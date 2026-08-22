@@ -602,7 +602,7 @@ const VERIFIER_TABS = (basePath) => [
 ];
 
 const CHECK_TYPE_SUBMENU = [
-  { path: "/AddCheckType/Employment", label: "Employment" },
+  { path: "/EmploymentCheck", label: "Employment" },
   { path: "/AddCheckType/Education", label: "Education" },
   { path: "/AddCheckType/Address", label: "Address" },
   { path: "/AddCheckType/Database", label: "Database" },
