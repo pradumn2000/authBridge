@@ -255,6 +255,7 @@ import ClientOnboardingForm from "./pages/Clientonbordingform";
 import AddClient from "./pages/AddClient";
 import PendingRegistrations from "./pages/PendingRegistrations";
 import AllClients from "./pages/Allclients";
+import EmploymentCheck from "./pages/EmploymentCheck";
 
 // ─────────────────────────────────────────
 // Helpers
@@ -364,6 +365,11 @@ function App() {
         } />
         <Route path="/AddInstitution" element={
           <PrivateRoute role="admin"><AddInstitution /></PrivateRoute>
+        } />
+
+        {/* ── Add Check Type Page ── */}
+        <Route path="/AddCheckType/Database" element={
+          <PrivateRoute role={["admin", ...VERIFIER_ROLES]}><EmploymentCheck /></PrivateRoute>
         } />
 
         {/* ── Allocator (+ admin) ── */}
