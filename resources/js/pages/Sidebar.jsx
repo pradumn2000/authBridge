@@ -618,7 +618,6 @@ const ROLE_NAV = {
     { path: "/AllCases", label: "All Cases", img: "images/sidebar/cases-icon.svg" },
     { path: "/AddCase", label: "Add Case", img: "images/sidebar/wip-icon.svg" },
     
-    // 👇 Submenu Item
     {
       label: "Add Check Type",
       img: "images/sidebar/setting-icon.svg",
@@ -820,7 +819,7 @@ export default function Sidebar() {
                       display: "flex",
                       flexDirection: "column",
                       width: "100%",
-                      paddingLeft: "45px",
+                      paddingLeft: "35px",
                       margin: "2px 0 8px 0",
                       listStyle: "none",
                       boxSizing: "border-box",
@@ -851,22 +850,21 @@ export default function Sidebar() {
                             style={{
                               display: "block",
                               width: "100%",
-                              padding: "6px 12px",
-                              borderRadius: "4px",
+                              padding: "8px 12px",
+                              borderRadius: "6px",
                               fontSize: "13px",
                               textDecoration: "none",
-                              color: isSubActive || isHovered ? "#ffffff" : "#a0aec0",
-                              backgroundColor: isSubActive
+                              color: "#ffffff",
+                              backgroundColor: isSubActive || isHovered
                                 ? "#008080"
-                                : isHovered
-                                ? "rgba(0, 128, 128, 0.4)"
                                 : "transparent",
-                              transition: "all 0.2s ease",
+                              transition: "background-color 0.2s ease",
                               boxSizing: "border-box",
-                              backgroundClip: "border-box",
                             }}
                           >
-                            <span className="text">{sub.label}</span>
+                            <span className="text" style={{ color: "#ffffff" }}>
+                              {sub.label}
+                            </span>
                           </a>
                         </li>
                       );
