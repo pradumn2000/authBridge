@@ -26,6 +26,15 @@ export default function EmploymentCheck() {
   const handleSaveAndMarkDone = (e) => {
     e.preventDefault();
     console.log("Final Submitted Data:", formData);
+    // Submit ke baad form fields ko clear karne ke liye
+    setFormData({
+      databasesChecked: "",
+      matchFound: "",
+      matchDetails: "",
+      panVerified: "",
+      aadhaarVerified: "",
+      remarks: "",
+    });
   };
 
   return (
