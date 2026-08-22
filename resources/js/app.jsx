@@ -255,6 +255,7 @@ import ClientOnboardingForm from "./pages/Clientonbordingform";
 import AddClient from "./pages/AddClient";
 import PendingRegistrations from "./pages/PendingRegistrations";
 import AllClients from "./pages/Allclients";
+// import EmploymentCheck from "./pages/EmploymentCheck";
 import EmploymentCheck from "./pages/EmploymentCheck";
 
 // ─────────────────────────────────────────
