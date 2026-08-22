@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from "react";
 
 export default function EmploymentCheck() {
   const [formData, setFormData] = useState({
@@ -21,12 +21,15 @@ export default function EmploymentCheck() {
   const handleSaveDraft = (e) => {
     e.preventDefault();
     console.log("Draft Saved Data:", formData);
+    alert("Draft saved successfully!");
   };
 
   const handleSaveAndMarkDone = (e) => {
     e.preventDefault();
     console.log("Final Submitted Data:", formData);
-    // Submit ke baad form fields ko clear karne ke liye
+    alert("Submitted and Marked Done!");
+    
+    // Clear Form Fields After Submit
     setFormData({
       databasesChecked: "",
       matchFound: "",
@@ -40,6 +43,8 @@ export default function EmploymentCheck() {
   return (
     <div style={styles.container}>
       <form style={styles.card}>
+        <h2 style={styles.title}>Database Check Verification</h2>
+        
         {/* Row 1: Databases Checked & Match Found */}
         <div style={styles.row}>
           <div style={styles.formGroup}>
@@ -148,24 +153,33 @@ export default function EmploymentCheck() {
   );
 }
 
-// Inline Styling (UI Screenshot Exact Alignment)
+// Layout Styling
 const styles = {
   container: {
-    padding: "20px",
+    padding: "40px 20px",
     backgroundColor: "#f4f7fe",
     minHeight: "100vh",
     display: "flex",
     justifyContent: "center",
+    alignItems: "flex-start",
   },
   card: {
     backgroundColor: "#ffffff",
     borderRadius: "8px",
-    padding: "24px",
+    padding: "28px",
     maxWidth: "800px",
     width: "100%",
-    boxShadow: "0px 2px 10px rgba(0, 0, 0, 0.05)",
-    borderRight: "4px solid #1a237e",
+    boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.05)",
+    borderTop: "4px solid #1a237e",
     boxSizing: "border-box",
+  },
+  title: {
+    fontSize: "20px",
+    fontWeight: "700",
+    color: "#1a237e",
+    marginBottom: "24px",
+    textTransform: "uppercase",
+    letterSpacing: "0.5px",
   },
   row: {
     display: "flex",
@@ -195,7 +209,7 @@ const styles = {
   input: {
     padding: "10px 14px",
     borderRadius: "6px",
-    border: "1px solid #e2e8f0",
+    border: "1px solid #cbd5e1",
     backgroundColor: "#f8fafc",
     fontSize: "14px",
     color: "#2d3748",
@@ -204,7 +218,7 @@ const styles = {
   select: {
     padding: "10px 14px",
     borderRadius: "6px",
-    border: "1px solid #e2e8f0",
+    border: "1px solid #cbd5e1",
     backgroundColor: "#f8fafc",
     fontSize: "14px",
     color: "#2d3748",
@@ -213,7 +227,7 @@ const styles = {
   textarea: {
     padding: "10px 14px",
     borderRadius: "6px",
-    border: "1px solid #e2e8f0",
+    border: "1px solid #cbd5e1",
     backgroundColor: "#f8fafc",
     fontSize: "14px",
     color: "#2d3748",
@@ -243,7 +257,7 @@ const styles = {
   btnSaveDone: {
     flex: 1,
     padding: "12px 20px",
-    backgroundColor: "#8a99b5",
+    backgroundColor: "#475569",
     color: "#ffffff",
     border: "none",
     borderRadius: "6px",

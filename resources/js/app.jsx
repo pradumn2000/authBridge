@@ -222,10 +222,12 @@
 // const container = document.getElementById("app");
 // const root = ReactDOM.createRoot(container);
 // root.render(<App />);
+import "./bootstrap";
 import React from "react";
 import ReactDOM from "react-dom/client";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 
+// Page Imports
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import Forgetpassword from "./pages/Forgetpassword";
@@ -257,10 +259,7 @@ import PendingRegistrations from "./pages/PendingRegistrations";
 import AllClients from "./pages/Allclients";
 import EmploymentCheck from "./pages/EmploymentCheck";
 
-// ─────────────────────────────────────────
 // Helpers
-// ─────────────────────────────────────────
-
 const getToken = () => localStorage.getItem("token");
 
 const getUser = () => {
@@ -271,7 +270,6 @@ const getUser = () => {
   }
 };
 
-// All 7 new specialist verifier roles that map to the Verifyer dashboard
 const VERIFIER_ROLES = [
   "verifier",
   "verifyer",
@@ -284,7 +282,6 @@ const VERIFIER_ROLES = [
   "courtroom_verifier",
 ];
 
-// Returns the home route for a given role
 function getRoleRoute(role) {
   const routes = {
     admin: "/dashboard",
@@ -296,7 +293,6 @@ function getRoleRoute(role) {
     pvt_qc: "/Intake",
     client: "/Client",
     onboarding: "/clientportal",
-    // 7 specialist verifier roles — all land on Verifyer dashboard
     employment_verifier: "/Verifyer",
     education_verifier: "/Verifyer",
     address_verifier: "/Verifyer",
@@ -308,12 +304,6 @@ function getRoleRoute(role) {
   return routes[role] || "/";
 }
 
-// ─────────────────────────────────────────
-// PrivateRoute
-// - No role prop  → any logged-in user
-// - role="x"      → that role OR admin
-// - role={[...]}  → any of those roles OR admin
-// ─────────────────────────────────────────
 function PrivateRoute({ children, role }) {
   const token = getToken();
   const user = getUser();
@@ -324,7 +314,6 @@ function PrivateRoute({ children, role }) {
 
   if (role) {
     const allowed = Array.isArray(role) ? role : [role];
-    // Admin can always access any page
     if (user.role !== "admin" && !allowed.includes(user.role)) {
       return <Navigate to={getRoleRoute(user.role)} replace />;
     }
@@ -333,14 +322,11 @@ function PrivateRoute({ children, role }) {
   return children;
 }
 
-// ─────────────────────────────────────────
-// App
-// ─────────────────────────────────────────
-function App() {
+export default function App() {
   return (
     <BrowserRouter>
       <Routes>
-        {/* ── Public routes ── */}
+        {/* Public Routes */}
         <Route path="/" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/client-register" element={<ClientRegistration />} />
@@ -349,7 +335,7 @@ function App() {
         <Route path="/resetpassword" element={<Resetpassword />} />
         <Route path="/confirmpassword" element={<Confrimpassword />} />
 
-        {/* ── Admin ── */}
+        {/* Admin Routes */}
         <Route
           path="/dashboard"
           element={
@@ -391,7 +377,7 @@ function App() {
           }
         />
 
-        {/* ── Add Check Type Page ── */}
+        {/* Add Check Type Route */}
         <Route
           path="/AddCheckType/Database"
           element={
@@ -401,7 +387,7 @@ function App() {
           }
         />
 
-        {/* ── Allocator (+ admin) ── */}
+        {/* Allocator Routes */}
         <Route
           path="/Allocator"
           element={
@@ -411,7 +397,7 @@ function App() {
           }
         />
 
-        {/* ── Add Case (admin, allocator, client) ── */}
+        {/* Case Routes */}
         <Route
           path="/AddCase"
           element={
@@ -421,7 +407,7 @@ function App() {
           }
         />
 
-        {/* ── Verifier — all 9 verifier roles (+ admin) ── */}
+        {/* Verifier Routes */}
         <Route
           path="/Verifyer"
           element={
@@ -455,7 +441,7 @@ function App() {
           }
         />
 
-        {/* ── Check Manager (+ admin) ── */}
+        {/* Check Manager */}
         <Route
           path="/AllCases"
           element={
@@ -465,7 +451,7 @@ function App() {
           }
         />
 
-        {/* ── Report Writing (+ admin) ── */}
+        {/* Specialist & QC */}
         <Route
           path="/Specialist"
           element={
@@ -474,8 +460,6 @@ function App() {
             </PrivateRoute>
           }
         />
-
-        {/* ── PVT / QC (+ admin) ── */}
         <Route
           path="/Intake"
           element={
@@ -485,7 +469,7 @@ function App() {
           }
         />
 
-        {/* ── Client (+ admin) — dynamic case list + detail ── */}
+        {/* Client Routes */}
         <Route
           path="/Client"
           element={
@@ -502,8 +486,6 @@ function App() {
             </PrivateRoute>
           }
         />
-
-        {/* ── Candidate Portal ── */}
         <Route
           path="/clientportal"
           element={
@@ -513,7 +495,7 @@ function App() {
           }
         />
 
-        {/* ── Settings — any logged-in user ── */}
+        {/* Settings & Admin Ops */}
         <Route
           path="/Settings"
           element={
@@ -563,13 +545,16 @@ function App() {
           }
         />
 
-        {/* ── Catch all ── */}
+        {/* Catch All */}
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </BrowserRouter>
   );
 }
 
+// Laravel Vite DOM Mounting Check
 const container = document.getElementById("app");
-const root = ReactDOM.createRoot(container);
-root.render(<App />);
+if (container) {
+  const root = ReactDOM.createRoot(container);
+  root.render(<App />);
+}
