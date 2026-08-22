@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-export default function EmploymentCheckForm() {
+export default function EmploymentCheck() {
   const [formData, setFormData] = useState({
     databasesChecked: "",
     matchFound: "",
