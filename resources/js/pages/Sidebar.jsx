@@ -569,12 +569,9 @@ function getUser() {
   }
 }
 
-// Helper to normalize role (handles spelling variations)
 const normalizeRole = (role) => {
   if (!role) return "admin";
-
   const r = role.toString().toLowerCase().trim();
-
   const roleMap = {
     verifier: "verifyer",
     verifyer: "verifyer",
@@ -588,54 +585,22 @@ const normalizeRole = (role) => {
     "employment verifier": "employment_verifier",
     "education verifier": "education_verifier",
   };
-
   return roleMap[r] || r;
 };
 
-// Common tabs
 const STANDARD_CASE_TABS = (basePath) => [
-  {
-    path: `${basePath}?tab=pending`,
-    label: "Active Cases",
-    img: "images/sidebar/wip-icon.svg",
-  },
-  {
-    path: `${basePath}?tab=completed`,
-    label: "Completed Cases",
-    img: "images/sidebar/completed-icon.svg",
-  },
-  {
-    path: `${basePath}?tab=all`,
-    label: "Total Cases",
-    img: "images/sidebar/cases-icon.svg",
-  },
+  { path: `${basePath}?tab=pending`, label: "Active Cases", img: "images/sidebar/wip-icon.svg" },
+  { path: `${basePath}?tab=completed`, label: "Completed Cases", img: "images/sidebar/completed-icon.svg" },
+  { path: `${basePath}?tab=all`, label: "Total Cases", img: "images/sidebar/cases-icon.svg" },
 ];
 
-// Verifier tabs
 const VERIFIER_TABS = (basePath) => [
-  {
-    path: `${basePath}?view=active`,
-    label: "Active Cases",
-    img: "images/sidebar/wip-icon.svg",
-  },
-  {
-    path: `${basePath}?view=completed`,
-    label: "Completed",
-    img: "images/sidebar/completed-icon.svg",
-  },
-  {
-    path: `${basePath}?view=clear`,
-    label: "Clear",
-    img: "images/sidebar/completed-icon.svg",
-  },
-  {
-    path: `${basePath}?view=discrepancy`,
-    label: "Discrepancy",
-    img: "images/sidebar/setting-icon.svg",
-  },
+  { path: `${basePath}?view=active`, label: "Active Cases", img: "images/sidebar/wip-icon.svg" },
+  { path: `${basePath}?view=completed`, label: "Completed", img: "images/sidebar/completed-icon.svg" },
+  { path: `${basePath}?view=clear`, label: "Clear", img: "images/sidebar/completed-icon.svg" },
+  { path: `${basePath}?view=discrepancy`, label: "Discrepancy", img: "images/sidebar/setting-icon.svg" },
 ];
 
-// Submenu Items for Add Check Type
 const CHECK_TYPE_SUBMENU = [
   { path: "/AddCheckType/Employment", label: "Employment" },
   { path: "/AddCheckType/Education", label: "Education" },
@@ -653,7 +618,7 @@ const ROLE_NAV = {
     { path: "/AllCases", label: "All Cases", img: "images/sidebar/cases-icon.svg" },
     { path: "/AddCase", label: "Add Case", img: "images/sidebar/wip-icon.svg" },
     
-    // 👇 Add Check Type with Submenu Options
+    // 👇 Submenu Item
     {
       label: "Add Check Type",
       img: "images/sidebar/setting-icon.svg",
@@ -778,9 +743,7 @@ export default function Sidebar() {
   const role = normalizeRole(rawRole);
 
   const navItems = ROLE_NAV[role] || ROLE_NAV.admin;
-
-  // Track dropdown open/close state
-  const [openDropdown, setOpenDropdown] = useState(false);
+  const [isCheckTypeOpen, setIsCheckTypeOpen] = useState(false);
 
   const logout = () => {
     localStorage.removeItem("token");
@@ -792,33 +755,27 @@ export default function Sidebar() {
     <aside id="sidebar">
       <div className="brand">
         <img src="/images/login/logo.png" alt="SATYAPAN" />
-        <img
-          src="/images/login/logo-small.png"
-          alt=""
-          className="collapsed"
-        />
+        <img src="/images/login/logo-small.png" alt="" className="collapsed" />
       </div>
 
       <ul className="side-menu">
         {navItems.map((item, idx) => {
-          // Check if item contains submenu dropdown
           if (item.submenu) {
             const isChildActive = item.submenu.some(
               (sub) => location.pathname === sub.path.split("?")[0]
             );
-            const isOpen = openDropdown || isChildActive;
+            const isOpen = isCheckTypeOpen || isChildActive;
 
             return (
               <li
                 key={`${item.label}-${idx}`}
-                className={`has-dropdown ${isOpen ? "open" : ""}`}
+                className={isOpen ? "show" : ""}
               >
                 <a
                   href="#"
-                  className="dropdown-toggle"
                   onClick={(e) => {
                     e.preventDefault();
-                    setOpenDropdown(!openDropdown);
+                    setIsCheckTypeOpen(!isCheckTypeOpen);
                   }}
                   style={{
                     display: "flex",
@@ -837,27 +794,28 @@ export default function Sidebar() {
                     <span className="text">{item.label}</span>
                   </span>
 
-                  {/* Down Arrow Indicator */}
+                  {/* Single Arrow Icon */}
                   <span
-                    className="arrow-icon"
                     style={{
                       transform: isOpen ? "rotate(180deg)" : "rotate(0deg)",
-                      transition: "transform 0.2s ease-in-out",
+                      transition: "transform 0.2s ease",
                       fontSize: "10px",
                       marginLeft: "auto",
+                      display: "inline-block",
                     }}
                   >
                     ▼
                   </span>
                 </a>
 
-                {/* Submenu Dropdown List */}
+                {/* Forced Visible Submenu List */}
                 {isOpen && (
                   <ul
-                    className="dropdown-menu"
                     style={{
-                      paddingLeft: "25px",
+                      display: "block",
+                      paddingLeft: "35px",
                       listStyle: "none",
+                      margin: "5px 0",
                     }}
                   >
                     {item.submenu.map((sub, subIdx) => {
@@ -868,12 +826,18 @@ export default function Sidebar() {
                         <li
                           key={`${sub.path}-${subIdx}`}
                           className={isSubActive ? "active" : ""}
+                          style={{ margin: "4px 0" }}
                         >
                           <a
                             href="#"
                             onClick={(e) => {
                               e.preventDefault();
                               navigate(sub.path);
+                            }}
+                            style={{
+                              padding: "4px 0",
+                              display: "block",
+                              fontSize: "13px",
                             }}
                           >
                             <span className="text">{sub.label}</span>
@@ -887,24 +851,16 @@ export default function Sidebar() {
             );
           }
 
-          // Regular menu rendering
           const [itemPath, itemQuery] = item.path.split("?");
 
           const isActive = (() => {
             if (location.pathname !== itemPath) return false;
-
-            if (!itemQuery) {
-              return !location.search;
-            }
-
+            if (!itemQuery) return !location.search;
             return location.search === `?${itemQuery}`;
           })();
 
           return (
-            <li
-              key={`${item.path}-${idx}`}
-              className={isActive ? "active" : ""}
-            >
+            <li key={`${item.path}-${idx}`} className={isActive ? "active" : ""}>
               <a
                 href="#"
                 onClick={(e) => {
@@ -919,7 +875,6 @@ export default function Sidebar() {
                     e.target.style.display = "none";
                   }}
                 />
-
                 <span className="text">{item.label}</span>
               </a>
             </li>
@@ -941,7 +896,6 @@ export default function Sidebar() {
                 e.target.style.display = "none";
               }}
             />
-
             <span className="text logout">Logout</span>
           </a>
         </li>
