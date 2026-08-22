@@ -222,7 +222,7 @@
 // const container = document.getElementById("app");
 // const root = ReactDOM.createRoot(container);
 // root.render(<App />);
-import "./bootstrap";
+// import "./bootstrap";
 import React from "react";
 import ReactDOM from "react-dom/client";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
