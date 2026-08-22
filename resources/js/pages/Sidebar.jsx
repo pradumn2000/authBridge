@@ -744,6 +744,7 @@ export default function Sidebar() {
 
   const navItems = ROLE_NAV[role] || ROLE_NAV.admin;
   const [isCheckTypeOpen, setIsCheckTypeOpen] = useState(false);
+  const [hoveredSubIndex, setHoveredSubIndex] = useState(null);
 
   const logout = () => {
     localStorage.removeItem("token");
@@ -769,7 +770,11 @@ export default function Sidebar() {
             return (
               <li
                 key={`${item.label}-${idx}`}
-                className={isOpen ? "show" : ""}
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  width: "100%",
+                }}
               >
                 <a
                   href="#"
@@ -781,6 +786,7 @@ export default function Sidebar() {
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "space-between",
+                    width: "100%",
                   }}
                 >
                   <span style={{ display: "flex", alignItems: "center" }}>
@@ -794,7 +800,6 @@ export default function Sidebar() {
                     <span className="text">{item.label}</span>
                   </span>
 
-                  {/* Single Arrow Icon */}
                   <span
                     style={{
                       transform: isOpen ? "rotate(180deg)" : "rotate(0deg)",
@@ -808,36 +813,57 @@ export default function Sidebar() {
                   </span>
                 </a>
 
-                {/* Forced Visible Submenu List */}
+                {/* Submenu Vertical Nested List */}
                 {isOpen && (
                   <ul
                     style={{
-                      display: "block",
-                      paddingLeft: "35px",
+                      display: "flex",
+                      flexDirection: "column",
+                      width: "100%",
+                      paddingLeft: "45px",
+                      margin: "2px 0 8px 0",
                       listStyle: "none",
-                      margin: "5px 0",
+                      boxSizing: "border-box",
                     }}
                   >
                     {item.submenu.map((sub, subIdx) => {
                       const isSubActive =
                         location.pathname === sub.path.split("?")[0];
+                      const isHovered = hoveredSubIndex === subIdx;
 
                       return (
                         <li
                           key={`${sub.path}-${subIdx}`}
-                          className={isSubActive ? "active" : ""}
-                          style={{ margin: "4px 0" }}
+                          style={{
+                            width: "100%",
+                            listStyle: "none",
+                            margin: "2px 0",
+                          }}
                         >
                           <a
                             href="#"
+                            onMouseEnter={() => setHoveredSubIndex(subIdx)}
+                            onMouseLeave={() => setHoveredSubIndex(null)}
                             onClick={(e) => {
                               e.preventDefault();
                               navigate(sub.path);
                             }}
                             style={{
-                              padding: "4px 0",
                               display: "block",
+                              width: "100%",
+                              padding: "6px 12px",
+                              borderRadius: "4px",
                               fontSize: "13px",
+                              textDecoration: "none",
+                              color: isSubActive || isHovered ? "#ffffff" : "#a0aec0",
+                              backgroundColor: isSubActive
+                                ? "#008080"
+                                : isHovered
+                                ? "rgba(0, 128, 128, 0.4)"
+                                : "transparent",
+                              transition: "all 0.2s ease",
+                              boxSizing: "border-box",
+                              backgroundClip: "border-box",
                             }}
                           >
                             <span className="text">{sub.label}</span>
