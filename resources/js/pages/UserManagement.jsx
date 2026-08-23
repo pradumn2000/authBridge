@@ -1388,10 +1388,33 @@ export default function UserManagement() {
                             </td>
                             <td style={{ color: "#64748b", fontSize: "13px" }}>{formatDate(user.created_at)}</td>
                             <td>
-                              <button onClick={() => handleDelete(user.id, user.name)} disabled={deletingId === user.id} style={{ background: "#fff5f5", color: "#eb4d4b", border: "1px solid #fca5a5", borderRadius: "6px", padding: "5px 12px", cursor: "pointer" }}>
-                                {deletingId === user.id ? "Deleting…" : "Delete"}
-                              </button>
-                            </td>
+  <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+    {/* Enable/Disable Toggle Switch */}
+    <ToggleSwitch
+      initialStatus={user.status === "active" || user.is_active || true}
+      onChange={(status) => {
+        console.log(`User ${user.id} status:`, status ? "Enabled" : "Disabled");
+        // Yaha aapki API call aayegi (e.g. updateUserStatus(user.id, status))
+      }}
+    />
+
+    {/* Delete Button (Bilkul Unchanged) */}
+    <button
+      onClick={() => handleDelete(user.id, user.name)}
+      disabled={deletingId === user.id}
+      style={{
+        background: "#fff5f5",
+        color: "#eb4d4b",
+        border: "1px solid #fca5a5",
+        borderRadius: "6px",
+        padding: "5px 12px",
+        cursor: "pointer",
+      }}
+    >
+      {deletingId === user.id ? "Deleting…" : "Delete"}
+    </button>
+  </div>
+</td>
                           </tr>
                         );
                       })
