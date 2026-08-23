@@ -1753,7 +1753,7 @@ export default function AddInstitution() {
                 <thead>
                   <tr>
                     <th>#</th>
-                    <th>Name</th>
+                    <th>Institute Name</th>
                     <th>Code</th>
                     <th>State</th>
                     <th>Stature</th>
