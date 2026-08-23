@@ -372,71 +372,47 @@ export default function AddInstitute() {
 
                 <div className="down-table">
                   <table>
-  <thead>
-    <tr>
-      <th>#</th>
-      <th>Institute Name</th>
-      <th>Code</th>
-      <th>Type</th>
-      <th>State</th>
-      <th>Regulatory Body</th>
-      <th>Email</th>
-      <th>Website</th>
-      <th>Charges</th>
-      <th>Status</th>
-      <th>Action</th>
-    </tr>
-  </thead>
-  <tbody>
-    {filteredInstitutes.length === 0 ? (
-      <tr>
-        {/* Total 11 columns hain toh colSpan 11 hoga */}
-        <td colSpan="11" className="empty-table-cell">
-          No institutes found
-        </td>
-      </tr>
-    ) : (
-      filteredInstitutes.map((institute, index) => (
-        <tr key={institute.id}>
-          <td>{index + 1}</td>
-          <td className="company-name-cell">{institute.name}</td>
-          <td className="code-cell">{institute.code}</td>
-          <td>{institute.type}</td>
-          <td>{institute.city || institute.state}</td>
-          <td>{institute.university || institute.regulatoryBody}</td>
-          <td>{institute.email || "N/A"}</td>
-          <td>
-            {institute.website ? (
-              <a href={institute.website} target="_blank" rel="noreferrer">
-                {institute.website}
-              </a>
-            ) : (
-              "N/A"
-            )}
-          </td>
-          <td>{institute.charges ? `₹${institute.charges}` : "N/A"}</td>
-          <td>
-            <span
-              className={`status ${
-                institute.status === "Verified" ? "completed" : "pending"
-              }`}
-            >
-              {institute.status}
-            </span>
-          </td>
-          <td>
-            <button
-              className="view-cta remove-btn-theme"
-              onClick={() => openDeleteModal(institute.name)}
-            >
-              Remove
-            </button>
-          </td>
-        </tr>
-      ))
-    )}
-  </tbody>
-</table>
+                    <thead>
+                      <tr>
+                        <th>#</th>
+                        <th>Institute Name</th>
+                        <th>Code</th>
+                        <th>Type</th>
+                        <th>City</th>
+                        <th>University</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {filteredInstitutes.length === 0 ? (
+                        <tr>
+                          <td colSpan="8" className="empty-table-cell">No institutes found</td>
+                        </tr>
+                      ) : (
+                        filteredInstitutes.map((institute, index) => (
+                          <tr key={institute.id}>
+                            <td>{index + 1}</td>
+                            <td className="company-name-cell">{institute.name}</td>
+                            <td className="code-cell">{institute.code}</td>
+                            <td>{institute.type}</td>
+                            <td>{institute.city}</td>
+                            <td>{institute.university}</td>
+                            <td>
+                              <span className={`status ${institute.status === "Verified" ? "completed" : "pending"}`}>
+                                {institute.status}
+                              </span>
+                            </td>
+                            <td>
+                              <button className="view-cta remove-btn-theme" onClick={() => openDeleteModal(institute.name)}>
+                                Remove
+                              </button>
+                            </td>
+                          </tr>
+                        ))
+                      )}
+                    </tbody>
+                  </table>
                 </div>
 
               </div>
