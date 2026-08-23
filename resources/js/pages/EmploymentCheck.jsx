@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-
+import Sidebar from "./Sidebar";
+import Header from "./Header";
 export default function EmploymentCheck() {
   const [formData, setFormData] = useState({
     databasesChecked: "",
