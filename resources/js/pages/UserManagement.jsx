@@ -1036,6 +1036,64 @@ import Header from "./Header";
 import Sidebar from "./Sidebar";
 import { API_URL } from "../src/config";
 
+const ToggleSwitch = ({ initialStatus = true, onChange }) => {
+  const [isEnabled, setIsEnabled] = useState(initialStatus);
+
+  const handleToggle = () => {
+    const nextState = !isEnabled;
+    setIsEnabled(nextState);
+    if (onChange) onChange(nextState);
+  };
+
+  return (
+    <button
+      type="button"
+      onClick={handleToggle}
+      style={{
+        display: "inline-flex",
+        alignItems: "center",
+        width: "85px",
+        height: "30px",
+        borderRadius: "20px",
+        backgroundColor: isEnabled ? "#2ed573" : "#e0e0e0",
+        border: "none",
+        padding: "3px",
+        cursor: "pointer",
+        transition: "background-color 0.3s ease",
+        position: "relative",
+      }}
+    >
+      <span
+        style={{
+          width: "24px",
+          height: "24px",
+          borderRadius: "50%",
+          backgroundColor: "#ffffff",
+          position: "absolute",
+          left: isEnabled ? "calc(100% - 27px)" : "3px",
+          transition: "left 0.3s ease",
+          zIndex: 2,
+        }}
+      />
+      <span
+        style={{
+          fontSize: "9px",
+          fontWeight: "800",
+          color: isEnabled ? "#ffffff" : "#718093",
+          paddingLeft: isEnabled ? "6px" : "0px",
+          paddingRight: isEnabled ? "0px" : "5px",
+          textTransform: "uppercase",
+          width: "100%",
+          textAlign: isEnabled ? "left" : "right",
+          zIndex: 1,
+        }}
+      >
+        {isEnabled ? "ENABLE" : "DISABLE"}
+      </span>
+    </button>
+  );
+};
+
 const ROLES = [
   { value: "admin",               label: "Admin" },
   { value: "allocator",           label: "Allocator" },
@@ -1391,14 +1449,36 @@ export default function UserManagement() {
   <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
     {/* Enable/Disable Toggle Switch */}
     <ToggleSwitch
-      initialStatus={user.status === "active" || user.is_active || true}
-      onChange={(status) => {
-        console.log(`User ${user.id} status:`, status ? "Enabled" : "Disabled");
-        // Yaha aapki API call aayegi (e.g. updateUserStatus(user.id, status))
+      initialStatus={user.status === "active" || user.status === "enabled"}
+      onChange={async (newStatus) => {
+        try {
+          const res = await fetch(`${API_URL}/api/users/${user.id}/status`, {
+            method: "PATCH", // ya "PUT" jo bhi aapka backend accept kare
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify({
+              status: newStatus ? "active" : "inactive",
+            }),
+          });
+
+          if (!res.ok) {
+            alert("Failed to update status");
+            fetchUsers(); // Rollback / Reset UI state from server
+            return;
+          }
+
+          console.log(`User ${user.id} status updated to:`, newStatus);
+        } catch (err) {
+          console.error("Status update error:", err);
+          alert("Server error while updating status.");
+          fetchUsers(); // Reset state on error
+        }
       }}
     />
 
-    {/* Delete Button (Bilkul Unchanged) */}
+    {/* Delete Button (Unchanged) */}
     <button
       onClick={() => handleDelete(user.id, user.name)}
       disabled={deletingId === user.id}
