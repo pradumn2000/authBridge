@@ -385,53 +385,61 @@ export default function App() {
 
         {/* Add Check Type Route */}
         <Route
-          path="/EmploymentCheck"
-          element={
-            <PrivateRoute role={["admin", ...VERIFIER_ROLES]}>
-              <EmploymentCheck />
-            </PrivateRoute>
-          }
-        />
-        <Route
-          path="/EducationCheck"
-          element={
-            <PrivateRoute role={["admin", ...VERIFIER_ROLES]}>
-              <EducationCheck />
-            </PrivateRoute>
-          }
-        />
-        <Route
-          path="/AddressCheck"
-          element={
-            <PrivateRoute role={["admin", ...VERIFIER_ROLES]}>
-              <AddressCheck />
-            </PrivateRoute>
-          }
-        />
-        <Route
-          path="/DatabaseCheck"
-          element={
-            <PrivateRoute role={["admin", ...VERIFIER_ROLES]}>
-              <DatabaseCheck />
-            </PrivateRoute>
-          }
-        />
-        <Route
-          path="/CriminalCheck"
-          element={
-            <PrivateRoute role={["admin", ...VERIFIER_ROLES]}>
-              <CriminalCheck />
-            </PrivateRoute>
-          }
-        />
-        <Route
-          path="/DrugtestCheck"
-          element={
-            <PrivateRoute role={["admin", ...VERIFIER_ROLES]}>
-              <DrugtestCheck />
-            </PrivateRoute>
-          }
-        />
+  path="/EmploymentCheck"
+  element={
+    <PrivateRoute role={["admin", ...VERIFIER_ROLES]}>
+      <EmploymentCheck />
+    </PrivateRoute>
+  }
+/>
+<Route
+  path="/EducationCheck"
+  element={
+    <PrivateRoute role={["admin", ...VERIFIER_ROLES]}>
+      <EducationCheck />
+    </PrivateRoute>
+  }
+/>
+<Route
+  path="/AddressCheck"
+  element={
+    <PrivateRoute role={["admin", ...VERIFIER_ROLES]}>
+      <AddressCheck />
+    </PrivateRoute>
+  }
+/>
+<Route
+  path="/DatabaseCheck"
+  element={
+    <PrivateRoute role={["admin", ...VERIFIER_ROLES]}>
+      <DatabaseCheck />
+    </PrivateRoute>
+  }
+/>
+<Route
+  path="/CriminalCheck"
+  element={
+    <PrivateRoute role={["admin", ...VERIFIER_ROLES]}>
+      <CriminalCheck />
+    </PrivateRoute>
+  }
+/>
+<Route
+  path="/DrugtestCheck"
+  element={
+    <PrivateRoute role={["admin", ...VERIFIER_ROLES]}>
+      <DrugtestCheck />
+    </PrivateRoute>
+  }
+/>
+<Route
+  path="/CourtroomCheck"
+  element={
+    <PrivateRoute role={["admin", ...VERIFIER_ROLES]}>
+      <CourtroomCheck />
+    </PrivateRoute>
+  }
+/>
 
         {/* Allocator Routes */}
         <Route
