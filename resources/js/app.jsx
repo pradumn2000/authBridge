@@ -258,6 +258,12 @@ import AddClient from "./pages/AddClient";
 import PendingRegistrations from "./pages/PendingRegistrations";
 import AllClients from "./pages/Allclients";
 import EmploymentCheck from "./pages/EmploymentCheck";
+import EducationCheck from "./pages/EducationCheck";
+import AddressCheck from "./pages/AddressCheck";
+import DatabaseCheck from "./pages/DatabaseCheck";
+import CriminalCheck from "./pages/CriminalCheck";
+import DrugtestCheck from "./pages/DrugtestCheck";
+import CourtroomCheck from "./pages/CourtroomCheck";
 
 // Helpers
 const getToken = () => localStorage.getItem("token");
@@ -383,6 +389,46 @@ export default function App() {
           element={
             <PrivateRoute role={["admin", ...VERIFIER_ROLES]}>
               <EmploymentCheck />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/EducationCheck"
+          element={
+            <PrivateRoute role={["admin", ...VERIFIER_ROLES]}>
+              <EducationCheck />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/AddressCheck"
+          element={
+            <PrivateRoute role={["admin", ...VERIFIER_ROLES]}>
+              <AddressCheck />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/DatabaseCheck"
+          element={
+            <PrivateRoute role={["admin", ...VERIFIER_ROLES]}>
+              <DatabaseCheck />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/CriminalCheck"
+          element={
+            <PrivateRoute role={["admin", ...VERIFIER_ROLES]}>
+              <CriminalCheck />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/DrugtestCheck"
+          element={
+            <PrivateRoute role={["admin", ...VERIFIER_ROLES]}>
+              <DrugtestCheck />
             </PrivateRoute>
           }
         />
