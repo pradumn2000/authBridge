@@ -31,7 +31,6 @@ export default function EmploymentCheck() {
     console.log("Final Submitted Data:", formData);
     alert("Submitted and Marked Done!");
 
-    // Clear Form Fields After Submit
     setFormData({
       databasesChecked: "",
       matchFound: "",
@@ -43,148 +42,139 @@ export default function EmploymentCheck() {
   };
 
   return (
-    <div style={styles.appLayout}>
-      {/* 1. Left Sidebar */}
+    <>
+      {/* 1. Sidebar (Fixed 270px) */}
       <Sidebar />
 
-      {/* 2. Right Content Area (Header + Form) */}
-      <div style={styles.mainContent}>
+      {/* 2. Main Content Wrapper (Left 270px, Width calc(100% - 270px)) */}
+      <section id="content">
+        {/* Header/Nav inside #content */}
         <Header />
 
-        <main style={styles.container}>
-          <form style={styles.card}>
-            <h2 style={styles.title}>Database Check Verification</h2>
+        {/* Main Content Body */}
+        <main>
+          <div style={styles.container}>
+            <form style={styles.card}>
+              <h2 style={styles.title}>Database Check Verification</h2>
 
-            {/* Row 1: Databases Checked & Match Found */}
-            <div style={styles.row}>
-              <div style={styles.formGroup}>
-                <label style={styles.label}>DATABASES CHECKED</label>
-                <input
-                  type="text"
-                  name="databasesChecked"
-                  value={formData.databasesChecked}
+              {/* Row 1: Databases Checked & Match Found */}
+              <div style={styles.row}>
+                <div style={styles.formGroup}>
+                  <label style={styles.label}>DATABASES CHECKED</label>
+                  <input
+                    type="text"
+                    name="databasesChecked"
+                    value={formData.databasesChecked}
+                    onChange={handleChange}
+                    placeholder="Enter databases checked..."
+                    style={styles.input}
+                  />
+                </div>
+
+                <div style={styles.formGroup}>
+                  <label style={styles.label}>MATCH FOUND?</label>
+                  <select
+                    name="matchFound"
+                    value={formData.matchFound}
+                    onChange={handleChange}
+                    style={styles.select}
+                  >
+                    <option value="">— Select —</option>
+                    <option value="Yes">Yes</option>
+                    <option value="No">No</option>
+                  </select>
+                </div>
+              </div>
+
+              {/* Row 2: Match Details */}
+              <div style={styles.formGroupFull}>
+                <label style={styles.label}>MATCH DETAILS</label>
+                <textarea
+                  name="matchDetails"
+                  value={formData.matchDetails}
                   onChange={handleChange}
-                  placeholder="Enter databases checked..."
-                  style={styles.input}
+                  placeholder="Enter match details..."
+                  rows={3}
+                  style={styles.textarea}
                 />
               </div>
 
-              <div style={styles.formGroup}>
-                <label style={styles.label}>MATCH FOUND?</label>
-                <select
-                  name="matchFound"
-                  value={formData.matchFound}
-                  onChange={handleChange}
-                  style={styles.select}
-                >
-                  <option value="">— Select —</option>
-                  <option value="Yes">Yes</option>
-                  <option value="No">No</option>
-                </select>
-              </div>
-            </div>
+              {/* Row 3: PAN Verified & Aadhaar Verified */}
+              <div style={styles.row}>
+                <div style={styles.formGroup}>
+                  <label style={styles.label}>PAN VERIFIED?</label>
+                  <select
+                    name="panVerified"
+                    value={formData.panVerified}
+                    onChange={handleChange}
+                    style={styles.select}
+                  >
+                    <option value="">— Select —</option>
+                    <option value="Yes">Yes</option>
+                    <option value="No">No</option>
+                  </select>
+                </div>
 
-            {/* Row 2: Match Details */}
-            <div style={styles.formGroupFull}>
-              <label style={styles.label}>MATCH DETAILS</label>
-              <textarea
-                name="matchDetails"
-                value={formData.matchDetails}
-                onChange={handleChange}
-                placeholder="Enter match details..."
-                rows={3}
-                style={styles.textarea}
-              />
-            </div>
-
-            {/* Row 3: PAN Verified & Aadhaar Verified */}
-            <div style={styles.row}>
-              <div style={styles.formGroup}>
-                <label style={styles.label}>PAN VERIFIED?</label>
-                <select
-                  name="panVerified"
-                  value={formData.panVerified}
-                  onChange={handleChange}
-                  style={styles.select}
-                >
-                  <option value="">— Select —</option>
-                  <option value="Yes">Yes</option>
-                  <option value="No">No</option>
-                </select>
+                <div style={styles.formGroup}>
+                  <label style={styles.label}>AADHAAR VERIFIED?</label>
+                  <select
+                    name="aadhaarVerified"
+                    value={formData.aadhaarVerified}
+                    onChange={handleChange}
+                    style={styles.select}
+                  >
+                    <option value="">— Select —</option>
+                    <option value="Yes">Yes</option>
+                    <option value="No">No</option>
+                  </select>
+                </div>
               </div>
 
-              <div style={styles.formGroup}>
-                <label style={styles.label}>AADHAAR VERIFIED?</label>
-                <select
-                  name="aadhaarVerified"
-                  value={formData.aadhaarVerified}
+              {/* Row 4: Remarks */}
+              <div style={styles.formGroupFull}>
+                <label style={styles.label}>REMARKS</label>
+                <textarea
+                  name="remarks"
+                  value={formData.remarks}
                   onChange={handleChange}
-                  style={styles.select}
-                >
-                  <option value="">— Select —</option>
-                  <option value="Yes">Yes</option>
-                  <option value="No">No</option>
-                </select>
+                  placeholder="Enter remarks..."
+                  rows={3}
+                  style={styles.textarea}
+                />
               </div>
-            </div>
 
-            {/* Row 4: Remarks */}
-            <div style={styles.formGroupFull}>
-              <label style={styles.label}>REMARKS</label>
-              <textarea
-                name="remarks"
-                value={formData.remarks}
-                onChange={handleChange}
-                placeholder="Enter remarks..."
-                rows={3}
-                style={styles.textarea}
-              />
-            </div>
-
-            {/* Action Buttons */}
-            <div style={styles.buttonContainer}>
-              <button
-                type="button"
-                onClick={handleSaveDraft}
-                style={styles.btnSaveDraft}
-              >
-                💾 Save Draft
-              </button>
-              <button
-                type="button"
-                onClick={handleSaveAndMarkDone}
-                style={styles.btnSaveDone}
-              >
-                ✓ Save & Mark Done
-              </button>
-            </div>
-          </form>
+              {/* Action Buttons */}
+              <div style={styles.buttonContainer}>
+                <button
+                  type="button"
+                  onClick={handleSaveDraft}
+                  style={styles.btnSaveDraft}
+                >
+                  💾 Save Draft
+                </button>
+                <button
+                  type="button"
+                  onClick={handleSaveAndMarkDone}
+                  style={styles.btnSaveDone}
+                >
+                  ✓ Save & Mark Done
+                </button>
+              </div>
+            </form>
+          </div>
         </main>
-      </div>
-    </div>
+      </section>
+    </>
   );
 }
 
-// Layout Styling
+// Inline Styles for Form Elements
 const styles = {
-  appLayout: {
-    display: "flex",
-    width: "100%",
-    minHeight: "100vh",
-    backgroundColor: "#f4f7fe",
-  },
-  mainContent: {
-    flex: 1,
-    display: "flex",
-    flexDirection: "column",
-    width: "calc(100% - 260px)", // Sidebar width adjust karne ke liye
-  },
   container: {
-    padding: "30px 20px",
     display: "flex",
     justifyContent: "center",
     alignItems: "flex-start",
-    flex: 1,
+    width: "100%",
   },
   card: {
     backgroundColor: "#ffffff",
