@@ -920,10 +920,11 @@ export default function CompanyManagement() {
                       <tr>
                         <th>#</th>
                         <th>Company Name</th>
-                        <th>Code</th>
+                        <th>Company Code</th>
                         <th>Industry</th>
                         <th>State</th>
                         <th>Website</th>
+                        <th>Contact person</th>
                         <th>Status</th>
                         <th>Action</th>
                       </tr>
