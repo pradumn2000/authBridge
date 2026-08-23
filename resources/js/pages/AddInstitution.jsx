@@ -1754,13 +1754,14 @@ export default function AddInstitution() {
                   <tr>
                     <th>#</th>
                     <th>Institute Name</th>
+                    <th>Type</th>
                     <th>Code</th>
                     <th>State</th>
-                    <th>Stature</th>
-                    <th>AICTE</th>
+                    <th>Regulatory Body</th>
+                    <th>UGC/AICTE</th>
                     <th>Website</th>
-                    <th>Verified</th>
-                    <th>Added</th>
+                    <th>Charges</th>
+                    <th>Status</th>
                     <th>Action</th>
                   </tr>
                 </thead>
