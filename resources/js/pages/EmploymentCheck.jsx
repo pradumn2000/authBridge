@@ -42,6 +42,9 @@ export default function EmploymentCheck() {
   };
 
   return (
+    <>
+        <Sidebar />
+    <Header />
     <div style={styles.container}>
       <form style={styles.card}>
         <h2 style={styles.title}>Database Check Verification</h2>
@@ -151,6 +154,8 @@ export default function EmploymentCheck() {
         </div>
       </form>
     </div>
+    </>
+    
   );
 }
 
