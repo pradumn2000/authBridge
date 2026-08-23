@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+import Sidebar from "./Sidebar";
+import Header from "./Header";
 
 export default function CourtCaseCheck() {
   const [formData, setFormData] = useState({
@@ -43,139 +45,151 @@ export default function CourtCaseCheck() {
   };
 
   return (
-    <div style={styles.container}>
-      <form style={styles.card}>
-        {/* Row 1: Court Name & Case Number */}
-        <div style={styles.row}>
-          <div style={styles.formGroup}>
-            <label style={styles.label}>COURT NAME</label>
-            <input
-              type="text"
-              name="courtName"
-              value={formData.courtName}
-              onChange={handleChange}
-              placeholder="Enter court name..."
-              style={styles.input}
-            />
+    <>
+      {/* 1. Sidebar */}
+      <Sidebar />
+
+      {/* 2. Main Layout Section */}
+      <section id="content">
+        <Header />
+
+        <main>
+          <div style={styles.container}>
+            <form style={styles.card}>
+              <h2 style={styles.title}>Court Case Check</h2>
+
+              {/* Row 1: Court Name & Case Number */}
+              <div style={styles.row}>
+                <div style={styles.formGroup}>
+                  <label style={styles.label}>COURT NAME</label>
+                  <input
+                    type="text"
+                    name="courtName"
+                    value={formData.courtName}
+                    onChange={handleChange}
+                    placeholder="Enter court name..."
+                    style={styles.input}
+                  />
+                </div>
+
+                <div style={styles.formGroup}>
+                  <label style={styles.label}>CASE NUMBER</label>
+                  <input
+                    type="text"
+                    name="caseNumber"
+                    value={formData.caseNumber}
+                    onChange={handleChange}
+                    placeholder="Enter case number..."
+                    style={styles.input}
+                  />
+                </div>
+              </div>
+
+              {/* Row 2: Case Type & Filing Date */}
+              <div style={styles.row}>
+                <div style={styles.formGroup}>
+                  <label style={styles.label}>CASE TYPE</label>
+                  <select
+                    name="caseType"
+                    value={formData.caseType}
+                    onChange={handleChange}
+                    style={styles.select}
+                  >
+                    <option value="">— Select —</option>
+                    <option value="Civil">Civil</option>
+                    <option value="Criminal">Criminal</option>
+                    <option value="Corporate / Commercial">Corporate / Commercial</option>
+                    <option value="Labour / Employment">Labour / Employment</option>
+                  </select>
+                </div>
+
+                <div style={styles.formGroup}>
+                  <label style={styles.label}>FILING DATE</label>
+                  <input
+                    type="date"
+                    name="filingDate"
+                    value={formData.filingDate}
+                    onChange={handleChange}
+                    style={styles.input}
+                  />
+                </div>
+              </div>
+
+              {/* Row 3: Current Status & Next Hearing Date */}
+              <div style={styles.row}>
+                <div style={styles.formGroup}>
+                  <label style={styles.label}>CURRENT STATUS</label>
+                  <select
+                    name="currentStatus"
+                    value={formData.currentStatus}
+                    onChange={handleChange}
+                    style={styles.select}
+                  >
+                    <option value="">— Select —</option>
+                    <option value="Pending">Pending</option>
+                    <option value="Disposed / Closed">Disposed / Closed</option>
+                    <option value="Stayed">Stayed</option>
+                    <option value="Under Appeal">Under Appeal</option>
+                  </select>
+                </div>
+
+                <div style={styles.formGroup}>
+                  <label style={styles.label}>NEXT HEARING DATE</label>
+                  <input
+                    type="date"
+                    name="nextHearingDate"
+                    value={formData.nextHearingDate}
+                    onChange={handleChange}
+                    style={styles.input}
+                  />
+                </div>
+              </div>
+
+              {/* Row 4: Remarks */}
+              <div style={styles.formGroupFull}>
+                <label style={styles.label}>REMARKS</label>
+                <textarea
+                  name="remarks"
+                  value={formData.remarks}
+                  onChange={handleChange}
+                  placeholder="Enter remarks..."
+                  rows={4}
+                  style={styles.textarea}
+                />
+              </div>
+
+              {/* Action Buttons */}
+              <div style={styles.buttonContainer}>
+                <button
+                  type="button"
+                  onClick={handleSaveDraft}
+                  style={styles.btnSaveDraft}
+                >
+                  💾 Save Draft
+                </button>
+                <button
+                  type="button"
+                  onClick={handleSaveAndMarkDone}
+                  style={styles.btnSaveDone}
+                >
+                  ✓ Save & Mark Done
+                </button>
+              </div>
+            </form>
           </div>
-
-          <div style={styles.formGroup}>
-            <label style={styles.label}>CASE NUMBER</label>
-            <input
-              type="text"
-              name="caseNumber"
-              value={formData.caseNumber}
-              onChange={handleChange}
-              placeholder="Enter case number..."
-              style={styles.input}
-            />
-          </div>
-        </div>
-
-        {/* Row 2: Case Type & Filing Date */}
-        <div style={styles.row}>
-          <div style={styles.formGroup}>
-            <label style={styles.label}>CASE TYPE</label>
-            <select
-              name="caseType"
-              value={formData.caseType}
-              onChange={handleChange}
-              style={styles.select}
-            >
-              <option value="">— Select —</option>
-              <option value="Civil">Civil</option>
-              <option value="Criminal">Criminal</option>
-              <option value="Corporate / Commercial">Corporate / Commercial</option>
-              <option value="Labour / Employment">Labour / Employment</option>
-            </select>
-          </div>
-
-          <div style={styles.formGroup}>
-            <label style={styles.label}>FILING DATE</label>
-            <input
-              type="date"
-              name="filingDate"
-              value={formData.filingDate}
-              onChange={handleChange}
-              style={styles.input}
-            />
-          </div>
-        </div>
-
-        {/* Row 3: Current Status & Next Hearing Date */}
-        <div style={styles.row}>
-          <div style={styles.formGroup}>
-            <label style={styles.label}>CURRENT STATUS</label>
-            <select
-              name="currentStatus"
-              value={formData.currentStatus}
-              onChange={handleChange}
-              style={styles.select}
-            >
-              <option value="">— Select —</option>
-              <option value="Pending">Pending</option>
-              <option value="Disposed / Closed">Disposed / Closed</option>
-              <option value="Stayed">Stayed</option>
-              <option value="Under Appeal">Under Appeal</option>
-            </select>
-          </div>
-
-          <div style={styles.formGroup}>
-            <label style={styles.label}>NEXT HEARING DATE</label>
-            <input
-              type="date"
-              name="nextHearingDate"
-              value={formData.nextHearingDate}
-              onChange={handleChange}
-              style={styles.input}
-            />
-          </div>
-        </div>
-
-        {/* Row 4: Remarks */}
-        <div style={styles.formGroupFull}>
-          <label style={styles.label}>REMARKS</label>
-          <textarea
-            name="remarks"
-            value={formData.remarks}
-            onChange={handleChange}
-            placeholder="Enter remarks..."
-            rows={4}
-            style={styles.textarea}
-          />
-        </div>
-
-        {/* Action Buttons */}
-        <div style={styles.buttonContainer}>
-          <button
-            type="button"
-            onClick={handleSaveDraft}
-            style={styles.btnSaveDraft}
-          >
-            💾 Save Draft
-          </button>
-          <button
-            type="button"
-            onClick={handleSaveAndMarkDone}
-            style={styles.btnSaveDone}
-          >
-            ✓ Save & Mark Done
-          </button>
-        </div>
-      </form>
-    </div>
+        </main>
+      </section>
+    </>
   );
 }
 
-// Inline Styles matching design exactly
+// Cleaned Inline Styles
 const styles = {
   container: {
-    padding: "30px 20px",
-    backgroundColor: "#f4f6f9",
-    minHeight: "100vh",
     display: "flex",
     justifyContent: "center",
     alignItems: "flex-start",
+    width: "100%",
   },
   card: {
     backgroundColor: "#ffffff",
@@ -184,8 +198,16 @@ const styles = {
     maxWidth: "850px",
     width: "100%",
     boxShadow: "0px 2px 8px rgba(0, 0, 0, 0.04)",
-    borderRight: "4px solid #1a237e",
+    borderTop: "4px solid #1a237e",
     boxSizing: "border-box",
+  },
+  title: {
+    fontSize: "20px",
+    fontWeight: "700",
+    color: "#1a237e",
+    marginBottom: "24px",
+    textTransform: "uppercase",
+    letterSpacing: "0.5px",
   },
   row: {
     display: "flex",

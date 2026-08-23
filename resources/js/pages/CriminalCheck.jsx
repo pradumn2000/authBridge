@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+import Sidebar from "./Sidebar";
+import Header from "./Header";
 
 export default function CourtPoliceCheck() {
   const [formData, setFormData] = useState({
@@ -43,142 +45,154 @@ export default function CourtPoliceCheck() {
   };
 
   return (
-    <div style={styles.container}>
-      <form style={styles.card}>
-        {/* Row 1: Courts Checked & Police Record Check */}
-        <div style={styles.row}>
-          <div style={styles.formGroup}>
-            <label style={styles.label}>COURTS CHECKED</label>
-            <input
-              type="text"
-              name="courtsChecked"
-              value={formData.courtsChecked}
-              onChange={handleChange}
-              placeholder="Enter courts checked..."
-              style={styles.input}
-            />
+    <>
+      {/* 1. Sidebar */}
+      <Sidebar />
+
+      {/* 2. Main Layout Section */}
+      <section id="content">
+        <Header />
+
+        <main>
+          <div style={styles.container}>
+            <form style={styles.card}>
+              <h2 style={styles.title}>Court & Police Verification Check</h2>
+
+              {/* Row 1: Courts Checked & Police Record Check */}
+              <div style={styles.row}>
+                <div style={styles.formGroup}>
+                  <label style={styles.label}>COURTS CHECKED</label>
+                  <input
+                    type="text"
+                    name="courtsChecked"
+                    value={formData.courtsChecked}
+                    onChange={handleChange}
+                    placeholder="Enter courts checked..."
+                    style={styles.input}
+                  />
+                </div>
+
+                <div style={styles.formGroup}>
+                  <label style={styles.label}>POLICE RECORD CHECK</label>
+                  <select
+                    name="policeRecordCheck"
+                    value={formData.policeRecordCheck}
+                    onChange={handleChange}
+                    style={styles.select}
+                  >
+                    <option value="">— Select —</option>
+                    <option value="Clear">Clear</option>
+                    <option value="Record Found">Record Found</option>
+                    <option value="Pending">Pending</option>
+                  </select>
+                </div>
+              </div>
+
+              {/* Row 2: Case Details (If Any) */}
+              <div style={styles.formGroupFull}>
+                <label style={styles.label}>CASE DETAILS (IF ANY)</label>
+                <textarea
+                  name="caseDetails"
+                  value={formData.caseDetails}
+                  onChange={handleChange}
+                  placeholder="Enter case details (if any)..."
+                  rows={4}
+                  style={styles.textarea}
+                />
+              </div>
+
+              {/* Row 3: State & District */}
+              <div style={styles.row}>
+                <div style={styles.formGroup}>
+                  <label style={styles.label}>STATE</label>
+                  <input
+                    type="text"
+                    name="state"
+                    value={formData.state}
+                    onChange={handleChange}
+                    placeholder="Enter state..."
+                    style={styles.input}
+                  />
+                </div>
+
+                <div style={styles.formGroup}>
+                  <label style={styles.label}>DISTRICT</label>
+                  <input
+                    type="text"
+                    name="district"
+                    value={formData.district}
+                    onChange={handleChange}
+                    placeholder="Enter district..."
+                    style={styles.input}
+                  />
+                </div>
+              </div>
+
+              {/* Row 4: Verification Mode */}
+              <div style={styles.row}>
+                <div style={styles.formGroup}>
+                  <label style={styles.label}>VERIFICATION MODE</label>
+                  <select
+                    name="verificationMode"
+                    value={formData.verificationMode}
+                    onChange={handleChange}
+                    style={styles.select}
+                  >
+                    <option value="">— Select —</option>
+                    <option value="Online Portal">Online Portal</option>
+                    <option value="Police Station Visit">Police Station Visit</option>
+                    <option value="Advocate Search">Advocate Search</option>
+                  </select>
+                </div>
+
+                <div style={styles.formGroup}></div>
+              </div>
+
+              {/* Row 5: Remarks */}
+              <div style={styles.formGroupFull}>
+                <label style={styles.label}>REMARKS</label>
+                <textarea
+                  name="remarks"
+                  value={formData.remarks}
+                  onChange={handleChange}
+                  placeholder="Enter remarks..."
+                  rows={4}
+                  style={styles.textarea}
+                />
+              </div>
+
+              {/* Action Buttons */}
+              <div style={styles.buttonContainer}>
+                <button
+                  type="button"
+                  onClick={handleSaveDraft}
+                  style={styles.btnSaveDraft}
+                >
+                  💾 Save Draft
+                </button>
+                <button
+                  type="button"
+                  onClick={handleSaveAndMarkDone}
+                  style={styles.btnSaveDone}
+                >
+                  ✓ Save & Mark Done
+                </button>
+              </div>
+            </form>
           </div>
-
-          <div style={styles.formGroup}>
-            <label style={styles.label}>POLICE RECORD CHECK</label>
-            <select
-              name="policeRecordCheck"
-              value={formData.policeRecordCheck}
-              onChange={handleChange}
-              style={styles.select}
-            >
-              <option value="">— Select —</option>
-              <option value="Clear">Clear</option>
-              <option value="Record Found">Record Found</option>
-              <option value="Pending">Pending</option>
-            </select>
-          </div>
-        </div>
-
-        {/* Row 2: Case Details (If Any) */}
-        <div style={styles.formGroupFull}>
-          <label style={styles.label}>CASE DETAILS (IF ANY)</label>
-          <textarea
-            name="caseDetails"
-            value={formData.caseDetails}
-            onChange={handleChange}
-            placeholder="Enter case details (if any)..."
-            rows={4}
-            style={styles.textarea}
-          />
-        </div>
-
-        {/* Row 3: State & District */}
-        <div style={styles.row}>
-          <div style={styles.formGroup}>
-            <label style={styles.label}>STATE</label>
-            <input
-              type="text"
-              name="state"
-              value={formData.state}
-              onChange={handleChange}
-              placeholder="Enter state..."
-              style={styles.input}
-            />
-          </div>
-
-          <div style={styles.formGroup}>
-            <label style={styles.label}>DISTRICT</label>
-            <input
-              type="text"
-              name="district"
-              value={formData.district}
-              onChange={handleChange}
-              placeholder="Enter district..."
-              style={styles.input}
-            />
-          </div>
-        </div>
-
-        {/* Row 4: Verification Mode */}
-        <div style={styles.row}>
-          <div style={styles.formGroup}>
-            <label style={styles.label}>VERIFICATION MODE</label>
-            <select
-              name="verificationMode"
-              value={formData.verificationMode}
-              onChange={handleChange}
-              style={styles.select}
-            >
-              <option value="">— Select —</option>
-              <option value="Online Portal">Online Portal</option>
-              <option value="Police Station Visit">Police Station Visit</option>
-              <option value="Advocate Search">Advocate Search</option>
-            </select>
-          </div>
-
-          <div style={styles.formGroup}></div>
-        </div>
-
-        {/* Row 5: Remarks */}
-        <div style={styles.formGroupFull}>
-          <label style={styles.label}>REMARKS</label>
-          <textarea
-            name="remarks"
-            value={formData.remarks}
-            onChange={handleChange}
-            placeholder="Enter remarks..."
-            rows={4}
-            style={styles.textarea}
-          />
-        </div>
-
-        {/* Action Buttons */}
-        <div style={styles.buttonContainer}>
-          <button
-            type="button"
-            onClick={handleSaveDraft}
-            style={styles.btnSaveDraft}
-          >
-            💾 Save Draft
-          </button>
-          <button
-            type="button"
-            onClick={handleSaveAndMarkDone}
-            style={styles.btnSaveDone}
-          >
-            ✓ Save & Mark Done
-          </button>
-        </div>
-      </form>
-    </div>
+        </main>
+      </section>
+    </>
   );
 }
 
-// Inline Styles matching exact layout
+// Cleaned Inline Styles
 const styles = {
   container: {
-    padding: "30px 20px",
-    backgroundColor: "#f4f6f9",
-    minHeight: "100vh",
     display: "flex",
     justifyContent: "center",
     alignItems: "flex-start",
+    width: "100%",
   },
   card: {
     backgroundColor: "#ffffff",
@@ -187,8 +201,16 @@ const styles = {
     maxWidth: "850px",
     width: "100%",
     boxShadow: "0px 2px 8px rgba(0, 0, 0, 0.04)",
-    borderRight: "4px solid #1a237e",
+    borderTop: "4px solid #1a237e",
     boxSizing: "border-box",
+  },
+  title: {
+    fontSize: "20px",
+    fontWeight: "700",
+    color: "#1a237e",
+    marginBottom: "24px",
+    textTransform: "uppercase",
+    letterSpacing: "0.5px",
   },
   row: {
     display: "flex",

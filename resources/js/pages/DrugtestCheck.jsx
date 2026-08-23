@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+import Sidebar from "./Sidebar";
+import Header from "./Header";
 
 export default function MedicalCheck() {
   const [formData, setFormData] = useState({
@@ -43,138 +45,150 @@ export default function MedicalCheck() {
   };
 
   return (
-    <div style={styles.container}>
-      <form style={styles.card}>
-        {/* Row 1: Test Type & Lab Name */}
-        <div style={styles.row}>
-          <div style={styles.formGroup}>
-            <label style={styles.label}>TEST TYPE</label>
-            <select
-              name="testType"
-              value={formData.testType}
-              onChange={handleChange}
-              style={styles.select}
-            >
-              <option value="">— Select —</option>
-              <option value="5 Panel Drug Test">5 Panel Drug Test</option>
-              <option value="10 Panel Drug Test">10 Panel Drug Test</option>
-              <option value="General Health Checkup">General Health Checkup</option>
-            </select>
+    <>
+      {/* 1. Sidebar */}
+      <Sidebar />
+
+      {/* 2. Main Layout Section */}
+      <section id="content">
+        <Header />
+
+        <main>
+          <div style={styles.container}>
+            <form style={styles.card}>
+              <h2 style={styles.title}>Medical & Drug Check</h2>
+
+              {/* Row 1: Test Type & Lab Name */}
+              <div style={styles.row}>
+                <div style={styles.formGroup}>
+                  <label style={styles.label}>TEST TYPE</label>
+                  <select
+                    name="testType"
+                    value={formData.testType}
+                    onChange={handleChange}
+                    style={styles.select}
+                  >
+                    <option value="">— Select —</option>
+                    <option value="5 Panel Drug Test">5 Panel Drug Test</option>
+                    <option value="10 Panel Drug Test">10 Panel Drug Test</option>
+                    <option value="General Health Checkup">General Health Checkup</option>
+                  </select>
+                </div>
+
+                <div style={styles.formGroup}>
+                  <label style={styles.label}>LAB NAME</label>
+                  <input
+                    type="text"
+                    name="labName"
+                    value={formData.labName}
+                    onChange={handleChange}
+                    placeholder="Enter lab name..."
+                    style={styles.input}
+                  />
+                </div>
+              </div>
+
+              {/* Row 2: Test Date & Substances Tested */}
+              <div style={styles.row}>
+                <div style={styles.formGroup}>
+                  <label style={styles.label}>TEST DATE</label>
+                  <input
+                    type="date"
+                    name="testDate"
+                    value={formData.testDate}
+                    onChange={handleChange}
+                    style={styles.input}
+                  />
+                </div>
+
+                <div style={styles.formGroup}>
+                  <label style={styles.label}>SUBSTANCES TESTED</label>
+                  <input
+                    type="text"
+                    name="substancesTested"
+                    value={formData.substancesTested}
+                    onChange={handleChange}
+                    placeholder="Enter substances tested..."
+                    style={styles.input}
+                  />
+                </div>
+              </div>
+
+              {/* Row 3: Test Result & Lab Report Ref No. */}
+              <div style={styles.row}>
+                <div style={styles.formGroup}>
+                  <label style={styles.label}>TEST RESULT</label>
+                  <select
+                    name="testResult"
+                    value={formData.testResult}
+                    onChange={handleChange}
+                    style={styles.select}
+                  >
+                    <option value="">— Select —</option>
+                    <option value="Negative / Passed">Negative / Passed</option>
+                    <option value="Positive / Failed">Positive / Failed</option>
+                    <option value="Inconclusive">Inconclusive</option>
+                  </select>
+                </div>
+
+                <div style={styles.formGroup}>
+                  <label style={styles.label}>LAB REPORT REF NO.</label>
+                  <input
+                    type="text"
+                    name="labReportRefNo"
+                    value={formData.labReportRefNo}
+                    onChange={handleChange}
+                    placeholder="Enter lab report ref no...."
+                    style={styles.input}
+                  />
+                </div>
+              </div>
+
+              {/* Row 4: Remarks */}
+              <div style={styles.formGroupFull}>
+                <label style={styles.label}>REMARKS</label>
+                <textarea
+                  name="remarks"
+                  value={formData.remarks}
+                  onChange={handleChange}
+                  placeholder="Enter remarks..."
+                  rows={4}
+                  style={styles.textarea}
+                />
+              </div>
+
+              {/* Action Buttons */}
+              <div style={styles.buttonContainer}>
+                <button
+                  type="button"
+                  onClick={handleSaveDraft}
+                  style={styles.btnSaveDraft}
+                >
+                  💾 Save Draft
+                </button>
+                <button
+                  type="button"
+                  onClick={handleSaveAndMarkDone}
+                  style={styles.btnSaveDone}
+                >
+                  ✓ Save & Mark Done
+                </button>
+              </div>
+            </form>
           </div>
-
-          <div style={styles.formGroup}>
-            <label style={styles.label}>LAB NAME</label>
-            <input
-              type="text"
-              name="labName"
-              value={formData.labName}
-              onChange={handleChange}
-              placeholder="Enter lab name..."
-              style={styles.input}
-            />
-          </div>
-        </div>
-
-        {/* Row 2: Test Date & Substances Tested */}
-        <div style={styles.row}>
-          <div style={styles.formGroup}>
-            <label style={styles.label}>TEST DATE</label>
-            <input
-              type="date"
-              name="testDate"
-              value={formData.testDate}
-              onChange={handleChange}
-              style={styles.input}
-            />
-          </div>
-
-          <div style={styles.formGroup}>
-            <label style={styles.label}>SUBSTANCES TESTED</label>
-            <input
-              type="text"
-              name="substancesTested"
-              value={formData.substancesTested}
-              onChange={handleChange}
-              placeholder="Enter substances tested..."
-              style={styles.input}
-            />
-          </div>
-        </div>
-
-        {/* Row 3: Test Result & Lab Report Ref No. */}
-        <div style={styles.row}>
-          <div style={styles.formGroup}>
-            <label style={styles.label}>TEST RESULT</label>
-            <select
-              name="testResult"
-              value={formData.testResult}
-              onChange={handleChange}
-              style={styles.select}
-            >
-              <option value="">— Select —</option>
-              <option value="Negative / Passed">Negative / Passed</option>
-              <option value="Positive / Failed">Positive / Failed</option>
-              <option value="Inconclusive">Inconclusive</option>
-            </select>
-          </div>
-
-          <div style={styles.formGroup}>
-            <label style={styles.label}>LAB REPORT REF NO.</label>
-            <input
-              type="text"
-              name="labReportRefNo"
-              value={formData.labReportRefNo}
-              onChange={handleChange}
-              placeholder="Enter lab report ref no...."
-              style={styles.input}
-            />
-          </div>
-        </div>
-
-        {/* Row 4: Remarks */}
-        <div style={styles.formGroupFull}>
-          <label style={styles.label}>REMARKS</label>
-          <textarea
-            name="remarks"
-            value={formData.remarks}
-            onChange={handleChange}
-            placeholder="Enter remarks..."
-            rows={4}
-            style={styles.textarea}
-          />
-        </div>
-
-        {/* Action Buttons */}
-        <div style={styles.buttonContainer}>
-          <button
-            type="button"
-            onClick={handleSaveDraft}
-            style={styles.btnSaveDraft}
-          >
-            💾 Save Draft
-          </button>
-          <button
-            type="button"
-            onClick={handleSaveAndMarkDone}
-            style={styles.btnSaveDone}
-          >
-            ✓ Save & Mark Done
-          </button>
-        </div>
-      </form>
-    </div>
+        </main>
+      </section>
+    </>
   );
 }
 
-// Inline Styles strictly matching design
+// Cleaned Inline Styles
 const styles = {
   container: {
-    padding: "30px 20px",
-    backgroundColor: "#f4f6f9",
-    minHeight: "100vh",
     display: "flex",
     justifyContent: "center",
     alignItems: "flex-start",
+    width: "100%",
   },
   card: {
     backgroundColor: "#ffffff",
@@ -183,8 +197,16 @@ const styles = {
     maxWidth: "850px",
     width: "100%",
     boxShadow: "0px 2px 8px rgba(0, 0, 0, 0.04)",
-    borderRight: "4px solid #1a237e",
+    borderTop: "4px solid #1a237e",
     boxSizing: "border-box",
+  },
+  title: {
+    fontSize: "20px",
+    fontWeight: "700",
+    color: "#1a237e",
+    marginBottom: "24px",
+    textTransform: "uppercase",
+    letterSpacing: "0.5px",
   },
   row: {
     display: "flex",
