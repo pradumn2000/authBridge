@@ -1749,72 +1749,91 @@ export default function AddInstitution() {
 
             {/* ── Table ── */}
             <div className="down-table">
-                 <table>
-  <thead>
-    <tr>
-      <th>#</th>
-      <th>Institute Name</th>
-      <th>Code</th>
-      <th>Type</th>
-      <th>State</th>
-      <th>Regulatory Body</th>
-      <th>Email</th>
-      <th>Website</th>
-      <th>Charges</th>
-      <th>Status</th>
-      <th>Action</th>
-    </tr>
-  </thead>
-  <tbody>
-    {filteredInstitutes.length === 0 ? (
-      <tr>
-        {/* Total 11 columns hain toh colSpan 11 hoga */}
-        <td colSpan="11" className="empty-table-cell">
-          No institutes found
-        </td>
-      </tr>
-    ) : (
-      filteredInstitutes.map((institute, index) => (
-        <tr key={institute.id}>
-          <td>{index + 1}</td>
-          <td className="company-name-cell">{institute.name}</td>
-          <td className="code-cell">{institute.code}</td>
-          <td>{institute.type}</td>
-          <td>{institute.city || institute.state}</td>
-          <td>{institute.university || institute.regulatoryBody}</td>
-          <td>{institute.email || "N/A"}</td>
-          <td>
-            {institute.website ? (
-              <a href={institute.website} target="_blank" rel="noreferrer">
-                {institute.website}
-              </a>
-            ) : (
-              "N/A"
-            )}
-          </td>
-          <td>{institute.charges ? `₹${institute.charges}` : "N/A"}</td>
-          <td>
-            <span
-              className={`status ${
-                institute.status === "Verified" ? "completed" : "pending"
-              }`}
-            >
-              {institute.status}
-            </span>
-          </td>
-          <td>
-            <button
-              className="view-cta remove-btn-theme"
-              onClick={() => openDeleteModal(institute.name)}
-            >
-              Remove
-            </button>
-          </td>
-        </tr>
-      ))
-    )}
-  </tbody>
-</table>
+              <table>
+                <thead>
+                  <tr>
+                    <th>#</th>
+                    <th>Name</th>
+                    <th>Code</th>
+                    <th>State</th>
+                    <th>Stature</th>
+                    <th>AICTE</th>
+                    <th>Website</th>
+                    <th>Verified</th>
+                    <th>Added</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {loading ? (
+                    <tr>
+                      <td colSpan="10" className="empty-table-cell" style={{ color: "#94a3b8" }}>
+                        Loading institutions…
+                      </td>
+                    </tr>
+                  ) : currentUsers.length === 0 ? (
+                    <tr>
+                      <td colSpan="10" className="empty-table-cell" style={{ color: "#94a3b8" }}>
+                        No institutions found. {search && "Try clearing the search."}
+                      </td>
+                    </tr>
+                  ) : (
+                    currentUsers.map((inst, i) => (
+                      <tr key={inst.id}>
+                        <td style={{ color: "#64748b", fontSize: "12px" }}>{indexOfFirstUser + i + 1}</td>
+                        <td className="company-name-cell">{inst.name}</td>
+                        <td className="code-cell" style={{ color: "#64748b" }}>{inst.code || "—"}</td>
+                        <td>{inst.state || "—"}</td>
+                        <td>
+                          {inst.stature ? (
+                            <span style={{
+                              padding: "3px 10px", borderRadius: "20px", fontSize: "11px", fontWeight: 700,
+                              background: "#eff6ff", color: "#1d4ed8"
+                            }}>
+                              {inst.stature}
+                            </span>
+                          ) : "—"}
+                        </td>
+                        <td>
+                          {inst.aicte ? (
+                            <span style={{
+                              padding: "3px 10px", borderRadius: "20px", fontSize: "11px", fontWeight: 700,
+                              background: inst.aicte === "approved" ? "#f0fdf4" : inst.aicte === "not_approved" ? "#fef2f2" : "#fffbeb",
+                              color: inst.aicte === "approved" ? "#15803d" : inst.aicte === "not_approved" ? "#b91c1c" : "#b45309",
+                            }}>
+                              {inst.aicte}
+                            </span>
+                          ) : "—"}
+                        </td>
+                        <td>
+                          {inst.website
+                            ? <a href={inst.website} target="_blank" rel="noreferrer" className="table-link-anchor">Visit ↗</a>
+                            : "—"}
+                        </td>
+                        <td>
+                          <span style={{ color: inst.verified ? "#16a34a" : "#94a3b8", fontWeight: 700, fontSize: "13px" }}>
+                            {inst.verified ? "✔ Yes" : "Pending"}
+                          </span>
+                        </td>
+                        <td style={{ fontSize: "12px", color: "#64748b" }}>
+                          {inst.created_at
+                            ? new Date(inst.created_at).toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" })
+                            : "—"}
+                        </td>
+                        <td>
+                          <button
+                            className="view-cta remove-btn-theme"
+                            style={{ fontSize: "12px", height: "34px", width: "70px" }}
+                            onClick={() => setDeleteConfirm(inst)}
+                          >
+                            Remove
+                          </button>
+                        </td>
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              </table>
 
                {/* Pagination Controls */}
               {totalPages > 1 && (
