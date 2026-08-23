@@ -379,7 +379,7 @@ export default function App() {
 
         {/* Add Check Type Route */}
         <Route
-          path="/AddCheckType/Database"
+          path="/EmploymentCheck"
           element={
             <PrivateRoute role={["admin", ...VERIFIER_ROLES]}>
               <EmploymentCheck />
