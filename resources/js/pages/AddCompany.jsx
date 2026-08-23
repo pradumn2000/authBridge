@@ -915,57 +915,74 @@ export default function CompanyManagement() {
                 )}
 
                 <div className="down-table">
-                  <table>
-                    <thead>
-                      <tr>
-                        <th>#</th>
-                        <th>Company Name</th>
-                        <th>Company Code</th>
-                        <th>Industry</th>
-                        <th>State</th>
-                        <th>Website</th>
-                        <th>Contact person</th>
-                        <th>Status</th>
-                        <th>Action</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {loading ? (
-                        <tr>
-                          <td colSpan="8" className="empty-table-cell">Loading companies…</td>
-                        </tr>
-                      ) : currentUsers.length === 0 ? (
-                        <tr>
-                          <td colSpan="8" className="empty-table-cell">No companies found</td>
-                        </tr>
-                      ) : (
-                        currentUsers.map((company, index) => (
-                          <tr key={company.id}>
-                            <td>{indexOfFirstUser + index + 1}</td>
-                            <td className="company-name-cell">{company.name}</td>
-                            <td className="code-cell">{company.code || "—"}</td>
-                            <td>{company.industry || "—"}</td>
-                            <td>{company.state || "—"}</td>
-                            <td>
-                              {company.website ? (
-                                <a href={company.website} target="_blank" rel="noreferrer" className="table-link-anchor">Link ↗</a>
-                              ) : "—"}
-                            </td>
-                            <td>
-                              <span className={`status ${company.verified ? "completed" : "pending"}`}>
-                                {company.verified ? "Verified" : "Pending"}
-                              </span>
-                            </td>
-                            <td>
-                              <button className="view-cta remove-btn-theme" onClick={() => setDeleteConfirm(company)}>
-                                Remove
-                              </button>
-                            </td>
-                          </tr>
-                        ))
-                      )}
-                    </tbody>
-                  </table>
+                 <table>
+  <thead>
+    <tr>
+      <th>#</th>
+      <th>Company Name</th>
+      <th>Company Code</th>
+      <th>Industry</th>
+      <th>State</th>
+      <th>Website</th>
+      <th>Contact person</th>
+      <th>Email</th>
+      <th>Phone</th>
+      <th>Added Date</th>
+      <th>Action</th>
+    </tr>
+  </thead>
+  <tbody>
+    {loading ? (
+      <tr>
+        <td colSpan="11" className="empty-table-cell">
+          Loading companies…
+        </td>
+      </tr>
+    ) : currentUsers.length === 0 ? (
+      <tr>
+        <td colSpan="11" className="empty-table-cell">
+          No companies found
+        </td>
+      </tr>
+    ) : (
+      currentUsers.map((company, index) => (
+        <tr key={company.id}>
+          <td>{indexOfFirstUser + index + 1}</td>
+          <td className="company-name-cell">{company.name}</td>
+          <td className="code-cell">{company.code || "—"}</td>
+          <td>{company.industry || "—"}</td>
+          <td>{company.state || "—"}</td>
+          <td>
+            {company.website ? (
+              <a
+                href={company.website}
+                target="_blank"
+                rel="noreferrer"
+                className="table-link-anchor"
+              >
+                Link ↗
+              </a>
+            ) : (
+              "—"
+            )}
+          </td>
+          <td>{company.contactPerson || company.contact_person || "—"}</td>
+          <td>{company.email || "—"}</td>
+          <td>{company.phone || company.mobile || "—"}</td>
+          <td>{company.createdAt || company.addedDate || "—"}</td>
+          <td>
+            <button
+              className="view-cta remove-btn-theme"
+              onClick={() => setDeleteConfirm(company)}
+            >
+              Remove
+            </button>
+          </td>
+        </tr>
+      ))
+    )}
+  </tbody>
+</table>
 
                   {/* Pagination Controls */}
                   {totalPages > 1 && (
