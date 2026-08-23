@@ -1760,6 +1760,7 @@ export default function AddInstitution() {
                     <th>Regulatory Body</th>
                     <th>UGC/AICTE</th>
                     <th>Website</th>
+                    <th>Email</th>
                     <th>Charges</th>
                     <th>Status</th>
                     <th>Action</th>
