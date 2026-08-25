@@ -3396,7 +3396,7 @@ export default function AddCase() {
                     </div>
 
                     {/* Client field — locked to self for client-role users */}
-                    <div className="ac-field">
+                    {/* <div className="ac-field">
                       <label className="ac-label">Client <span className="ac-req">*</span></label>
                       {isClientUser ? (
                         <div className="ac-input ac-input-readonly">{form.clientName || user.name}</div>
@@ -3425,7 +3425,37 @@ export default function AddCase() {
                           )}
                         </>
                       )}
-                    </div>
+                    </div> */}
+                    <div className="ac-field">
+  <label className="ac-label">
+    Client <span className="ac-req">*</span>
+  </label>
+  <select
+    className="ac-input ac-select"
+    value={form.clientId}
+    onChange={(e) => handleClientChange(e.target.value)}
+  >
+    <option value="">
+      {clientsLoading
+        ? "Loading clients…"
+        : clientsError
+        ? "Failed to load clients"
+        : clients.length === 0
+        ? "No clients found"
+        : "— Select Client —"}
+    </option>
+    {clients.map((c) => (
+      <option key={c.id} value={c.id}>
+        {c.company_name || c.name}
+      </option>
+    ))}
+  </select>
+  {clientsError && (
+    <span style={{ fontSize: "0.72rem", color: "#dc2626" }}>
+      {clientsError} — check your connection and reload.
+    </span>
+  )}
+</div>
                   </div>
                 </div>
 
