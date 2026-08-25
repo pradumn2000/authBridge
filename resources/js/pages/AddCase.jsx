@@ -3428,7 +3428,7 @@ export default function AddCase() {
                     </div> */}
                     <div className="ac-field">
   <label className="ac-label">
-    Client <span className="ac-req">*</span>
+    Client <span className="ac-req"></span>
   </label>
   <select
     className="ac-input ac-select"
