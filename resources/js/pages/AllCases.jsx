@@ -509,13 +509,17 @@ export default function AllCases() {
                         <thead>
                           <tr>
                             <th style={{ whiteSpace: "nowrap" }}>Case ID</th>
-                            <th style={{ whiteSpace: "nowrap" }}>Candidate</th>
+                            <th style={{ whiteSpace: "nowrap" }}>Candidate Name</th>
                             {isAdmin && <th style={{ whiteSpace: "nowrap" }}>Client</th>}
                             <th style={{ whiteSpace: "nowrap" }}>Checks</th>
+                            <th style={{ whiteSpace: "nowrap" }}>Progress</th>
+                            <th style={{ whiteSpace: "nowrap" }}>Assigned Verifier</th>
                             <th style={{ whiteSpace: "nowrap" }}>Status</th>
                             <th style={{ whiteSpace: "nowrap" }}>Priority</th>
-                            <th style={{ whiteSpace: "nowrap" }}>TAT</th>
-                            <th style={{ whiteSpace: "nowrap" }}>Created</th>
+                            <th style={{ whiteSpace: "nowrap" }}>TAT/SLA</th>
+                            <th style={{ whiteSpace: "nowrap" }}>Due Date</th>
+                            <th style={{ whiteSpace: "nowrap" }}>QC Status</th>
+                            <th style={{ whiteSpace: "nowrap" }}>Uploaded Documents</th>
                             <th style={{ whiteSpace: "nowrap" }}>Action</th>
                           </tr>
                         </thead>
@@ -540,7 +544,6 @@ export default function AllCases() {
                                     cursor: "pointer",
                                     background: isSelected ? "#eef3ff" : undefined,
                                   }}>
-                                  <td style={{ fontWeight: 700, color: "#2b3b8c", whiteSpace: "nowrap" }}>{row.case_id}</td>
                                   <td style={{ whiteSpace: "nowrap" }}>{row.candidate}</td>
                                   {isAdmin && <td style={{ whiteSpace: "nowrap" }}>{row.client}</td>}
                                   <td style={{ fontSize: "12px", color: "#475569", whiteSpace: "nowrap" }}>{displayChecks(row.checks)}</td>
