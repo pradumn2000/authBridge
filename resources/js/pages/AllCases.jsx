@@ -508,6 +508,17 @@ export default function AllCases() {
                       <table style={{ minWidth: "900px", width: "100%", borderCollapse: "collapse" }}>
   <thead>
     <tr>
+      {/* 0. Checkbox Column */}
+      <th style={{ whiteSpace: "nowrap", width: "40px", textAlign: "center" }}>
+        <input 
+          type="checkbox" 
+          id="coding" 
+          name="interest" 
+          value="coding" 
+          checked 
+          onChange={() => {}} // react warning avoid karne ke liye
+        />
+      </th>
       <th style={{ whiteSpace: "nowrap" }}>Case ID</th>
       <th style={{ whiteSpace: "nowrap" }}>Candidate Name</th>
       {isAdmin && <th style={{ whiteSpace: "nowrap" }}>Client</th>}
@@ -526,8 +537,9 @@ export default function AllCases() {
   <tbody>
     {filtered.length === 0 ? (
       <tr>
+        {/* Checkbox column count included (+1 in colSpan) */}
         <td
-          colSpan={isAdmin ? 13 : 12}
+          colSpan={isAdmin ? 14 : 13}
           style={{
             textAlign: "center",
             padding: "32px",
@@ -571,6 +583,14 @@ export default function AllCases() {
               background: isSelected ? "#eef3ff" : undefined,
             }}
           >
+            {/* 0. Row Checkbox */}
+            <td 
+              style={{ textAlign: "center", whiteSpace: "nowrap" }}
+              onClick={(e) => e.stopPropagation()} // Row click trigger se bachane ke liye
+            >
+              <input type="checkbox" value={row.case_id} />
+            </td>
+
             {/* 1. Case ID */}
             <td style={{ whiteSpace: "nowrap", fontWeight: 600 }}>
               {row.case_id || row.id || "—"}
