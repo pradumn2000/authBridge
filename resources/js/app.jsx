@@ -264,7 +264,6 @@ import DatabaseCheck from "./pages/DatabaseCheck";
 import CriminalCheck from "./pages/CriminalCheck";
 import DrugtestCheck from "./pages/DrugtestCheck";
 import CourtroomCheck from "./pages/CourtroomCheck";
-import Bg from ".pages/Bg";
 
 // Helpers
 const getToken = () => localStorage.getItem("token");
@@ -344,7 +343,6 @@ export default function App() {
         {/* Public Routes */}
         <Route path="/" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
-        <Route path="/bg-verification" element={<Bg />} />
         <Route path="/client-register" element={<ClientRegistration />} />
         <Route path="/forgetpassword" element={<Forgetpassword />} />
         <Route path="/verifyaccount" element={<VerifyAccount />} />
@@ -608,7 +606,6 @@ export default function App() {
             </PrivateRoute>
           }
         />
-        
 
         {/* Catch All */}
         <Route path="*" element={<Navigate to="/" replace />} />
