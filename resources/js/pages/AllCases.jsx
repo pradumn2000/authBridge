@@ -506,73 +506,161 @@ export default function AllCases() {
                   ) : (
                     <div style={{ overflowX: "auto", overflowY: "auto", maxHeight: "640px", border: "1px solid #eef1f6", borderRadius: "8px" }}>
                       <table style={{ minWidth: "900px", width: "100%", borderCollapse: "collapse" }}>
-                        <thead>
-                          <tr>
-                            <th style={{ whiteSpace: "nowrap" }}>Case ID</th>
-                            <th style={{ whiteSpace: "nowrap" }}>Candidate Name</th>
-                            {isAdmin && <th style={{ whiteSpace: "nowrap" }}>Client</th>}
-                            <th style={{ whiteSpace: "nowrap" }}>Checks</th>
-                            <th style={{ whiteSpace: "nowrap" }}>Progress</th>
-                            <th style={{ whiteSpace: "nowrap" }}>Assigned Verifier</th>
-                            <th style={{ whiteSpace: "nowrap" }}>Status</th>
-                            <th style={{ whiteSpace: "nowrap" }}>Priority</th>
-                            <th style={{ whiteSpace: "nowrap" }}>TAT/SLA</th>
-                            <th style={{ whiteSpace: "nowrap" }}>Due Date</th>
-                            <th style={{ whiteSpace: "nowrap" }}>QC Status</th>
-                            <th style={{ whiteSpace: "nowrap" }}>Uploaded Documents</th>
-                            <th style={{ whiteSpace: "nowrap" }}>Action</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {filtered.length === 0 ? (
-                            <tr>
-                              <td colSpan={isAdmin ? 9 : 8} style={{ textAlign: "center", padding: "32px", color: "#94a3b8", fontSize: "14px" }}>
-                                {cases.length === 0 ? (
-                                  <>No cases yet. <button onClick={() => navigate("/AddCase")} style={{ color: "#2b3b8c", fontWeight: 700, background: "none", border: "none", cursor: "pointer" }}>Add your first case →</button></>
-                                ) : (
-                                  "No cases match your filter."
-                                )}
-                              </td>
-                            </tr>
-                          ) : (
-                            filtered.map(row => {
-                              const isSelected = selectedCase?.case_id === row.case_id;
-                              return (
-                                <tr key={row.case_id}
-                                  onClick={() => { setSelectedCase(row); setActiveDetailTab("overview"); }}
-                                  style={{
-                                    cursor: "pointer",
-                                    background: isSelected ? "#eef3ff" : undefined,
-                                  }}>
-                                  <td style={{ whiteSpace: "nowrap" }}>{row.candidate}</td>
-                                  {isAdmin && <td style={{ whiteSpace: "nowrap" }}>{row.client}</td>}
-                                  <td style={{ fontSize: "12px", color: "#475569", whiteSpace: "nowrap" }}>{displayChecks(row.checks)}</td>
-                                  <td>
-                                    <span className={`status ${row.status}`}>{statusLabel(row.status)}</span>
-                                  </td>
-                                  <td style={{ whiteSpace: "nowrap" }}>
-                                    <span style={{ color: priorityColor(row.priority), fontWeight: 700, fontSize: "13px" }}>
-                                      {row.priority ? row.priority.charAt(0).toUpperCase() + row.priority.slice(1) : "—"}
-                                    </span>
-                                  </td>
-                                  <td style={{ fontSize: "13px", whiteSpace: "nowrap" }}>
-  <div className="tat-custom-class green"> <span className="tat-label-dot green"></span>
-    {formatTatDisplay(row)}
-  </div>
-</td>
-                                  <td style={{ fontSize: "12px", color: "#94a3b8", whiteSpace: "nowrap" }}>{row.created_at}</td>
-                                  <td>
-                                    <div style={{ display: "flex", gap: "8px" }}>
-                                      <ViewButton c={row} />
-                                      <EditButton c={row} />
-                                    </div>
-                                  </td>
-                                </tr>
-                              );
-                            })
-                          )}
-                        </tbody>
-                      </table>
+  <thead>
+    <tr>
+      <th style={{ whiteSpace: "nowrap" }}>Case ID</th>
+      <th style={{ whiteSpace: "nowrap" }}>Candidate Name</th>
+      {isAdmin && <th style={{ whiteSpace: "nowrap" }}>Client</th>}
+      <th style={{ whiteSpace: "nowrap" }}>Checks</th>
+      <th style={{ whiteSpace: "nowrap" }}>Progress</th>
+      <th style={{ whiteSpace: "nowrap" }}>Assigned Verifier</th>
+      <th style={{ whiteSpace: "nowrap" }}>Status</th>
+      <th style={{ whiteSpace: "nowrap" }}>Priority</th>
+      <th style={{ whiteSpace: "nowrap" }}>TAT/SLA</th>
+      <th style={{ whiteSpace: "nowrap" }}>Due Date</th>
+      <th style={{ whiteSpace: "nowrap" }}>QC Status</th>
+      <th style={{ whiteSpace: "nowrap" }}>Uploaded Documents</th>
+      <th style={{ whiteSpace: "nowrap" }}>Action</th>
+    </tr>
+  </thead>
+  <tbody>
+    {filtered.length === 0 ? (
+      <tr>
+        <td
+          colSpan={isAdmin ? 13 : 12}
+          style={{
+            textAlign: "center",
+            padding: "32px",
+            color: "#94a3b8",
+            fontSize: "14px",
+          }}
+        >
+          {cases.length === 0 ? (
+            <>
+              No cases yet.{" "}
+              <button
+                onClick={() => navigate("/AddCase")}
+                style={{
+                  color: "#2b3b8c",
+                  fontWeight: 700,
+                  background: "none",
+                  border: "none",
+                  cursor: "pointer",
+                }}
+              >
+                Add your first case →
+              </button>
+            </>
+          ) : (
+            "No cases match your filter."
+          )}
+        </td>
+      </tr>
+    ) : (
+      filtered.map((row) => {
+        const isSelected = selectedCase?.case_id === row.case_id;
+        return (
+          <tr
+            key={row.case_id}
+            onClick={() => {
+              setSelectedCase(row);
+              setActiveDetailTab("overview");
+            }}
+            style={{
+              cursor: "pointer",
+              background: isSelected ? "#eef3ff" : undefined,
+            }}
+          >
+            {/* 1. Case ID */}
+            <td style={{ whiteSpace: "nowrap", fontWeight: 600 }}>
+              {row.case_id || row.id || "—"}
+            </td>
+
+            {/* 2. Candidate Name */}
+            <td style={{ whiteSpace: "nowrap" }}>{row.candidate}</td>
+
+            {/* 3. Client (Admin Only) */}
+            {isAdmin && (
+              <td style={{ whiteSpace: "nowrap" }}>{row.client}</td>
+            )}
+
+            {/* 4. Checks */}
+            <td style={{ fontSize: "12px", color: "#475569", whiteSpace: "nowrap" }}>
+              {displayChecks(row.checks)}
+            </td>
+
+            {/* 5. Progress */}
+            <td style={{ whiteSpace: "nowrap", fontSize: "13px" }}>
+              {row.progress !== undefined ? `${row.progress}%` : "—"}
+            </td>
+
+            {/* 6. Assigned Verifier */}
+            <td style={{ whiteSpace: "nowrap", fontSize: "13px", color: "#475569" }}>
+              {row.assigned_verifier || row.verifier_name || "Unassigned"}
+            </td>
+
+            {/* 7. Status */}
+            <td>
+              <span className={`status ${row.status}`}>
+                {statusLabel(row.status)}
+              </span>
+            </td>
+
+            {/* 8. Priority */}
+            <td style={{ whiteSpace: "nowrap" }}>
+              <span
+                style={{
+                  color: priorityColor(row.priority),
+                  fontWeight: 700,
+                  fontSize: "13px",
+                }}
+              >
+                {row.priority
+                  ? row.priority.charAt(0).toUpperCase() + row.priority.slice(1)
+                  : "—"}
+              </span>
+            </td>
+
+            {/* 9. TAT/SLA */}
+            <td style={{ fontSize: "13px", whiteSpace: "nowrap" }}>
+              <div className="tat-custom-class green">
+                <span className="tat-label-dot green"></span>
+                {formatTatDisplay(row)}
+              </div>
+            </td>
+
+            {/* 10. Due Date */}
+            <td style={{ fontSize: "12px", color: "#94a3b8", whiteSpace: "nowrap" }}>
+              {row.due_date || row.created_at || "—"}
+            </td>
+
+            {/* 11. QC Status */}
+            <td style={{ whiteSpace: "nowrap", fontSize: "12px", color: "#475569" }}>
+              {row.qc_status || "Pending"}
+            </td>
+
+            {/* 12. Uploaded Documents */}
+            <td style={{ whiteSpace: "nowrap", fontSize: "12px", color: "#475569" }}>
+              {row.documents_count !== undefined
+                ? `${row.documents_count} Files`
+                : row.documents?.length
+                ? `${row.documents.length} Files`
+                : "0 Files"}
+            </td>
+
+            {/* 13. Action */}
+            <td style={{ whiteSpace: "nowrap" }}>
+              <div style={{ display: "flex", gap: "8px" }}>
+                <ViewButton c={row} />
+                <EditButton c={row} />
+              </div>
+            </td>
+          </tr>
+        );
+      })
+    )}
+  </tbody>
+</table>
                     </div>
                   )}
 
