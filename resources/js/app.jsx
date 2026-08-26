@@ -264,6 +264,7 @@ import DatabaseCheck from "./pages/DatabaseCheck";
 import CriminalCheck from "./pages/CriminalCheck";
 import DrugtestCheck from "./pages/DrugtestCheck";
 import CourtroomCheck from "./pages/CourtroomCheck";
+import Bg from "./pages/bg";
 
 // Helpers
 const getToken = () => localStorage.getItem("token");
@@ -501,7 +502,16 @@ export default function App() {
               <StatusEmploment />
             </PrivateRoute>
           }
+          
         />
+        <Route
+  path="/bg"
+  element={
+    <PrivateRoute role={["admin", ...VERIFIER_ROLES]}>
+      <Bg />
+    </PrivateRoute>
+  }
+/>
 
         {/* Check Manager */}
         <Route
