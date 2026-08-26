@@ -975,12 +975,12 @@ const VERIFIER_TABS = (basePath) => [
 
 const CHECK_TYPE_SUBMENU = [
   { path: "/EmploymentCheck", label: "Employment" },
-  { path: "/AddCheckType/Education", label: "Education" },
-  { path: "/AddCheckType/Address", label: "Address" },
-  { path: "/AddCheckType/Database", label: "Database" },
-  { path: "/AddCheckType/Criminal", label: "Criminal" },
-  { path: "/AddCheckType/DrugTest", label: "Drug Test" },
-  { path: "/AddCheckType/Courtroom", label: "Courtroom" },
+  { path: "/EducationCheck", label: "Education" },
+  { path: "/AddressCheck", label: "Address" },
+  { path: "/DatabaseCheck", label: "Database" },
+  { path: "/CriminalCheck", label: "Criminal" },
+  { path: "/DrugtestCheck", label: "Drug Test" },
+  { path: "/CourtroomCheck", label: "Courtroom" },
   { path: "/AddCheckType/New", label: "Product Add" },
 ];
 
