@@ -5904,3 +5904,316 @@ span.tat-label-dot.orange {
     padding: 0.6rem;
     font-size: 14px;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* Unique Scope Class Prefix: bk- */
+
+.dash-wrper {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* 1. Header Top Bar */
+.bk-upper-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 0;
+  gap: 16px;
+}
+.bk-title-box {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.bk-folder-icon {
+  width: 42px;
+  height: 42px;
+  background-color: #2563eb;
+  color: #ffffff;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+}
+.bk-main-title {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 800;
+  color: #0f172a;
+}
+.bk-sub-title {
+  margin: 2px 0 0 0;
+  font-size: 13px;
+  color: #64748b;
+}
+
+.bk-action-controls {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.bk-date-selector {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  padding: 8px 14px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #475569;
+  cursor: pointer;
+}
+.bk-dropdown-select {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  padding: 8px 14px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #475569;
+  outline: none;
+  cursor: pointer;
+}
+.bk-add-case-btn {
+  background-color: #0d9488;
+  color: #ffffff;
+  font-weight: 700;
+  font-size: 13px;
+  border: none;
+  padding: 9px 18px;
+  border-radius: 8px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+/* 2. Stat Summary Cards Grid */
+.bk-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 12px;
+}
+.bk-stat-card {
+  border-radius: 12px;
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+.card-blue { background-color: #eff6ff; border: 1px solid #dbeafe; }
+.card-yellow { background-color: #fefce8; border: 1px solid #fef08a; }
+.card-purple { background-color: #faf5ff; border: 1px solid #f3e8ff; }
+.card-pink { background-color: #fdf2f8; border: 1px solid #fbcfe8; }
+.card-green-light { background-color: #f0fdf4; border: 1px solid #dcfce7; }
+.card-teal { background-color: #f0fdfa; border: 1px solid #ccfbf1; }
+
+.bk-stat-left {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+.bk-stat-icon {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  flex-shrink: 0;
+}
+.icon-blue { background: #dbeafe; color: #2563eb; }
+.icon-yellow { background: #fef08a; color: #ca8a04; }
+.icon-purple { background: #f3e8ff; color: #9333ea; }
+.icon-pink { background: #fbcfe8; color: #db2777; }
+.icon-green-light { background: #dcfce7; color: #16a34a; }
+.icon-teal { background: #ccfbf1; color: #0d9488; }
+
+.bk-stat-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #64748b;
+  display: block;
+}
+.bk-stat-value {
+  margin: 2px 0 4px 0;
+  font-size: 20px;
+  font-weight: 800;
+  color: #0f172a;
+}
+.bk-stat-badge {
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 4px;
+  display: inline-block;
+}
+.badge-green { background: #dcfce7; color: #15803d; }
+.badge-red { background: #fee2e2; color: #b91c1c; }
+
+/* 3. Filter Section Bar */
+.bk-filter-bar {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 10px 14px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.bk-search-box {
+  flex: 1.5;
+  min-width: 220px;
+  display: flex;
+  align-items: center;
+  background: #f8fafc;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  padding: 6px 12px;
+}
+.bk-search-icon {
+  margin-right: 8px;
+  font-size: 14px;
+  color: #94a3b8;
+}
+.bk-search-box input {
+  border: none;
+  background: transparent;
+  outline: none;
+  width: 100%;
+  font-size: 13px;
+}
+
+.bk-select-group {
+  display: flex;
+  gap: 10px;
+  flex: 2;
+}
+.bk-select-wrapper {
+  position: relative;
+  flex: 1;
+}
+.bk-select-wrapper label {
+  position: absolute;
+  top: -6px;
+  left: 8px;
+  background: #ffffff;
+  padding: 0 4px;
+  font-size: 9px;
+  font-weight: 700;
+  color: #64748b;
+  text-transform: uppercase;
+}
+.bk-select-wrapper select {
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #334155;
+  background: #ffffff;
+  outline: none;
+}
+
+.bk-btn-group {
+  display: flex;
+  gap: 8px;
+}
+.bk-outlined-btn {
+  background: #f8fafc;
+  border: 1px solid #cbd5e1;
+  padding: 8px 14px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 700;
+  color: #334155;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* 4. Pills Row */
+.bk-pills-row {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.bk-pill-btn {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  color: #2563eb;
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.bk-pill-btn.active {
+  background: #1e293b;
+  color: #ffffff;
+  border-color: #1e293b;
+}
+
+/* 5. Custom Table Layout */
+.bk-table-scroll-container {
+  overflow-x: auto;
+  overflow-y: auto;
+  max-height: 640px;
+  border: 1px solid #eef1f6;
+  border-radius: 8px;
+}
+.bk-custom-table {
+  min-width: 900px;
+  width: 100%;
+  border-collapse: collapse;
+}
+.bk-custom-table th {
+  background: #1e3a8a;
+  color: #ffffff;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 10px 12px;
+  text-align: left;
+  white-space: nowrap;
+}
+.bk-th-checkbox, .bk-td-checkbox {
+  width: 40px;
+  text-align: center !important;
+}
+.bk-custom-table td {
+  padding: 10px 12px;
+  border-bottom: 1px solid #f1f5f9;
+}
