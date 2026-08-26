@@ -981,7 +981,7 @@ const CHECK_TYPE_SUBMENU = [
   { path: "/AddCheckType/Criminal", label: "Criminal" },
   { path: "/AddCheckType/DrugTest", label: "Drug Test" },
   { path: "/AddCheckType/Courtroom", label: "Courtroom" },
-  { path: "/AddCheckType/New", label: "Add New Check" },
+  { path: "/AddCheckType/New", label: "Product Add" },
 ];
 
 // Client Management Submenu
@@ -997,7 +997,7 @@ const ROLE_NAV = {
     { path: "/AddCase", label: "Add Case", img: "images/sidebar/wip-icon.svg" },
     
     {
-      label: "Add Check Type",
+      label: "Verifications",
       img: "images/sidebar/setting-icon.svg",
       submenu: CHECK_TYPE_SUBMENU,
       id: "checkType",
