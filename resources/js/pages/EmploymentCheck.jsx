@@ -702,7 +702,7 @@ export default function EmploymentCheck() {
 
                 {/* Table 2: Recent Employment Cases */}
                 <div style={{ background: "#fff", borderRadius: "8px", border: "1px solid #e2e8f0", padding: "18px" }}>
-                  <h3 style={{ fontSize: "16px", fontWeight 700, marginBottom: "14px", color: "#1e293b" }}>Recent Employment Cases</h3>
+                  <h3 style={{ fontSize: "16px", fontWeight: 700, marginBottom: "14px", color: "#1e293b" }}>Recent Employment Cases</h3>
                   <div style={{ overflowX: "auto" }}>
                     <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "13px" }}>
                       <thead>
