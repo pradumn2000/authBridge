@@ -441,17 +441,21 @@ export default function EducationVerification() {
   };
 
   return (
-    <div style={{ display: "flex", minHeight: "100vh", backgroundColor: "#f8fafc" }}>
-      {/* 1. Aapka Bna Hua Custom Sidebar */}
-      <Sidebar />
+    <div style={{ display: "flex", minHeight: "100vh" }}>
+      {/* 1. Aapka Bna Hua Custom Sidebar (CSS Wrapper ID: #sidebar) */}
+      <div id="sidebar">
+        <Sidebar />
+      </div>
 
-      <div style={{ flex: 1, display: "flex", flexDirection: "column" }}>
-        {/* 2. Aapka Bna Hua Custom Header */}
-        <Header />
+      {/* 2. Main Content Wrapper (CSS Wrapper ID: #content) */}
+      <div id="content">
+        {/* Aapka Navbar/Header Component */}
+        <nav>
+          <Header />
+        </nav>
 
-        {/* 3. Page Main Area */}
-        <main style={{ padding: "24px", flex: 1, overflowY: "auto" }}>
-          
+        {/* 3. Main Body Container (CSS Wrapper Tag: main) */}
+        <main>
           {/* Top Bar Search & New Case Button */}
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px" }}>
             <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
@@ -466,13 +470,15 @@ export default function EducationVerification() {
               <button style={{ background: "#fff", border: "1px solid #cbd5e1", borderRadius: "6px", padding: "8px 12px", cursor: "pointer" }}>🌪️ Filter</button>
             </div>
 
-            {/* CLICK EVENT: Switch to Education Tab */}
-            <button
-              onClick={() => setActiveTab("education")}
-              style={{ backgroundColor: "#2563eb", color: "#ffffff", border: "none", borderRadius: "6px", padding: "9px 20px", fontWeight: 600, fontSize: "13.5px", cursor: "pointer" }}
-            >
-              + New Education Case
-            </button>
+            {/* CONDITIONAL BUTTON: Sirf Tab 1 (University Allocation) par hi show hoga */}
+            {activeTab === "allocation" && (
+              <button
+                onClick={() => setActiveTab("education")}
+                style={{ backgroundColor: "#2563eb", color: "#ffffff", border: "none", borderRadius: "6px", padding: "9px 20px", fontWeight: 600, fontSize: "13.5px", cursor: "pointer" }}
+              >
+                + New Education Case
+              </button>
+            )}
           </div>
 
           {/* Navigation Tabs Header */}
