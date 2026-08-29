@@ -693,7 +693,7 @@ export default function EmploymentCheck() {
       <div
         style={{
           display: "flex",
-          justify: "space-between",
+          justifyContent: "space-between",
           alignItems: "center",
           marginTop: "16px",
           paddingTop: "12px",
@@ -1015,7 +1015,7 @@ export default function EmploymentCheck() {
                               <td style={{ padding: "10px" }}>{row.company}</td>
                               <td style={{ padding: "10px", color: "#2563eb", fontWeight: 700 }}>{row.newCases}</td>
                               <td style={{ padding: "10px", color: "#d97706", fontWeight: 700 }}>{row.pending}</td>
-                              <td style={{ padding: "10px", color: "#028090", fontWeight: 700 }}>{row.progress}</td>
+                              <td style={{ padding: "10px", color: "#028090", fontWeight 700 }}>{row.progress}</td>
                               <td style={{ padding: "10px", color: "#16a34a", fontWeight: 700 }}>{row.done}</td>
                               <td style={{ padding: "10px", color: "#64748b" }}>{row.verifiers}</td>
                               <td style={{ padding: "10px" }}>
@@ -1099,7 +1099,25 @@ export default function EmploymentCheck() {
                           <tr key={row.id} style={{ borderBottom: "1px solid #f1f5f9" }}>
                             <td style={{ padding: "10px" }}><input type="checkbox" defaultChecked={row.id === "EMP-10245" || row.id === "EMP-10246"} /></td>
                             <td style={{ padding: "10px", color: "#2563eb", fontWeight: 700 }}>{row.id}</td>
-                            <td style={{ padding: "10px", fontWeight: 600 }}>{row.candidate}</td>
+                            
+                            {/* Candidate Name Redirect Anchor Tag */}
+                            <td style={{ padding: "10px", fontWeight: 600 }}>
+                              <a
+                                href="/address-verification" // Apne page ka URL yaha daalein (e.g. /candidate-details)
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                style={{
+                                  color: "#2563eb",
+                                  textDecoration: "none",
+                                  cursor: "pointer"
+                                }}
+                                onMouseEnter={(e) => (e.target.style.textDecoration = "underline")}
+                                onMouseLeave={(e) => (e.target.style.textDecoration = "none")}
+                              >
+                                {row.candidate}
+                              </a>
+                            </td>
+
                             <td style={{ padding: "10px" }}>{row.client}</td>
                             <td style={{ padding: "10px" }}>{row.company}</td>
                             <td style={{ padding: "10px", color: "#64748b" }}>{row.hr}</td>
