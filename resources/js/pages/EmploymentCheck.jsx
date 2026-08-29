@@ -662,17 +662,6 @@ export default function EmploymentCheck() {
   const [formData, setFormData] = useState({
     candidateName: "",
     date: "",
-    employers: [
-      {
-        companyName: "",
-        designation: "",
-        employeeId: "",
-        hrEmail: "",
-        hrPhone: "",
-        doj: "",
-        doe: "",
-      },
-    ],
   });
 
   const handleInputChange = (field, value) => {
@@ -685,20 +674,77 @@ export default function EmploymentCheck() {
     alert("Employment Case Saved Successfully!");
   };
 
+  // Common Accordion Form Body Component
+  const renderEmployerFields = (num) => (
+    <div className="accordion-body" style={{ background: "#fff", paddingTop: "16px" }}>
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "16px", marginBottom: "16px" }}>
+        <div>
+          <label style={{ display: "block", fontSize: "12px", fontWeight: 700, marginBottom: "6px" }}>COMPANY NAME *</label>
+          <input type="text" placeholder="Enter company name" style={{ width: "100%", padding: "8px 12px", borderRadius: "6px", border: "1px solid #cbd5e1" }} />
+        </div>
+        <div>
+          <label style={{ display: "block", fontSize: "12px", fontWeight: 700, marginBottom: "6px" }}>DESIGNATION *</label>
+          <input type="text" placeholder="Enter designation" style={{ width: "100%", padding: "8px 12px", borderRadius: "6px", border: "1px solid #cbd5e1" }} />
+        </div>
+        <div>
+          <label style={{ display: "block", fontSize: "12px", fontWeight: 700, marginBottom: "6px" }}>EMPLOYEE ID</label>
+          <input type="text" placeholder="Enter employee ID" style={{ width: "100%", padding: "8px 12px", borderRadius: "6px", border: "1px solid #cbd5e1" }} />
+        </div>
+      </div>
+
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px", marginBottom: "16px" }}>
+        <div>
+          <label style={{ display: "block", fontSize: "12px", fontWeight: 700, marginBottom: "6px" }}>HR EMAIL ID *</label>
+          <input type="email" placeholder="Enter HR email ID" style={{ width: "100%", padding: "8px 12px", borderRadius: "6px", border: "1px solid #cbd5e1" }} />
+        </div>
+        <div>
+          <label style={{ display: "block", fontSize: "12px", fontWeight: 700, marginBottom: "6px" }}>HR PHONE NUMBER *</label>
+          <input type="text" placeholder="Enter phone number" style={{ width: "100%", padding: "8px 12px", borderRadius: "6px", border: "1px solid #cbd5e1" }} />
+        </div>
+      </div>
+
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px", marginBottom: "20px" }}>
+        <div>
+          <label style={{ display: "block", fontSize: "12px", fontWeight: 700, marginBottom: "6px" }}>DATE OF JOINING (DOJ) *</label>
+          <input type="date" style={{ width: "100%", padding: "8px 12px", borderRadius: "6px", border: "1px solid #cbd5e1" }} />
+        </div>
+        <div>
+          <label style={{ display: "block", fontSize: "12px", fontWeight: 700, marginBottom: "6px" }}>DATE OF EXIT (DOE) *</label>
+          <input type="date" style={{ width: "100%", padding: "8px 12px", borderRadius: "6px", border: "1px solid #cbd5e1" }} />
+        </div>
+      </div>
+
+      {/* Documents Upload Section */}
+      <div>
+        <label style={{ display: "block", fontSize: "12px", fontWeight: 700, marginBottom: "10px" }}>DOCUMENTS * (Upload up to 4 documents)</label>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "12px" }}>
+          {[1, 2, 3, 4].map((docNum) => (
+            <div key={docNum} style={{ border: "2px dashed #cbd5e1", borderRadius: "8px", padding: "16px", textAlign: "center", background: "#f8fafc" }}>
+              <p style={{ fontSize: "12px", fontWeight: 700, margin: "0 0 4px 0" }}>Document {docNum}</p>
+              <span style={{ fontSize: "10px", color: "#94a3b8", display: "block", marginBottom: "10px" }}>PDF, JPG, PNG (Max 10MB)</span>
+              <label style={{ background: "#eff6ff", color: "#2563eb", padding: "6px 12px", borderRadius: "4px", fontSize: "11px", fontWeight: 700, cursor: "pointer" }}>
+                ☁ Choose File
+                <input type="file" style={{ display: "none" }} />
+              </label>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+
   return (
     <>
-      {/* 1. Sidebar */}
       <Sidebar />
 
-      {/* 2. Main Layout Section */}
       <section id="content">
         <Header />
 
         <main style={{ padding: "20px", backgroundColor: "#f8fafc", minHeight: "100vh" }}>
           <div style={{ maxWidth: "1280px", margin: "0 auto" }}>
             
-            {/* Top Navigation Bar with Action Button */}
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px", borderBottom: "2px solid #e2e8f0", pb: "10px" }}>
+            {/* Top Navigation Bar */}
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px", borderBottom: "2px solid #e2e8f0", paddingBottom: "10px" }}>
               <ul className="nav nav-pills" style={{ gap: "10px", marginBottom: "0" }}>
                 <li className="nav-item">
                   <button
@@ -736,7 +782,6 @@ export default function EmploymentCheck() {
                 </li>
               </ul>
 
-              {/* Add New Employment Case Button -> Triggers Employment Tab */}
               {activeTab === "allocation" && (
                 <button
                   onClick={() => setActiveTab("employment")}
@@ -799,58 +844,108 @@ export default function EmploymentCheck() {
                   </div>
                   <div style={{ background: "#fff", padding: "16px", borderRadius: "8px", border: "1px solid #e2e8f0" }}>
                     <span style={{ fontSize: "12px", color: "#64748b", fontWeight: 600 }}>Completed (This Month)</span>
-                    <h2 style={{ fontSize: "22px", margin: "4px 0", fontWeight: 800, color: "#16a34a" }}>1,035</h2>
+                    <h2 style={{ fontSize: "22px", margin: "4px 0", fontWeight 800, color: "#16a34a" }}>1,035</h2>
                     <span style={{ fontSize: "11px", color: "#94a3b8" }}>This month</span>
                   </div>
                 </div>
 
-                {/* Table 1: Company-wise Case Allocation */}
-                <div style={{ background: "#fff", borderRadius: "8px", border: "1px solid #e2e8f0", padding: "18px", marginBottom: "24px" }}>
-                  <h3 style={{ fontSize: "16px", fontWeight: 700, marginBottom: "14px", color: "#1e293b" }}>
-                    Company-wise Case Allocation
-                  </h3>
-                  <div style={{ overflowX: "auto" }}>
-                    <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "13px" }}>
-                      <thead>
-                        <tr style={{ background: "#f8fafc", textAlign: "left", color: "#64748b" }}>
-                          <th style={{ padding: "10px" }}><input type="checkbox" /></th>
-                          <th style={{ padding: "10px" }}>#</th>
-                          <th style={{ padding: "10px" }}>Client Name</th>
-                          <th style={{ padding: "10px" }}>Company Name</th>
-                          <th style={{ padding: "10px" }}>New Cases</th>
-                          <th style={{ padding: "10px" }}>Pending</th>
-                          <th style={{ padding: "10px" }}>In Progress</th>
-                          <th style={{ padding: "10px" }}>Completed</th>
-                          <th style={{ padding: "10px" }}>Verifiers (Name)</th>
-                          <th style={{ padding: "10px" }}>Action</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {[
-                          { id: 1, client: "ABC Corp", company: "ABC Technologies Pvt. Ltd.", newCases: 24, pending: 8, progress: 6, done: 10, verifiers: "Amit Kumar, Neha Patel" },
-                          { id: 2, client: "XYZ Solutions", company: "XYZ Infotech Ltd.", newCases: 18, pending: 5, progress: 7, done: 6, verifiers: "Neha Patel, Rahul Verma" },
-                          { id: 3, client: "Infosys Limited", company: "Infosys Ltd.", newCases: 31, pending: 12, progress: 8, done: 11, verifiers: "Amit Kumar, Priya Singh" }
-                        ].map((row) => (
-                          <tr key={row.id} style={{ borderBottom: "1px solid #f1f5f9" }}>
-                            <td style={{ padding: "10px" }}><input type="checkbox" /></td>
-                            <td style={{ padding: "10px" }}>{row.id}</td>
-                            <td style={{ padding: "10px", fontWeight: 600 }}>{row.client}</td>
-                            <td style={{ padding: "10px" }}>{row.company}</td>
-                            <td style={{ padding: "10px", color: "#2563eb", fontWeight: 700 }}>{row.newCases}</td>
-                            <td style={{ padding: "10px", color: "#d97706", fontWeight: 700 }}>{row.pending}</td>
-                            <td style={{ padding: "10px", color: "#028090", fontWeight: 700 }}>{row.progress}</td>
-                            <td style={{ padding: "10px", color: "#16a34a", fontWeight: 700 }}>{row.done}</td>
-                            <td style={{ padding: "10px", color: "#64748b" }}>{row.verifiers}</td>
-                            <td style={{ padding: "10px" }}>
-                              <button style={{ background: "#eff6ff", color: "#2563eb", border: "none", padding: "5px 12px", borderRadius: "4px", fontWeight: 600, cursor: "pointer" }}>
-                                Allocate
-                              </button>
-                            </td>
+                {/* Table 1 with Right Side Verifier Panel */}
+                <div style={{ display: "flex", gap: "20px", marginBottom: "24px", alignItems: "flex-start" }}>
+                  
+                  {/* Left Side: Company-wise Case Allocation Table */}
+                  <div style={{ flex: 1, background: "#fff", borderRadius: "8px", border: "1px solid #e2e8f0", padding: "18px" }}>
+                    <h3 style={{ fontSize: "16px", fontWeight: 700, marginBottom: "14px", color: "#1e293b" }}>
+                      Company-wise Case Allocation
+                    </h3>
+                    <div style={{ overflowX: "auto" }}>
+                      <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "13px" }}>
+                        <thead>
+                          <tr style={{ background: "#f8fafc", textAlign: "left", color: "#64748b" }}>
+                            <th style={{ padding: "10px" }}><input type="checkbox" /></th>
+                            <th style={{ padding: "10px" }}>#</th>
+                            <th style={{ padding: "10px" }}>Client Name</th>
+                            <th style={{ padding: "10px" }}>Company Name</th>
+                            <th style={{ padding: "10px" }}>New Cases</th>
+                            <th style={{ padding: "10px" }}>Pending</th>
+                            <th style={{ padding: "10px" }}>In Progress</th>
+                            <th style={{ padding: "10px" }}>Completed</th>
+                            <th style={{ padding: "10px" }}>Verifiers (Name)</th>
+                            <th style={{ padding: "10px" }}>Action</th>
                           </tr>
-                        ))}
-                      </tbody>
-                    </table>
+                        </thead>
+                        <tbody>
+                          {[
+                            { id: 1, client: "ABC Corp", company: "ABC Technologies Pvt. Ltd.", newCases: 24, pending: 8, progress: 6, done: 10, verifiers: "Amit Kumar, Neha Patel" },
+                            { id: 2, client: "XYZ Solutions", company: "XYZ Infotech Ltd.", newCases: 18, pending: 5, progress: 7, done: 6, verifiers: "Neha Patel, Rahul Verma" },
+                            { id: 3, client: "Infosys Limited", company: "Infosys Ltd.", newCases: 31, pending: 12, progress: 8, done: 11, verifiers: "Amit Kumar, Priya Singh" }
+                          ].map((row) => (
+                            <tr key={row.id} style={{ borderBottom: "1px solid #f1f5f9" }}>
+                              <td style={{ padding: "10px" }}><input type="checkbox" /></td>
+                              <td style={{ padding: "10px" }}>{row.id}</td>
+                              <td style={{ padding: "10px", fontWeight: 600 }}>{row.client}</td>
+                              <td style={{ padding: "10px" }}>{row.company}</td>
+                              <td style={{ padding: "10px", color: "#2563eb", fontWeight: 700 }}>{row.newCases}</td>
+                              <td style={{ padding: "10px", color: "#d97706", fontWeight: 700 }}>{row.pending}</td>
+                              <td style={{ padding: "10px", color: "#028090", fontWeight: 700 }}>{row.progress}</td>
+                              <td style={{ padding: "10px", color: "#16a34a", fontWeight: 700 }}>{row.done}</td>
+                              <td style={{ padding: "10px", color: "#64748b" }}>{row.verifiers}</td>
+                              <td style={{ padding: "10px" }}>
+                                <button style={{ background: "#eff6ff", color: "#2563eb", border: "none", padding: "5px 12px", borderRadius: "4px", fontWeight: 600, cursor: "pointer" }}>
+                                  Allocate
+                                </button>
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
                   </div>
+
+                  {/* Right Side Panel: Select Verifier */}
+                  <div style={{ width: "320px", background: "#fff", borderRadius: "8px", border: "1px solid #e2e8f0", padding: "18px", boxShadow: "0px 2px 8px rgba(0,0,0,0.03)" }}>
+                    <h3 style={{ fontSize: "16px", fontWeight: 700, marginBottom: "14px", color: "#0f172a" }}>Select Verifier</h3>
+                    
+                    <input
+                      type="text"
+                      placeholder="🔍 Search verifier..."
+                      style={{ width: "100%", padding: "9px 12px", borderRadius: "6px", border: "1px solid #cbd5e1", outline: "none", marginBottom: "16px", fontSize: "13px" }}
+                    />
+
+                    <div style={{ display: "flex", flexDirection: "column", gap: "12px", marginBottom: "20px" }}>
+                      {[
+                        { name: "Amit Kumar", title: "Employment Verifier", cases: 12, checked: true },
+                        { name: "Neha Patel", title: "Employment Verifier", cases: 8, checked: true },
+                        { name: "Rahul Verma", title: "Employment Verifier", cases: 15, checked: false },
+                      ].map((verifier, idx) => (
+                        <div key={idx} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "10px 12px", borderRadius: "8px", border: "1px solid #f1f5f9", background: "#f8fafc" }}>
+                          <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                            <input type="checkbox" defaultChecked={verifier.checked} style={{ cursor: "pointer" }} />
+                            <div style={{ width: "32px", height: "32px", borderRadius: "50%", background: "#cbd5e1", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 700, fontSize: "12px", color: "#334155" }}>
+                              {verifier.name.charAt(0)}
+                            </div>
+                            <div>
+                              <p style={{ margin: 0, fontWeight: 700, fontSize: "13px", color: "#1e293b" }}>{verifier.name}</p>
+                              <span style={{ fontSize: "11px", color: "#64748b" }}>{verifier.title}</span>
+                            </div>
+                          </div>
+                          <div style={{ textAlign: "right" }}>
+                            <span style={{ fontSize: "13px", fontWeight: 800, color: "#2563eb", display: "block" }}>{verifier.cases}</span>
+                            <span style={{ fontSize: "10px", color: "#2563eb", fontWeight: 600 }}>Active Cases</span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+
+                    <div style={{ display: "flex", gap: "10px" }}>
+                      <button style={{ flex: 1, padding: "9px", borderRadius: "6px", border: "1px solid #cbd5e1", background: "#fff", fontWeight: 600, cursor: "pointer", fontSize: "13px" }}>
+                        Cancel
+                      </button>
+                      <button style={{ flex: 1, padding: "9px", borderRadius: "6px", border: "none", background: "#2563eb", color: "#fff", fontWeight: 600, cursor: "pointer", fontSize: "13px" }}>
+                        Allocate Cases
+                      </button>
+                    </div>
+                  </div>
+
                 </div>
 
                 {/* Table 2: Recent Employment Cases */}
@@ -962,153 +1057,29 @@ export default function EmploymentCheck() {
 
                 {/* Employers Accordion Section */}
                 <div className="accordion" id="employerAccordion">
-                  
-                  {/* Item 1: Employer 1 */}
-                  <div className="accordion-item" style={{ marginBottom: "12px", border: "1px solid #cbd5e1", borderRadius: "8px", overflow: "hidden" }}>
-                    <h2 className="accordion-header" id="headingEmployer1">
-                      <button
-                        className="accordion-button"
-                        type="button"
-                        data-bs-toggle="collapse"
-                        data-bs-target="#collapseEmployer1"
-                        aria-expanded="true"
-                        aria-controls="collapseEmployer1"
-                        style={{ fontWeight: 700, color: "#1e293b", background: "#ffffff" }}
-                      >
-                        <span style={{ background: "#2563eb", color: "#fff", borderRadius: "50%", width: "22px", height: "22px", display: "inline-flex", alignItems: "center", justifyContent: "center", fontSize: "12px", marginRight: "10px" }}>1</span>
-                        Employer 1
-                      </button>
-                    </h2>
-                    <div id="collapseEmployer1" className="accordion-collapse collapse show" aria-labelledby="headingEmployer1" data-bs-parent="#employerAccordion">
-                      <div className="accordion-body" style={{ background: "#fff", paddingTop: "16px" }}>
-                        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "16px", marginBottom: "16px" }}>
-                          <div>
-                            <label style={{ display: "block", fontSize: "12px", fontWeight: 700, marginBottom: "6px" }}>COMPANY NAME *</label>
-                            <input type="text" placeholder="Enter company name" style={{ width: "100%", padding: "8px 12px", borderRadius: "6px", border: "1px solid #cbd5e1" }} />
-                          </div>
-                          <div>
-                            <label style={{ display: "block", fontSize: "12px", fontWeight: 700, marginBottom: "6px" }}>DESIGNATION *</label>
-                            <input type="text" placeholder="Enter designation" style={{ width: "100%", padding: "8px 12px", borderRadius: "6px", border: "1px solid #cbd5e1" }} />
-                          </div>
-                          <div>
-                            <label style={{ display: "block", fontSize: "12px", fontWeight: 700, marginBottom: "6px" }}>EMPLOYEE ID</label>
-                            <input type="text" placeholder="Enter employee ID" style={{ width: "100%", padding: "8px 12px", borderRadius: "6px", border: "1px solid #cbd5e1" }} />
-                          </div>
-                        </div>
-
-                        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px", marginBottom: "16px" }}>
-                          <div>
-                            <label style={{ display: "block", fontSize: "12px", fontWeight: 700, marginBottom: "6px" }}>HR EMAIL ID *</label>
-                            <input type="email" placeholder="Enter HR email ID" style={{ width: "100%", padding: "8px 12px", borderRadius: "6px", border: "1px solid #cbd5e1" }} />
-                          </div>
-                          <div>
-                            <label style={{ display: "block", fontSize: "12px", fontWeight: 700, marginBottom: "6px" }}>HR PHONE NUMBER *</label>
-                            <input type="text" placeholder="Enter phone number" style={{ width: "100%", padding: "8px 12px", borderRadius: "6px", border: "1px solid #cbd5e1" }} />
-                          </div>
-                        </div>
-
-                        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px", marginBottom: "20px" }}>
-                          <div>
-                            <label style={{ display: "block", fontSize: "12px", fontWeight: 700, marginBottom: "6px" }}>DATE OF JOINING (DOJ) *</label>
-                            <input type="date" style={{ width: "100%", padding: "8px 12px", borderRadius: "6px", border: "1px solid #cbd5e1" }} />
-                          </div>
-                          <div>
-                            // ✅ Sahi Code
-<label style={{ display: "block", fontSize: "12px", fontWeight: 700, marginBottom: "6px" }}>DATE OF EXIT (DOE) *</label>
-                            <input type="date" style={{ width: "100%", padding: "8px 12px", borderRadius: "6px", border: "1px solid #cbd5e1" }} />
-                          </div>
-                        </div>
-
-                        {/* Documents Upload Section */}
-                        <div>
-                          <label style={{ display: "block", fontSize: "12px", fontWeight: 700, marginBottom: "10px" }}>DOCUMENTS * (Upload up to 4 documents)</label>
-                          <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "12px" }}>
-                            {[1, 2, 3, 4].map((num) => (
-                              <div key={num} style={{ border: "2px dashed #cbd5e1", borderRadius: "8px", padding: "16px", textAlign: "center", background: "#f8fafc" }}>
-                                <p style={{ fontSize: "12px", fontWeight: 700, margin: "0 0 4px 0" }}>Document {num}</p>
-                                <span style={{ fontSize: "10px", color: "#94a3b8", display: "block", marginBottom: "10px" }}>PDF, JPG, PNG (Max 10MB)</span>
-                                <label style={{ background: "#eff6ff", color: "#2563eb", padding: "6px 12px", borderRadius: "4px", fontSize: "11px", fontWeight: 700, cursor: "pointer" }}>
-                                  ☁ Choose File
-                                  <input type="file" style={{ display: "none" }} />
-                                </label>
-                              </div>
-                            ))}
-                          </div>
-                        </div>
-
+                  {[1, 2, 3, 4].map((num) => (
+                    <div key={num} className="accordion-item" style={{ marginBottom: "12px", border: "1px solid #cbd5e1", borderRadius: "8px", overflow: "hidden" }}>
+                      <h2 className="accordion-header" id={`headingEmployer${num}`}>
+                        <button
+                          className={`accordion-button ${num !== 1 ? "collapsed" : ""}`}
+                          type="button"
+                          data-bs-toggle="collapse"
+                          data-bs-target={`#collapseEmployer${num}`}
+                          aria-expanded={num === 1 ? "true" : "false"}
+                          aria-controls={`collapseEmployer${num}`}
+                          style={{ fontWeight: 700, color: "#1e293b", background: "#ffffff" }}
+                        >
+                          <span style={{ background: num === 1 ? "#2563eb" : "#94a3b8", color: "#fff", borderRadius: "50%", width: "22px", height: "22px", display: "inline-flex", alignItems: "center", justifyContent: "center", fontSize: "12px", marginRight: "10px" }}>
+                            {num}
+                          </span>
+                          Employer {num}
+                        </button>
+                      </h2>
+                      <div id={`collapseEmployer${num}`} className={`accordion-collapse collapse ${num === 1 ? "show" : ""}`} aria-labelledby={`headingEmployer${num}`} data-bs-parent="#employerAccordion">
+                        {renderEmployerFields(num)}
                       </div>
                     </div>
-                  </div>
-
-                  {/* Item 2: Employer 2 */}
-                  <div className="accordion-item" style={{ marginBottom: "12px", border: "1px solid #cbd5e1", borderRadius: "8px", overflow: "hidden" }}>
-                    <h2 className="accordion-header" id="headingEmployer2">
-                      <button
-                        className="accordion-button collapsed"
-                        type="button"
-                        data-bs-toggle="collapse"
-                        data-bs-target="#collapseEmployer2"
-                        aria-expanded="false"
-                        aria-controls="collapseEmployer2"
-                        style={{ fontWeight: 700, color: "#1e293b", background: "#ffffff" }}
-                      >
-                        <span style={{ background: "#94a3b8", color: "#fff", borderRadius: "50%", width: "22px", height: "22px", display: "inline-flex", alignItems: "center", justifyContent: "center", fontSize: "12px", marginRight: "10px" }}>2</span>
-                        Employer 2
-                      </button>
-                    </h2>
-                    <div id="collapseEmployer2" className="accordion-collapse collapse" aria-labelledby="headingEmployer2" data-bs-parent="#employerAccordion">
-                      <div className="accordion-body" style={{ background: "#fff", paddingTop: "16px" }}>
-                        <p style={{ color: "#64748b", fontSize: "13px" }}>Click to fill details for Employer 2.</p>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Item 3: Employer 3 */}
-                  <div className="accordion-item" style={{ marginBottom: "12px", border: "1px solid #cbd5e1", borderRadius: "8px", overflow: "hidden" }}>
-                    <h2 className="accordion-header" id="headingEmployer3">
-                      <button
-                        className="accordion-button collapsed"
-                        type="button"
-                        data-bs-toggle="collapse"
-                        data-bs-target="#collapseEmployer3"
-                        aria-expanded="false"
-                        aria-controls="collapseEmployer3"
-                        style={{ fontWeight: 700, color: "#1e293b", background: "#ffffff" }}
-                      >
-                        <span style={{ background: "#94a3b8", color: "#fff", borderRadius: "50%", width: "22px", height: "22px", display: "inline-flex", alignItems: "center", justifyContent: "center", fontSize: "12px", marginRight: "10px" }}>3</span>
-                        Employer 3
-                      </button>
-                    </h2>
-                    <div id="collapseEmployer3" className="accordion-collapse collapse" aria-labelledby="headingEmployer3" data-bs-parent="#employerAccordion">
-                      <div className="accordion-body" style={{ background: "#fff", paddingTop: "16px" }}>
-                        <p style={{ color: "#64748b", fontSize: "13px" }}>Click to fill details for Employer 3.</p>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Item 4: Employer 4 */}
-                  <div className="accordion-item" style={{ marginBottom: "12px", border: "1px solid #cbd5e1", borderRadius: "8px", overflow: "hidden" }}>
-                    <h2 className="accordion-header" id="headingEmployer4">
-                      <button
-                        className="accordion-button collapsed"
-                        type="button"
-                        data-bs-toggle="collapse"
-                        data-bs-target="#collapseEmployer4"
-                        aria-expanded="false"
-                        aria-controls="collapseEmployer4"
-                        style={{ fontWeight: 700, color: "#1e293b", background: "#ffffff" }}
-                      >
-                        <span style={{ background: "#94a3b8", color: "#fff", borderRadius: "50%", width: "22px", height: "22px", display: "inline-flex", alignItems: "center", justifyContent: "center", fontSize: "12px", marginRight: "10px" }}>4</span>
-                        Employer 4
-                      </button>
-                    </h2>
-                    <div id="collapseEmployer4" className="accordion-collapse collapse" aria-labelledby="headingEmployer4" data-bs-parent="#employerAccordion">
-                      <div className="accordion-body" style={{ background: "#fff", paddingTop: "16px" }}>
-                        <p style={{ color: "#64748b", fontSize: "13px" }}>Click to fill details for Employer 4.</p>
-                      </div>
-                    </div>
-                  </div>
-
+                  ))}
                 </div>
 
                 {/* Bottom Action Footer */}
