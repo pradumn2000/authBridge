@@ -460,9 +460,9 @@ export default function EducationVerification() {
       {/* 2. Main Content Wrapper */}
       <div id="content">
         {/* Navbar Header */}
-        <nav>
+        
           <Header />
-        </nav>
+        
 
         {/* 3. Main Body Container */}
         <main style={{ padding: "24px" }}>
