@@ -1103,7 +1103,7 @@ export default function EmploymentCheck() {
                             {/* Candidate Name Redirect Anchor Tag */}
                             <td style={{ padding: "10px", fontWeight: 600 }}>
                               <a
-                                href="/address-verification" // Apne page ka URL yaha daalein (e.g. /candidate-details)
+                                href="/AddressVerification.jsx" 
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 style={{

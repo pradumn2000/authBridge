@@ -693,6 +693,7 @@ import UserManagement from "./pages/UserManagement";
 import AddInstitution from "./pages/AddInstitution";
 import CompanyManagement from "./pages/AddCompany";
 import Apiintegretion from "./pages/Apiintegretion";
+import AddressVerification from "./pages/AddressVerification";
 
 // ─────────────────────────────────────────
 // Other Pages
@@ -1189,6 +1190,16 @@ function App() {
           }
         />
 
+
+
+<Route
+          path="/AddressVerification"
+          element={
+            <PrivateRoute role="admin">
+              <AddressVerification />
+            </PrivateRoute>
+          }
+        />
 
         {/* ═══════════════════════════════
             API INTEGRATION
