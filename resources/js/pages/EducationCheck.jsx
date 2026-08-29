@@ -403,7 +403,7 @@ export default function EducationVerification() {
     setQualifications((prev) => prev.filter((q) => q.id !== id));
   };
 
-  // Reusable Table Pagination
+  // Reusable Table Pagination Component
   const renderPagination = (currentPage, totalItems, itemsPerPage, onPageChange, onRowsChange) => {
     const totalPages = Math.ceil(totalItems / itemsPerPage);
     const startItem = (currentPage - 1) * itemsPerPage + 1;
@@ -442,21 +442,21 @@ export default function EducationVerification() {
 
   return (
     <div style={{ display: "flex", minHeight: "100vh" }}>
-      {/* 1. Aapka Bna Hua Custom Sidebar (CSS Wrapper ID: #sidebar) */}
+      {/* 1. Sidebar Wrapper with #sidebar */}
       <div id="sidebar">
         <Sidebar />
       </div>
 
-      {/* 2. Main Content Wrapper (CSS Wrapper ID: #content) */}
+      {/* 2. Main Content Wrapper with #content */}
       <div id="content">
-        {/* Aapka Navbar/Header Component */}
+        {/* Navbar Header */}
         <nav>
           <Header />
         </nav>
 
-        {/* 3. Main Body Container (CSS Wrapper Tag: main) */}
+        {/* 3. Main Body Container with main tag */}
         <main>
-          {/* Top Bar Search & New Case Button */}
+          {/* Top Bar Search & Conditional Button */}
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px" }}>
             <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
               <div style={{ position: "relative" }}>
@@ -470,7 +470,7 @@ export default function EducationVerification() {
               <button style={{ background: "#fff", border: "1px solid #cbd5e1", borderRadius: "6px", padding: "8px 12px", cursor: "pointer" }}>🌪️ Filter</button>
             </div>
 
-            {/* CONDITIONAL BUTTON: Sirf Tab 1 (University Allocation) par hi show hoga */}
+            {/* CONDITIONAL BUTTON: Hide hone ke liye check logic */}
             {activeTab === "allocation" && (
               <button
                 onClick={() => setActiveTab("education")}
@@ -582,7 +582,7 @@ export default function EducationVerification() {
                   {renderPagination(table1Page, 50, table1RowsPerPage, setTable1Page, setTable1RowsPerPage)}
                 </div>
 
-                {/* Verifier Modal Box */}
+                {/* Verifier Selection Side Modal Box */}
                 <div style={{ width: "270px", background: "#fff", borderRadius: "8px", border: "1px solid #e2e8f0", padding: "16px" }}>
                   <h3 style={{ fontSize: "15px", fontWeight: 700, marginBottom: "12px", color: "#0f172a" }}>Select Verifier</h3>
                   <input type="text" placeholder="🔍 Search verifier..." style={{ width: "100%", padding: "8px 12px", borderRadius: "6px", border: "1px solid #cbd5e1", outline: "none", marginBottom: "14px", fontSize: "12px" }} />
@@ -613,7 +613,7 @@ export default function EducationVerification() {
                     <tr style={{ background: "#f8fafc", textAlign: "left", color: "#64748b" }}>
                       <th style={{ padding: "10px" }}><input type="checkbox" defaultChecked /></th>
                       <th style={{ padding: "10px" }}>Case ID</th>
-                      <th style={{ padding: "10px" }}>Client Name</th>
+                      <th style={{ padding: "10px" }}>Candidate Name</th>
                       <th style={{ padding: "10px" }}>University</th>
                       <th style={{ padding: "10px" }}>Status</th>
                       <th style={{ padding: "10px" }}>Action</th>
@@ -627,7 +627,26 @@ export default function EducationVerification() {
                       <tr key={r.id} style={{ borderBottom: "1px solid #f1f5f9" }}>
                         <td style={{ padding: "10px" }}><input type="checkbox" defaultChecked /></td>
                         <td style={{ padding: "10px", color: "#2563eb", fontWeight: 700 }}>{r.id}</td>
-                        <td style={{ padding: "10px", fontWeight: 600 }}>{r.candidate}</td>
+                        <td style={{ padding: "10px", fontWeight: 600 }}>
+                          {/* Candidate Name Wrapped in Anchor Tag */}
+                          <a
+                            href={`/candidate/${r.id}`}
+                            onClick={(e) => {
+                              e.preventDefault();
+                              console.log("Navigating to candidate:", r.candidate);
+                            }}
+                            style={{
+                              color: "#2563eb",
+                              textDecoration: "none",
+                              cursor: "pointer",
+                              fontWeight: 600,
+                            }}
+                            onMouseOver={(e) => (e.target.style.textDecoration = "underline")}
+                            onMouseOut={(e) => (e.target.style.textDecoration = "none")}
+                          >
+                            {r.candidate}
+                          </a>
+                        </td>
                         <td style={{ padding: "10px" }}>{r.uni}</td>
                         <td style={{ padding: "10px" }}><span style={{ background: "#fee2e2", color: "#dc2626", padding: "4px 8px", borderRadius: "4px", fontWeight: 700, fontSize: "11px" }}>Unassigned</span></td>
                         <td style={{ padding: "10px" }}><button style={{ background: "#eff6ff", color: "#2563eb", border: "none", padding: "4px 12px", borderRadius: "4px", fontWeight: 600, cursor: "pointer", fontSize: "12px" }}>Assign</button></td>
@@ -651,7 +670,7 @@ export default function EducationVerification() {
                 </div>
               </div>
 
-              {/* Candidate Info Box */}
+              {/* Candidate Info Input Card */}
               <div style={{ border: "1px solid #e2e8f0", borderRadius: "8px", padding: "18px", marginBottom: "24px" }}>
                 <h4 style={{ fontSize: "14px", fontWeight: 700, margin: "0 0 16px 0", color: "#1e293b" }}>👤 Candidate Information</h4>
                 <div style={{ display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: "12px" }}>
@@ -676,7 +695,7 @@ export default function EducationVerification() {
                 </div>
               </div>
 
-              {/* Dynamic Education Section */}
+              {/* Dynamic Education Input Section */}
               <div style={{ border: "1px solid #e2e8f0", borderRadius: "8px", padding: "18px", marginBottom: "24px" }}>
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "16px" }}>
                   <h4 style={{ fontSize: "14px", fontWeight: 700, margin: 0, color: "#1e293b" }}>📖 Education Details</h4>
@@ -715,7 +734,7 @@ export default function EducationVerification() {
                       </div>
                     </div>
 
-                    {/* File Upload Component Cards */}
+                    {/* Document Upload Component Cards */}
                     <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "12px" }}>
                       {["Marksheet", "Passing Certificate", "Degree Certificate", "Other Document"].map((doc, idx) => (
                         <div key={idx} style={{ border: "1px dashed #cbd5e1", borderRadius: "6px", padding: "12px", textAlign: "center", background: "#f8fafc" }}>
