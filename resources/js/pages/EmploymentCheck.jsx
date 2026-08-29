@@ -651,19 +651,22 @@
 //   },
 // };
 import React, { useState } from "react";
+// Aapke existing components ka import
+import Sidebar from "./Sidebar";
+import Header from "./Header";
 
-export default function EducationPage() {
-  // Navigation State: 'allocation' | 'education'
+export default function EducationVerification() {
+  // Active Tab State: 'allocation' | 'education'
   const [activeTab, setActiveTab] = useState("allocation");
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
   // Pagination States
   const [table1Page, setTable1Page] = useState(1);
   const [table1RowsPerPage, setTable1RowsPerPage] = useState(5);
+
   const [table2Page, setTable2Page] = useState(1);
   const [table2RowsPerPage, setTable2RowsPerPage] = useState(5);
 
-  // Form States
+  // Candidate Information Form State
   const [candidateInfo, setCandidateInfo] = useState({
     candidateName: "",
     candidateId: "",
@@ -672,6 +675,7 @@ export default function EducationPage() {
     emailAddress: "",
   });
 
+  // Qualification Dynamic Accordions State
   const [qualifications, setQualifications] = useState([
     {
       id: 1,
@@ -720,7 +724,7 @@ export default function EducationPage() {
     setQualifications((prev) => prev.filter((q) => q.id !== id));
   };
 
-  // Pagination Helper
+  // Reusable Table Pagination
   const renderPagination = (currentPage, totalItems, itemsPerPage, onPageChange, onRowsChange) => {
     const totalPages = Math.ceil(totalItems / itemsPerPage);
     const startItem = (currentPage - 1) * itemsPerPage + 1;
@@ -731,17 +735,23 @@ export default function EducationPage() {
         <div>
           Showing <span style={{ fontWeight: 600, color: "#1e293b" }}>{startItem}</span> to <span style={{ fontWeight: 600, color: "#1e293b" }}>{endItem}</span> of <span style={{ fontWeight: 600, color: "#1e293b" }}>{totalItems}</span> entries
         </div>
+
         <div style={{ display: "flex", alignItems: "center", gap: "4px" }}>
-          <button onClick={() => onPageChange(Math.max(1, currentPage - 1))} disabled={currentPage === 1} style={{ padding: "4px 8px", borderRadius: "4px", border: "1px solid #cbd5e1", background: "#fff", cursor: currentPage === 1 ? "not-allowed" : "pointer" }}>‹</button>
-          {[1, 2, 3, 4, 5].map((num) => (
-            <button key={num} onClick={() => onPageChange(num)} style={{ padding: "4px 10px", borderRadius: "4px", border: num === currentPage ? "none" : "1px solid #cbd5e1", background: num === currentPage ? "#2563eb" : "#fff", color: num === currentPage ? "#fff" : "#1e293b", fontWeight: num === currentPage ? 700 : 500, cursor: "pointer" }}>
-              {num}
+          <button onClick={() => onPageChange(Math.max(1, currentPage - 1))} disabled={currentPage === 1} style={{ padding: "4px 8px", borderRadius: "4px", border: "1px solid #cbd5e1", background: "#fff", cursor: currentPage === 1 ? "not-allowed" : "pointer" }}>
+            ‹
+          </button>
+          {[1, 2, 3, 4, 5].map((pageNum) => (
+            <button key={pageNum} onClick={() => onPageChange(pageNum)} style={{ padding: "4px 10px", borderRadius: "4px", border: pageNum === currentPage ? "none" : "1px solid #cbd5e1", background: pageNum === currentPage ? "#2563eb" : "#fff", color: pageNum === currentPage ? "#fff" : "#1e293b", fontWeight: pageNum === currentPage ? 700 : 500, cursor: "pointer" }}>
+              {pageNum}
             </button>
           ))}
           <span style={{ padding: "0 4px", color: "#94a3b8" }}>...</span>
           <button onClick={() => onPageChange(15)} style={{ padding: "4px 10px", borderRadius: "4px", border: 15 === currentPage ? "none" : "1px solid #cbd5e1", background: 15 === currentPage ? "#2563eb" : "#fff", color: 15 === currentPage ? "#fff" : "#1e293b", cursor: "pointer" }}>15</button>
-          <button onClick={() => onPageChange(Math.min(totalPages, currentPage + 1))} disabled={currentPage === totalPages} style={{ padding: "4px 8px", borderRadius: "4px", border: "1px solid #cbd5e1", background: "#fff", cursor: currentPage === totalPages ? "not-allowed" : "pointer" }}>›</button>
+          <button onClick={() => onPageChange(Math.min(totalPages, currentPage + 1))} disabled={currentPage === totalPages} style={{ padding: "4px 8px", borderRadius: "4px", border: "1px solid #cbd5e1", background: "#fff", cursor: currentPage === totalPages ? "not-allowed" : "pointer" }}>
+            ›
+          </button>
         </div>
+
         <select value={itemsPerPage} onChange={(e) => onRowsChange(Number(e.target.value))} style={{ padding: "4px 8px", borderRadius: "4px", border: "1px solid #cbd5e1", background: "#fff", fontSize: "12px", cursor: "pointer" }}>
           <option value={5}>5 / page</option>
           <option value={10}>10 / page</option>
@@ -752,83 +762,18 @@ export default function EducationPage() {
   };
 
   return (
-    <div style={{ display: "flex", minHeight: "100vh", fontFamily: "'Inter', sans-serif", backgroundColor: "#f8fafc" }}>
-      
-      {/* 1. SIDEBAR */}
-      <aside style={{ width: sidebarCollapsed ? "70px" : "240px", backgroundColor: "#0f172a", color: "#94a3b8", transition: "width 0.2s ease", display: "flex", flexDirection: "column" }}>
-        {/* Logo */}
-        <div style={{ padding: "18px 20px", display: "flex", alignItems: "center", justifyContent: "space-between", borderBottom: "1px solid #1e293b" }}>
-          {!sidebarCollapsed && <span style={{ color: "#38bdf8", fontWeight: 800, fontSize: "18px", letterSpacing: "0.5px" }}>VERIFYPRO</span>}
-          <button onClick={() => setSidebarCollapsed(!sidebarCollapsed)} style={{ background: "none", border: "none", color: "#94a3b8", cursor: "pointer", fontSize: "16px" }}>
-            {sidebarCollapsed ? "➔" : "◀"}
-          </button>
-        </div>
+    <div style={{ display: "flex", minHeight: "100vh", backgroundColor: "#f8fafc" }}>
+      {/* 1. Aapka Bna Hua Custom Sidebar */}
+      <Sidebar />
 
-        {/* Menu Items */}
-        <nav style={{ flex: 1, padding: "16px 10px", display: "flex", flexDirection: "column", gap: "4px" }}>
-          {[
-            { icon: "📊", label: "Dashboard", active: false },
-            { icon: "📁", label: "All Cases", active: false },
-            { icon: "🎓", label: "Education Verification", active: true },
-            { icon: "🏢", label: "Employment Check", active: false },
-            { icon: "🏛️", label: "Court Record Check", active: false },
-            { icon: "👥", label: "Verifier Allocation", active: false },
-            { icon: "⚙️", label: "Settings", active: false },
-          ].map((item, idx) => (
-            <div
-              key={idx}
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: "12px",
-                padding: "10px 14px",
-                borderRadius: "6px",
-                backgroundColor: item.active ? "#1e293b" : "transparent",
-                color: item.active ? "#38bdf8" : "#94a3b8",
-                fontWeight: item.active ? 600 : 400,
-                fontSize: "13.5px",
-                cursor: "pointer",
-              }}
-            >
-              <span>{item.icon}</span>
-              {!sidebarCollapsed && <span>{item.label}</span>}
-            </div>
-          ))}
-        </nav>
-      </aside>
-
-      {/* RIGHT SIDE MAIN CONTAINER */}
       <div style={{ flex: 1, display: "flex", flexDirection: "column" }}>
-        
-        {/* 2. HEADER */}
-        <header style={{ height: "64px", backgroundColor: "#ffffff", borderBottom: "1px solid #e2e8f0", display: "flex", alignItems: "center", justifyContent: "space-between", padding: "0 24px" }}>
-          <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-            <span style={{ fontSize: "12px", color: "#64748b" }}>Dashboard / Operations /</span>
-            <span style={{ fontSize: "13px", fontWeight: 700, color: "#0f172a" }}>Education Verification</span>
-          </div>
+        {/* 2. Aapka Bna Hua Custom Header */}
+        <Header />
 
-          <div style={{ display: "flex", alignItems: "center", gap: "20px" }}>
-            <div style={{ position: "relative" }}>
-              <span style={{ fontSize: "16px", cursor: "pointer" }}>🔔</span>
-              <span style={{ position: "absolute", top: "-2px", right: "-2px", background: "#ef4444", width: "7px", height: "7px", borderRadius: "50%" }}></span>
-            </div>
-            
-            <div style={{ display: "flex", alignItems: "center", gap: "10px", borderLeft: "1px solid #e2e8f0", paddingLeft: "16px" }}>
-              <div style={{ width: "34px", height: "34px", borderRadius: "50%", backgroundColor: "#2563eb", color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 700, fontSize: "13px" }}>
-                AD
-              </div>
-              <div>
-                <span style={{ fontSize: "13px", fontWeight: 700, color: "#1e293b", display: "block" }}>Admin User</span>
-                <span style={{ fontSize: "11px", color: "#64748b" }}>Ops Lead</span>
-              </div>
-            </div>
-          </div>
-        </header>
-
-        {/* 3. MAIN CONTENT BODY */}
-        <main style={{ padding: "20px 24px", flex: 1, overflowY: "auto" }}>
+        {/* 3. Page Main Area */}
+        <main style={{ padding: "24px", flex: 1, overflowY: "auto" }}>
           
-          {/* Top Search & Actions */}
+          {/* Top Bar Search & New Case Button */}
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px" }}>
             <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
               <div style={{ position: "relative" }}>
@@ -842,6 +787,7 @@ export default function EducationPage() {
               <button style={{ background: "#fff", border: "1px solid #cbd5e1", borderRadius: "6px", padding: "8px 12px", cursor: "pointer" }}>🌪️ Filter</button>
             </div>
 
+            {/* CLICK EVENT: Switch to Education Tab */}
             <button
               onClick={() => setActiveTab("education")}
               style={{ backgroundColor: "#2563eb", color: "#ffffff", border: "none", borderRadius: "6px", padding: "9px 20px", fontWeight: 600, fontSize: "13.5px", cursor: "pointer" }}
@@ -886,7 +832,7 @@ export default function EducationPage() {
             </div>
           </div>
 
-          {/* TAB 1: UNIVERSITY ALLOCATION */}
+          {/* TAB 1: UNIVERSITY ALLOCATION TAB */}
           {activeTab === "allocation" && (
             <div>
               {/* Stat Cards */}
@@ -908,7 +854,7 @@ export default function EducationPage() {
                 ))}
               </div>
 
-              {/* Table 1 & Verifier Panel */}
+              {/* Summary Table & Select Verifier Drawer */}
               <div style={{ display: "flex", gap: "20px", marginBottom: "24px", alignItems: "flex-start" }}>
                 <div style={{ flex: 1, background: "#fff", borderRadius: "8px", border: "1px solid #e2e8f0", padding: "18px" }}>
                   <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "16px" }}>
@@ -951,7 +897,7 @@ export default function EducationPage() {
                   {renderPagination(table1Page, 50, table1RowsPerPage, setTable1Page, setTable1RowsPerPage)}
                 </div>
 
-                {/* Verifier Panel */}
+                {/* Verifier Modal Box */}
                 <div style={{ width: "270px", background: "#fff", borderRadius: "8px", border: "1px solid #e2e8f0", padding: "16px" }}>
                   <h3 style={{ fontSize: "15px", fontWeight: 700, marginBottom: "12px", color: "#0f172a" }}>Select Verifier</h3>
                   <input type="text" placeholder="🔍 Search verifier..." style={{ width: "100%", padding: "8px 12px", borderRadius: "6px", border: "1px solid #cbd5e1", outline: "none", marginBottom: "14px", fontSize: "12px" }} />
@@ -974,7 +920,7 @@ export default function EducationPage() {
                 </div>
               </div>
 
-              {/* Table 2: Unassigned Cases */}
+              {/* Unassigned Cases Table */}
               <div style={{ background: "#fff", borderRadius: "8px", border: "1px solid #e2e8f0", padding: "18px" }}>
                 <h3 style={{ fontSize: "15px", fontWeight: 700, marginBottom: "16px", color: "#1e293b" }}>Unassigned Education Cases</h3>
                 <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "13px" }}>
@@ -1009,7 +955,7 @@ export default function EducationPage() {
             </div>
           )}
 
-          {/* TAB 2: ADD NEW EDUCATION FORM */}
+          {/* TAB 2: ADD NEW EDUCATION FORM TAB */}
           {activeTab === "education" && (
             <div style={{ background: "#fff", borderRadius: "10px", border: "1px solid #e2e8f0", padding: "24px" }}>
               <div style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "20px" }}>
@@ -1020,7 +966,7 @@ export default function EducationPage() {
                 </div>
               </div>
 
-              {/* Candidate Info Card */}
+              {/* Candidate Info Box */}
               <div style={{ border: "1px solid #e2e8f0", borderRadius: "8px", padding: "18px", marginBottom: "24px" }}>
                 <h4 style={{ fontSize: "14px", fontWeight: 700, margin: "0 0 16px 0", color: "#1e293b" }}>👤 Candidate Information</h4>
                 <div style={{ display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: "12px" }}>
@@ -1045,7 +991,7 @@ export default function EducationPage() {
                 </div>
               </div>
 
-              {/* Education Details Card */}
+              {/* Dynamic Education Section */}
               <div style={{ border: "1px solid #e2e8f0", borderRadius: "8px", padding: "18px", marginBottom: "24px" }}>
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "16px" }}>
                   <h4 style={{ fontSize: "14px", fontWeight: 700, margin: 0, color: "#1e293b" }}>📖 Education Details</h4>
@@ -1084,7 +1030,7 @@ export default function EducationPage() {
                       </div>
                     </div>
 
-                    {/* File Upload Section */}
+                    {/* File Upload Component Cards */}
                     <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "12px" }}>
                       {["Marksheet", "Passing Certificate", "Degree Certificate", "Other Document"].map((doc, idx) => (
                         <div key={idx} style={{ border: "1px dashed #cbd5e1", borderRadius: "6px", padding: "12px", textAlign: "center", background: "#f8fafc" }}>
@@ -1100,7 +1046,7 @@ export default function EducationPage() {
                 ))}
               </div>
 
-              {/* Form Action Buttons */}
+              {/* Form Action Controls */}
               <div style={{ display: "flex", justifyContent: "flex-end", gap: "12px" }}>
                 <button onClick={() => setActiveTab("allocation")} style={{ padding: "9px 20px", borderRadius: "6px", border: "1px solid #cbd5e1", background: "#fff", fontWeight: 600, cursor: "pointer" }}>Cancel</button>
                 <button onClick={() => alert("Saved as Draft")} style={{ padding: "9px 20px", borderRadius: "6px", border: "1px solid #cbd5e1", background: "#fff", fontWeight: 600, cursor: "pointer" }}>Save as Draft</button>
