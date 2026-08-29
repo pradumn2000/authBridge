@@ -334,25 +334,9 @@ import Sidebar from "./Sidebar";
 import Header from "./Header";
 
 export default function EducationVerification() {
-  const [activeTab, setActiveTab] = useState("allocation");
+  const [activeTab, setActiveTab] = useState("education");
 
-  // Pagination States
-  const [table1Page, setTable1Page] = useState(1);
-  const [table1RowsPerPage, setTable1RowsPerPage] = useState(5);
-
-  const [table2Page, setTable2Page] = useState(1);
-  const [table2RowsPerPage, setTable2RowsPerPage] = useState(5);
-
-  // Candidate Information Form State
-  const [candidateInfo, setCandidateInfo] = useState({
-    candidateName: "",
-    candidateId: "",
-    clientName: "",
-    mobileNumber: "",
-    emailAddress: "",
-  });
-
-  // Qualification Dynamic Accordions State (Includes isOpen for accordion collapse/expand)
+  // Multi-qualification state according to image
   const [qualifications, setQualifications] = useState([
     {
       id: 1,
@@ -367,11 +351,11 @@ export default function EducationVerification() {
       yearOfPassing: "",
       educationCharges: "",
     },
+    { id: 2, isOpen: false, qualificationType: "", courseStream: "", specialization: "", instituteUniversity: "", boardUniversity: "", studyType: "National", modeOfStudy: "", yearOfPassing: "", educationCharges: "" },
+    { id: 3, isOpen: false, qualificationType: "", courseStream: "", specialization: "", instituteUniversity: "", boardUniversity: "", studyType: "National", modeOfStudy: "", yearOfPassing: "", educationCharges: "" },
+    { id: 4, isOpen: false, qualificationType: "", courseStream: "", specialization: "", instituteUniversity: "", boardUniversity: "", studyType: "National", modeOfStudy: "", yearOfPassing: "", educationCharges: "" },
+    { id: 5, isOpen: false, qualificationType: "", courseStream: "", specialization: "", instituteUniversity: "", boardUniversity: "", studyType: "National", modeOfStudy: "", yearOfPassing: "", educationCharges: "" },
   ]);
-
-  const handleCandidateChange = (field, value) => {
-    setCandidateInfo((prev) => ({ ...prev, [field]: value }));
-  };
 
   const handleQualificationChange = (id, field, value) => {
     setQualifications((prev) =>
@@ -387,9 +371,8 @@ export default function EducationVerification() {
 
   const addQualification = () => {
     const newId = qualifications.length > 0 ? Math.max(...qualifications.map((q) => q.id)) + 1 : 1;
-    // Collapse previous ones and open the new one
     setQualifications((prev) => [
-      ...prev.map((q) => ({ ...q, isOpen: false })),
+      ...prev,
       {
         id: newId,
         isOpen: true,
@@ -412,42 +395,6 @@ export default function EducationVerification() {
     setQualifications((prev) => prev.filter((q) => q.id !== id));
   };
 
-  const renderPagination = (currentPage, totalItems, itemsPerPage, onPageChange, onRowsChange) => {
-    const totalPages = Math.ceil(totalItems / itemsPerPage);
-    const startItem = (currentPage - 1) * itemsPerPage + 1;
-    const endItem = Math.min(currentPage * itemsPerPage, totalItems);
-
-    return (
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: "16px", paddingTop: "12px", borderTop: "1px solid #f1f5f9", fontSize: "12px", color: "#64748b" }}>
-        <div>
-          Showing <span style={{ fontWeight: 600, color: "#1e293b" }}>{startItem}</span> to <span style={{ fontWeight: 600, color: "#1e293b" }}>{endItem}</span> of <span style={{ fontWeight: 600, color: "#1e293b" }}>{totalItems}</span> entries
-        </div>
-
-        <div style={{ display: "flex", alignItems: "center", gap: "4px" }}>
-          <button onClick={() => onPageChange(Math.max(1, currentPage - 1))} disabled={currentPage === 1} style={{ padding: "4px 8px", borderRadius: "4px", border: "1px solid #cbd5e1", background: "#fff", cursor: currentPage === 1 ? "not-allowed" : "pointer" }}>
-            ‹
-          </button>
-          {[1, 2, 3, 4, 5].map((pageNum) => (
-            <button key={pageNum} onClick={() => onPageChange(pageNum)} style={{ padding: "4px 10px", borderRadius: "4px", border: pageNum === currentPage ? "none" : "1px solid #cbd5e1", background: pageNum === currentPage ? "#2563eb" : "#fff", color: pageNum === currentPage ? "#fff" : "#1e293b", fontWeight: pageNum === currentPage ? 700 : 500, cursor: "pointer" }}>
-              {pageNum}
-            </button>
-          ))}
-          <span style={{ padding: "0 4px", color: "#94a3b8" }}>...</span>
-          <button onClick={() => onPageChange(15)} style={{ padding: "4px 10px", borderRadius: "4px", border: 15 === currentPage ? "none" : "1px solid #cbd5e1", background: 15 === currentPage ? "#2563eb" : "#fff", color: 15 === currentPage ? "#fff" : "#1e293b", cursor: "pointer" }}>15</button>
-          <button onClick={() => onPageChange(Math.min(totalPages, currentPage + 1))} disabled={currentPage === totalPages} style={{ padding: "4px 8px", borderRadius: "4px", border: "1px solid #cbd5e1", background: "#fff", cursor: currentPage === totalPages ? "not-allowed" : "pointer" }}>
-            ›
-          </button>
-        </div>
-
-        <select value={itemsPerPage} onChange={(e) => onRowsChange(Number(e.target.value))} style={{ padding: "4px 8px", borderRadius: "4px", border: "1px solid #cbd5e1", background: "#fff", fontSize: "12px", cursor: "pointer" }}>
-          <option value={5}>5 / page</option>
-          <option value={10}>10 / page</option>
-          <option value={20}>20 / page</option>
-        </select>
-      </div>
-    );
-  };
-
   return (
     <div style={{ display: "flex", minHeight: "100vh", backgroundColor: "#f8fafc" }}>
       <div id="sidebar">
@@ -460,575 +407,313 @@ export default function EducationVerification() {
         </nav>
 
         <main style={{ padding: "24px" }}>
-          {/* Top Bar Search & New Education Case Button */}
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px" }}>
-            <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-              <div style={{ position: "relative" }}>
-                <input
-                  type="text"
-                  placeholder="Search by Candidate, Case ID, University..."
-                  style={{ width: "340px", padding: "8px 12px 8px 34px", borderRadius: "6px", border: "1px solid #cbd5e1", fontSize: "13px", outline: "none", background: "#fff" }}
-                />
-                <span style={{ position: "absolute", left: "10px", top: "8px", color: "#94a3b8" }}>🔍</span>
+          <div style={{ background: "#fff", borderRadius: "10px", border: "1px solid #e2e8f0", padding: "24px" }}>
+            {/* Header Section with Icon and + Add Qualification Button */}
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "24px" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+                <div style={{ background: "#eff6ff", width: "40px", height: "40px", borderRadius: "8px", display: "flex", alignItems: "center", justifyContent: "center", color: "#2563eb", fontSize: "20px" }}>
+                  📖
+                </div>
+                <div>
+                  <h2 style={{ fontSize: "16px", fontWeight: 700, color: "#0f172a", margin: 0 }}>Education Details</h2>
+                  <p style={{ fontSize: "13px", color: "#64748b", margin: "2px 0 0 0" }}>Add all educational qualifications of the candidate</p>
+                </div>
               </div>
-              <button style={{ background: "#fff", border: "1px solid #cbd5e1", borderRadius: "6px", padding: "8px 12px", cursor: "pointer", fontSize: "13px" }}>🌪️ Filter</button>
-            </div>
 
-            {activeTab === "allocation" && (
               <button
-                onClick={() => setActiveTab("education")}
-                style={{ backgroundColor: "#2563eb", color: "#ffffff", border: "none", borderRadius: "6px", padding: "9px 20px", fontWeight: 600, fontSize: "13.5px", cursor: "pointer" }}
-              >
-                + New Education Case
-              </button>
-            )}
-          </div>
-
-          {/* Navigation Tabs Header */}
-          <div style={{ borderBottom: "1px solid #e2e8f0", marginBottom: "20px" }}>
-            <div style={{ display: "flex", gap: "24px" }}>
-              <button
-                onClick={() => setActiveTab("allocation")}
+                onClick={addQualification}
                 style={{
-                  padding: "8px 4px 12px 4px",
-                  border: "none",
-                  background: "transparent",
-                  fontWeight: activeTab === "allocation" ? 700 : 500,
-                  fontSize: "14px",
-                  color: activeTab === "allocation" ? "#2563eb" : "#64748b",
-                  borderBottom: activeTab === "allocation" ? "2.5px solid #2563eb" : "none",
+                  padding: "8px 16px",
+                  borderRadius: "6px",
+                  border: "1px solid #cbd5e1",
+                  background: "#fff",
+                  color: "#2563eb",
+                  fontWeight: 600,
+                  fontSize: "13px",
                   cursor: "pointer",
                 }}
               >
-                University Allocation
-              </button>
-              <button
-                onClick={() => setActiveTab("education")}
-                style={{
-                  padding: "8px 4px 12px 4px",
-                  border: "none",
-                  background: "transparent",
-                  fontWeight: activeTab === "education" ? 700 : 500,
-                  fontSize: "14px",
-                  color: activeTab === "education" ? "#2563eb" : "#64748b",
-                  borderBottom: activeTab === "education" ? "2.5px solid #2563eb" : "none",
-                  cursor: "pointer",
-                }}
-              >
-                Education Cases
+                + Add Qualification
               </button>
             </div>
-          </div>
 
-          {/* TAB 1: UNIVERSITY ALLOCATION */}
-          {activeTab === "allocation" && (
-            <div>
-              <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "16px", marginBottom: "24px" }}>
-                {[
-                  { title: "Total Education Cases", val: "1,248", sub: "Across all Universities", icon: "🎓", bg: "#eff6ff" },
-                  { title: "Unassigned Cases", val: "143", sub: "Require allocation", icon: "👤", bg: "#fff7ed" },
-                  { title: "In Progress", val: "685", sub: "With Verifiers", icon: "👥", bg: "#f0fdf4" },
-                  { title: "Completed (This Month)", val: "420", sub: "This Month", icon: "✓", bg: "#dcfce7" },
-                ].map((st, i) => (
-                  <div key={i} style={{ background: "#fff", padding: "16px 20px", borderRadius: "8px", border: "1px solid #e2e8f0", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                    <div>
-                      <span style={{ fontSize: "12px", color: "#64748b", fontWeight: 600 }}>{st.title}</span>
-                      <h2 style={{ fontSize: "22px", margin: "4px 0", fontWeight: 800 }}>{st.val}</h2>
-                      <span style={{ fontSize: "11px", color: "#94a3b8" }}>{st.sub}</span>
+            {/* Qualification Cards List */}
+            <div style={{ display: "flex", flexDirection: "column", gap: "16px", marginBottom: "32px" }}>
+              {qualifications.map((q, index) => (
+                <div key={q.id} style={{ border: "1px solid #e2e8f0", borderRadius: "8px", background: "#ffffff", overflow: "hidden" }}>
+                  {/* Accordion Header */}
+                  <div
+                    onClick={() => toggleAccordion(q.id)}
+                    style={{
+                      display: "flex",
+                      justify: "space-between",
+                      alignItems: "center",
+                      padding: "14px 20px",
+                      background: "#ffffff",
+                      cursor: "pointer",
+                      userSelect: "none",
+                      borderBottom: q.isOpen ? "1px solid #f1f5f9" : "none",
+                    }}
+                  >
+                    <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                      <span style={{ color: "#94a3b8", fontSize: "14px", cursor: "grab" }}>:::</span>
+                      <span style={{ fontWeight: 700, fontSize: "14px", color: "#1e293b" }}>Qualification {index + 1}</span>
                     </div>
-                    <div style={{ background: st.bg, width: "40px", height: "40px", borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "18px" }}>{st.icon}</div>
-                  </div>
-                ))}
-              </div>
 
-              <div style={{ display: "flex", gap: "20px", marginBottom: "24px", alignItems: "flex-start" }}>
-                <div style={{ flex: 1, background: "#fff", borderRadius: "8px", border: "1px solid #e2e8f0", padding: "18px" }}>
-                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "16px" }}>
-                    <h3 style={{ fontSize: "15px", fontWeight: 700, margin: 0, color: "#1e293b" }}>University-wise Case Summary</h3>
-                    <input type="text" placeholder="Search University / Client..." style={{ padding: "6px 12px", borderRadius: "6px", border: "1px solid #cbd5e1", fontSize: "12px", outline: "none" }} />
+                    <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+                      <button
+                        onClick={(e) => removeQualification(q.id, e)}
+                        style={{
+                          padding: "5px 14px",
+                          borderRadius: "4px",
+                          border: "1px solid #fecaca",
+                          background: "#fff",
+                          color: "#dc2626",
+                          fontSize: "12px",
+                          cursor: "pointer",
+                          fontWeight: 500,
+                        }}
+                      >
+                        Remove
+                      </button>
+                      <span style={{ fontSize: "12px", color: "#64748b" }}>{q.isOpen ? "▲" : "▼"}</span>
+                    </div>
                   </div>
 
-                  <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "13px" }}>
-                    <thead>
-                      <tr style={{ background: "#f8fafc", textAlign: "left", color: "#64748b" }}>
-                        <th style={{ padding: "10px" }}><input type="checkbox" defaultChecked /></th>
-                        <th style={{ padding: "10px" }}>#</th>
-                        <th style={{ padding: "10px" }}>University / Institution</th>
-                        <th style={{ padding: "10px" }}>Client Name</th>
-                        <th style={{ padding: "10px" }}>New Cases</th>
-                        <th style={{ padding: "10px" }}>Pending</th>
-                        <th style={{ padding: "10px" }}>Verifier Name</th>
-                        <th style={{ padding: "10px" }}>Action</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {[
-                        { id: 1, uni: "Pune University", client: "ABC Corp", newCases: 24, pending: 8, verifier: "Amit Kumar" },
-                        { id: 2, uni: "Mumbai University", client: "XYZ Solutions", newCases: 18, pending: 5, verifier: "Neha Patel" },
-                        { id: 3, uni: "Delhi University", client: "Infosys Ltd.", newCases: 31, pending: 12, verifier: "Rahul Verma" },
-                      ].map((row) => (
-                        <tr key={row.id} style={{ borderBottom: "1px solid #f1f5f9" }}>
-                          <td style={{ padding: "10px" }}><input type="checkbox" defaultChecked /></td>
-                          <td style={{ padding: "10px" }}>{row.id}</td>
-                          <td style={{ padding: "10px", fontWeight: 600 }}>{row.uni}</td>
-                          <td style={{ padding: "10px" }}>{row.client}</td>
-                          <td style={{ padding: "10px", color: "#2563eb", fontWeight: 700 }}>{row.newCases}</td>
-                          <td style={{ padding: "10px", color: "#d97706", fontWeight: 700 }}>{row.pending}</td>
-                          <td style={{ padding: "10px" }}>{row.verifier}</td>
-                          <td style={{ padding: "10px" }}><button style={{ background: "#eff6ff", color: "#2563eb", border: "none", padding: "5px 12px", borderRadius: "4px", fontWeight: 600, cursor: "pointer", fontSize: "12px" }}>Allocate</button></td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                  {renderPagination(table1Page, 50, table1RowsPerPage, setTable1Page, setTable1RowsPerPage)}
-                </div>
-
-                <div style={{ width: "320px", background: "#fff", borderRadius: "8px", border: "1px solid #e2e8f0", padding: "18px" }}>
-                  <h3 style={{ fontSize: "16px", fontWeight: 700, marginBottom: "14px", color: "#0f172a" }}>Select Verifier</h3>
-                  <input type="text" placeholder="🔍 Search verifier..." style={{ width: "100%", padding: "9px 12px", borderRadius: "6px", border: "1px solid #cbd5e1", outline: "none", marginBottom: "16px", fontSize: "13px" }} />
-                  <div style={{ display: "flex", flexDirection: "column", gap: "12px", marginBottom: "20px" }}>
-                    {[
-                      { name: "Amit Kumar", title: "Employment Verifier", cases: 12, checked: true },
-                      { name: "Neha Patel", title: "Employment Verifier", cases: 8, checked: true },
-                      { name: "Rahul Verma", title: "Employment Verifier", cases: 15, checked: false },
-                    ].map((verifier, idx) => (
-                      <div key={idx} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "10px 12px", borderRadius: "8px", border: "1px solid #f1f5f9", background: "#f8fafc" }}>
-                        <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-                          <input type="checkbox" defaultChecked={verifier.checked} style={{ cursor: "pointer" }} />
-                          <div style={{ width: "32px", height: "32px", borderRadius: "50%", background: "#cbd5e1", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 700, fontSize: "12px", color: "#334155" }}>
-                            {verifier.name.charAt(0)}
-                          </div>
-                          <div>
-                            <p style={{ margin: 0, fontWeight: 700, fontSize: "13px", color: "#1e293b" }}>{verifier.name}</p>
-                            <span style={{ fontSize: "11px", color: "#64748b" }}>{verifier.title}</span>
-                          </div>
-                        </div>
-                        <div style={{ textAlign: "right" }}>
-                          <span style={{ fontSize: "13px", fontWeight: 800, color: "#2563eb", display: "block" }}>{verifier.cases}</span>
-                          <span style={{ fontSize: "10px", color: "#2563eb", fontWeight: 600 }}>Active Cases</span>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                  <div style={{ display: "flex", gap: "10px" }}>
-                    <button style={{ flex: 1, padding: "9px", borderRadius: "6px", border: "1px solid #cbd5e1", background: "#fff", fontWeight: 600, cursor: "pointer", fontSize: "13px" }}>Cancel</button>
-                    <button style={{ flex: 1, padding: "9px", borderRadius: "6px", border: "none", background: "#2563eb", color: "#fff", fontWeight: 600, cursor: "pointer", fontSize: "13px" }}>Allocate Cases</button>
-                  </div>
-                </div>
-              </div>
-
-              <div style={{ background: "#fff", borderRadius: "8px", border: "1px solid #e2e8f0", padding: "18px" }}>
-                <h3 style={{ fontSize: "15px", fontWeight: 700, marginBottom: "16px", color: "#1e293b" }}>Unassigned Education Cases</h3>
-                <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "13px" }}>
-                  <thead>
-                    <tr style={{ background: "#f8fafc", textAlign: "left", color: "#64748b" }}>
-                      <th style={{ padding: "10px" }}><input type="checkbox" defaultChecked /></th>
-                      <th style={{ padding: "10px" }}>Case ID</th>
-                      <th style={{ padding: "10px" }}>Candidate Name</th>
-                      <th style={{ padding: "10px" }}>University</th>
-                      <th style={{ padding: "10px" }}>Status</th>
-                      <th style={{ padding: "10px" }}>Action</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {[
-                      { id: "EDU-10245", candidate: "Rahul Sharma", uni: "Pune University" },
-                      { id: "EDU-10246", candidate: "Priya Singh", uni: "Mumbai University" },
-                    ].map((r) => (
-                      <tr key={r.id} style={{ borderBottom: "1px solid #f1f5f9" }}>
-                        <td style={{ padding: "10px" }}><input type="checkbox" defaultChecked /></td>
-                        <td style={{ padding: "10px", color: "#2563eb", fontWeight: 700 }}>{r.id}</td>
-                        <td style={{ padding: "10px", fontWeight: 600 }}>
-                          <a
-                            href={`/candidate/${r.id}`}
-                            onClick={(e) => {
-                              e.preventDefault();
-                              console.log("Navigating to candidate:", r.candidate);
-                            }}
-                            style={{ color: "#2563eb", textDecoration: "none", cursor: "pointer", fontWeight: 600 }}
-                            onMouseOver={(e) => (e.target.style.textDecoration = "underline")}
-                            onMouseOut={(e) => (e.target.style.textDecoration = "none")}
+                  {/* Accordion Body */}
+                  {q.isOpen && (
+                    <div style={{ padding: "20px" }}>
+                      {/* Row 1: Select Inputs & Text Field */}
+                      <div style={{ display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: "16px", marginBottom: "20px" }}>
+                        <div>
+                          <label style={{ display: "block", fontSize: "12px", fontWeight: 700, marginBottom: "6px", color: "#1e293b" }}>
+                            Qualification Type <span style={{ color: "#dc2626" }}>*</span>
+                          </label>
+                          <select
+                            value={q.qualificationType}
+                            onChange={(e) => handleQualificationChange(q.id, "qualificationType", e.target.value)}
+                            style={{ width: "100%", padding: "9px 12px", borderRadius: "6px", border: "1px solid #cbd5e1", fontSize: "13px", color: "#64748b", outline: "none" }}
                           >
-                            {r.candidate}
-                          </a>
-                        </td>
-                        <td style={{ padding: "10px" }}>{r.uni}</td>
-                        <td style={{ padding: "10px" }}><span style={{ background: "#fee2e2", color: "#dc2626", padding: "4px 8px", borderRadius: "4px", fontWeight: 700, fontSize: "11px" }}>Unassigned</span></td>
-                        <td style={{ padding: "10px" }}><button style={{ background: "#eff6ff", color: "#2563eb", border: "none", padding: "4px 12px", borderRadius: "4px", fontWeight: 600, cursor: "pointer", fontSize: "12px" }}>Assign</button></td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-                {renderPagination(table2Page, 143, table2RowsPerPage, setTable2Page, setTable2RowsPerPage)}
-              </div>
-            </div>
-          )}
+                            <option value="">Select Qualification Type</option>
+                            <option value="10th">10th Standard</option>
+                            <option value="12th">12th Standard</option>
+                            <option value="Graduation">Graduation</option>
+                          </select>
+                        </div>
 
-          {/* TAB 2: EDUCATION CASES (MATCHED ACCORDING TO REFERENCE IMAGE) */}
-          {activeTab === "education" && (
-            <div style={{ background: "#fff", borderRadius: "10px", border: "1px solid #e2e8f0", padding: "24px" }}>
-              {/* Header Section */}
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "20px" }}>
-                <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-                  <div style={{ background: "#eff6ff", width: "40px", height: "40px", borderRadius: "8px", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "20px" }}>📖</div>
-                  <div>
-                    <h2 style={{ fontSize: "18px", fontWeight: 700, color: "#0f172a", margin: 0 }}>Education Details</h2>
-                    <p style={{ fontSize: "13px", color: "#64748b", margin: "2px 0 0 0" }}>Add all educational qualifications of the candidate</p>
-                  </div>
-                </div>
-                <button
-                  onClick={addQualification}
-                  style={{
-                    padding: "8px 16px",
-                    borderRadius: "6px",
-                    border: "1px solid #2563eb",
-                    background: "#fff",
-                    color: "#2563eb",
-                    fontWeight: 600,
-                    cursor: "pointer",
-                    fontSize: "13px",
-                  }}
-                >
-                  + Add Qualification
-                </button>
-              </div>
+                        <div>
+                          <label style={{ display: "block", fontSize: "12px", fontWeight: 700, marginBottom: "6px", color: "#1e293b" }}>
+                            Course / Stream <span style={{ color: "#dc2626" }}>*</span>
+                          </label>
+                          <select
+                            value={q.courseStream}
+                            onChange={(e) => handleQualificationChange(q.id, "courseStream", e.target.value)}
+                            style={{ width: "100%", padding: "9px 12px", borderRadius: "6px", border: "1px solid #cbd5e1", fontSize: "13px", color: "#64748b", outline: "none" }}
+                          >
+                            <option value="">Select Course / Stream</option>
+                            <option value="B.Tech">B.Tech</option>
+                            <option value="B.Sc">B.Sc</option>
+                          </select>
+                        </div>
 
-              {/* Candidate Info Optional Section */}
-              <div style={{ border: "1px solid #e2e8f0", borderRadius: "8px", padding: "18px", marginBottom: "20px", background: "#f8fafc" }}>
-                <h4 style={{ fontSize: "13px", fontWeight: 700, margin: "0 0 12px 0", color: "#334155" }}>👤 Candidate Basic Info</h4>
-                <div style={{ display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: "12px" }}>
-                  {[
-                    { label: "CANDIDATE NAME *", key: "candidateName", placeholder: "Enter Candidate Name" },
-                    { label: "CANDIDATE ID *", key: "candidateId", placeholder: "Enter Candidate ID" },
-                    { label: "CLIENT NAME *", key: "clientName", placeholder: "Enter Client Name" },
-                    { label: "MOBILE NUMBER *", key: "mobileNumber", placeholder: "Enter Mobile Number" },
-                    { label: "EMAIL ADDRESS *", key: "emailAddress", placeholder: "Enter Email Address" },
-                  ].map((field, i) => (
-                    <div key={i}>
-                      <label style={{ display: "block", fontSize: "10px", fontWeight: 700, marginBottom: "4px", color: "#64748b" }}>{field.label}</label>
-                      <input
-                        type="text"
-                        placeholder={field.placeholder}
-                        value={candidateInfo[field.key]}
-                        onChange={(e) => handleCandidateChange(field.key, e.target.value)}
-                        style={{ width: "100%", padding: "7px 10px", borderRadius: "6px", border: "1px solid #cbd5e1", outline: "none", fontSize: "12px", background: "#fff" }}
-                      />
-                    </div>
-                  ))}
-                </div>
-              </div>
+                        <div>
+                          <label style={{ display: "block", fontSize: "12px", fontWeight: 700, marginBottom: "6px", color: "#1e293b" }}>Specialization (Optional)</label>
+                          <input
+                            type="text"
+                            placeholder="Enter Specialization"
+                            value={q.specialization}
+                            onChange={(e) => handleQualificationChange(q.id, "specialization", e.target.value)}
+                            style={{ width: "100%", padding: "9px 12px", borderRadius: "6px", border: "1px solid #cbd5e1", fontSize: "13px", outline: "none" }}
+                          />
+                        </div>
 
-              {/* Qualification Accordion List */}
-              <div style={{ display: "flex", flexDirection: "column", gap: "12px", marginBottom: "24px" }}>
-                {qualifications.map((q, index) => (
-                  <div key={q.id} style={{ border: "1px solid #e2e8f0", borderRadius: "8px", background: "#ffffff", overflow: "hidden" }}>
-                    {/* Accordion Header */}
-                    <div
-                      onClick={() => toggleAccordion(q.id)}
-                      style={{
-                        display: "flex",
-                        justify: "space-between",
-                        alignItems: "center",
-                        padding: "14px 18px",
-                        background: q.isOpen ? "#ffffff" : "#f8fafc",
-                        cursor: "pointer",
-                        userSelect: "none",
-                        borderBottom: q.isOpen ? "1px solid #f1f5f9" : "none",
-                      }}
-                    >
-                      <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-                        <span style={{ color: "#94a3b8", cursor: "grab", fontSize: "14px" }}>░░</span>
-                        <span style={{ fontWeight: 700, fontSize: "14px", color: "#1e293b" }}>Qualification {index + 1}</span>
+                        <div>
+                          <label style={{ display: "block", fontSize: "12px", fontWeight: 700, marginBottom: "6px", color: "#1e293b" }}>
+                            Institute / University <span style={{ color: "#dc2626" }}>*</span>
+                          </label>
+                          <select
+                            value={q.instituteUniversity}
+                            onChange={(e) => handleQualificationChange(q.id, "instituteUniversity", e.target.value)}
+                            style={{ width: "100%", padding: "9px 12px", borderRadius: "6px", border: "1px solid #cbd5e1", fontSize: "13px", color: "#64748b", outline: "none" }}
+                          >
+                            <option value="">Enter Institute / School / University</option>
+                          </select>
+                        </div>
+
+                        <div>
+                          <label style={{ display: "block", fontSize: "12px", fontWeight: 700, marginBottom: "6px", color: "#1e293b" }}>
+                            Board / University <span style={{ color: "#dc2626" }}>*</span>
+                          </label>
+                          <select
+                            value={q.boardUniversity}
+                            onChange={(e) => handleQualificationChange(q.id, "boardUniversity", e.target.value)}
+                            style={{ width: "100%", padding: "9px 12px", borderRadius: "6px", border: "1px solid #cbd5e1", fontSize: "13px", color: "#64748b", outline: "none" }}
+                          >
+                            <option value="">Select Board / University</option>
+                          </select>
+                        </div>
                       </div>
 
-                      <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-                        <button
-                          onClick={(e) => removeQualification(q.id, e)}
-                          disabled={qualifications.length === 1}
-                          style={{
-                            padding: "4px 12px",
-                            borderRadius: "4px",
-                            border: "1px solid #fecaca",
-                            background: "#fff",
-                            color: qualifications.length === 1 ? "#cbd5e1" : "#dc2626",
-                            fontSize: "12px",
-                            cursor: qualifications.length === 1 ? "not-allowed" : "pointer",
-                            fontWeight: 600,
-                          }}
-                        >
-                          Remove
-                        </button>
-                        <span style={{ fontSize: "12px", color: "#64748b" }}>{q.isOpen ? "▲" : "▼"}</span>
-                      </div>
-                    </div>
-
-                    {/* Accordion Body */}
-                    {q.isOpen && (
-                      <div style={{ padding: "20px" }}>
-                        {/* Row 1: Dropdowns and Text Inputs */}
-                        <div style={{ display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: "12px", marginBottom: "16px" }}>
-                          <div>
-                            <label style={{ display: "block", fontSize: "11px", fontWeight: 700, marginBottom: "6px", color: "#334155" }}>
-                              Qualification Type <span style={{ color: "#dc2626" }}>*</span>
+                      {/* Row 2: Radio & Numbers */}
+                      <div style={{ display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: "16px", marginBottom: "24px" }}>
+                        <div>
+                          <label style={{ display: "block", fontSize: "12px", fontWeight: 700, marginBottom: "8px", color: "#1e293b" }}>
+                            National / International <span style={{ color: "#dc2626" }}>*</span>
+                          </label>
+                          <div style={{ display: "flex", gap: "16px", alignItems: "center", paddingTop: "6px" }}>
+                            <label style={{ fontSize: "13px", fontWeight: 600, cursor: "pointer", display: "flex", alignItems: "center", gap: "6px" }}>
+                              <input
+                                type="radio"
+                                name={`studyType-${q.id}`}
+                                value="National"
+                                checked={q.studyType === "National"}
+                                onChange={(e) => handleQualificationChange(q.id, "studyType", e.target.value)}
+                                style={{ accentColor: "#2563eb" }}
+                              />
+                              National
                             </label>
-                            <select
-                              value={q.qualificationType}
-                              onChange={(e) => handleQualificationChange(q.id, "qualificationType", e.target.value)}
-                              style={{ width: "100%", padding: "8px 10px", borderRadius: "6px", border: "1px solid #cbd5e1", fontSize: "12px", outline: "none", color: "#334155" }}
-                            >
-                              <option value="">Select Qualification Type</option>
-                              <option value="10th">10th Standard</option>
-                              <option value="12th">12th Standard</option>
-                              <option value="Graduation">Graduation</option>
-                              <option value="Post Graduation">Post Graduation</option>
-                              <option value="Diploma">Diploma</option>
-                            </select>
-                          </div>
-
-                          <div>
-                            <label style={{ display: "block", fontSize: "11px", fontWeight: 700, marginBottom: "6px", color: "#334155" }}>
-                              Course / Stream <span style={{ color: "#dc2626" }}>*</span>
+                            <label style={{ fontSize: "13px", fontWeight: 600, cursor: "pointer", display: "flex", alignItems: "center", gap: "6px" }}>
+                              <input
+                                type="radio"
+                                name={`studyType-${q.id}`}
+                                value="International"
+                                checked={q.studyType === "International"}
+                                onChange={(e) => handleQualificationChange(q.id, "studyType", e.target.value)}
+                                style={{ accentColor: "#2563eb" }}
+                              />
+                              International
                             </label>
-                            <select
-                              value={q.courseStream}
-                              onChange={(e) => handleQualificationChange(q.id, "courseStream", e.target.value)}
-                              style={{ width: "100%", padding: "8px 10px", borderRadius: "6px", border: "1px solid #cbd5e1", fontSize: "12px", outline: "none", color: "#334155" }}
-                            >
-                              <option value="">Select Course / Stream</option>
-                              <option value="B.Tech">B.Tech</option>
-                              <option value="B.Sc">B.Sc</option>
-                              <option value="B.Com">B.Com</option>
-                              <option value="B.A">B.A</option>
-                              <option value="MBA">MBA</option>
-                            </select>
                           </div>
+                        </div>
 
-                          <div>
-                            <label style={{ display: "block", fontSize: "11px", fontWeight: 700, marginBottom: "6px", color: "#334155" }}>Specialization (Optional)</label>
+                        <div>
+                          <label style={{ display: "block", fontSize: "12px", fontWeight: 700, marginBottom: "6px", color: "#1e293b" }}>
+                            Mode of Study <span style={{ color: "#dc2626" }}>*</span>
+                          </label>
+                          <select
+                            value={q.modeOfStudy}
+                            onChange={(e) => handleQualificationChange(q.id, "modeOfStudy", e.target.value)}
+                            style={{ width: "100%", padding: "9px 12px", borderRadius: "6px", border: "1px solid #cbd5e1", fontSize: "13px", color: "#64748b", outline: "none" }}
+                          >
+                            <option value="">Select Mode of Study</option>
+                          </select>
+                        </div>
+
+                        <div>
+                          <label style={{ display: "block", fontSize: "12px", fontWeight: 700, marginBottom: "6px", color: "#1e293b" }}>
+                            Year of Passing <span style={{ color: "#dc2626" }}>*</span>
+                          </label>
+                          <div style={{ position: "relative" }}>
+                            <select
+                              value={q.yearOfPassing}
+                              onChange={(e) => handleQualificationChange(q.id, "yearOfPassing", e.target.value)}
+                              style={{ width: "100%", padding: "9px 12px", borderRadius: "6px", border: "1px solid #cbd5e1", fontSize: "13px", color: "#64748b", outline: "none" }}
+                            >
+                              <option value="">Select Year</option>
+                            </select>
+                            <span style={{ position: "absolute", right: "12px", top: "10px", fontSize: "14px", color: "#94a3b8", pointerEvents: "none" }}>📅</span>
+                          </div>
+                        </div>
+
+                        <div>
+                          <label style={{ display: "block", fontSize: "12px", fontWeight: 700, marginBottom: "6px", color: "#1e293b" }}>
+                            Education Charges (INR) <span style={{ color: "#dc2626" }}>*</span>
+                          </label>
+                          <div style={{ position: "relative" }}>
+                            <span style={{ position: "absolute", left: "12px", top: "9px", fontSize: "13px", color: "#64748b" }}>₹</span>
                             <input
                               type="text"
-                              placeholder="Enter Specialization"
-                              value={q.specialization}
-                              onChange={(e) => handleQualificationChange(q.id, "specialization", e.target.value)}
-                              style={{ width: "100%", padding: "8px 10px", borderRadius: "6px", border: "1px solid #cbd5e1", fontSize: "12px", outline: "none" }}
+                              placeholder="Enter Amount"
+                              value={q.educationCharges}
+                              onChange={(e) => handleQualificationChange(q.id, "educationCharges", e.target.value)}
+                              style={{ width: "100%", padding: "9px 12px 9px 28px", borderRadius: "6px", border: "1px solid #cbd5e1", fontSize: "13px", outline: "none" }}
                             />
                           </div>
-
-                          <div>
-                            <label style={{ display: "block", fontSize: "11px", fontWeight: 700, marginBottom: "6px", color: "#334155" }}>
-                              Institute / University <span style={{ color: "#dc2626" }}>*</span>
-                            </label>
-                            <select
-                              value={q.instituteUniversity}
-                              onChange={(e) => handleQualificationChange(q.id, "instituteUniversity", e.target.value)}
-                              style={{ width: "100%", padding: "8px 10px", borderRadius: "6px", border: "1px solid #cbd5e1", fontSize: "12px", outline: "none", color: "#334155" }}
-                            >
-                              <option value="">Enter Institute / School / University</option>
-                              <option value="Pune University">Pune University</option>
-                              <option value="Mumbai University">Mumbai University</option>
-                              <option value="Delhi University">Delhi University</option>
-                            </select>
-                          </div>
-
-                          <div>
-                            <label style={{ display: "block", fontSize: "11px", fontWeight: 700, marginBottom: "6px", color: "#334155" }}>
-                              Board / University <span style={{ color: "#dc2626" }}>*</span>
-                            </label>
-                            <select
-                              value={q.boardUniversity}
-                              onChange={(e) => handleQualificationChange(q.id, "boardUniversity", e.target.value)}
-                              style={{ width: "100%", padding: "8px 10px", borderRadius: "6px", border: "1px solid #cbd5e1", fontSize: "12px", outline: "none", color: "#334155" }}
-                            >
-                              <option value="">Select Board / University</option>
-                              <option value="CBSE">CBSE</option>
-                              <option value="ICSE">ICSE</option>
-                              <option value="State Board">State Board</option>
-                            </select>
-                          </div>
                         </div>
+                      </div>
 
-                        {/* Row 2: Radio & Numbers */}
-                        <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "12px", marginBottom: "20px" }}>
-                          <div>
-                            <label style={{ display: "block", fontSize: "11px", fontWeight: 700, marginBottom: "8px", color: "#334155" }}>
-                              National / International <span style={{ color: "#dc2626" }}>*</span>
-                            </label>
-                            <div style={{ display: "flex", gap: "16px", alignItems: "center", paddingTop: "4px" }}>
-                              <label style={{ fontSize: "12px", fontWeight: 600, cursor: "pointer", display: "flex", alignItems: "center", gap: "6px" }}>
-                                <input
-                                  type="radio"
-                                  name={`studyType-${q.id}`}
-                                  value="National"
-                                  checked={q.studyType === "National"}
-                                  onChange={(e) => handleQualificationChange(q.id, "studyType", e.target.value)}
-                                  style={{ accentColor: "#2563eb" }}
-                                />
-                                National
-                              </label>
-                              <label style={{ fontSize: "12px", fontWeight: 600, cursor: "pointer", display: "flex", alignItems: "center", gap: "6px" }}>
-                                <input
-                                  type="radio"
-                                  name={`studyType-${q.id}`}
-                                  value="International"
-                                  checked={q.studyType === "International"}
-                                  onChange={(e) => handleQualificationChange(q.id, "studyType", e.target.value)}
-                                  style={{ accentColor: "#2563eb" }}
-                                />
-                                International
-                              </label>
-                            </div>
-                          </div>
+                      {/* Row 3: Upload Documents */}
+                      <div>
+                        <label style={{ display: "block", fontSize: "12px", fontWeight: 700, marginBottom: "12px", color: "#1e293b" }}>
+                          Upload Documents <span style={{ color: "#dc2626" }}>*</span>
+                        </label>
 
-                          <div>
-                            <label style={{ display: "block", fontSize: "11px", fontWeight: 700, marginBottom: "6px", color: "#334155" }}>
-                              Mode of Study <span style={{ color: "#dc2626" }}>*</span>
-                            </label>
-                            <select
-                              value={q.modeOfStudy}
-                              onChange={(e) => handleQualificationChange(q.id, "modeOfStudy", e.target.value)}
-                              style={{ width: "100%", padding: "8px 10px", borderRadius: "6px", border: "1px solid #cbd5e1", fontSize: "12px", outline: "none", color: "#334155" }}
-                            >
-                              <option value="">Select Mode of Study</option>
-                              <option value="Full Time">Full Time</option>
-                              <option value="Part Time">Part Time</option>
-                              <option value="Distance">Distance / Online</option>
-                            </select>
-                          </div>
-
-                          <div>
-                            <label style={{ display: "block", fontSize: "11px", fontWeight: 700, marginBottom: "6px", color: "#334155" }}>
-                              Year of Passing <span style={{ color: "#dc2626" }}>*</span>
-                            </label>
-                            <div style={{ position: "relative" }}>
-                              <select
-                                value={q.yearOfPassing}
-                                onChange={(e) => handleQualificationChange(q.id, "yearOfPassing", e.target.value)}
-                                style={{ width: "100%", padding: "8px 10px", borderRadius: "6px", border: "1px solid #cbd5e1", fontSize: "12px", outline: "none", color: "#334155" }}
-                              >
-                                <option value="">Select Year</option>
-                                {Array.from({ length: 30 }, (_, i) => 2026 - i).map((yr) => (
-                                  <option key={yr} value={yr}>
-                                    {yr}
-                                  </option>
-                                ))}
-                              </select>
-                              <span style={{ position: "absolute", right: "10px", top: "8px", fontSize: "12px", color: "#94a3b8", pointerEvents: "none" }}>📅</span>
-                            </div>
-                          </div>
-
-                          <div>
-                            <label style={{ display: "block", fontSize: "11px", fontWeight: 700, marginBottom: "6px", color: "#334155" }}>
-                              Education Charges (INR) <span style={{ color: "#dc2626" }}>*</span>
-                            </label>
-                            <div style={{ position: "relative" }}>
-                              <span style={{ position: "absolute", left: "10px", top: "8px", fontSize: "12px", color: "#64748b" }}>₹</span>
-                              <input
-                                type="text"
-                                placeholder="Enter Amount"
-                                value={q.educationCharges}
-                                onChange={(e) => handleQualificationChange(q.id, "educationCharges", e.target.value)}
-                                style={{ width: "100%", padding: "8px 10px 8px 24px", borderRadius: "6px", border: "1px solid #cbd5e1", fontSize: "12px", outline: "none" }}
-                              />
-                            </div>
-                          </div>
-                        </div>
-
-                        {/* Document Upload Section */}
-                        <div>
-                          <label style={{ display: "block", fontSize: "11px", fontWeight: 700, marginBottom: "8px", color: "#334155" }}>
-                            Upload Documents <span style={{ color: "#dc2626" }}>*</span>
-                          </label>
-
-                          <div style={{ display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: "12px" }}>
-                            {[
-                              { label: "Marksheet(s)", req: true, note: null },
-                              { label: "Passing Certificate", req: true, note: null },
-                              { label: "Degree Certificate", req: false, note: "(if applicable)" },
-                              { label: "Other Document", req: false, note: "(if any)" },
-                            ].map((doc, idx) => (
-                              <div
-                                key={idx}
-                                style={{
-                                  border: "1px dashed #cbd5e1",
-                                  borderRadius: "6px",
-                                  padding: "16px 12px",
-                                  textAlign: "center",
-                                  background: "#f8fafc",
-                                  display: "flex",
-                                  flexDirection: "column",
-                                  alignItems: "center",
-                                  justify: "center",
-                                }}
-                              >
-                                <span style={{ fontSize: "11px", fontWeight: 700, color: "#1e293b", marginBottom: "8px", display: "flex", alignItems: "center", gap: "3px" }}>
-                                  {doc.label}
-                                  {doc.req && <span style={{ color: "#dc2626" }}>*</span>}
-                                  <span style={{ color: "#94a3b8", fontSize: "10px" }}>ⓘ</span>
-                                </span>
-
-                                <label style={{ cursor: "pointer", display: "inline-block", marginBottom: "6px" }}>
-                                  <div style={{ display: "flex", alignItems: "center", gap: "4px", color: "#2563eb", fontSize: "12px", fontWeight: 600 }}>
-                                    <span>☁</span> Upload
-                                  </div>
-                                  <span style={{ fontSize: "10px", color: "#64748b", display: "block" }}>or drag & drop</span>
-                                  <input type="file" style={{ display: "none" }} />
-                                </label>
-
-                                <span style={{ fontSize: "9px", color: "#94a3b8", marginTop: "4px" }}>Supported: PDF, JPG, PNG</span>
-                              </div>
-                            ))}
-
-                            {/* Allowed Files Info Card */}
+                        <div style={{ display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: "16px" }}>
+                          {[
+                            { label: "Marksheet(s)", req: true, note: null },
+                            { label: "Passing Certificate", req: true, note: null },
+                            { label: "Degree Certificate", req: false, note: "(if applicable)" },
+                            { label: "Other Document", req: false, note: "(if any)" },
+                          ].map((doc, idx) => (
                             <div
+                              key={idx}
                               style={{
-                                border: "1px solid #e2e8f0",
-                                borderRadius: "6px",
-                                padding: "16px 12px",
-                                background: "#f8fafc",
+                                border: "1px solid #f1f5f9",
+                                borderRadius: "8px",
+                                padding: "16px",
+                                background: "#fafafa",
                                 display: "flex",
                                 flexDirection: "column",
                                 alignItems: "center",
                                 justifyContent: "center",
-                                textAlign: "center",
                               }}
                             >
-                              <div style={{ fontSize: "20px", marginBottom: "4px", color: "#2563eb" }}>📑</div>
-                              <span style={{ fontSize: "11px", fontWeight: 700, color: "#1e293b" }}>Allowed file types</span>
-                              <span style={{ fontSize: "10px", color: "#64748b", fontWeight: 600, marginTop: "2px" }}>PDF, JPG, PNG</span>
-                              <div style={{ borderTop: "1px solid #e2e8f0", width: "100%", margin: "8px 0" }}></div>
-                              <span style={{ fontSize: "10px", color: "#64748b" }}>No file size restriction</span>
+                              <span style={{ fontSize: "12px", fontWeight: 600, color: "#1e293b", marginBottom: "12px", display: "flex", alignItems: "center", gap: "4px" }}>
+                                {doc.label} {doc.req && <span style={{ color: "#dc2626" }}>*</span>} {doc.note && <span style={{ fontSize: "11px", color: "#64748b", fontWeight: 400 }}>{doc.note}</span>}{" "}
+                                <span style={{ color: "#94a3b8", fontSize: "12px" }}>ⓘ</span>
+                              </span>
+
+                              <div style={{ border: "1px dashed #cbd5e1", borderRadius: "6px", width: "100%", padding: "16px 8px", textAlign: "center", background: "#fff" }}>
+                                <label style={{ cursor: "pointer", display: "block" }}>
+                                  <div style={{ color: "#2563eb", fontSize: "13px", fontWeight: 600, marginBottom: "2px" }}>☁ Upload</div>
+                                  <span style={{ fontSize: "11px", color: "#64748b", display: "block" }}>or drag & drop</span>
+                                  <input type="file" style={{ display: "none" }} />
+                                </label>
+                              </div>
+
+                              <span style={{ fontSize: "10px", color: "#94a3b8", marginTop: "8px" }}>Supported: PDF, JPG, PNG</span>
                             </div>
+                          ))}
+
+                          {/* File Format Card */}
+                          <div
+                            style={{
+                              border: "1px solid #f1f5f9",
+                              borderRadius: "8px",
+                              padding: "16px",
+                              background: "#f8fafc",
+                              display: "flex",
+                              flexDirection: "column",
+                              alignItems: "center",
+                              justify: "center",
+                              textAlign: "center",
+                            }}
+                          >
+                            <div style={{ background: "#eff6ff", width: "36px", height: "36px", borderRadius: "8px", display: "flex", alignItems: "center", justifyContent: "center", color: "#2563eb", marginBottom: "8px" }}>
+                              📄
+                            </div>
+                            <span style={{ fontSize: "12px", fontWeight: 600, color: "#1e293b" }}>Allowed file types</span>
+                            <span style={{ fontSize: "11px", fontWeight: 700, color: "#475569", marginTop: "2px" }}>PDF, JPG, PNG</span>
+                            <div style={{ borderTop: "1px solid #e2e8f0", width: "80%", margin: "10px 0" }}></div>
+                            <span style={{ fontSize: "11px", color: "#64748b" }}>No file size restriction</span>
                           </div>
                         </div>
                       </div>
-                    )}
-                  </div>
-                ))}
-              </div>
-
-              {/* Form Action Controls */}
-              <div style={{ display: "flex", justifyContent: "flex-end", gap: "12px", marginTop: "20px" }}>
-                <button
-                  onClick={() => setActiveTab("allocation")}
-                  style={{ padding: "9px 24px", borderRadius: "6px", border: "1px solid #cbd5e1", background: "#fff", fontWeight: 600, cursor: "pointer", fontSize: "13px", color: "#334155" }}
-                >
-                  Cancel
-                </button>
-                <button
-                  onClick={() => alert("Saved as Draft")}
-                  style={{ padding: "9px 24px", borderRadius: "6px", border: "1px solid #cbd5e1", background: "#fff", fontWeight: 600, cursor: "pointer", fontSize: "13px", color: "#334155" }}
-                >
-                  Save as Draft
-                </button>
-                <button
-                  onClick={() => alert("Sent for Verification")}
-                  style={{ padding: "9px 24px", borderRadius: "6px", border: "none", background: "#2563eb", color: "#fff", fontWeight: 600, cursor: "pointer", fontSize: "13px", display: "flex", alignItems: "center", gap: "6px" }}
-                >
-                  <span>🚀</span> Save & Send for Verification
-                </button>
-              </div>
+                    </div>
+                  )}
+                </div>
+              ))}
             </div>
-          )}
+
+            {/* Bottom Form Actions */}
+            <div style={{ display: "flex", justifyContent: "flex-end", gap: "12px" }}>
+              <button style={{ padding: "9px 24px", borderRadius: "6px", border: "1px solid #cbd5e1", background: "#fff", color: "#334155", fontWeight: 600, cursor: "pointer", fontSize: "13px" }}>Cancel</button>
+              <button style={{ padding: "9px 24px", borderRadius: "6px", border: "1px solid #cbd5e1", background: "#fff", color: "#334155", fontWeight: 600, cursor: "pointer", fontSize: "13px" }}>Save as Draft</button>
+              <button style={{ padding: "9px 24px", borderRadius: "6px", border: "none", background: "#2563eb", color: "#fff", fontWeight: 600, cursor: "pointer", fontSize: "13px", display: "flex", alignItems: "center", gap: "6px" }}>
+                <span>✈</span> Save & Send for Verification
+              </button>
+            </div>
+          </div>
         </main>
       </div>
     </div>
