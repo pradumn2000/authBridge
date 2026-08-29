@@ -981,7 +981,7 @@ const CHECK_TYPE_SUBMENU = [
   { path: "/CriminalCheck", label: "Criminal" },
   { path: "/DrugtestCheck", label: "Drug Test" },
   { path: "/CourtroomCheck", label: "Courtroom" },
-  { path: "/AddCheckType/New", label: "Add NewProduct" },
+  { path: "/AddCheckType/New", label: "Add New Product" },
 ];
 
 // Client Management Submenu
