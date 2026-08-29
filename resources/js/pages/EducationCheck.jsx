@@ -401,7 +401,7 @@ export default function EducationVerification() {
         <Sidebar />
       </div>
 
-      <div id="content" style={{ flex: 1 }}>
+      <div id="content">
         <nav>
           <Header />
         </nav>
@@ -409,7 +409,7 @@ export default function EducationVerification() {
         <main style={{ padding: "24px" }}>
           <div style={{ background: "#fff", borderRadius: "10px", border: "1px solid #e2e8f0", padding: "24px" }}>
             {/* Header Section with Icon and + Add Qualification Button */}
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "24px" }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "24px", width:"100%" }}>
               <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
                 <div style={{ background: "#eff6ff", width: "40px", height: "40px", borderRadius: "8px", display: "flex", alignItems: "center", justifyContent: "center", color: "#2563eb", fontSize: "20px" }}>
                   📖
