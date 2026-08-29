@@ -1013,7 +1013,8 @@ export default function EmploymentCheck() {
                             <input type="date" style={{ width: "100%", padding: "8px 12px", borderRadius: "6px", border: "1px solid #cbd5e1" }} />
                           </div>
                           <div>
-                            <label style={{ display: "block", fontSize: "12px", fontWeight 700, marginBottom: "6px" }}>DATE OF EXIT (DOE) *</label>
+                            // ✅ Sahi Code
+<label style={{ display: "block", fontSize: "12px", fontWeight: 700, marginBottom: "6px" }}>DATE OF EXIT (DOE) *</label>
                             <input type="date" style={{ width: "100%", padding: "8px 12px", borderRadius: "6px", border: "1px solid #cbd5e1" }} />
                           </div>
                         </div>
