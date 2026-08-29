@@ -844,7 +844,7 @@ export default function EmploymentCheck() {
                   </div>
                   <div style={{ background: "#fff", padding: "16px", borderRadius: "8px", border: "1px solid #e2e8f0" }}>
                     <span style={{ fontSize: "12px", color: "#64748b", fontWeight: 600 }}>Completed (This Month)</span>
-                    <h2 style={{ fontSize: "22px", margin: "4px 0", fontWeight 800, color: "#16a34a" }}>1,035</h2>
+                    <h2 style={{ fontSize: "22px", margin: "4px 0", fontWeight: 800, color: "#16a34a" }}>1,035</h2>
                     <span style={{ fontSize: "11px", color: "#94a3b8" }}>This month</span>
                   </div>
                 </div>
