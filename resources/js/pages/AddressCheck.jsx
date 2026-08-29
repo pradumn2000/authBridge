@@ -149,7 +149,7 @@ export default function AddressVerification() {
       <Sidebar />
 
       {/* 2. Main Content Container */}
-      <div style={{ flex: 1, display: "flex", flexDirection: "column", minWidth: 0 }}>
+      <div style={{ display: "flex", flexDirection: "column", minWidth: 0,width: "calc(100% - 270px)",   position: "relative",     left: "270px",}}>
         {/* Fixed Top Header (Standard Component) */}
         <Header />
 
