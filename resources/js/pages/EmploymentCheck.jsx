@@ -659,6 +659,14 @@ export default function EmploymentCheck() {
   const [activeTab, setActiveTab] = useState("allocation");
   const [openEmployer, setOpenEmployer] = useState(1); // Track active accordion tab
 
+  // Pagination States for Table 1 (Company Allocation)
+  const [table1Page, setTable1Page] = useState(1);
+  const [table1RowsPerPage, setTable1RowsPerPage] = useState(5);
+
+  // Pagination States for Table 2 (Recent Cases)
+  const [table2Page, setTable2Page] = useState(1);
+  const [table2RowsPerPage, setTable2RowsPerPage] = useState(5);
+
   // Form State for Employment Cases Tab
   const [formData, setFormData] = useState({
     candidateName: "",
@@ -673,6 +681,123 @@ export default function EmploymentCheck() {
     e.preventDefault();
     console.log("Saved Case Data:", formData);
     alert("Employment Case Saved Successfully!");
+  };
+
+  // Reusable Pagination Component
+  const renderPagination = (currentPage, totalItems, itemsPerPage, onPageChange, onRowsChange) => {
+    const totalPages = Math.ceil(totalItems / itemsPerPage);
+    const startItem = (currentPage - 1) * itemsPerPage + 1;
+    const endItem = Math.min(currentPage * itemsPerPage, totalItems);
+
+    return (
+      <div
+        style={{
+          display: "flex",
+          justify: "space-between",
+          alignItems: "center",
+          marginTop: "16px",
+          paddingTop: "12px",
+          borderTop: "1px solid #f1f5f9",
+          fontSize: "12px",
+          color: "#64748b"
+        }}
+      >
+        {/* Left Side: Showing items count */}
+        <div>
+          Showing <span style={{ fontWeight: 600, color: "#1e293b" }}>{startItem}</span> to{" "}
+          <span style={{ fontWeight: 600, color: "#1e293b" }}>{endItem}</span> of{" "}
+          <span style={{ fontWeight: 600, color: "#1e293b" }}>{totalItems}</span> entries
+        </div>
+
+        {/* Center: Page Navigation Buttons */}
+        <div style={{ display: "flex", alignItems: "center", gap: "4px" }}>
+          <button
+            onClick={() => onPageChange(Math.max(1, currentPage - 1))}
+            disabled={currentPage === 1}
+            style={{
+              padding: "4px 8px",
+              borderRadius: "4px",
+              border: "1px solid #cbd5e1",
+              background: "#fff",
+              cursor: currentPage === 1 ? "not-allowed" : "pointer",
+              opacity: currentPage === 1 ? 0.5 : 1
+            }}
+          >
+            ‹
+          </button>
+
+          {[1, 2, 3, 4, 5].map((pageNum) => (
+            <button
+              key={pageNum}
+              onClick={() => onPageChange(pageNum)}
+              style={{
+                padding: "4px 10px",
+                borderRadius: "4px",
+                border: pageNum === currentPage ? "none" : "1px solid #cbd5e1",
+                background: pageNum === currentPage ? "#2563eb" : "#fff",
+                color: pageNum === currentPage ? "#fff" : "#1e293b",
+                fontWeight: pageNum === currentPage ? 700 : 500,
+                cursor: "pointer"
+              }}
+            >
+              {pageNum}
+            </button>
+          ))}
+
+          <span style={{ padding: "0 4px", color: "#94a3b8" }}>...</span>
+
+          <button
+            onClick={() => onPageChange(10)}
+            style={{
+              padding: "4px 10px",
+              borderRadius: "4px",
+              border: 10 === currentPage ? "none" : "1px solid #cbd5e1",
+              background: 10 === currentPage ? "#2563eb" : "#fff",
+              color: 10 === currentPage ? "#fff" : "#1e293b",
+              cursor: "pointer"
+            }}
+          >
+            10
+          </button>
+
+          <button
+            onClick={() => onPageChange(Math.min(totalPages, currentPage + 1))}
+            disabled={currentPage === totalPages}
+            style={{
+              padding: "4px 8px",
+              borderRadius: "4px",
+              border: "1px solid #cbd5e1",
+              background: "#fff",
+              cursor: currentPage === totalPages ? "not-allowed" : "pointer",
+              opacity: currentPage === totalPages ? 0.5 : 1
+            }}
+          >
+            ›
+          </button>
+        </div>
+
+        {/* Right Side: Rows per page selector */}
+        <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+          <select
+            value={itemsPerPage}
+            onChange={(e) => onRowsChange(Number(e.target.value))}
+            style={{
+              padding: "4px 8px",
+              borderRadius: "4px",
+              border: "1px solid #cbd5e1",
+              background: "#fff",
+              fontSize: "12px",
+              cursor: "pointer"
+            }}
+          >
+            <option value={5}>5 / page</option>
+            <option value={10}>10 / page</option>
+            <option value={20}>20 / page</option>
+            <option value={50}>50 / page</option>
+          </select>
+        </div>
+      </div>
+    );
   };
 
   // Common Accordion Form Body Component
@@ -855,7 +980,7 @@ export default function EmploymentCheck() {
                   </div>
                 </div>
 
-                {/* Table & Verifier Selection */}
+                {/* Table 1 & Verifier Selection Section */}
                 <div style={{ display: "flex", gap: "20px", marginBottom: "24px", alignItems: "flex-start" }}>
                   <div style={{ flex: 1, background: "#fff", borderRadius: "8px", border: "1px solid #e2e8f0", padding: "18px" }}>
                     <h3 style={{ fontSize: "16px", fontWeight: 700, marginBottom: "14px", color: "#1e293b" }}>Company-wise Case Allocation</h3>
@@ -877,12 +1002,14 @@ export default function EmploymentCheck() {
                         </thead>
                         <tbody>
                           {[
-                            { id: 1, client: "ABC Corp", company: "ABC Technologies Pvt. Ltd.", newCases: 24, pending: 8, progress: 6, done: 10, verifiers: "Amit Kumar, Neha Patel" },
+                            { id: 1, client: "ABC Corp", company: "ABC Technologies Pvt. Ltd.", newCases: 24, pending: 8, progress: 6, done: 10, verifiers: "Amit Kumar, Neha Patel, Rahul Verma" },
                             { id: 2, client: "XYZ Solutions", company: "XYZ Infotech Ltd.", newCases: 18, pending: 5, progress: 7, done: 6, verifiers: "Neha Patel, Rahul Verma" },
-                            { id: 3, client: "Infosys Limited", company: "Infosys Ltd.", newCases: 31, pending: 12, progress: 8, done: 11, verifiers: "Amit Kumar, Priya Singh" }
+                            { id: 3, client: "Infosys Limited", company: "Infosys Ltd.", newCases: 31, pending: 12, progress: 8, done: 11, verifiers: "Amit Kumar, Priya Singh" },
+                            { id: 4, client: "Tata Group", company: "Tata Consultancy Services", newCases: 27, pending: 9, progress: 10, done: 8, verifiers: "Rahul Verma, Smita Joshi, Amit Kumar" },
+                            { id: 5, client: "Wipro Enterprises", company: "Wipro Ltd.", newCases: 15, pending: 4, progress: 5, done: 6, verifiers: "Amit Kumar, Neha Patel" }
                           ].map((row) => (
                             <tr key={row.id} style={{ borderBottom: "1px solid #f1f5f9" }}>
-                              <td style={{ padding: "10px" }}><input type="checkbox" /></td>
+                              <td style={{ padding: "10px" }}><input type="checkbox" defaultChecked={row.id <= 2} /></td>
                               <td style={{ padding: "10px" }}>{row.id}</td>
                               <td style={{ padding: "10px", fontWeight: 600 }}>{row.client}</td>
                               <td style={{ padding: "10px" }}>{row.company}</td>
@@ -901,6 +1028,9 @@ export default function EmploymentCheck() {
                         </tbody>
                       </table>
                     </div>
+
+                    {/* Pagination for Table 1 */}
+                    {renderPagination(table1Page, 50, table1RowsPerPage, setTable1Page, setTable1RowsPerPage)}
                   </div>
 
                   {/* Select Verifier Panel */}
@@ -949,8 +1079,10 @@ export default function EmploymentCheck() {
                           <th style={{ padding: "10px" }}>Case ID</th>
                           <th style={{ padding: "10px" }}>Candidate Name</th>
                           <th style={{ padding: "10px" }}>Client Name</th>
+                          <th style={{ padding: "10px" }}>Company Name</th>
                           <th style={{ padding: "10px" }}>HR Email ID</th>
-                          <th style={{ padding: "10px" }}>Verifier</th>
+                          <th style={{ padding: "10px" }}>HR Phone Number</th>
+                          <th style={{ padding: "10px" }}>Verifier (Name)</th>
                           <th style={{ padding: "10px" }}>SLA</th>
                           <th style={{ padding: "10px" }}>Status</th>
                           <th style={{ padding: "10px" }}>Action</th>
@@ -958,16 +1090,20 @@ export default function EmploymentCheck() {
                       </thead>
                       <tbody>
                         {[
-                          { id: "EMP-10245", candidate: "Rahul Sharma", client: "ABC Corp", hr: "hr@abctech.com", verifier: "Amit Kumar", sla: "3 Days", status: "In Progress", statusBg: "#fef3c7", statusColor: "#d97706" },
-                          { id: "EMP-10246", candidate: "Priya Singh", client: "XYZ Solutions", hr: "hr@xyz.com", verifier: "Neha Patel", sla: "3 Days", status: "Assigned", statusBg: "#dbeafe", statusColor: "#2563eb" },
-                          { id: "EMP-10247", candidate: "Arjun Mehta", client: "Infosys Limited", hr: "hr@infosys.com", verifier: "Unassigned", sla: "5 Days", status: "Unassigned", statusBg: "#fee2e2", statusColor: "#dc2626" }
+                          { id: "EMP-10245", candidate: "Rahul Sharma", client: "ABC Corp", company: "ABC Technologies Pvt. Ltd.", hr: "hr@abctech.com", phone: "+91 98765 43210", verifier: "Amit Kumar", sla: "3 Days", status: "In Progress", statusBg: "#fef3c7", statusColor: "#d97706" },
+                          { id: "EMP-10246", candidate: "Priya Singh", client: "XYZ Solutions", company: "XYZ Infotech Ltd.", hr: "hr@xyz.com", phone: "+91 91234 56789", verifier: "Neha Patel", sla: "3 Days", status: "Assigned", statusBg: "#dbeafe", statusColor: "#2563eb" },
+                          { id: "EMP-10247", candidate: "Arjun Mehta", client: "Infosys Limited", company: "Infosys Ltd.", hr: "hr@infosys.com", phone: "+91 98450 67890", verifier: "Unassigned", sla: "5 Days", status: "Unassigned", statusBg: "#fee2e2", statusColor: "#dc2626" },
+                          { id: "EMP-10248", candidate: "Sneha Joshi", client: "Tata Group", company: "Tata Consultancy Services", hr: "hr@tcs.com", phone: "+91 88765 12345", verifier: "Rahul Verma", sla: "3 Days", status: "In Progress", statusBg: "#fef3c7", statusColor: "#d97706" },
+                          { id: "EMP-10249", candidate: "Karan Verma", client: "Wipro Enterprises", company: "Wipro Ltd.", hr: "hr@wipro.com", phone: "+91 99087 66554", verifier: "Amit Kumar", sla: "5 Days", status: "Awaiting Response", statusBg: "#f3e8ff", statusColor: "#7e22ce" }
                         ].map((row) => (
                           <tr key={row.id} style={{ borderBottom: "1px solid #f1f5f9" }}>
-                            <td style={{ padding: "10px" }}><input type="checkbox" /></td>
+                            <td style={{ padding: "10px" }}><input type="checkbox" defaultChecked={row.id === "EMP-10245" || row.id === "EMP-10246"} /></td>
                             <td style={{ padding: "10px", color: "#2563eb", fontWeight: 700 }}>{row.id}</td>
                             <td style={{ padding: "10px", fontWeight: 600 }}>{row.candidate}</td>
                             <td style={{ padding: "10px" }}>{row.client}</td>
+                            <td style={{ padding: "10px" }}>{row.company}</td>
                             <td style={{ padding: "10px", color: "#64748b" }}>{row.hr}</td>
+                            <td style={{ padding: "10px", color: "#64748b" }}>{row.phone}</td>
                             <td style={{ padding: "10px" }}>{row.verifier}</td>
                             <td style={{ padding: "10px" }}>{row.sla}</td>
                             <td style={{ padding: "10px" }}>
@@ -983,11 +1119,14 @@ export default function EmploymentCheck() {
                       </tbody>
                     </table>
                   </div>
+
+                  {/* Pagination for Table 2 */}
+                  {renderPagination(table2Page, 25, table2RowsPerPage, setTable2Page, setTable2RowsPerPage)}
                 </div>
               </div>
             )}
 
-            {/* TAB 2: EMPLOYMENT CASES (FORM WITH REACT ACCORDION) */}
+            {/* TAB 2: EMPLOYMENT CASES (ACCORDION FORM) */}
             {activeTab === "employment" && (
               <div style={{ background: "#fff", borderRadius: "10px", border: "1px solid #e2e8f0", padding: "24px" }}>
                 
@@ -1043,7 +1182,7 @@ export default function EmploymentCheck() {
                   </div>
                 </div>
 
-                {/* Employers Pure React Accordion */}
+                {/* Employers Accordion */}
                 <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
                   {[1, 2, 3, 4].map((num) => {
                     const isOpen = openEmployer === num;
