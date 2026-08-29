@@ -458,7 +458,7 @@ export default function EducationVerification() {
       </div>
 
       {/* 2. Main Content Wrapper */}
-      <div id="content" style={{ flex: 1, backgroundColor: "#f8fafc" }}>
+      <div id="content">
         {/* Navbar Header */}
         <nav>
           <Header />
