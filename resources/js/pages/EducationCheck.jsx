@@ -805,7 +805,7 @@ export default function EducationVerification() {
                             />
                           </div>
                           <div>
-                            <label style={{ display: "block", fontSize: "11px", fontWeight 700, marginBottom: "6px", color: "#374151" }}>EDUCATION CHARGES (INR)</label>
+                            <label style={{ display: "block", fontSize: "11px", fontWeight: 700, marginBottom: "6px", color: "#374151" }}>EDUCATION CHARGES (INR)</label>
                             <input
                               type="text"
                               placeholder="₹ Amount"
