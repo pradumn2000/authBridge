@@ -583,26 +583,38 @@ export default function EducationVerification() {
                 </div>
 
                 {/* Verifier Selection Side Modal Box */}
-                <div style={{ width: "270px", background: "#fff", borderRadius: "8px", border: "1px solid #e2e8f0", padding: "16px" }}>
-                  <h3 style={{ fontSize: "15px", fontWeight: 700, marginBottom: "12px", color: "#0f172a" }}>Select Verifier</h3>
-                  <input type="text" placeholder="🔍 Search verifier..." style={{ width: "100%", padding: "8px 12px", borderRadius: "6px", border: "1px solid #cbd5e1", outline: "none", marginBottom: "14px", fontSize: "12px" }} />
-                  {[
-                    { name: "Amit Kumar", role: "Education Verifier", cases: 12, checked: true },
-                    { name: "Neha Patel", role: "Education Verifier", cases: 8, checked: false },
-                  ].map((v, i) => (
-                    <div key={i} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "10px", borderRadius: "6px", border: "1px solid #f1f5f9", background: "#f8fafc", marginBottom: "10px" }}>
-                      <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-                        <input type="radio" name="verifier" defaultChecked={v.checked} />
-                        <div>
-                          <p style={{ margin: 0, fontWeight: 700, fontSize: "12px" }}>{v.name}</p>
-                          <span style={{ fontSize: "10px", color: "#64748b" }}>{v.role}</span>
+                <div style={{ width: "320px", background: "#fff", borderRadius: "8px", border: "1px solid #e2e8f0", padding: "18px" }}>
+                    <h3 style={{ fontSize: "16px", fontWeight: 700, marginBottom: "14px", color: "#0f172a" }}>Select Verifier</h3>
+                    <input type="text" placeholder="🔍 Search verifier..." style={{ width: "100%", padding: "9px 12px", borderRadius: "6px", border: "1px solid #cbd5e1", outline: "none", marginBottom: "16px", fontSize: "13px" }} />
+                    <div style={{ display: "flex", flexDirection: "column", gap: "12px", marginBottom: "20px" }}>
+                      {[
+                        { name: "Amit Kumar", title: "Employment Verifier", cases: 12, checked: true },
+                        { name: "Neha Patel", title: "Employment Verifier", cases: 8, checked: true },
+                        { name: "Rahul Verma", title: "Employment Verifier", cases: 15, checked: false },
+                      ].map((verifier, idx) => (
+                        <div key={idx} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "10px 12px", borderRadius: "8px", border: "1px solid #f1f5f9", background: "#f8fafc" }}>
+                          <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                            <input type="checkbox" defaultChecked={verifier.checked} style={{ cursor: "pointer" }} />
+                            <div style={{ width: "32px", height: "32px", borderRadius: "50%", background: "#cbd5e1", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 700, fontSize: "12px", color: "#334155" }}>
+                              {verifier.name.charAt(0)}
+                            </div>
+                            <div>
+                              <p style={{ margin: 0, fontWeight: 700, fontSize: "13px", color: "#1e293b" }}>{verifier.name}</p>
+                              <span style={{ fontSize: "11px", color: "#64748b" }}>{verifier.title}</span>
+                            </div>
+                          </div>
+                          <div style={{ textAlign: "right" }}>
+                            <span style={{ fontSize: "13px", fontWeight: 800, color: "#2563eb", display: "block" }}>{verifier.cases}</span>
+                            <span style={{ fontSize: "10px", color: "#2563eb", fontWeight: 600 }}>Active Cases</span>
+                          </div>
                         </div>
-                      </div>
-                      <span style={{ fontSize: "12px", fontWeight: 800, color: "#2563eb" }}>{v.cases}</span>
+                      ))}
                     </div>
-                  ))}
-                  <button style={{ width: "100%", padding: "8px", borderRadius: "6px", border: "none", background: "#2563eb", color: "#fff", fontWeight: 600, cursor: "pointer", fontSize: "12px", marginTop: "10px" }}>Allocate Cases</button>
-                </div>
+                    <div style={{ display: "flex", gap: "10px" }}>
+                      <button style={{ flex: 1, padding: "9px", borderRadius: "6px", border: "1px solid #cbd5e1", background: "#fff", fontWeight: 600, cursor: "pointer", fontSize: "13px" }}>Cancel</button>
+                      <button style={{ flex: 1, padding: "9px", borderRadius: "6px", border: "none", background: "#2563eb", color: "#fff", fontWeight: 600, cursor: "pointer", fontSize: "13px" }}>Allocate Cases</button>
+                    </div>
+                  </div>
               </div>
 
               {/* Unassigned Cases Table */}
