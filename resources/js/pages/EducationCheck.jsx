@@ -354,10 +354,11 @@ export default function EducationVerification() {
     emailAddress: "",
   });
 
-  // Qualification Dynamic Accordions State
+  // Qualification Dynamic Accordions State with all image UI fields
   const [qualifications, setQualifications] = useState([
     {
       id: 1,
+      isOpen: true,
       qualificationType: "",
       courseStream: "",
       specialization: "",
@@ -380,11 +381,19 @@ export default function EducationVerification() {
     );
   };
 
+  // Accordion Toggle Handler
+  const toggleAccordion = (id) => {
+    setQualifications((prev) =>
+      prev.map((q) => (q.id === id ? { ...q, isOpen: !q.isOpen } : q))
+    );
+  };
+
   const addQualification = () => {
     setQualifications((prev) => [
-      ...prev,
+      ...prev.map((q) => ({ ...q, isOpen: false })),
       {
-        id: prev.length + 1,
+        id: Date.now(),
+        isOpen: true,
         qualificationType: "",
         courseStream: "",
         specialization: "",
@@ -398,7 +407,8 @@ export default function EducationVerification() {
     ]);
   };
 
-  const removeQualification = (id) => {
+  const removeQualification = (id, e) => {
+    e.stopPropagation();
     if (qualifications.length === 1) return;
     setQualifications((prev) => prev.filter((q) => q.id !== id));
   };
@@ -442,20 +452,20 @@ export default function EducationVerification() {
 
   return (
     <div style={{ display: "flex", minHeight: "100vh" }}>
-      {/* 1. Sidebar Wrapper with #sidebar */}
+      {/* 1. Sidebar Wrapper */}
       <div id="sidebar">
         <Sidebar />
       </div>
 
-      {/* 2. Main Content Wrapper with #content */}
-      <div id="content">
+      {/* 2. Main Content Wrapper */}
+      <div id="content" style={{ flex: 1, backgroundColor: "#f8fafc" }}>
         {/* Navbar Header */}
         <nav>
           <Header />
         </nav>
 
-        {/* 3. Main Body Container with main tag */}
-        <main>
+        {/* 3. Main Body Container */}
+        <main style={{ padding: "24px" }}>
           {/* Top Bar Search & Conditional Button */}
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px" }}>
             <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
@@ -470,7 +480,7 @@ export default function EducationVerification() {
               <button style={{ background: "#fff", border: "1px solid #cbd5e1", borderRadius: "6px", padding: "8px 12px", cursor: "pointer" }}>🌪️ Filter</button>
             </div>
 
-            {/* CONDITIONAL BUTTON: Hide hone ke liye check logic */}
+            {/* CONDITIONAL BUTTON */}
             {activeTab === "allocation" && (
               <button
                 onClick={() => setActiveTab("education")}
@@ -584,37 +594,37 @@ export default function EducationVerification() {
 
                 {/* Verifier Selection Side Modal Box */}
                 <div style={{ width: "320px", background: "#fff", borderRadius: "8px", border: "1px solid #e2e8f0", padding: "18px" }}>
-                    <h3 style={{ fontSize: "16px", fontWeight: 700, marginBottom: "14px", color: "#0f172a" }}>Select Verifier</h3>
-                    <input type="text" placeholder="🔍 Search verifier..." style={{ width: "100%", padding: "9px 12px", borderRadius: "6px", border: "1px solid #cbd5e1", outline: "none", marginBottom: "16px", fontSize: "13px" }} />
-                    <div style={{ display: "flex", flexDirection: "column", gap: "12px", marginBottom: "20px" }}>
-                      {[
-                        { name: "Amit Kumar", title: "Employment Verifier", cases: 12, checked: true },
-                        { name: "Neha Patel", title: "Employment Verifier", cases: 8, checked: true },
-                        { name: "Rahul Verma", title: "Employment Verifier", cases: 15, checked: false },
-                      ].map((verifier, idx) => (
-                        <div key={idx} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "10px 12px", borderRadius: "8px", border: "1px solid #f1f5f9", background: "#f8fafc" }}>
-                          <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-                            <input type="checkbox" defaultChecked={verifier.checked} style={{ cursor: "pointer" }} />
-                            <div style={{ width: "32px", height: "32px", borderRadius: "50%", background: "#cbd5e1", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 700, fontSize: "12px", color: "#334155" }}>
-                              {verifier.name.charAt(0)}
-                            </div>
-                            <div>
-                              <p style={{ margin: 0, fontWeight: 700, fontSize: "13px", color: "#1e293b" }}>{verifier.name}</p>
-                              <span style={{ fontSize: "11px", color: "#64748b" }}>{verifier.title}</span>
-                            </div>
+                  <h3 style={{ fontSize: "16px", fontWeight: 700, marginBottom: "14px", color: "#0f172a" }}>Select Verifier</h3>
+                  <input type="text" placeholder="🔍 Search verifier..." style={{ width: "100%", padding: "9px 12px", borderRadius: "6px", border: "1px solid #cbd5e1", outline: "none", marginBottom: "16px", fontSize: "13px" }} />
+                  <div style={{ display: "flex", flexDirection: "column", gap: "12px", marginBottom: "20px" }}>
+                    {[
+                      { name: "Amit Kumar", title: "Employment Verifier", cases: 12, checked: true },
+                      { name: "Neha Patel", title: "Employment Verifier", cases: 8, checked: true },
+                      { name: "Rahul Verma", title: "Employment Verifier", cases: 15, checked: false },
+                    ].map((verifier, idx) => (
+                      <div key={idx} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "10px 12px", borderRadius: "8px", border: "1px solid #f1f5f9", background: "#f8fafc" }}>
+                        <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                          <input type="checkbox" defaultChecked={verifier.checked} style={{ cursor: "pointer" }} />
+                          <div style={{ width: "32px", height: "32px", borderRadius: "50%", background: "#cbd5e1", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 700, fontSize: "12px", color: "#334155" }}>
+                            {verifier.name.charAt(0)}
                           </div>
-                          <div style={{ textAlign: "right" }}>
-                            <span style={{ fontSize: "13px", fontWeight: 800, color: "#2563eb", display: "block" }}>{verifier.cases}</span>
-                            <span style={{ fontSize: "10px", color: "#2563eb", fontWeight: 600 }}>Active Cases</span>
+                          <div>
+                            <p style={{ margin: 0, fontWeight: 700, fontSize: "13px", color: "#1e293b" }}>{verifier.name}</p>
+                            <span style={{ fontSize: "11px", color: "#64748b" }}>{verifier.title}</span>
                           </div>
                         </div>
-                      ))}
-                    </div>
-                    <div style={{ display: "flex", gap: "10px" }}>
-                      <button style={{ flex: 1, padding: "9px", borderRadius: "6px", border: "1px solid #cbd5e1", background: "#fff", fontWeight: 600, cursor: "pointer", fontSize: "13px" }}>Cancel</button>
-                      <button style={{ flex: 1, padding: "9px", borderRadius: "6px", border: "none", background: "#2563eb", color: "#fff", fontWeight: 600, cursor: "pointer", fontSize: "13px" }}>Allocate Cases</button>
-                    </div>
+                        <div style={{ textAlign: "right" }}>
+                          <span style={{ fontSize: "13px", fontWeight: 800, color: "#2563eb", display: "block" }}>{verifier.cases}</span>
+                          <span style={{ fontSize: "10px", color: "#2563eb", fontWeight: 600 }}>Active Cases</span>
+                        </div>
+                      </div>
+                    ))}
                   </div>
+                  <div style={{ display: "flex", gap: "10px" }}>
+                    <button style={{ flex: 1, padding: "9px", borderRadius: "6px", border: "1px solid #cbd5e1", background: "#fff", fontWeight: 600, cursor: "pointer", fontSize: "13px" }}>Cancel</button>
+                    <button style={{ flex: 1, padding: "9px", borderRadius: "6px", border: "none", background: "#2563eb", color: "#fff", fontWeight: 600, cursor: "pointer", fontSize: "13px" }}>Allocate Cases</button>
+                  </div>
+                </div>
               </div>
 
               {/* Unassigned Cases Table */}
@@ -640,7 +650,6 @@ export default function EducationVerification() {
                         <td style={{ padding: "10px" }}><input type="checkbox" defaultChecked /></td>
                         <td style={{ padding: "10px", color: "#2563eb", fontWeight: 700 }}>{r.id}</td>
                         <td style={{ padding: "10px", fontWeight: 600 }}>
-                          {/* Candidate Name Wrapped in Anchor Tag */}
                           <a
                             href={`/candidate/${r.id}`}
                             onClick={(e) => {
@@ -674,12 +683,34 @@ export default function EducationVerification() {
           {/* TAB 2: ADD NEW EDUCATION FORM TAB */}
           {activeTab === "education" && (
             <div style={{ background: "#fff", borderRadius: "10px", border: "1px solid #e2e8f0", padding: "24px" }}>
-              <div style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "20px" }}>
-                <div style={{ background: "#eff6ff", width: "40px", height: "40px", borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "20px" }}>🎓</div>
-                <div>
-                  <h2 style={{ fontSize: "18px", fontWeight: 700, color: "#0f172a", margin: 0 }}>Add New Education</h2>
-                  <p style={{ fontSize: "13px", color: "#64748b", margin: "2px 0 0 0" }}>Add candidate's education details and upload documents for verification</p>
+              
+              {/* Form Header */}
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "20px" }}>
+                <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+                  <div style={{ background: "#eff6ff", width: "40px", height: "40px", borderRadius: "8px", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "20px", color: "#2563eb" }}>📖</div>
+                  <div>
+                    <h2 style={{ fontSize: "18px", fontWeight: 700, color: "#0f172a", margin: 0 }}>Education Details</h2>
+                    <p style={{ fontSize: "13px", color: "#64748b", margin: "2px 0 0 0" }}>Add all educational qualifications of the candidate</p>
+                  </div>
                 </div>
+                <button
+                  onClick={addQualification}
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "6px",
+                    padding: "8px 16px",
+                    borderRadius: "6px",
+                    border: "1px solid #cbd5e1",
+                    background: "#ffffff",
+                    color: "#2563eb",
+                    fontWeight: 600,
+                    cursor: "pointer",
+                    fontSize: "13px",
+                  }}
+                >
+                  <span style={{ fontSize: "16px" }}>+</span> Add Qualification
+                </button>
               </div>
 
               {/* Candidate Info Input Card */}
@@ -707,66 +738,213 @@ export default function EducationVerification() {
                 </div>
               </div>
 
-              {/* Dynamic Education Input Section */}
-              <div style={{ border: "1px solid #e2e8f0", borderRadius: "8px", padding: "18px", marginBottom: "24px" }}>
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "16px" }}>
-                  <h4 style={{ fontSize: "14px", fontWeight: 700, margin: 0, color: "#1e293b" }}>📖 Education Details</h4>
-                  <button onClick={addQualification} style={{ padding: "7px 14px", borderRadius: "6px", border: "1px solid #2563eb", background: "#eff6ff", color: "#2563eb", fontWeight: 600, cursor: "pointer", fontSize: "12px" }}>+ Add Qualification</button>
-                </div>
-
+              {/* Dynamic Qualifications List */}
+              <div style={{ display: "flex", flexDirection: "column", gap: "16px", marginBottom: "24px" }}>
                 {qualifications.map((q, index) => (
-                  <div key={q.id} style={{ border: "1px solid #e2e8f0", borderRadius: "8px", marginBottom: "16px", background: "#ffffff", padding: "16px" }}>
-                    <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "12px" }}>
-                      <span style={{ fontWeight: 700, fontSize: "13px" }}>Qualification {index + 1}</span>
-                      {qualifications.length > 1 && (
-                        <button onClick={() => removeQualification(q.id)} style={{ padding: "4px 8px", borderRadius: "4px", border: "1px solid #fecaca", background: "#fef2f2", color: "#dc2626", fontSize: "11px", cursor: "pointer" }}>Remove</button>
-                      )}
+                  <div key={q.id} style={{ border: "1px solid #e2e8f0", borderRadius: "8px", background: "#ffffff", overflow: "hidden" }}>
+                    
+                    {/* ACCORDION HEADER */}
+                    <div
+                      onClick={() => toggleAccordion(q.id)}
+                      style={{
+                        display: "flex",
+                        justify: "space-between",
+                        alignItems: "center",
+                        padding: "14px 16px",
+                        background: "#ffffff",
+                        cursor: "pointer",
+                        borderBottom: q.isOpen ? "1px solid #f1f5f9" : "none",
+                        userSelect: "none",
+                      }}
+                    >
+                      <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                        <span style={{ color: "#94a3b8", fontSize: "14px", cursor: "grab" }}>⣿</span>
+                        <span style={{ fontWeight: 700, fontSize: "14px", color: "#0f172a" }}>
+                          Qualification {index + 1}
+                        </span>
+                      </div>
+
+                      <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+                        <button
+                          onClick={(e) => removeQualification(q.id, e)}
+                          style={{
+                            padding: "4px 12px",
+                            borderRadius: "4px",
+                            border: "1px solid #fecaca",
+                            background: "#ffffff",
+                            color: "#dc2626",
+                            fontSize: "12px",
+                            fontWeight: 600,
+                            cursor: "pointer",
+                          }}
+                        >
+                          Remove
+                        </button>
+                        <span style={{ fontSize: "12px", color: "#64748b", transform: q.isOpen ? "rotate(180deg)" : "rotate(0deg)", transition: "transform 0.2s" }}>
+                          ▼
+                        </span>
+                      </div>
                     </div>
 
-                    <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "12px", marginBottom: "16px" }}>
-                      <div>
-                        <label style={{ display: "block", fontSize: "11px", fontWeight: 700, marginBottom: "6px" }}>QUALIFICATION TYPE *</label>
-                        <select value={q.qualificationType} onChange={(e) => handleQualificationChange(q.id, "qualificationType", e.target.value)} style={{ width: "100%", padding: "8px", borderRadius: "6px", border: "1px solid #cbd5e1", fontSize: "12px" }}>
-                          <option value="">Select Qualification</option>
-                          <option value="Graduation">Graduation</option>
-                          <option value="Post Graduation">Post Graduation</option>
-                        </select>
-                      </div>
-                      <div>
-                        <label style={{ display: "block", fontSize: "11px", fontWeight: 700, marginBottom: "6px" }}>INSTITUTE / UNIVERSITY *</label>
-                        <input type="text" placeholder="Enter University" value={q.instituteUniversity} onChange={(e) => handleQualificationChange(q.id, "instituteUniversity", e.target.value)} style={{ width: "100%", padding: "8px", borderRadius: "6px", border: "1px solid #cbd5e1", fontSize: "12px" }} />
-                      </div>
-                      <div>
-                        <label style={{ display: "block", fontSize: "11px", fontWeight: 700, marginBottom: "6px" }}>YEAR OF PASSING *</label>
-                        <input type="text" placeholder="e.g. 2023" value={q.yearOfPassing} onChange={(e) => handleQualificationChange(q.id, "yearOfPassing", e.target.value)} style={{ width: "100%", padding: "8px", borderRadius: "6px", border: "1px solid #cbd5e1", fontSize: "12px" }} />
-                      </div>
-                      <div>
-                        <label style={{ display: "block", fontSize: "11px", fontWeight: 700, marginBottom: "6px" }}>EDUCATION CHARGES (INR)</label>
-                        <input type="text" placeholder="₹ Amount" value={q.educationCharges} onChange={(e) => handleQualificationChange(q.id, "educationCharges", e.target.value)} style={{ width: "100%", padding: "8px", borderRadius: "6px", border: "1px solid #cbd5e1", fontSize: "12px" }} />
-                      </div>
-                    </div>
+                    {/* ACCORDION BODY */}
+                    {q.isOpen && (
+                      <div style={{ padding: "16px 20px" }}>
+                        {/* Row 1: 5 Inputs */}
+                        <div style={{ display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: "16px", marginBottom: "16px" }}>
+                          <div>
+                            <label style={{ display: "block", fontSize: "11px", fontWeight: 700, marginBottom: "6px", color: "#374151" }}>Qualification Type *</label>
+                            <select
+                              value={q.qualificationType}
+                              onChange={(e) => handleQualificationChange(q.id, "qualificationType", e.target.value)}
+                              style={{ width: "100%", padding: "9px 12px", borderRadius: "6px", border: "1px solid #cbd5e1", fontSize: "12px", color: q.qualificationType ? "#0f172a" : "#94a3b8" }}
+                            >
+                              <option value="">Select Qualification Type</option>
+                              <option value="Graduation">Graduation</option>
+                              <option value="Post Graduation">Post Graduation</option>
+                              <option value="Diploma">Diploma</option>
+                              <option value="10th / 12th">10th / 12th</option>
+                            </select>
+                          </div>
 
-                    {/* Document Upload Component Cards */}
-                    <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "12px" }}>
-                      {["Marksheet", "Passing Certificate", "Degree Certificate", "Other Document"].map((doc, idx) => (
-                        <div key={idx} style={{ border: "1px dashed #cbd5e1", borderRadius: "6px", padding: "12px", textAlign: "center", background: "#f8fafc" }}>
-                          <span style={{ fontSize: "11px", fontWeight: 600, display: "block", marginBottom: "6px" }}>{doc}</span>
-                          <label style={{ color: "#2563eb", fontSize: "12px", cursor: "pointer", fontWeight: 600 }}>
-                            ☁ Upload File
-                            <input type="file" style={{ display: "none" }} />
-                          </label>
+                          <div>
+                            <label style={{ display: "block", fontSize: "11px", fontWeight: 700, marginBottom: "6px", color: "#374151" }}>Course / Stream *</label>
+                            <select
+                              value={q.courseStream}
+                              onChange={(e) => handleQualificationChange(q.id, "courseStream", e.target.value)}
+                              style={{ width: "100%", padding: "9px 12px", borderRadius: "6px", border: "1px solid #cbd5e1", fontSize: "12px", color: q.courseStream ? "#0f172a" : "#94a3b8" }}
+                            >
+                              <option value="">Select Course / Stream</option>
+                              <option value="B.Tech">B.Tech</option>
+                              <option value="B.Sc">B.Sc</option>
+                              <option value="B.Com">B.Com</option>
+                              <option value="MBA">MBA</option>
+                            </select>
+                          </div>
+
+                          <div>
+                            <label style={{ display: "block", fontSize: "11px", fontWeight: 700, marginBottom: "6px", color: "#374151" }}>Specialization (Optional)</label>
+                            <input
+                              type="text"
+                              placeholder="Enter Specialization"
+                              value={q.specialization}
+                              onChange={(e) => handleQualificationChange(q.id, "specialization", e.target.value)}
+                              style={{ width: "100%", padding: "8px 12px", borderRadius: "6px", border: "1px solid #cbd5e1", fontSize: "12px", outline: "none" }}
+                            />
+                          </div>
+
+                          <div>
+                            <label style={{ display: "block", fontSize: "11px", fontWeight: 700, marginBottom: "6px", color: "#374151" }}>Institute / University *</label>
+                            <select
+                              value={q.instituteUniversity}
+                              onChange={(e) => handleQualificationChange(q.id, "instituteUniversity", e.target.value)}
+                              style={{ width: "100%", padding: "9px 12px", borderRadius: "6px", border: "1px solid #cbd5e1", fontSize: "12px", color: q.instituteUniversity ? "#0f172a" : "#94a3b8" }}
+                            >
+                              <option value="">Enter Institute / School / University</option>
+                              <option value="University of Delhi">University of Delhi</option>
+                              <option value="Pune University">Pune University</option>
+                              <option value="Mumbai University">Mumbai University</option>
+                            </select>
+                          </div>
+
+                          <div>
+                            <label style={{ display: "block", fontSize: "11px", fontWeight: 700, marginBottom: "6px", color: "#374151" }}>Board / University *</label>
+                            <select
+                              value={q.boardUniversity}
+                              onChange={(e) => handleQualificationChange(q.id, "boardUniversity", e.target.value)}
+                              style={{ width: "100%", padding: "9px 12px", borderRadius: "6px", border: "1px solid #cbd5e1", fontSize: "12px", color: q.boardUniversity ? "#0f172a" : "#94a3b8" }}
+                            >
+                              <option value="">Select Board / University</option>
+                              <option value="CBSE">CBSE</option>
+                              <option value="ICSE">ICSE</option>
+                              <option value="State Board">State Board</option>
+                            </select>
+                          </div>
                         </div>
-                      ))}
-                    </div>
+
+                        {/* Row 2: Radio & Remaining Inputs */}
+                        <div style={{ display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: "16px", marginBottom: "20px" }}>
+                          <div>
+                            <label style={{ display: "block", fontSize: "11px", fontWeight: 700, marginBottom: "6px", color: "#374151" }}>National / International *</label>
+                            <div style={{ display: "flex", gap: "16px", alignItems: "center", height: "36px" }}>
+                              <label style={{ fontSize: "12px", fontWeight: 600, display: "flex", alignItems: "center", gap: "6px", cursor: "pointer" }}>
+                                <input
+                                  type="radio"
+                                  name={`studyType-${q.id}`}
+                                  value="National"
+                                  checked={q.studyType === "National"}
+                                  onChange={(e) => handleQualificationChange(q.id, "studyType", e.target.value)}
+                                />
+                                National
+                              </label>
+                              <label style={{ fontSize: "12px", fontWeight: 600, display: "flex", alignItems: "center", gap: "6px", cursor: "pointer" }}>
+                                <input
+                                  type="radio"
+                                  name={`studyType-${q.id}`}
+                                  value="International"
+                                  checked={q.studyType === "International"}
+                                  onChange={(e) => handleQualificationChange(q.id, "studyType", e.target.value)}
+                                />
+                                International
+                              </label>
+                            </div>
+                          </div>
+
+                          <div>
+                            <label style={{ display: "block", fontSize: "11px", fontWeight: 700, marginBottom: "6px", color: "#374151" }}>Mode of Study *</label>
+                            <select
+                              value={q.modeOfStudy}
+                              onChange={(e) => handleQualificationChange(q.id, "modeOfStudy", e.target.value)}
+                              style={{ width: "100%", padding: "9px 12px", borderRadius: "6px", border: "1px solid #cbd5e1", fontSize: "12px", color: q.modeOfStudy ? "#0f172a" : "#94a3b8" }}
+                            >
+                              <option value="">Select Mode</option>
+                              <option value="Full Time">Full Time</option>
+                              <option value="Part Time">Part Time</option>
+                              <option value="Distance">Distance</option>
+                            </select>
+                          </div>
+
+                          <div>
+                            <label style={{ display: "block", fontSize: "11px", fontWeight: 700, marginBottom: "6px", color: "#374151" }}>Year of Passing *</label>
+                            <input
+                              type="text"
+                              placeholder="YYYY"
+                              value={q.yearOfPassing}
+                              onChange={(e) => handleQualificationChange(q.id, "yearOfPassing", e.target.value)}
+                              style={{ width: "100%", padding: "8px 12px", borderRadius: "6px", border: "1px solid #cbd5e1", fontSize: "12px", outline: "none" }}
+                            />
+                          </div>
+
+                          <div>
+                            <label style={{ display: "block", fontSize: "11px", fontWeight: 700, marginBottom: "6px", color: "#374151" }}>Education Charges (₹)</label>
+                            <input
+                              type="number"
+                              placeholder="Enter Charges"
+                              value={q.educationCharges}
+                              onChange={(e) => handleQualificationChange(q.id, "educationCharges", e.target.value)}
+                              style={{ width: "100%", padding: "8px 12px", borderRadius: "6px", border: "1px solid #cbd5e1", fontSize: "12px", outline: "none" }}
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 ))}
               </div>
 
-              {/* Form Action Controls */}
+              {/* Form Actions */}
               <div style={{ display: "flex", justifyContent: "flex-end", gap: "12px" }}>
-                <button onClick={() => setActiveTab("allocation")} style={{ padding: "9px 20px", borderRadius: "6px", border: "1px solid #cbd5e1", background: "#fff", fontWeight: 600, cursor: "pointer" }}>Cancel</button>
-                <button onClick={() => alert("Saved as Draft")} style={{ padding: "9px 20px", borderRadius: "6px", border: "1px solid #cbd5e1", background: "#fff", fontWeight: 600, cursor: "pointer" }}>Save as Draft</button>
-                <button onClick={() => alert("Sent for Verification")} style={{ padding: "9px 24px", borderRadius: "6px", border: "none", background: "#2563eb", color: "#fff", fontWeight: 600, cursor: "pointer" }}>🚀 Save & Send for Verification</button>
+                <button
+                  onClick={() => setActiveTab("allocation")}
+                  style={{ padding: "9px 20px", borderRadius: "6px", border: "1px solid #cbd5e1", background: "#fff", fontWeight: 600, fontSize: "13px", cursor: "pointer" }}
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={() => alert("Form Submitted Successfully!")}
+                  style={{ padding: "9px 24px", borderRadius: "6px", border: "none", background: "#2563eb", color: "#fff", fontWeight: 600, fontSize: "13px", cursor: "pointer" }}
+                >
+                  Submit Details
+                </button>
               </div>
             </div>
           )}
