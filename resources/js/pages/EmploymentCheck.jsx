@@ -887,7 +887,7 @@ export default function EmploymentCheck() {
                               <td style={{ padding: "10px", fontWeight: 600 }}>{row.client}</td>
                               <td style={{ padding: "10px" }}>{row.company}</td>
                               <td style={{ padding: "10px", color: "#2563eb", fontWeight: 700 }}>{row.newCases}</td>
-                              <td style={{ padding: "10px", color: "#d97706", fontWeight 700 }}>{row.pending}</td>
+                              <td style={{ padding: "10px", color: "#d97706", fontWeight: 700 }}>{row.pending}</td>
                               <td style={{ padding: "10px", color: "#028090", fontWeight: 700 }}>{row.progress}</td>
                               <td style={{ padding: "10px", color: "#16a34a", fontWeight: 700 }}>{row.done}</td>
                               <td style={{ padding: "10px", color: "#64748b" }}>{row.verifiers}</td>
