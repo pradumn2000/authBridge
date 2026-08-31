@@ -1298,97 +1298,103 @@ import {
 // ─────────────────────────────────────────
 // Authentication / Public Pages
 // ─────────────────────────────────────────
+
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import Forgetpassword from "./pages/Forgetpassword";
 import VerifyAccount from "./pages/Verifyaccount";
 import Resetpassword from "./pages/Resetpassword";
 import Confrimpassword from "./pages/Confrimpassword";
-import ClientRegistration from "./pages/ClientRegistration";
 
 // ─────────────────────────────────────────
-// Main Dashboard Pages
+// Admin / Dashboard Pages
 // ─────────────────────────────────────────
+
 import Dashboard from "./pages/Dashboard";
-import Client from "./pages/Client";
-import Clientportal from "./pages/Clientportal";
-import ClientCases from "./pages/ClientCases";
-import ClientBilling from "./pages/ClientBilling";
+import Trends from "./pages/Trends";
+import Apiintegretion from "./pages/Apiintegretion";
+import UserManagement from "./pages/UserManagement";
+import AddInstitution from "./pages/AddInstitution";
 
 // ─────────────────────────────────────────
-// Admin — Client Management
+// Operational Pages
 // ─────────────────────────────────────────
-import AddClient from "./pages/AddClient";
-import AllClients from "./pages/Allclients";
-import PendingRegistrations from "./pages/PendingRegistrations";
-import ClientOnboardingForm from "./pages/Clientonbordingform";
 
-// ─────────────────────────────────────────
-// Case Management
-// ─────────────────────────────────────────
-import AllCases from "./pages/AllCases";
-import AddCase from "./pages/AddCase";
 import Allocator from "./pages/Allocator";
-
-// ─────────────────────────────────────────
-// Verification / Operations
-// ─────────────────────────────────────────
 import Verifyer from "./pages/verifyer";
 import Emploment from "./pages/Emploment";
 import StatusEmploment from "./pages/StatusEmploment";
+import AllCases from "./pages/AllCases";
 import Specialist from "./pages/Specialist";
 import Intake from "./pages/Intake";
 
 // ─────────────────────────────────────────
-// Verification Check Type Pages
+// Client Pages
 // ─────────────────────────────────────────
-import EmploymentCheck from "./pages/EmploymentCheck";
-import EducationCheck from "./pages/EducationCheck";
-import AddressCheck from "./pages/AddressCheck";
-import DatabaseCheck from "./pages/DatabaseCheck";
-import CriminalCheck from "./pages/CriminalCheck";
-import DrugtestCheck from "./pages/DrugtestCheck";
-import CourtroomCheck from "./pages/CourtroomCheck";
+
+import Client from "./pages/Client";
+import ClientCases from "./pages/ClientCases";
+import ClientBilling from "./pages/ClientBilling";
+import Clientportal from "./pages/Clientportal";
 
 // ─────────────────────────────────────────
-// Admin Pages
+// Case Pages
 // ─────────────────────────────────────────
-import UserManagement from "./pages/UserManagement";
-import AddInstitution from "./pages/AddInstitution";
-import CompanyManagement from "./pages/AddCompany";
-import Apiintegretion from "./pages/Apiintegretion";
-import AddressVerification from "./pages/AddressVerification";
+
+import AddCase from "./pages/AddCase";
 
 // ─────────────────────────────────────────
-// Other Pages
+// Company / Settings
 // ─────────────────────────────────────────
+
 import Settings from "./pages/Settings";
-import Trends from "./pages/Trends";
+import CompanyManagement from "./pages/AddCompany";
 
 // ─────────────────────────────────────────
-// Candidate Self-Service
+// Client Registration
 // ─────────────────────────────────────────
-import CandidateVerificationWizard from "./pages/CandidateVerificationWizard";
 
-// ═════════════════════════════════════════
-// AUTHENTICATION HELPERS
-// ═════════════════════════════════════════
+import ClientRegistration from "./pages/ClientRegistration";
+
+// ─────────────────────────────────────────
+// Candidate Verification
+// IMPORTANT:
+// Your actual file is:
+// resources/js/pages/bg.jsx
+// ─────────────────────────────────────────
+
+import CandidateVerificationWizard from "./pages/bg";
+
+// ─────────────────────────────────────────
+// Helper: Get Authentication Token
+// ─────────────────────────────────────────
 
 const getToken = () => {
   return localStorage.getItem("token");
 };
 
+// ─────────────────────────────────────────
+// Helper: Get Logged-in User
+// ─────────────────────────────────────────
+
 const getUser = () => {
   try {
-    return JSON.parse(localStorage.getItem("user")) || null;
-  } catch {
+    const user = localStorage.getItem("user");
+
+    if (!user) {
+      return null;
+    }
+
+    return JSON.parse(user);
+  } catch (error) {
+    console.error("Unable to read user from localStorage:", error);
     return null;
   }
 };
 
-// ═════════════════════════════════════════
-// ROLE → DEFAULT ROUTE
-// ═════════════════════════════════════════
+// ─────────────────────────────────────────
+// Role → Default Route
+// ─────────────────────────────────────────
 
 function getRoleRoute(role) {
   const routes = {
@@ -1397,15 +1403,6 @@ function getRoleRoute(role) {
     allocator: "/Allocator",
 
     verifier: "/Verifyer",
-    verifyer: "/Verifyer",
-
-    employment_verifier: "/Verifyer",
-    education_verifier: "/Verifyer",
-    address_verifier: "/Verifyer",
-    database_verifier: "/Verifyer",
-    criminal_verifier: "/Verifyer",
-    drug_test_verifier: "/Verifyer",
-    courtroom_verifier: "/Verifyer",
 
     check_manager: "/AllCases",
 
@@ -1421,45 +1418,43 @@ function getRoleRoute(role) {
   return routes[role] || "/";
 }
 
-// ═════════════════════════════════════════
-// PRIVATE ROUTE
-// ═════════════════════════════════════════
+// ─────────────────────────────────────────
+// PrivateRoute
 //
-// Usage:
+// No role:
+//   Any authenticated user can access.
 //
-// <PrivateRoute>
-//     <Page />
-// </PrivateRoute>
+// role="admin":
+//   Only admin.
 //
-// OR
+// role={["admin", "client"]}:
+//   Admin or client.
 //
-// <PrivateRoute role="admin">
-//     <Page />
-// </PrivateRoute>
-//
-// OR
-//
-// <PrivateRoute role={["admin", "client"]}>
-//     <Page />
-// </PrivateRoute>
-// ═════════════════════════════════════════
+// Admin has access to all protected routes.
+// ─────────────────────────────────────────
 
 function PrivateRoute({ children, role }) {
   const token = getToken();
   const user = getUser();
 
+  // ───────────────────────────────────────
   // User is not logged in
+  // ───────────────────────────────────────
+
   if (!token || !user) {
     return <Navigate to="/" replace />;
   }
 
-  // Role restriction
+  // ───────────────────────────────────────
+  // Role validation
+  // ───────────────────────────────────────
+
   if (role) {
     const allowedRoles = Array.isArray(role)
       ? role
       : [role];
 
-    // Admin has access to all protected pages
+    // Admin can access protected modules
     if (
       user.role !== "admin" &&
       !allowedRoles.includes(user.role)
@@ -1476,31 +1471,76 @@ function PrivateRoute({ children, role }) {
   return children;
 }
 
-// ═════════════════════════════════════════
-// APP
-// ═════════════════════════════════════════
+// ─────────────────────────────────────────
+// Application
+// ─────────────────────────────────────────
 
 function App() {
   return (
     <BrowserRouter>
+
       <Routes>
 
-        {/* ═══════════════════════════════
+        {/* ═══════════════════════════════════
             PUBLIC ROUTES
-        ═══════════════════════════════ */}
+        ═══════════════════════════════════ */}
 
-        <Route path="/" element={<Login />} />
-        <Route path="/signup" element={<Signup />} />
-        <Route path="/client-register" element={<ClientRegistration />} />
-        <Route path="/candidate-verification" element={<CandidateVerificationWizard />} />
-        <Route path="/forgetpassword" element={<Forgetpassword />} />
-        <Route path="/verifyaccount" element={<VerifyAccount />} />
-        <Route path="/resetpassword" element={<Resetpassword />} />
-        <Route path="/confirmpassword" element={<Confrimpassword />} />
+        <Route
+          path="/"
+          element={<Login />}
+        />
 
-        {/* ═══════════════════════════════
-            ADMIN DASHBOARD
-        ═══════════════════════════════ */}
+        <Route
+          path="/signup"
+          element={<Signup />}
+        />
+
+        {/* Client Registration
+            This is PUBLIC.
+            No login required. */}
+
+        <Route
+          path="/client-register"
+          element={<ClientRegistration />}
+        />
+
+        <Route
+          path="/forgetpassword"
+          element={<Forgetpassword />}
+        />
+
+        <Route
+          path="/verifyaccount"
+          element={<VerifyAccount />}
+        />
+
+        <Route
+          path="/resetpassword"
+          element={<Resetpassword />}
+        />
+
+        <Route
+          path="/confirmpassword"
+          element={<Confrimpassword />}
+        />
+
+
+        {/* ═══════════════════════════════════
+            CANDIDATE VERIFICATION
+            PUBLIC ROUTE
+        ═══════════════════════════════════ */}
+
+        <Route
+          path="/candidate-verification"
+          element={
+            <CandidateVerificationWizard />
+          }
+        />
+
+
+        {/* ═══════════════════════════════════
+            ADMIN ROUTES
+        ═══════════════════════════════════ */}
 
         <Route
           path="/dashboard"
@@ -1511,27 +1551,46 @@ function App() {
           }
         />
 
-        {/* ═══════════════════════════════
-            ADMIN — CASES
-        ═══════════════════════════════ */}
-
         <Route
-          path="/AllCases"
+          path="/Trends"
           element={
-            <PrivateRoute role="check_manager">
-              <AllCases />
+            <PrivateRoute role="admin">
+              <Trends />
             </PrivateRoute>
           }
         />
 
         <Route
-          path="/AddCase"
+          path="/Apiintegretion"
           element={
-            <PrivateRoute role={["admin", "allocator", "client"]}>
-              <AddCase />
+            <PrivateRoute role="admin">
+              <Apiintegretion />
             </PrivateRoute>
           }
         />
+
+        <Route
+          path="/UserManagement"
+          element={
+            <PrivateRoute role="admin">
+              <UserManagement />
+            </PrivateRoute>
+          }
+        />
+
+        <Route
+          path="/AddInstitution"
+          element={
+            <PrivateRoute role="admin">
+              <AddInstitution />
+            </PrivateRoute>
+          }
+        />
+
+
+        {/* ═══════════════════════════════════
+            ALLOCATOR
+        ═══════════════════════════════════ */}
 
         <Route
           path="/Allocator"
@@ -1542,42 +1601,45 @@ function App() {
           }
         />
 
-        {/* ═══════════════════════════════
-            VERIFIER DASHBOARD
-        ═══════════════════════════════ */}
+
+        {/* ═══════════════════════════════════
+            CASE CREATION
+            Admin + Allocator + Client
+        ═══════════════════════════════════ */}
 
         <Route
-          path="/Verifyer"
+          path="/AddCase"
           element={
             <PrivateRoute
               role={[
                 "admin",
-                "verifier",
-                "verifyer",
-                "employment_verifier",
-                "education_verifier",
-                "address_verifier",
-                "database_verifier",
-                "criminal_verifier",
-                "drug_test_verifier",
-                "courtroom_verifier",
+                "allocator",
+                "client",
               ]}
             >
+              <AddCase />
+            </PrivateRoute>
+          }
+        />
+
+
+        {/* ═══════════════════════════════════
+            VERIFIER
+        ═══════════════════════════════════ */}
+
+        <Route
+          path="/Verifyer"
+          element={
+            <PrivateRoute role="verifier">
               <Verifyer />
             </PrivateRoute>
           }
         />
 
-        {/* ═══════════════════════════════
-            EMPLOYMENT OPERATIONS
-        ═══════════════════════════════ */}
-
         <Route
           path="/emploment"
           element={
-            <PrivateRoute
-              role={["admin", "verifier", "verifyer", "employment_verifier", "check_manager"]}
-            >
+            <PrivateRoute role="verifier">
               <Emploment />
             </PrivateRoute>
           }
@@ -1586,29 +1648,30 @@ function App() {
         <Route
           path="/StatusEmploment"
           element={
-            <PrivateRoute
-              role={["admin", "verifier", "verifyer", "employment_verifier", "check_manager"]}
-            >
+            <PrivateRoute role="verifier">
               <StatusEmploment />
             </PrivateRoute>
           }
         />
 
-        {/* ═══════════════════════════════
-            VERIFICATION CHECK TYPES
-        ═══════════════════════════════ */}
 
-        <Route path="/EmploymentCheck" element={<PrivateRoute role="admin"><EmploymentCheck /></PrivateRoute>} />
-        <Route path="/EducationCheck" element={<PrivateRoute role="admin"><EducationCheck /></PrivateRoute>} />
-        <Route path="/AddressCheck" element={<PrivateRoute role="admin"><AddressCheck /></PrivateRoute>} />
-        <Route path="/DatabaseCheck" element={<PrivateRoute role="admin"><DatabaseCheck /></PrivateRoute>} />
-        <Route path="/CriminalCheck" element={<PrivateRoute role="admin"><CriminalCheck /></PrivateRoute>} />
-        <Route path="/DrugtestCheck" element={<PrivateRoute role="admin"><DrugtestCheck /></PrivateRoute>} />
-        <Route path="/CourtroomCheck" element={<PrivateRoute role="admin"><CourtroomCheck /></PrivateRoute>} />
+        {/* ═══════════════════════════════════
+            CHECK MANAGER
+        ═══════════════════════════════════ */}
 
-        {/* ═══════════════════════════════
-            REPORT WRITING
-        ═══════════════════════════════ */}
+        <Route
+          path="/AllCases"
+          element={
+            <PrivateRoute role="check_manager">
+              <AllCases />
+            </PrivateRoute>
+          }
+        />
+
+
+        {/* ═══════════════════════════════════
+            REPORT WRITING / SPECIALIST
+        ═══════════════════════════════════ */}
 
         <Route
           path="/Specialist"
@@ -1619,9 +1682,10 @@ function App() {
           }
         />
 
-        {/* ═══════════════════════════════
-            QC / INTAKE
-        ═══════════════════════════════ */}
+
+        {/* ═══════════════════════════════════
+            PVT / QC
+        ═══════════════════════════════════ */}
 
         <Route
           path="/Intake"
@@ -1632,9 +1696,10 @@ function App() {
           }
         />
 
-        {/* ═══════════════════════════════
+
+        {/* ═══════════════════════════════════
             CLIENT
-        ═══════════════════════════════ */}
+        ═══════════════════════════════════ */}
 
         <Route
           path="/Client"
@@ -1663,138 +1728,31 @@ function App() {
           }
         />
 
-        {/* ═══════════════════════════════
-            ADMIN — CLIENT MANAGEMENT
-            (restored — previously dropped from the active routes)
-        ═══════════════════════════════ */}
 
-        <Route
-          path="/AddClient"
-          element={
-            <PrivateRoute role="admin">
-              <AddClient />
-            </PrivateRoute>
-          }
-        />
-
-        <Route
-          path="/AllClients"
-          element={
-            <PrivateRoute role="admin">
-              <AllClients />
-            </PrivateRoute>
-          }
-        />
-
-        <Route
-          path="/PendingRegistrations"
-          element={
-            <PrivateRoute role="admin">
-              <PendingRegistrations />
-            </PrivateRoute>
-          }
-        />
-
-        <Route
-          path="/ClientOnboardingForm"
-          element={
-            <PrivateRoute>
-              <ClientOnboardingForm />
-            </PrivateRoute>
-          }
-        />
-
-        {/* ═══════════════════════════════
-            CLIENT PORTAL
-        ═══════════════════════════════ */}
+        {/* ═══════════════════════════════════
+            CANDIDATE PORTAL
+            Onboarding + Client + Admin
+        ═══════════════════════════════════ */}
 
         <Route
           path="/clientportal"
           element={
-            <PrivateRoute role={["admin", "onboarding", "client"]}>
+            <PrivateRoute
+              role={[
+                "onboarding",
+                "client",
+              ]}
+            >
               <Clientportal />
             </PrivateRoute>
           }
         />
 
-        {/* ═══════════════════════════════
-            ADMIN — USER MANAGEMENT
-        ═══════════════════════════════ */}
 
-        <Route
-          path="/UserManagement"
-          element={
-            <PrivateRoute role="admin">
-              <UserManagement />
-            </PrivateRoute>
-          }
-        />
-
-        {/* ═══════════════════════════════
-            ADMIN — INSTITUTION
-        ═══════════════════════════════ */}
-
-        <Route
-          path="/AddInstitution"
-          element={
-            <PrivateRoute role="admin">
-              <AddInstitution />
-            </PrivateRoute>
-          }
-        />
-
-        {/* ═══════════════════════════════
-            ADMIN — COMPANY
-        ═══════════════════════════════ */}
-
-        <Route
-          path="/AddCompany"
-          element={
-            <PrivateRoute role="admin">
-              <CompanyManagement />
-            </PrivateRoute>
-          }
-        />
-
-        <Route
-          path="/AddressVerification"
-          element={
-            <PrivateRoute role="admin">
-              <AddressVerification />
-            </PrivateRoute>
-          }
-        />
-
-        {/* ═══════════════════════════════
-            API INTEGRATION
-        ═══════════════════════════════ */}
-
-        <Route
-          path="/Apiintegretion"
-          element={
-            <PrivateRoute role="admin">
-              <Apiintegretion />
-            </PrivateRoute>
-          }
-        />
-
-        {/* ═══════════════════════════════
-            REPORTS & TRENDS
-        ═══════════════════════════════ */}
-
-        <Route
-          path="/Trends"
-          element={
-            <PrivateRoute role={["admin", "client"]}>
-              <Trends />
-            </PrivateRoute>
-          }
-        />
-
-        {/* ═══════════════════════════════
+        {/* ═══════════════════════════════════
             SETTINGS
             Any logged-in user
-        ═══════════════════════════════ */}
+        ═══════════════════════════════════ */}
 
         <Route
           path="/Settings"
@@ -1805,21 +1763,58 @@ function App() {
           }
         />
 
-        {/* ═══════════════════════════════
-            FALLBACK
-        ═══════════════════════════════ */}
 
-        <Route path="*" element={<Navigate to="/" replace />} />
+        {/* ═══════════════════════════════════
+            COMPANY MANAGEMENT
+            Any authenticated user
+        ═══════════════════════════════════ */}
+
+        <Route
+          path="/AddCompany"
+          element={
+            <PrivateRoute>
+              <CompanyManagement />
+            </PrivateRoute>
+          }
+        />
+
+
+        {/* ═══════════════════════════════════
+            FALLBACK
+        ═══════════════════════════════════ */}
+
+        <Route
+          path="*"
+          element={
+            <Navigate
+              to="/"
+              replace
+            />
+          }
+        />
 
       </Routes>
+
     </BrowserRouter>
   );
 }
 
-// ═════════════════════════════════════════
-// REACT MOUNT
-// ═════════════════════════════════════════
+// ─────────────────────────────────────────
+// React Mount
+// ─────────────────────────────────────────
 
 const container = document.getElementById("app");
+
+if (!container) {
+  throw new Error(
+    'Root element "#app" was not found.'
+  );
+}
+
 const root = ReactDOM.createRoot(container);
-root.render(<App />);
+
+root.render(
+  <React.StrictMode>
+    <App />
+  </React.StrictMode>
+);
