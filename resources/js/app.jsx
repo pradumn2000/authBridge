@@ -1,8 +1,233 @@
 
+// // // // import React from "react";
+// // // // import ReactDOM from "react-dom/client";
+// // // // import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+
+// // // // import Login from "./pages/Login";
+// // // // import Signup from "./pages/Signup";
+// // // // import Forgetpassword from "./pages/Forgetpassword";
+// // // // import VerifyAccount from "./pages/Verifyaccount";
+// // // // import Resetpassword from "./pages/Resetpassword";
+// // // // import Confrimpassword from "./pages/Confrimpassword";
+// // // // import Dashboard from "./pages/Dashboard";
+// // // // import Emploment from "./pages/Emploment";
+// // // // import Verifyer from "./pages/verifyer";
+// // // // import Clientportal from "./pages/Clientportal";
+// // // // import Client from "./pages/Client";
+// // // // import Settings from "./pages/Settings";
+// // // // import Intake from "./pages/Intake";
+// // // // import Allocator from "./pages/Allocator";
+// // // // import Specialist from "./pages/Specialist";
+// // // // import AllCases from "./pages/AllCases";
+// // // // import Trends from "./pages/Trends";
+// // // // import Apiintegretion from "./pages/Apiintegretion";
+// // // // import StatusEmploment from "./pages/StatusEmploment";
+// // // // import UserManagement from "./pages/UserManagement";
+// // // // import AddCase from "./pages/AddCase";
+// // // // import ClientRegistration from "./pages/ClientRegistration";
+// // // // import AddInstitution from "./pages/AddInstitution";
+// // // // import CompanyManagement from "./pages/AddCompany";
+// // // // import ClientBilling from "./pages/ClientBilling";
+// // // // import ClientOnboardingForm from "./pages/Clientonbordingform";
+// // // // import AddClient from "./pages/AddClient";
+// // // // import PendingRegistrations from "./pages/PendingRegistrations";
+
+// // // // // ─────────────────────────────────────────
+// // // // // Helpers
+// // // // // ─────────────────────────────────────────
+
+// // // // const getToken = () => localStorage.getItem("token");
+
+// // // // const getUser = () => {
+// // // //   try {
+// // // //     return JSON.parse(localStorage.getItem("user")) || null;
+// // // //   } catch {
+// // // //     return null;
+// // // //   }
+// // // // };
+
+// // // // // All 7 new specialist verifier roles that map to the Verifyer dashboard
+// // // // const VERIFIER_ROLES = [
+// // // //   "verifier",
+// // // //   "verifyer",
+// // // //   "employment_verifier",
+// // // //   "education_verifier",
+// // // //   "address_verifier",
+// // // //   "database_verifier",
+// // // //   "criminal_verifier",
+// // // //   "drug_test_verifier",
+// // // //   "courtroom_verifier",
+// // // // ];
+
+// // // // // Returns the home route for a given role
+// // // // function getRoleRoute(role) {
+// // // //   const routes = {
+// // // //     admin:                "/dashboard",
+// // // //     allocator:            "/Allocator",
+// // // //     verifier:             "/Verifyer",
+// // // //     verifyer:             "/Verifyer",
+// // // //     check_manager:        "/AllCases",
+// // // //     report_writing:       "/Specialist",
+// // // //     pvt_qc:               "/Intake",
+// // // //     client:               "/Client",
+// // // //     onboarding:           "/clientportal",
+// // // //     // 7 specialist verifier roles — all land on Verifyer dashboard
+// // // //     employment_verifier:  "/Verifyer",
+// // // //     education_verifier:   "/Verifyer",
+// // // //     address_verifier:     "/Verifyer",
+// // // //     database_verifier:    "/Verifyer",
+// // // //     criminal_verifier:    "/Verifyer",
+// // // //     drug_test_verifier:   "/Verifyer",
+// // // //     courtroom_verifier:   "/Verifyer",
+// // // //   };
+// // // //   return routes[role] || "/";
+// // // // }
+
+// // // // // ─────────────────────────────────────────
+// // // // // PrivateRoute
+// // // // // - No role prop  → any logged-in user
+// // // // // - role="x"      → that role OR admin
+// // // // // - role={[...]}  → any of those roles OR admin
+// // // // // ─────────────────────────────────────────
+// // // // function PrivateRoute({ children, role }) {
+// // // //   const token = getToken();
+// // // //   const user  = getUser();
+
+// // // //   if (!token || !user) {
+// // // //     return <Navigate to="/" replace />;
+// // // //   }
+
+// // // //   if (role) {
+// // // //     const allowed = Array.isArray(role) ? role : [role];
+// // // //     // Admin can always access any page
+// // // //     if (user.role !== "admin" && !allowed.includes(user.role)) {
+// // // //       return <Navigate to={getRoleRoute(user.role)} replace />;
+// // // //     }
+// // // //   }
+
+// // // //   return children;
+// // // // }
+
+// // // // // ─────────────────────────────────────────
+// // // // // App
+// // // // // ─────────────────────────────────────────
+// // // // function App() {
+// // // //   return (
+// // // //     <BrowserRouter>
+// // // //       <Routes>
+
+// // // //         {/* ── Public routes ── */}
+// // // //         <Route path="/"                element={<Login />} />
+// // // //         <Route path="/signup"          element={<Signup />} />
+// // // //         <Route path="/client-register" element={<ClientRegistration />} />
+// // // //         <Route path="/forgetpassword"  element={<Forgetpassword />} />
+// // // //         <Route path="/verifyaccount"   element={<VerifyAccount />} />
+// // // //         <Route path="/resetpassword"   element={<Resetpassword />} />
+// // // //         <Route path="/confirmpassword" element={<Confrimpassword />} />
+
+// // // //         {/* ── Admin ── */}
+// // // //         <Route path="/dashboard" element={
+// // // //           <PrivateRoute role="admin"><Dashboard /></PrivateRoute>
+// // // //         } />
+// // // //         <Route path="/Trends" element={
+// // // //           <PrivateRoute role={["admin", "client"]}><Trends /></PrivateRoute>
+// // // //         } />
+// // // //         <Route path="/Apiintegretion" element={
+// // // //           <PrivateRoute role="admin"><Apiintegretion /></PrivateRoute>
+// // // //         } />
+// // // //         <Route path="/UserManagement" element={
+// // // //           <PrivateRoute role="admin"><UserManagement /></PrivateRoute>
+// // // //         } />
+// // // //         <Route path="/AddInstitution" element={
+// // // //           <PrivateRoute role="admin"><AddInstitution /></PrivateRoute>
+// // // //         } />
+
+// // // //         {/* ── Allocator (+ admin) ── */}
+// // // //         <Route path="/Allocator" element={
+// // // //           <PrivateRoute role="allocator"><Allocator /></PrivateRoute>
+// // // //         } />
+
+// // // //         {/* ── Add Case (admin, allocator, client) ── */}
+// // // //         <Route path="/AddCase" element={
+// // // //           <PrivateRoute role={["admin", "allocator", "client"]}><AddCase /></PrivateRoute>
+// // // //         } />
+
+// // // //         {/* ── Verifier — all 9 verifier roles (+ admin) ── */}
+// // // //         <Route path="/Verifyer" element={
+// // // //           <PrivateRoute role={VERIFIER_ROLES}><Verifyer /></PrivateRoute>
+// // // //         } />
+// // // //         <Route path="/VerifyerDashboard" element={
+// // // //           <PrivateRoute role={VERIFIER_ROLES}><Verifyer /></PrivateRoute>
+// // // //         } />
+// // // //         <Route path="/emploment" element={
+// // // //           <PrivateRoute role={VERIFIER_ROLES}><Emploment /></PrivateRoute>
+// // // //         } />
+// // // //         <Route path="/StatusEmploment" element={
+// // // //           <PrivateRoute role={VERIFIER_ROLES}><StatusEmploment /></PrivateRoute>
+// // // //         } />
+
+// // // //         {/* ── Check Manager (+ admin) ── */}
+// // // //         <Route path="/AllCases" element={
+// // // //           <PrivateRoute role="check_manager"><AllCases /></PrivateRoute>
+// // // //         } />
+
+// // // //         {/* ── Report Writing (+ admin) ── */}
+// // // //         <Route path="/Specialist" element={
+// // // //           <PrivateRoute role="report_writing"><Specialist /></PrivateRoute>
+// // // //         } />
+
+// // // //         {/* ── PVT / QC (+ admin) ── */}
+// // // //         <Route path="/Intake" element={
+// // // //           <PrivateRoute role="pvt_qc"><Intake /></PrivateRoute>
+// // // //         } />
+
+// // // //         {/* ── Client (+ admin) — dynamic case list + detail, filtered server-side ── */}
+// // // //         <Route path="/Client" element={
+// // // //           <PrivateRoute role="client"><Client /></PrivateRoute>
+// // // //         } />
+// // // //         <Route path="/ClientBilling" element={
+// // // //           <PrivateRoute role="client"><ClientBilling /></PrivateRoute>
+// // // //         } />
+
+// // // //         {/* ── Candidate Portal — Link Generator (onboarding + client + admin) ── */}
+// // // //         <Route path="/clientportal" element={
+// // // //           <PrivateRoute role={["onboarding", "client"]}><Clientportal /></PrivateRoute>
+// // // //         } />
+
+// // // //         {/* ── Settings — any logged-in user ── */}
+// // // //         <Route path="/Settings" element={
+// // // //           <PrivateRoute><Settings /></PrivateRoute>
+// // // //         } />
+// // // //         <Route path="/AddCompany" element={
+// // // //           <PrivateRoute><CompanyManagement /></PrivateRoute>
+// // // //         } />
+// // // //         <Route path="/ClientOnboardingForm" element={
+// // // //           <PrivateRoute><ClientOnboardingForm /></PrivateRoute>
+// // // //         } />
+// // // //         <Route path="/AddClient" element={
+// // // //   <PrivateRoute role="admin"><AddClient /></PrivateRoute>
+// // // // } />
+// // // // <Route path="/PendingRegistrations" element={
+// // // //   <PrivateRoute role="admin"><PendingRegistrations /></PrivateRoute>
+// // // // } />
+
+// // // //         {/* ── Catch all ── */}
+// // // //         <Route path="*" element={<Navigate to="/" replace />} />
+
+// // // //       </Routes>
+// // // //     </BrowserRouter>
+// // // //   );
+// // // // }
+
+// // // // const container = document.getElementById("app");
+// // // // const root = ReactDOM.createRoot(container);
+// // // // root.render(<App />);
+// // // // import "./bootstrap";
 // // // import React from "react";
 // // // import ReactDOM from "react-dom/client";
 // // // import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 
+// // // // Page Imports
 // // // import Login from "./pages/Login";
 // // // import Signup from "./pages/Signup";
 // // // import Forgetpassword from "./pages/Forgetpassword";
@@ -31,11 +256,17 @@
 // // // import ClientOnboardingForm from "./pages/Clientonbordingform";
 // // // import AddClient from "./pages/AddClient";
 // // // import PendingRegistrations from "./pages/PendingRegistrations";
+// // // import AllClients from "./pages/Allclients";
+// // // import EmploymentCheck from "./pages/EmploymentCheck";
+// // // import EducationCheck from "./pages/EducationCheck";
+// // // import AddressCheck from "./pages/AddressCheck";
+// // // import DatabaseCheck from "./pages/DatabaseCheck";
+// // // import CriminalCheck from "./pages/CriminalCheck";
+// // // import DrugtestCheck from "./pages/DrugtestCheck";
+// // // import CourtroomCheck from "./pages/CourtroomCheck";
+// // // import Bg from "./pages/bg";
 
-// // // // ─────────────────────────────────────────
 // // // // Helpers
-// // // // ─────────────────────────────────────────
-
 // // // const getToken = () => localStorage.getItem("token");
 
 // // // const getUser = () => {
@@ -46,7 +277,6 @@
 // // //   }
 // // // };
 
-// // // // All 7 new specialist verifier roles that map to the Verifyer dashboard
 // // // const VERIFIER_ROLES = [
 // // //   "verifier",
 // // //   "verifyer",
@@ -59,39 +289,32 @@
 // // //   "courtroom_verifier",
 // // // ];
 
-// // // // Returns the home route for a given role
 // // // function getRoleRoute(role) {
+// // //   const normalizedRole = role?.toLowerCase();
 // // //   const routes = {
-// // //     admin:                "/dashboard",
-// // //     allocator:            "/Allocator",
-// // //     verifier:             "/Verifyer",
-// // //     verifyer:             "/Verifyer",
-// // //     check_manager:        "/AllCases",
-// // //     report_writing:       "/Specialist",
-// // //     pvt_qc:               "/Intake",
-// // //     client:               "/Client",
-// // //     onboarding:           "/clientportal",
-// // //     // 7 specialist verifier roles — all land on Verifyer dashboard
-// // //     employment_verifier:  "/Verifyer",
-// // //     education_verifier:   "/Verifyer",
-// // //     address_verifier:     "/Verifyer",
-// // //     database_verifier:    "/Verifyer",
-// // //     criminal_verifier:    "/Verifyer",
-// // //     drug_test_verifier:   "/Verifyer",
-// // //     courtroom_verifier:   "/Verifyer",
+// // //     admin: "/dashboard",
+// // //     allocator: "/Allocator",
+// // //     verifier: "/Verifyer",
+// // //     verifyer: "/Verifyer",
+// // //     check_manager: "/AllCases",
+// // //     report_writing: "/Specialist",
+// // //     pvt_qc: "/Intake",
+// // //     client: "/Client",
+// // //     onboarding: "/clientportal",
+// // //     employment_verifier: "/EmploymentCheck",
+// // //     education_verifier: "/EducationCheck",
+// // //     address_verifier: "/AddressCheck",
+// // //     database_verifier: "/DatabaseCheck",
+// // //     criminal_verifier: "/CriminalCheck",
+// // //     drug_test_verifier: "/DrugtestCheck",
+// // //     courtroom_verifier: "/CourtroomCheck",
 // // //   };
-// // //   return routes[role] || "/";
+// // //   return routes[normalizedRole] || "/";
 // // // }
 
-// // // // ─────────────────────────────────────────
-// // // // PrivateRoute
-// // // // - No role prop  → any logged-in user
-// // // // - role="x"      → that role OR admin
-// // // // - role={[...]}  → any of those roles OR admin
-// // // // ─────────────────────────────────────────
 // // // function PrivateRoute({ children, role }) {
 // // //   const token = getToken();
-// // //   const user  = getUser();
+// // //   const user = getUser();
 
 // // //   if (!token || !user) {
 // // //     return <Navigate to="/" replace />;
@@ -99,8 +322,14 @@
 
 // // //   if (role) {
 // // //     const allowed = Array.isArray(role) ? role : [role];
-// // //     // Admin can always access any page
-// // //     if (user.role !== "admin" && !allowed.includes(user.role)) {
+// // //     const userRole = user.role?.toLowerCase();
+
+// // //     // Check if user is admin or user's role exists in allowed list
+// // //     const hasAccess =
+// // //       userRole === "admin" ||
+// // //       allowed.some((r) => r.toLowerCase() === userRole);
+
+// // //     if (!hasAccess) {
 // // //       return <Navigate to={getRoleRoute(user.role)} replace />;
 // // //     }
 // // //   }
@@ -108,155 +337,347 @@
 // // //   return children;
 // // // }
 
-// // // // ─────────────────────────────────────────
-// // // // App
-// // // // ─────────────────────────────────────────
-// // // function App() {
+// // // export default function App() {
 // // //   return (
 // // //     <BrowserRouter>
 // // //       <Routes>
-
-// // //         {/* ── Public routes ── */}
-// // //         <Route path="/"                element={<Login />} />
-// // //         <Route path="/signup"          element={<Signup />} />
+// // //         {/* Public Routes */}
+// // //         <Route path="/" element={<Login />} />
+// // //         <Route path="/signup" element={<Signup />} />
 // // //         <Route path="/client-register" element={<ClientRegistration />} />
-// // //         <Route path="/forgetpassword"  element={<Forgetpassword />} />
-// // //         <Route path="/verifyaccount"   element={<VerifyAccount />} />
-// // //         <Route path="/resetpassword"   element={<Resetpassword />} />
+// // //         <Route path="/forgetpassword" element={<Forgetpassword />} />
+// // //         <Route path="/verifyaccount" element={<VerifyAccount />} />
+// // //         <Route path="/resetpassword" element={<Resetpassword />} />
 // // //         <Route path="/confirmpassword" element={<Confrimpassword />} />
 
-// // //         {/* ── Admin ── */}
-// // //         <Route path="/dashboard" element={
-// // //           <PrivateRoute role="admin"><Dashboard /></PrivateRoute>
-// // //         } />
-// // //         <Route path="/Trends" element={
-// // //           <PrivateRoute role={["admin", "client"]}><Trends /></PrivateRoute>
-// // //         } />
-// // //         <Route path="/Apiintegretion" element={
-// // //           <PrivateRoute role="admin"><Apiintegretion /></PrivateRoute>
-// // //         } />
-// // //         <Route path="/UserManagement" element={
-// // //           <PrivateRoute role="admin"><UserManagement /></PrivateRoute>
-// // //         } />
-// // //         <Route path="/AddInstitution" element={
-// // //           <PrivateRoute role="admin"><AddInstitution /></PrivateRoute>
-// // //         } />
+// // //         {/* Admin Routes */}
+// // //         <Route
+// // //           path="/dashboard"
+// // //           element={
+// // //             <PrivateRoute role="admin">
+// // //               <Dashboard />
+// // //             </PrivateRoute>
+// // //           }
+// // //         />
+// // //         <Route
+// // //           path="/Trends"
+// // //           element={
+// // //             <PrivateRoute role={["admin", "client"]}>
+// // //               <Trends />
+// // //             </PrivateRoute>
+// // //           }
+// // //         />
+// // //         <Route
+// // //           path="/Apiintegretion"
+// // //           element={
+// // //             <PrivateRoute role="admin">
+// // //               <Apiintegretion />
+// // //             </PrivateRoute>
+// // //           }
+// // //         />
+// // //         <Route
+// // //           path="/UserManagement"
+// // //           element={
+// // //             <PrivateRoute role="admin">
+// // //               <UserManagement />
+// // //             </PrivateRoute>
+// // //           }
+// // //         />
+// // //         <Route
+// // //           path="/AddInstitution"
+// // //           element={
+// // //             <PrivateRoute role="admin">
+// // //               <AddInstitution />
+// // //             </PrivateRoute>
+// // //           }
+// // //         />
 
-// // //         {/* ── Allocator (+ admin) ── */}
-// // //         <Route path="/Allocator" element={
-// // //           <PrivateRoute role="allocator"><Allocator /></PrivateRoute>
-// // //         } />
+// // //         {/* Check Type Routes */}
+// // //         <Route
+// // //           path="/EmploymentCheck"
+// // //           element={
+// // //             <PrivateRoute role={["admin", ...VERIFIER_ROLES]}>
+// // //               <EmploymentCheck />
+// // //             </PrivateRoute>
+// // //           }
+// // //         />
+// // //         <Route
+// // //           path="/EducationCheck"
+// // //           element={
+// // //             <PrivateRoute role={["admin", ...VERIFIER_ROLES]}>
+// // //               <EducationCheck />
+// // //             </PrivateRoute>
+// // //           }
+// // //         />
+// // //         <Route
+// // //           path="/AddressCheck"
+// // //           element={
+// // //             <PrivateRoute role={["admin", ...VERIFIER_ROLES]}>
+// // //               <AddressCheck />
+// // //             </PrivateRoute>
+// // //           }
+// // //         />
+// // //         <Route
+// // //           path="/DatabaseCheck"
+// // //           element={
+// // //             <PrivateRoute role={["admin", ...VERIFIER_ROLES]}>
+// // //               <DatabaseCheck />
+// // //             </PrivateRoute>
+// // //           }
+// // //         />
+// // //         <Route
+// // //           path="/CriminalCheck"
+// // //           element={
+// // //             <PrivateRoute role={["admin", ...VERIFIER_ROLES]}>
+// // //               <CriminalCheck />
+// // //             </PrivateRoute>
+// // //           }
+// // //         />
+// // //         <Route
+// // //           path="/DrugtestCheck"
+// // //           element={
+// // //             <PrivateRoute role={["admin", ...VERIFIER_ROLES]}>
+// // //               <DrugtestCheck />
+// // //             </PrivateRoute>
+// // //           }
+// // //         />
+// // //         <Route
+// // //           path="/CourtroomCheck"
+// // //           element={
+// // //             <PrivateRoute role={["admin", ...VERIFIER_ROLES]}>
+// // //               <CourtroomCheck />
+// // //             </PrivateRoute>
+// // //           }
+// // //         />
 
-// // //         {/* ── Add Case (admin, allocator, client) ── */}
-// // //         <Route path="/AddCase" element={
-// // //           <PrivateRoute role={["admin", "allocator", "client"]}><AddCase /></PrivateRoute>
-// // //         } />
+// // //         {/* Allocator Routes */}
+// // //         <Route
+// // //           path="/Allocator"
+// // //           element={
+// // //             <PrivateRoute role="allocator">
+// // //               <Allocator />
+// // //             </PrivateRoute>
+// // //           }
+// // //         />
 
-// // //         {/* ── Verifier — all 9 verifier roles (+ admin) ── */}
-// // //         <Route path="/Verifyer" element={
-// // //           <PrivateRoute role={VERIFIER_ROLES}><Verifyer /></PrivateRoute>
-// // //         } />
-// // //         <Route path="/VerifyerDashboard" element={
-// // //           <PrivateRoute role={VERIFIER_ROLES}><Verifyer /></PrivateRoute>
-// // //         } />
-// // //         <Route path="/emploment" element={
-// // //           <PrivateRoute role={VERIFIER_ROLES}><Emploment /></PrivateRoute>
-// // //         } />
-// // //         <Route path="/StatusEmploment" element={
-// // //           <PrivateRoute role={VERIFIER_ROLES}><StatusEmploment /></PrivateRoute>
-// // //         } />
+// // //         {/* Case Routes */}
+// // //         <Route
+// // //           path="/AddCase"
+// // //           element={
+// // //             <PrivateRoute role={["admin", "allocator", "client"]}>
+// // //               <AddCase />
+// // //             </PrivateRoute>
+// // //           }
+// // //         />
 
-// // //         {/* ── Check Manager (+ admin) ── */}
-// // //         <Route path="/AllCases" element={
-// // //           <PrivateRoute role="check_manager"><AllCases /></PrivateRoute>
-// // //         } />
+// // //         {/* Verifier Routes */}
+// // //         <Route
+// // //           path="/Verifyer"
+// // //           element={
+// // //             <PrivateRoute role={VERIFIER_ROLES}>
+// // //               <Verifyer />
+// // //             </PrivateRoute>
+// // //           }
+// // //         />
+// // //         <Route
+// // //           path="/VerifyerDashboard"
+// // //           element={
+// // //             <PrivateRoute role={VERIFIER_ROLES}>
+// // //               <Verifyer />
+// // //             </PrivateRoute>
+// // //           }
+// // //         />
+// // //         <Route
+// // //           path="/emploment"
+// // //           element={
+// // //             <PrivateRoute role={VERIFIER_ROLES}>
+// // //               <Emploment />
+// // //             </PrivateRoute>
+// // //           }
+// // //         />
+// // //         <Route
+// // //           path="/StatusEmploment"
+// // //           element={
+// // //             <PrivateRoute role={VERIFIER_ROLES}>
+// // //               <StatusEmploment />
+// // //             </PrivateRoute>
+// // //           }
+          
+// // //         />
+// // //         <Route
+// // //   path="/bg"
+// // //   element={
+// // //     <PrivateRoute role={["admin", ...VERIFIER_ROLES]}>
+// // //       <Bg />
+// // //     </PrivateRoute>
+// // //   }
+// // // />
 
-// // //         {/* ── Report Writing (+ admin) ── */}
-// // //         <Route path="/Specialist" element={
-// // //           <PrivateRoute role="report_writing"><Specialist /></PrivateRoute>
-// // //         } />
+// // //         {/* Check Manager */}
+// // //         <Route
+// // //           path="/AllCases"
+// // //           element={
+// // //             <PrivateRoute role="check_manager">
+// // //               <AllCases />
+// // //             </PrivateRoute>
+// // //           }
+// // //         />
 
-// // //         {/* ── PVT / QC (+ admin) ── */}
-// // //         <Route path="/Intake" element={
-// // //           <PrivateRoute role="pvt_qc"><Intake /></PrivateRoute>
-// // //         } />
+// // //         {/* Specialist & QC */}
+// // //         <Route
+// // //           path="/Specialist"
+// // //           element={
+// // //             <PrivateRoute role="report_writing">
+// // //               <Specialist />
+// // //             </PrivateRoute>
+// // //           }
+// // //         />
+// // //         <Route
+// // //           path="/Intake"
+// // //           element={
+// // //             <PrivateRoute role="pvt_qc">
+// // //               <Intake />
+// // //             </PrivateRoute>
+// // //           }
+// // //         />
 
-// // //         {/* ── Client (+ admin) — dynamic case list + detail, filtered server-side ── */}
-// // //         <Route path="/Client" element={
-// // //           <PrivateRoute role="client"><Client /></PrivateRoute>
-// // //         } />
-// // //         <Route path="/ClientBilling" element={
-// // //           <PrivateRoute role="client"><ClientBilling /></PrivateRoute>
-// // //         } />
+// // //         {/* Client Routes */}
+// // //         <Route
+// // //           path="/Client"
+// // //           element={
+// // //             <PrivateRoute role="client">
+// // //               <Client />
+// // //             </PrivateRoute>
+// // //           }
+// // //         />
+// // //         <Route
+// // //           path="/ClientBilling"
+// // //           element={
+// // //             <PrivateRoute role="client">
+// // //               <ClientBilling />
+// // //             </PrivateRoute>
+// // //           }
+// // //         />
+// // //         <Route
+// // //           path="/clientportal"
+// // //           element={
+// // //             <PrivateRoute role={["onboarding", "client"]}>
+// // //               <Clientportal />
+// // //             </PrivateRoute>
+// // //           }
+// // //         />
 
-// // //         {/* ── Candidate Portal — Link Generator (onboarding + client + admin) ── */}
-// // //         <Route path="/clientportal" element={
-// // //           <PrivateRoute role={["onboarding", "client"]}><Clientportal /></PrivateRoute>
-// // //         } />
+// // //         {/* Settings & Admin Ops */}
+// // //         <Route
+// // //           path="/Settings"
+// // //           element={
+// // //             <PrivateRoute>
+// // //               <Settings />
+// // //             </PrivateRoute>
+// // //           }
+// // //         />
+// // //         <Route
+// // //           path="/AddCompany"
+// // //           element={
+// // //             <PrivateRoute>
+// // //               <CompanyManagement />
+// // //             </PrivateRoute>
+// // //           }
+// // //         />
+// // //         <Route
+// // //           path="/ClientOnboardingForm"
+// // //           element={
+// // //             <PrivateRoute>
+// // //               <ClientOnboardingForm />
+// // //             </PrivateRoute>
+// // //           }
+// // //         />
+// // //         <Route
+// // //           path="/AddClient"
+// // //           element={
+// // //             <PrivateRoute role="admin">
+// // //               <AddClient />
+// // //             </PrivateRoute>
+// // //           }
+// // //         />
+// // //         <Route
+// // //           path="/AllClients"
+// // //           element={
+// // //             <PrivateRoute role="admin">
+// // //               <AllClients />
+// // //             </PrivateRoute>
+// // //           }
+// // //         />
+// // //         <Route
+// // //           path="/PendingRegistrations"
+// // //           element={
+// // //             <PrivateRoute role="admin">
+// // //               <PendingRegistrations />
+// // //             </PrivateRoute>
+// // //           }
+// // //         />
 
-// // //         {/* ── Settings — any logged-in user ── */}
-// // //         <Route path="/Settings" element={
-// // //           <PrivateRoute><Settings /></PrivateRoute>
-// // //         } />
-// // //         <Route path="/AddCompany" element={
-// // //           <PrivateRoute><CompanyManagement /></PrivateRoute>
-// // //         } />
-// // //         <Route path="/ClientOnboardingForm" element={
-// // //           <PrivateRoute><ClientOnboardingForm /></PrivateRoute>
-// // //         } />
-// // //         <Route path="/AddClient" element={
-// // //   <PrivateRoute role="admin"><AddClient /></PrivateRoute>
-// // // } />
-// // // <Route path="/PendingRegistrations" element={
-// // //   <PrivateRoute role="admin"><PendingRegistrations /></PrivateRoute>
-// // // } />
-
-// // //         {/* ── Catch all ── */}
+// // //         {/* Catch All */}
 // // //         <Route path="*" element={<Navigate to="/" replace />} />
-
 // // //       </Routes>
 // // //     </BrowserRouter>
 // // //   );
 // // // }
 
+// // // // Laravel Vite DOM Mounting Check
 // // // const container = document.getElementById("app");
-// // // const root = ReactDOM.createRoot(container);
-// // // root.render(<App />);
-// // // import "./bootstrap";
+// // // if (container) {
+// // //   const root = ReactDOM.createRoot(container);
+// // //   root.render(<App />);
+// // // }
 // // import React from "react";
 // // import ReactDOM from "react-dom/client";
-// // import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+// // import {
+// //   BrowserRouter,
+// //   Routes,
+// //   Route,
+// //   Navigate,
+// // } from "react-router-dom";
 
-// // // Page Imports
+// // // ─────────────────────────────────────────
+// // // Authentication / Public Pages
+// // // ─────────────────────────────────────────
 // // import Login from "./pages/Login";
 // // import Signup from "./pages/Signup";
 // // import Forgetpassword from "./pages/Forgetpassword";
 // // import VerifyAccount from "./pages/Verifyaccount";
 // // import Resetpassword from "./pages/Resetpassword";
 // // import Confrimpassword from "./pages/Confrimpassword";
-// // import Dashboard from "./pages/Dashboard";
-// // import Emploment from "./pages/Emploment";
-// // import Verifyer from "./pages/verifyer";
-// // import Clientportal from "./pages/Clientportal";
-// // import Client from "./pages/Client";
-// // import Settings from "./pages/Settings";
-// // import Intake from "./pages/Intake";
-// // import Allocator from "./pages/Allocator";
-// // import Specialist from "./pages/Specialist";
-// // import AllCases from "./pages/AllCases";
-// // import Trends from "./pages/Trends";
-// // import Apiintegretion from "./pages/Apiintegretion";
-// // import StatusEmploment from "./pages/StatusEmploment";
-// // import UserManagement from "./pages/UserManagement";
-// // import AddCase from "./pages/AddCase";
 // // import ClientRegistration from "./pages/ClientRegistration";
-// // import AddInstitution from "./pages/AddInstitution";
-// // import CompanyManagement from "./pages/AddCompany";
+
+// // // ─────────────────────────────────────────
+// // // Main Dashboard Pages
+// // // ─────────────────────────────────────────
+// // import Dashboard from "./pages/Dashboard";
+// // import Client from "./pages/Client";
+// // import Clientportal from "./pages/Clientportal";
+// // import ClientCases from "./pages/ClientCases";
 // // import ClientBilling from "./pages/ClientBilling";
-// // import ClientOnboardingForm from "./pages/Clientonbordingform";
-// // import AddClient from "./pages/AddClient";
-// // import PendingRegistrations from "./pages/PendingRegistrations";
-// // import AllClients from "./pages/Allclients";
+
+// // // ─────────────────────────────────────────
+// // // Case Management
+// // // ─────────────────────────────────────────
+// // import AllCases from "./pages/AllCases";
+// // import AddCase from "./pages/AddCase";
+// // import Allocator from "./pages/Allocator";
+
+// // // ─────────────────────────────────────────
+// // // Verification / Operations
+// // // ─────────────────────────────────────────
+// // import Verifyer from "./pages/verifyer";
+// // import Emploment from "./pages/Emploment";
+// // import StatusEmploment from "./pages/StatusEmploment";
+// // import Specialist from "./pages/Specialist";
+// // import Intake from "./pages/Intake";
+
+// // // ─────────────────────────────────────────
+// // // Verification Check Type Pages
+// // // ─────────────────────────────────────────
 // // import EmploymentCheck from "./pages/EmploymentCheck";
 // // import EducationCheck from "./pages/EducationCheck";
 // // import AddressCheck from "./pages/AddressCheck";
@@ -264,10 +685,34 @@
 // // import CriminalCheck from "./pages/CriminalCheck";
 // // import DrugtestCheck from "./pages/DrugtestCheck";
 // // import CourtroomCheck from "./pages/CourtroomCheck";
-// // import Bg from "./pages/bg";
 
-// // // Helpers
-// // const getToken = () => localStorage.getItem("token");
+// // // ─────────────────────────────────────────
+// // // Admin Pages
+// // // ─────────────────────────────────────────
+// // import UserManagement from "./pages/UserManagement";
+// // import AddInstitution from "./pages/AddInstitution";
+// // import CompanyManagement from "./pages/AddCompany";
+// // import Apiintegretion from "./pages/Apiintegretion";
+// // import AddressVerification from "./pages/AddressVerification";
+
+// // // ─────────────────────────────────────────
+// // // Other Pages
+// // // ─────────────────────────────────────────
+// // import Settings from "./pages/Settings";
+// // import Trends from "./pages/Trends";
+
+// // // ─────────────────────────────────────────
+// // // Candidate Self-Service
+// // // ─────────────────────────────────────────
+// // import CandidateVerificationWizard from "./pages/CandidateVerificationWizard";
+// // // ═════════════════════════════════════════
+// // // AUTHENTICATION HELPERS
+// // // ═════════════════════════════════════════
+
+// // const getToken = () => {
+// //   return localStorage.getItem("token");
+// // };
+
 
 // // const getUser = () => {
 // //   try {
@@ -277,80 +722,158 @@
 // //   }
 // // };
 
-// // const VERIFIER_ROLES = [
-// //   "verifier",
-// //   "verifyer",
-// //   "employment_verifier",
-// //   "education_verifier",
-// //   "address_verifier",
-// //   "database_verifier",
-// //   "criminal_verifier",
-// //   "drug_test_verifier",
-// //   "courtroom_verifier",
-// // ];
+
+// // // ═════════════════════════════════════════
+// // // ROLE → DEFAULT ROUTE
+// // // ═════════════════════════════════════════
 
 // // function getRoleRoute(role) {
-// //   const normalizedRole = role?.toLowerCase();
 // //   const routes = {
 // //     admin: "/dashboard",
+
 // //     allocator: "/Allocator",
+
 // //     verifier: "/Verifyer",
 // //     verifyer: "/Verifyer",
+
+// //     employment_verifier: "/Verifyer",
+// //     education_verifier: "/Verifyer",
+// //     address_verifier: "/Verifyer",
+// //     database_verifier: "/Verifyer",
+// //     criminal_verifier: "/Verifyer",
+// //     drug_test_verifier: "/Verifyer",
+// //     courtroom_verifier: "/Verifyer",
+
 // //     check_manager: "/AllCases",
+
 // //     report_writing: "/Specialist",
+
 // //     pvt_qc: "/Intake",
+
 // //     client: "/Client",
+
 // //     onboarding: "/clientportal",
-// //     employment_verifier: "/EmploymentCheck",
-// //     education_verifier: "/EducationCheck",
-// //     address_verifier: "/AddressCheck",
-// //     database_verifier: "/DatabaseCheck",
-// //     criminal_verifier: "/CriminalCheck",
-// //     drug_test_verifier: "/DrugtestCheck",
-// //     courtroom_verifier: "/CourtroomCheck",
 // //   };
-// //   return routes[normalizedRole] || "/";
+
+// //   return routes[role] || "/";
 // // }
+
+
+// // // ═════════════════════════════════════════
+// // // PRIVATE ROUTE
+// // // ═════════════════════════════════════════
+// // //
+// // // Usage:
+// // //
+// // // <PrivateRoute>
+// // //     <Page />
+// // // </PrivateRoute>
+// // //
+// // // OR
+// // //
+// // // <PrivateRoute role="admin">
+// // //     <Page />
+// // // </PrivateRoute>
+// // //
+// // // OR
+// // //
+// // // <PrivateRoute role={["admin", "client"]}>
+// // //     <Page />
+// // // </PrivateRoute>
+// // // ═════════════════════════════════════════
 
 // // function PrivateRoute({ children, role }) {
 // //   const token = getToken();
 // //   const user = getUser();
 
+// //   // User is not logged in
 // //   if (!token || !user) {
 // //     return <Navigate to="/" replace />;
 // //   }
 
+// //   // Role restriction
 // //   if (role) {
-// //     const allowed = Array.isArray(role) ? role : [role];
-// //     const userRole = user.role?.toLowerCase();
+// //     const allowedRoles = Array.isArray(role)
+// //       ? role
+// //       : [role];
 
-// //     // Check if user is admin or user's role exists in allowed list
-// //     const hasAccess =
-// //       userRole === "admin" ||
-// //       allowed.some((r) => r.toLowerCase() === userRole);
-
-// //     if (!hasAccess) {
-// //       return <Navigate to={getRoleRoute(user.role)} replace />;
+// //     // Admin has access to all protected pages
+// //     if (
+// //       user.role !== "admin" &&
+// //       !allowedRoles.includes(user.role)
+// //     ) {
+// //       return (
+// //         <Navigate
+// //           to={getRoleRoute(user.role)}
+// //           replace
+// //         />
+// //       );
 // //     }
 // //   }
 
 // //   return children;
 // // }
 
-// // export default function App() {
+
+// // // ═════════════════════════════════════════
+// // // APP
+// // // ═════════════════════════════════════════
+
+// // function App() {
 // //   return (
 // //     <BrowserRouter>
-// //       <Routes>
-// //         {/* Public Routes */}
-// //         <Route path="/" element={<Login />} />
-// //         <Route path="/signup" element={<Signup />} />
-// //         <Route path="/client-register" element={<ClientRegistration />} />
-// //         <Route path="/forgetpassword" element={<Forgetpassword />} />
-// //         <Route path="/verifyaccount" element={<VerifyAccount />} />
-// //         <Route path="/resetpassword" element={<Resetpassword />} />
-// //         <Route path="/confirmpassword" element={<Confrimpassword />} />
 
-// //         {/* Admin Routes */}
+// //       <Routes>
+
+
+// //         {/* ═══════════════════════════════
+// //             PUBLIC ROUTES
+// //         ═══════════════════════════════ */}
+
+// //         <Route
+// //           path="/"
+// //           element={<Login />}
+// //         />
+
+// //         <Route
+// //           path="/signup"
+// //           element={<Signup />}
+// //         />
+
+// //         <Route
+// //           path="/client-register"
+// //           element={<ClientRegistration />}
+// //         />
+// //         <Route
+// //   path="/candidate-verification"
+// //   element={<CandidateVerificationWizard />}
+// // />
+
+// //         <Route
+// //           path="/forgetpassword"
+// //           element={<Forgetpassword />}
+// //         />
+
+// //         <Route
+// //           path="/verifyaccount"
+// //           element={<VerifyAccount />}
+// //         />
+
+// //         <Route
+// //           path="/resetpassword"
+// //           element={<Resetpassword />}
+// //         />
+
+// //         <Route
+// //           path="/confirmpassword"
+// //           element={<Confrimpassword />}
+// //         />
+
+
+// //         {/* ═══════════════════════════════
+// //             ADMIN DASHBOARD
+// //         ═══════════════════════════════ */}
+
 // //         <Route
 // //           path="/dashboard"
 // //           element={
@@ -359,161 +882,12 @@
 // //             </PrivateRoute>
 // //           }
 // //         />
-// //         <Route
-// //           path="/Trends"
-// //           element={
-// //             <PrivateRoute role={["admin", "client"]}>
-// //               <Trends />
-// //             </PrivateRoute>
-// //           }
-// //         />
-// //         <Route
-// //           path="/Apiintegretion"
-// //           element={
-// //             <PrivateRoute role="admin">
-// //               <Apiintegretion />
-// //             </PrivateRoute>
-// //           }
-// //         />
-// //         <Route
-// //           path="/UserManagement"
-// //           element={
-// //             <PrivateRoute role="admin">
-// //               <UserManagement />
-// //             </PrivateRoute>
-// //           }
-// //         />
-// //         <Route
-// //           path="/AddInstitution"
-// //           element={
-// //             <PrivateRoute role="admin">
-// //               <AddInstitution />
-// //             </PrivateRoute>
-// //           }
-// //         />
 
-// //         {/* Check Type Routes */}
-// //         <Route
-// //           path="/EmploymentCheck"
-// //           element={
-// //             <PrivateRoute role={["admin", ...VERIFIER_ROLES]}>
-// //               <EmploymentCheck />
-// //             </PrivateRoute>
-// //           }
-// //         />
-// //         <Route
-// //           path="/EducationCheck"
-// //           element={
-// //             <PrivateRoute role={["admin", ...VERIFIER_ROLES]}>
-// //               <EducationCheck />
-// //             </PrivateRoute>
-// //           }
-// //         />
-// //         <Route
-// //           path="/AddressCheck"
-// //           element={
-// //             <PrivateRoute role={["admin", ...VERIFIER_ROLES]}>
-// //               <AddressCheck />
-// //             </PrivateRoute>
-// //           }
-// //         />
-// //         <Route
-// //           path="/DatabaseCheck"
-// //           element={
-// //             <PrivateRoute role={["admin", ...VERIFIER_ROLES]}>
-// //               <DatabaseCheck />
-// //             </PrivateRoute>
-// //           }
-// //         />
-// //         <Route
-// //           path="/CriminalCheck"
-// //           element={
-// //             <PrivateRoute role={["admin", ...VERIFIER_ROLES]}>
-// //               <CriminalCheck />
-// //             </PrivateRoute>
-// //           }
-// //         />
-// //         <Route
-// //           path="/DrugtestCheck"
-// //           element={
-// //             <PrivateRoute role={["admin", ...VERIFIER_ROLES]}>
-// //               <DrugtestCheck />
-// //             </PrivateRoute>
-// //           }
-// //         />
-// //         <Route
-// //           path="/CourtroomCheck"
-// //           element={
-// //             <PrivateRoute role={["admin", ...VERIFIER_ROLES]}>
-// //               <CourtroomCheck />
-// //             </PrivateRoute>
-// //           }
-// //         />
 
-// //         {/* Allocator Routes */}
-// //         <Route
-// //           path="/Allocator"
-// //           element={
-// //             <PrivateRoute role="allocator">
-// //               <Allocator />
-// //             </PrivateRoute>
-// //           }
-// //         />
+// //         {/* ═══════════════════════════════
+// //             ADMIN — CASES
+// //         ═══════════════════════════════ */}
 
-// //         {/* Case Routes */}
-// //         <Route
-// //           path="/AddCase"
-// //           element={
-// //             <PrivateRoute role={["admin", "allocator", "client"]}>
-// //               <AddCase />
-// //             </PrivateRoute>
-// //           }
-// //         />
-
-// //         {/* Verifier Routes */}
-// //         <Route
-// //           path="/Verifyer"
-// //           element={
-// //             <PrivateRoute role={VERIFIER_ROLES}>
-// //               <Verifyer />
-// //             </PrivateRoute>
-// //           }
-// //         />
-// //         <Route
-// //           path="/VerifyerDashboard"
-// //           element={
-// //             <PrivateRoute role={VERIFIER_ROLES}>
-// //               <Verifyer />
-// //             </PrivateRoute>
-// //           }
-// //         />
-// //         <Route
-// //           path="/emploment"
-// //           element={
-// //             <PrivateRoute role={VERIFIER_ROLES}>
-// //               <Emploment />
-// //             </PrivateRoute>
-// //           }
-// //         />
-// //         <Route
-// //           path="/StatusEmploment"
-// //           element={
-// //             <PrivateRoute role={VERIFIER_ROLES}>
-// //               <StatusEmploment />
-// //             </PrivateRoute>
-// //           }
-          
-// //         />
-// //         <Route
-// //   path="/bg"
-// //   element={
-// //     <PrivateRoute role={["admin", ...VERIFIER_ROLES]}>
-// //       <Bg />
-// //     </PrivateRoute>
-// //   }
-// // />
-
-// //         {/* Check Manager */}
 // //         <Route
 // //           path="/AllCases"
 // //           element={
@@ -523,7 +897,189 @@
 // //           }
 // //         />
 
-// //         {/* Specialist & QC */}
+// //         <Route
+// //           path="/AddCase"
+// //           element={
+// //             <PrivateRoute
+// //               role={[
+// //                 "admin",
+// //                 "allocator",
+// //                 "client",
+// //               ]}
+// //             >
+// //               <AddCase />
+// //             </PrivateRoute>
+// //           }
+// //         />
+
+// //         <Route
+// //           path="/Allocator"
+// //           element={
+// //             <PrivateRoute role="allocator">
+// //               <Allocator />
+// //             </PrivateRoute>
+// //           }
+// //         />
+
+
+// //         {/* ═══════════════════════════════
+// //             VERIFIER DASHBOARD
+// //         ═══════════════════════════════ */}
+
+// //         <Route
+// //           path="/Verifyer"
+// //           element={
+// //             <PrivateRoute
+// //               role={[
+// //                 "admin",
+// //                 "verifier",
+// //                 "verifyer",
+// //                 "employment_verifier",
+// //                 "education_verifier",
+// //                 "address_verifier",
+// //                 "database_verifier",
+// //                 "criminal_verifier",
+// //                 "drug_test_verifier",
+// //                 "courtroom_verifier",
+// //               ]}
+// //             >
+// //               <Verifyer />
+// //             </PrivateRoute>
+// //           }
+// //         />
+
+
+// //         {/* ═══════════════════════════════
+// //             EMPLOYMENT OPERATIONS
+// //         ═══════════════════════════════ */}
+
+// //         <Route
+// //           path="/emploment"
+// //           element={
+// //             <PrivateRoute
+// //               role={[
+// //                 "admin",
+// //                 "verifier",
+// //                 "verifyer",
+// //                 "employment_verifier",
+// //                 "check_manager",
+// //               ]}
+// //             >
+// //               <Emploment />
+// //             </PrivateRoute>
+// //           }
+// //         />
+
+// //         <Route
+// //           path="/StatusEmploment"
+// //           element={
+// //             <PrivateRoute
+// //               role={[
+// //                 "admin",
+// //                 "verifier",
+// //                 "verifyer",
+// //                 "employment_verifier",
+// //                 "check_manager",
+// //               ]}
+// //             >
+// //               <StatusEmploment />
+// //             </PrivateRoute>
+// //           }
+// //         />
+
+
+// //         {/* ═══════════════════════════════
+// //             VERIFICATION CHECK TYPES
+// //         ═══════════════════════════════ */}
+
+// //         {/* Employment */}
+
+// //         <Route
+// //           path="/EmploymentCheck"
+// //           element={
+// //             <PrivateRoute role="admin">
+// //               <EmploymentCheck />
+// //             </PrivateRoute>
+// //           }
+// //         />
+
+
+// //         {/* Education */}
+
+// //         <Route
+// //           path="/EducationCheck"
+// //           element={
+// //             <PrivateRoute role="admin">
+// //               <EducationCheck />
+// //             </PrivateRoute>
+// //           }
+// //         />
+
+
+// //         {/* Address */}
+
+// //         <Route
+// //           path="/AddressCheck"
+// //           element={
+// //             <PrivateRoute role="admin">
+// //               <AddressCheck />
+// //             </PrivateRoute>
+// //           }
+// //         />
+
+
+// //         {/* Database */}
+
+// //         <Route
+// //           path="/DatabaseCheck"
+// //           element={
+// //             <PrivateRoute role="admin">
+// //               <DatabaseCheck />
+// //             </PrivateRoute>
+// //           }
+// //         />
+
+
+// //         {/* Criminal */}
+
+// //         <Route
+// //           path="/CriminalCheck"
+// //           element={
+// //             <PrivateRoute role="admin">
+// //               <CriminalCheck />
+// //             </PrivateRoute>
+// //           }
+// //         />
+
+
+// //         {/* Drug Test */}
+
+// //         <Route
+// //           path="/DrugtestCheck"
+// //           element={
+// //             <PrivateRoute role="admin">
+// //               <DrugtestCheck />
+// //             </PrivateRoute>
+// //           }
+// //         />
+
+
+// //         {/* Courtroom */}
+
+// //         <Route
+// //           path="/CourtroomCheck"
+// //           element={
+// //             <PrivateRoute role="admin">
+// //               <CourtroomCheck />
+// //             </PrivateRoute>
+// //           }
+// //         />
+
+
+// //         {/* ═══════════════════════════════
+// //             REPORT WRITING
+// //         ═══════════════════════════════ */}
+
 // //         <Route
 // //           path="/Specialist"
 // //           element={
@@ -532,6 +1088,12 @@
 // //             </PrivateRoute>
 // //           }
 // //         />
+
+
+// //         {/* ═══════════════════════════════
+// //             QC / INTAKE
+// //         ═══════════════════════════════ */}
+
 // //         <Route
 // //           path="/Intake"
 // //           element={
@@ -541,7 +1103,11 @@
 // //           }
 // //         />
 
-// //         {/* Client Routes */}
+
+// //         {/* ═══════════════════════════════
+// //             CLIENT
+// //         ═══════════════════════════════ */}
+
 // //         <Route
 // //           path="/Client"
 // //           element={
@@ -550,6 +1116,16 @@
 // //             </PrivateRoute>
 // //           }
 // //         />
+
+// //         <Route
+// //           path="/ClientCases"
+// //           element={
+// //             <PrivateRoute role="client">
+// //               <ClientCases />
+// //             </PrivateRoute>
+// //           }
+// //         />
+
 // //         <Route
 // //           path="/ClientBilling"
 // //           element={
@@ -558,16 +1134,118 @@
 // //             </PrivateRoute>
 // //           }
 // //         />
+
+
+// //         {/* ═══════════════════════════════
+// //             CLIENT PORTAL
+// //         ═══════════════════════════════ */}
+
 // //         <Route
 // //           path="/clientportal"
 // //           element={
-// //             <PrivateRoute role={["onboarding", "client"]}>
+// //             <PrivateRoute
+// //               role={[
+// //                 "admin",
+// //                 "onboarding",
+// //                 "client",
+// //               ]}
+// //             >
 // //               <Clientportal />
 // //             </PrivateRoute>
 // //           }
 // //         />
 
-// //         {/* Settings & Admin Ops */}
+
+// //         {/* ═══════════════════════════════
+// //             ADMIN — USER MANAGEMENT
+// //         ═══════════════════════════════ */}
+
+// //         <Route
+// //           path="/UserManagement"
+// //           element={
+// //             <PrivateRoute role="admin">
+// //               <UserManagement />
+// //             </PrivateRoute>
+// //           }
+// //         />
+
+
+// //         {/* ═══════════════════════════════
+// //             ADMIN — INSTITUTION
+// //         ═══════════════════════════════ */}
+
+// //         <Route
+// //           path="/AddInstitution"
+// //           element={
+// //             <PrivateRoute role="admin">
+// //               <AddInstitution />
+// //             </PrivateRoute>
+// //           }
+// //         />
+
+
+// //         {/* ═══════════════════════════════
+// //             ADMIN — COMPANY
+// //         ═══════════════════════════════ */}
+
+// //         <Route
+// //           path="/AddCompany"
+// //           element={
+// //             <PrivateRoute role="admin">
+// //               <CompanyManagement />
+// //             </PrivateRoute>
+// //           }
+// //         />
+
+
+
+// // <Route
+// //           path="/AddressVerification"
+// //           element={
+// //             <PrivateRoute role="admin">
+// //               <AddressVerification />
+// //             </PrivateRoute>
+// //           }
+// //         />
+
+// //         {/* ═══════════════════════════════
+// //             API INTEGRATION
+// //         ═══════════════════════════════ */}
+
+// //         <Route
+// //           path="/Apiintegretion"
+// //           element={
+// //             <PrivateRoute role="admin">
+// //               <Apiintegretion />
+// //             </PrivateRoute>
+// //           }
+// //         />
+
+
+// //         {/* ═══════════════════════════════
+// //             REPORTS & TRENDS
+// //         ═══════════════════════════════ */}
+
+// //         <Route
+// //           path="/Trends"
+// //           element={
+// //             <PrivateRoute
+// //               role={[
+// //                 "admin",
+// //                 "client",
+// //               ]}
+// //             >
+// //               <Trends />
+// //             </PrivateRoute>
+// //           }
+// //         />
+
+
+// //         {/* ═══════════════════════════════
+// //             SETTINGS
+// //             Any logged-in user
+// //         ═══════════════════════════════ */}
+
 // //         <Route
 // //           path="/Settings"
 // //           element={
@@ -576,60 +1254,38 @@
 // //             </PrivateRoute>
 // //           }
 // //         />
+
+
+// //         {/* ═══════════════════════════════
+// //             FALLBACK
+// //         ═══════════════════════════════ */}
+
 // //         <Route
-// //           path="/AddCompany"
+// //           path="*"
 // //           element={
-// //             <PrivateRoute>
-// //               <CompanyManagement />
-// //             </PrivateRoute>
-// //           }
-// //         />
-// //         <Route
-// //           path="/ClientOnboardingForm"
-// //           element={
-// //             <PrivateRoute>
-// //               <ClientOnboardingForm />
-// //             </PrivateRoute>
-// //           }
-// //         />
-// //         <Route
-// //           path="/AddClient"
-// //           element={
-// //             <PrivateRoute role="admin">
-// //               <AddClient />
-// //             </PrivateRoute>
-// //           }
-// //         />
-// //         <Route
-// //           path="/AllClients"
-// //           element={
-// //             <PrivateRoute role="admin">
-// //               <AllClients />
-// //             </PrivateRoute>
-// //           }
-// //         />
-// //         <Route
-// //           path="/PendingRegistrations"
-// //           element={
-// //             <PrivateRoute role="admin">
-// //               <PendingRegistrations />
-// //             </PrivateRoute>
+// //             <Navigate
+// //               to="/"
+// //               replace
+// //             />
 // //           }
 // //         />
 
-// //         {/* Catch All */}
-// //         <Route path="*" element={<Navigate to="/" replace />} />
 // //       </Routes>
+
 // //     </BrowserRouter>
 // //   );
 // // }
 
-// // // Laravel Vite DOM Mounting Check
+
+// // // ═════════════════════════════════════════
+// // // REACT MOUNT
+// // // ═════════════════════════════════════════
+
 // // const container = document.getElementById("app");
-// // if (container) {
-// //   const root = ReactDOM.createRoot(container);
-// //   root.render(<App />);
-// // }
+
+// // const root = ReactDOM.createRoot(container);
+
+// // root.render(<App />);
 // import React from "react";
 // import ReactDOM from "react-dom/client";
 // import {
@@ -642,90 +1298,103 @@
 // // ─────────────────────────────────────────
 // // Authentication / Public Pages
 // // ─────────────────────────────────────────
+
 // import Login from "./pages/Login";
 // import Signup from "./pages/Signup";
 // import Forgetpassword from "./pages/Forgetpassword";
 // import VerifyAccount from "./pages/Verifyaccount";
 // import Resetpassword from "./pages/Resetpassword";
 // import Confrimpassword from "./pages/Confrimpassword";
-// import ClientRegistration from "./pages/ClientRegistration";
 
 // // ─────────────────────────────────────────
-// // Main Dashboard Pages
+// // Admin / Dashboard Pages
 // // ─────────────────────────────────────────
+
 // import Dashboard from "./pages/Dashboard";
-// import Client from "./pages/Client";
-// import Clientportal from "./pages/Clientportal";
-// import ClientCases from "./pages/ClientCases";
-// import ClientBilling from "./pages/ClientBilling";
+// import Trends from "./pages/Trends";
+// import Apiintegretion from "./pages/Apiintegretion";
+// import UserManagement from "./pages/UserManagement";
+// import AddInstitution from "./pages/AddInstitution";
 
 // // ─────────────────────────────────────────
-// // Case Management
+// // Operational Pages
 // // ─────────────────────────────────────────
-// import AllCases from "./pages/AllCases";
-// import AddCase from "./pages/AddCase";
+
 // import Allocator from "./pages/Allocator";
-
-// // ─────────────────────────────────────────
-// // Verification / Operations
-// // ─────────────────────────────────────────
 // import Verifyer from "./pages/verifyer";
 // import Emploment from "./pages/Emploment";
 // import StatusEmploment from "./pages/StatusEmploment";
+// import AllCases from "./pages/AllCases";
 // import Specialist from "./pages/Specialist";
 // import Intake from "./pages/Intake";
 
 // // ─────────────────────────────────────────
-// // Verification Check Type Pages
+// // Client Pages
 // // ─────────────────────────────────────────
-// import EmploymentCheck from "./pages/EmploymentCheck";
-// import EducationCheck from "./pages/EducationCheck";
-// import AddressCheck from "./pages/AddressCheck";
-// import DatabaseCheck from "./pages/DatabaseCheck";
-// import CriminalCheck from "./pages/CriminalCheck";
-// import DrugtestCheck from "./pages/DrugtestCheck";
-// import CourtroomCheck from "./pages/CourtroomCheck";
+
+// import Client from "./pages/Client";
+// import ClientCases from "./pages/ClientCases";
+// import ClientBilling from "./pages/ClientBilling";
+// import Clientportal from "./pages/Clientportal";
 
 // // ─────────────────────────────────────────
-// // Admin Pages
+// // Case Pages
 // // ─────────────────────────────────────────
-// import UserManagement from "./pages/UserManagement";
-// import AddInstitution from "./pages/AddInstitution";
-// import CompanyManagement from "./pages/AddCompany";
-// import Apiintegretion from "./pages/Apiintegretion";
-// import AddressVerification from "./pages/AddressVerification";
+
+// import AddCase from "./pages/AddCase";
 
 // // ─────────────────────────────────────────
-// // Other Pages
+// // Company / Settings
 // // ─────────────────────────────────────────
+
 // import Settings from "./pages/Settings";
-// import Trends from "./pages/Trends";
+// import CompanyManagement from "./pages/AddCompany";
 
 // // ─────────────────────────────────────────
-// // Candidate Self-Service
+// // Client Registration
 // // ─────────────────────────────────────────
-// import CandidateVerificationWizard from "./pages/CandidateVerificationWizard";
-// // ═════════════════════════════════════════
-// // AUTHENTICATION HELPERS
-// // ═════════════════════════════════════════
+
+// import ClientRegistration from "./pages/ClientRegistration";
+
+// // ─────────────────────────────────────────
+// // Candidate Verification
+// // IMPORTANT:
+// // Your actual file is:
+// // resources/js/pages/bg.jsx
+// // ─────────────────────────────────────────
+
+// import CandidateVerificationWizard from "./pages/bg";
+
+// // ─────────────────────────────────────────
+// // Helper: Get Authentication Token
+// // ─────────────────────────────────────────
 
 // const getToken = () => {
 //   return localStorage.getItem("token");
 // };
 
+// // ─────────────────────────────────────────
+// // Helper: Get Logged-in User
+// // ─────────────────────────────────────────
 
 // const getUser = () => {
 //   try {
-//     return JSON.parse(localStorage.getItem("user")) || null;
-//   } catch {
+//     const user = localStorage.getItem("user");
+
+//     if (!user) {
+//       return null;
+//     }
+
+//     return JSON.parse(user);
+//   } catch (error) {
+//     console.error("Unable to read user from localStorage:", error);
 //     return null;
 //   }
 // };
 
-
-// // ═════════════════════════════════════════
-// // ROLE → DEFAULT ROUTE
-// // ═════════════════════════════════════════
+// // ─────────────────────────────────────────
+// // Role → Default Route
+// // ─────────────────────────────────────────
 
 // function getRoleRoute(role) {
 //   const routes = {
@@ -734,15 +1403,6 @@
 //     allocator: "/Allocator",
 
 //     verifier: "/Verifyer",
-//     verifyer: "/Verifyer",
-
-//     employment_verifier: "/Verifyer",
-//     education_verifier: "/Verifyer",
-//     address_verifier: "/Verifyer",
-//     database_verifier: "/Verifyer",
-//     criminal_verifier: "/Verifyer",
-//     drug_test_verifier: "/Verifyer",
-//     courtroom_verifier: "/Verifyer",
 
 //     check_manager: "/AllCases",
 
@@ -758,46 +1418,43 @@
 //   return routes[role] || "/";
 // }
 
-
-// // ═════════════════════════════════════════
-// // PRIVATE ROUTE
-// // ═════════════════════════════════════════
+// // ─────────────────────────────────────────
+// // PrivateRoute
 // //
-// // Usage:
+// // No role:
+// //   Any authenticated user can access.
 // //
-// // <PrivateRoute>
-// //     <Page />
-// // </PrivateRoute>
+// // role="admin":
+// //   Only admin.
 // //
-// // OR
+// // role={["admin", "client"]}:
+// //   Admin or client.
 // //
-// // <PrivateRoute role="admin">
-// //     <Page />
-// // </PrivateRoute>
-// //
-// // OR
-// //
-// // <PrivateRoute role={["admin", "client"]}>
-// //     <Page />
-// // </PrivateRoute>
-// // ═════════════════════════════════════════
+// // Admin has access to all protected routes.
+// // ─────────────────────────────────────────
 
 // function PrivateRoute({ children, role }) {
 //   const token = getToken();
 //   const user = getUser();
 
+//   // ───────────────────────────────────────
 //   // User is not logged in
+//   // ───────────────────────────────────────
+
 //   if (!token || !user) {
 //     return <Navigate to="/" replace />;
 //   }
 
-//   // Role restriction
+//   // ───────────────────────────────────────
+//   // Role validation
+//   // ───────────────────────────────────────
+
 //   if (role) {
 //     const allowedRoles = Array.isArray(role)
 //       ? role
 //       : [role];
 
-//     // Admin has access to all protected pages
+//     // Admin can access protected modules
 //     if (
 //       user.role !== "admin" &&
 //       !allowedRoles.includes(user.role)
@@ -814,10 +1471,9 @@
 //   return children;
 // }
 
-
-// // ═════════════════════════════════════════
-// // APP
-// // ═════════════════════════════════════════
+// // ─────────────────────────────────────────
+// // Application
+// // ─────────────────────────────────────────
 
 // function App() {
 //   return (
@@ -825,10 +1481,9 @@
 
 //       <Routes>
 
-
-//         {/* ═══════════════════════════════
+//         {/* ═══════════════════════════════════
 //             PUBLIC ROUTES
-//         ═══════════════════════════════ */}
+//         ═══════════════════════════════════ */}
 
 //         <Route
 //           path="/"
@@ -840,14 +1495,14 @@
 //           element={<Signup />}
 //         />
 
+//         {/* Client Registration
+//             This is PUBLIC.
+//             No login required. */}
+
 //         <Route
 //           path="/client-register"
 //           element={<ClientRegistration />}
 //         />
-//         <Route
-//   path="/candidate-verification"
-//   element={<CandidateVerificationWizard />}
-// />
 
 //         <Route
 //           path="/forgetpassword"
@@ -870,9 +1525,22 @@
 //         />
 
 
-//         {/* ═══════════════════════════════
-//             ADMIN DASHBOARD
-//         ═══════════════════════════════ */}
+//         {/* ═══════════════════════════════════
+//             CANDIDATE VERIFICATION
+//             PUBLIC ROUTE
+//         ═══════════════════════════════════ */}
+
+//         <Route
+//           path="/candidate-verification"
+//           element={
+//             <CandidateVerificationWizard />
+//           }
+//         />
+
+
+//         {/* ═══════════════════════════════════
+//             ADMIN ROUTES
+//         ═══════════════════════════════════ */}
 
 //         <Route
 //           path="/dashboard"
@@ -883,19 +1551,61 @@
 //           }
 //         />
 
-
-//         {/* ═══════════════════════════════
-//             ADMIN — CASES
-//         ═══════════════════════════════ */}
-
 //         <Route
-//           path="/AllCases"
+//           path="/Trends"
 //           element={
-//             <PrivateRoute role="check_manager">
-//               <AllCases />
+//             <PrivateRoute role="admin">
+//               <Trends />
 //             </PrivateRoute>
 //           }
 //         />
+
+//         <Route
+//           path="/Apiintegretion"
+//           element={
+//             <PrivateRoute role="admin">
+//               <Apiintegretion />
+//             </PrivateRoute>
+//           }
+//         />
+
+//         <Route
+//           path="/UserManagement"
+//           element={
+//             <PrivateRoute role="admin">
+//               <UserManagement />
+//             </PrivateRoute>
+//           }
+//         />
+
+//         <Route
+//           path="/AddInstitution"
+//           element={
+//             <PrivateRoute role="admin">
+//               <AddInstitution />
+//             </PrivateRoute>
+//           }
+//         />
+
+
+//         {/* ═══════════════════════════════════
+//             ALLOCATOR
+//         ═══════════════════════════════════ */}
+
+//         <Route
+//           path="/Allocator"
+//           element={
+//             <PrivateRoute role="allocator">
+//               <Allocator />
+//             </PrivateRoute>
+//           }
+//         />
+
+
+//         {/* ═══════════════════════════════════
+//             CASE CREATION
+//             Admin + Allocator + Client
+//         ═══════════════════════════════════ */}
 
 //         <Route
 //           path="/AddCase"
@@ -912,59 +1622,24 @@
 //           }
 //         />
 
-//         <Route
-//           path="/Allocator"
-//           element={
-//             <PrivateRoute role="allocator">
-//               <Allocator />
-//             </PrivateRoute>
-//           }
-//         />
 
-
-//         {/* ═══════════════════════════════
-//             VERIFIER DASHBOARD
-//         ═══════════════════════════════ */}
+//         {/* ═══════════════════════════════════
+//             VERIFIER
+//         ═══════════════════════════════════ */}
 
 //         <Route
 //           path="/Verifyer"
 //           element={
-//             <PrivateRoute
-//               role={[
-//                 "admin",
-//                 "verifier",
-//                 "verifyer",
-//                 "employment_verifier",
-//                 "education_verifier",
-//                 "address_verifier",
-//                 "database_verifier",
-//                 "criminal_verifier",
-//                 "drug_test_verifier",
-//                 "courtroom_verifier",
-//               ]}
-//             >
+//             <PrivateRoute role="verifier">
 //               <Verifyer />
 //             </PrivateRoute>
 //           }
 //         />
 
-
-//         {/* ═══════════════════════════════
-//             EMPLOYMENT OPERATIONS
-//         ═══════════════════════════════ */}
-
 //         <Route
 //           path="/emploment"
 //           element={
-//             <PrivateRoute
-//               role={[
-//                 "admin",
-//                 "verifier",
-//                 "verifyer",
-//                 "employment_verifier",
-//                 "check_manager",
-//               ]}
-//             >
+//             <PrivateRoute role="verifier">
 //               <Emploment />
 //             </PrivateRoute>
 //           }
@@ -973,112 +1648,30 @@
 //         <Route
 //           path="/StatusEmploment"
 //           element={
-//             <PrivateRoute
-//               role={[
-//                 "admin",
-//                 "verifier",
-//                 "verifyer",
-//                 "employment_verifier",
-//                 "check_manager",
-//               ]}
-//             >
+//             <PrivateRoute role="verifier">
 //               <StatusEmploment />
 //             </PrivateRoute>
 //           }
 //         />
 
 
-//         {/* ═══════════════════════════════
-//             VERIFICATION CHECK TYPES
-//         ═══════════════════════════════ */}
-
-//         {/* Employment */}
+//         {/* ═══════════════════════════════════
+//             CHECK MANAGER
+//         ═══════════════════════════════════ */}
 
 //         <Route
-//           path="/EmploymentCheck"
+//           path="/AllCases"
 //           element={
-//             <PrivateRoute role="admin">
-//               <EmploymentCheck />
+//             <PrivateRoute role="check_manager">
+//               <AllCases />
 //             </PrivateRoute>
 //           }
 //         />
 
 
-//         {/* Education */}
-
-//         <Route
-//           path="/EducationCheck"
-//           element={
-//             <PrivateRoute role="admin">
-//               <EducationCheck />
-//             </PrivateRoute>
-//           }
-//         />
-
-
-//         {/* Address */}
-
-//         <Route
-//           path="/AddressCheck"
-//           element={
-//             <PrivateRoute role="admin">
-//               <AddressCheck />
-//             </PrivateRoute>
-//           }
-//         />
-
-
-//         {/* Database */}
-
-//         <Route
-//           path="/DatabaseCheck"
-//           element={
-//             <PrivateRoute role="admin">
-//               <DatabaseCheck />
-//             </PrivateRoute>
-//           }
-//         />
-
-
-//         {/* Criminal */}
-
-//         <Route
-//           path="/CriminalCheck"
-//           element={
-//             <PrivateRoute role="admin">
-//               <CriminalCheck />
-//             </PrivateRoute>
-//           }
-//         />
-
-
-//         {/* Drug Test */}
-
-//         <Route
-//           path="/DrugtestCheck"
-//           element={
-//             <PrivateRoute role="admin">
-//               <DrugtestCheck />
-//             </PrivateRoute>
-//           }
-//         />
-
-
-//         {/* Courtroom */}
-
-//         <Route
-//           path="/CourtroomCheck"
-//           element={
-//             <PrivateRoute role="admin">
-//               <CourtroomCheck />
-//             </PrivateRoute>
-//           }
-//         />
-
-
-//         {/* ═══════════════════════════════
-//             REPORT WRITING
-//         ═══════════════════════════════ */}
+//         {/* ═══════════════════════════════════
+//             REPORT WRITING / SPECIALIST
+//         ═══════════════════════════════════ */}
 
 //         <Route
 //           path="/Specialist"
@@ -1090,9 +1683,9 @@
 //         />
 
 
-//         {/* ═══════════════════════════════
-//             QC / INTAKE
-//         ═══════════════════════════════ */}
+//         {/* ═══════════════════════════════════
+//             PVT / QC
+//         ═══════════════════════════════════ */}
 
 //         <Route
 //           path="/Intake"
@@ -1104,9 +1697,9 @@
 //         />
 
 
-//         {/* ═══════════════════════════════
+//         {/* ═══════════════════════════════════
 //             CLIENT
-//         ═══════════════════════════════ */}
+//         ═══════════════════════════════════ */}
 
 //         <Route
 //           path="/Client"
@@ -1136,16 +1729,16 @@
 //         />
 
 
-//         {/* ═══════════════════════════════
-//             CLIENT PORTAL
-//         ═══════════════════════════════ */}
+//         {/* ═══════════════════════════════════
+//             CANDIDATE PORTAL
+//             Onboarding + Client + Admin
+//         ═══════════════════════════════════ */}
 
 //         <Route
 //           path="/clientportal"
 //           element={
 //             <PrivateRoute
 //               role={[
-//                 "admin",
 //                 "onboarding",
 //                 "client",
 //               ]}
@@ -1156,95 +1749,10 @@
 //         />
 
 
-//         {/* ═══════════════════════════════
-//             ADMIN — USER MANAGEMENT
-//         ═══════════════════════════════ */}
-
-//         <Route
-//           path="/UserManagement"
-//           element={
-//             <PrivateRoute role="admin">
-//               <UserManagement />
-//             </PrivateRoute>
-//           }
-//         />
-
-
-//         {/* ═══════════════════════════════
-//             ADMIN — INSTITUTION
-//         ═══════════════════════════════ */}
-
-//         <Route
-//           path="/AddInstitution"
-//           element={
-//             <PrivateRoute role="admin">
-//               <AddInstitution />
-//             </PrivateRoute>
-//           }
-//         />
-
-
-//         {/* ═══════════════════════════════
-//             ADMIN — COMPANY
-//         ═══════════════════════════════ */}
-
-//         <Route
-//           path="/AddCompany"
-//           element={
-//             <PrivateRoute role="admin">
-//               <CompanyManagement />
-//             </PrivateRoute>
-//           }
-//         />
-
-
-
-// <Route
-//           path="/AddressVerification"
-//           element={
-//             <PrivateRoute role="admin">
-//               <AddressVerification />
-//             </PrivateRoute>
-//           }
-//         />
-
-//         {/* ═══════════════════════════════
-//             API INTEGRATION
-//         ═══════════════════════════════ */}
-
-//         <Route
-//           path="/Apiintegretion"
-//           element={
-//             <PrivateRoute role="admin">
-//               <Apiintegretion />
-//             </PrivateRoute>
-//           }
-//         />
-
-
-//         {/* ═══════════════════════════════
-//             REPORTS & TRENDS
-//         ═══════════════════════════════ */}
-
-//         <Route
-//           path="/Trends"
-//           element={
-//             <PrivateRoute
-//               role={[
-//                 "admin",
-//                 "client",
-//               ]}
-//             >
-//               <Trends />
-//             </PrivateRoute>
-//           }
-//         />
-
-
-//         {/* ═══════════════════════════════
+//         {/* ═══════════════════════════════════
 //             SETTINGS
 //             Any logged-in user
-//         ═══════════════════════════════ */}
+//         ═══════════════════════════════════ */}
 
 //         <Route
 //           path="/Settings"
@@ -1256,9 +1764,24 @@
 //         />
 
 
-//         {/* ═══════════════════════════════
+//         {/* ═══════════════════════════════════
+//             COMPANY MANAGEMENT
+//             Any authenticated user
+//         ═══════════════════════════════════ */}
+
+//         <Route
+//           path="/AddCompany"
+//           element={
+//             <PrivateRoute>
+//               <CompanyManagement />
+//             </PrivateRoute>
+//           }
+//         />
+
+
+//         {/* ═══════════════════════════════════
 //             FALLBACK
-//         ═══════════════════════════════ */}
+//         ═══════════════════════════════════ */}
 
 //         <Route
 //           path="*"
@@ -1276,16 +1799,25 @@
 //   );
 // }
 
-
-// // ═════════════════════════════════════════
-// // REACT MOUNT
-// // ═════════════════════════════════════════
+// // ─────────────────────────────────────────
+// // React Mount
+// // ─────────────────────────────────────────
 
 // const container = document.getElementById("app");
 
+// if (!container) {
+//   throw new Error(
+//     'Root element "#app" was not found.'
+//   );
+// }
+
 // const root = ReactDOM.createRoot(container);
 
-// root.render(<App />);
+// root.render(
+//   <React.StrictMode>
+//     <App />
+//   </React.StrictMode>
+// );
 import React from "react";
 import ReactDOM from "react-dom/client";
 import {
@@ -1295,9 +1827,9 @@ import {
   Navigate,
 } from "react-router-dom";
 
-// ─────────────────────────────────────────
-// Authentication / Public Pages
-// ─────────────────────────────────────────
+/* =========================================================
+   PUBLIC / AUTH PAGES
+   ========================================================= */
 
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
@@ -1306,103 +1838,99 @@ import VerifyAccount from "./pages/Verifyaccount";
 import Resetpassword from "./pages/Resetpassword";
 import Confrimpassword from "./pages/Confrimpassword";
 
-// ─────────────────────────────────────────
-// Admin / Dashboard Pages
-// ─────────────────────────────────────────
+/* =========================================================
+   MAIN DASHBOARDS
+   ========================================================= */
 
 import Dashboard from "./pages/Dashboard";
-import Trends from "./pages/Trends";
-import Apiintegretion from "./pages/Apiintegretion";
-import UserManagement from "./pages/UserManagement";
-import AddInstitution from "./pages/AddInstitution";
-
-// ─────────────────────────────────────────
-// Operational Pages
-// ─────────────────────────────────────────
-
+import Client from "./pages/Client";
+import Clientportal from "./pages/Clientportal";
 import Allocator from "./pages/Allocator";
 import Verifyer from "./pages/verifyer";
-import Emploment from "./pages/Emploment";
-import StatusEmploment from "./pages/StatusEmploment";
-import AllCases from "./pages/AllCases";
 import Specialist from "./pages/Specialist";
 import Intake from "./pages/Intake";
+import AllCases from "./pages/AllCases";
 
-// ─────────────────────────────────────────
-// Client Pages
-// ─────────────────────────────────────────
-
-import Client from "./pages/Client";
-import ClientCases from "./pages/ClientCases";
-import ClientBilling from "./pages/ClientBilling";
-import Clientportal from "./pages/Clientportal";
-
-// ─────────────────────────────────────────
-// Case Pages
-// ─────────────────────────────────────────
+/* =========================================================
+   CASE / EMPLOYMENT PAGES
+   ========================================================= */
 
 import AddCase from "./pages/AddCase";
+import Emploment from "./pages/Emploment";
+import StatusEmploment from "./pages/StatusEmploment";
 
-// ─────────────────────────────────────────
-// Company / Settings
-// ─────────────────────────────────────────
+/* =========================================================
+   VERIFICATION CHECK PAGES
+   ========================================================= */
 
-import Settings from "./pages/Settings";
+import EmploymentCheck from "./pages/EmploymentCheck";
+import EducationCheck from "./pages/EducationCheck";
+import AddressCheck from "./pages/AddressCheck";
+import DatabaseCheck from "./pages/DatabaseCheck";
+import CriminalCheck from "./pages/CriminalCheck";
+import DrugtestCheck from "./pages/DrugtestCheck";
+import CourtroomCheck from "./pages/CourtroomCheck";
+
+/* =========================================================
+   CLIENT MANAGEMENT
+   ========================================================= */
+
+import AllClients from "./pages/AllClients";
+import AddClient from "./pages/AddClient";
+import ClientRegistration from "./pages/ClientRegistration";
+import ClientCases from "./pages/ClientCases";
+import ClientBilling from "./pages/ClientBilling";
+
+/* =========================================================
+   ADMIN MANAGEMENT
+   ========================================================= */
+
+import UserManagement from "./pages/UserManagement";
+import AddInstitution from "./pages/AddInstitution";
 import CompanyManagement from "./pages/AddCompany";
 
-// ─────────────────────────────────────────
-// Client Registration
-// ─────────────────────────────────────────
+/* =========================================================
+   OTHER PAGES
+   ========================================================= */
 
-import ClientRegistration from "./pages/ClientRegistration";
+import Settings from "./pages/Settings";
+import Trends from "./pages/Trends";
+import Apiintegretion from "./pages/Apiintegretion";
 
-// ─────────────────────────────────────────
-// Candidate Verification
-// IMPORTANT:
-// Your actual file is:
-// resources/js/pages/bg.jsx
-// ─────────────────────────────────────────
 
-import CandidateVerificationWizard from "./pages/bg";
-
-// ─────────────────────────────────────────
-// Helper: Get Authentication Token
-// ─────────────────────────────────────────
+/* =========================================================
+   AUTH HELPERS
+   ========================================================= */
 
 const getToken = () => {
   return localStorage.getItem("token");
 };
 
-// ─────────────────────────────────────────
-// Helper: Get Logged-in User
-// ─────────────────────────────────────────
 
 const getUser = () => {
   try {
-    const user = localStorage.getItem("user");
-
-    if (!user) {
-      return null;
-    }
-
-    return JSON.parse(user);
+    return JSON.parse(localStorage.getItem("user")) || null;
   } catch (error) {
-    console.error("Unable to read user from localStorage:", error);
     return null;
   }
 };
 
-// ─────────────────────────────────────────
-// Role → Default Route
-// ─────────────────────────────────────────
+
+/* =========================================================
+   ROLE HOME ROUTES
+   ========================================================= */
 
 function getRoleRoute(role) {
+
   const routes = {
+
     admin: "/dashboard",
 
     allocator: "/Allocator",
 
     verifier: "/Verifyer",
+
+    verifyer: "/Verifyer",
 
     check_manager: "/AllCases",
 
@@ -1413,77 +1941,200 @@ function getRoleRoute(role) {
     client: "/Client",
 
     onboarding: "/clientportal",
+
+    employment_verifier: "/Verifyer",
+
+    education_verifier: "/Verifyer",
+
+    address_verifier: "/Verifyer",
+
+    database_verifier: "/Verifyer",
+
+    criminal_verifier: "/Verifyer",
+
+    drug_test_verifier: "/Verifyer",
+
+    courtroom_verifier: "/Verifyer",
+
   };
 
   return routes[role] || "/";
 }
 
-// ─────────────────────────────────────────
-// PrivateRoute
-//
-// No role:
-//   Any authenticated user can access.
-//
-// role="admin":
-//   Only admin.
-//
-// role={["admin", "client"]}:
-//   Admin or client.
-//
-// Admin has access to all protected routes.
-// ─────────────────────────────────────────
 
-function PrivateRoute({ children, role }) {
-  const token = getToken();
-  const user = getUser();
+/* =========================================================
+   NORMALIZE ROLE
+   ========================================================= */
 
-  // ───────────────────────────────────────
-  // User is not logged in
-  // ───────────────────────────────────────
+function normalizeRole(role) {
 
-  if (!token || !user) {
-    return <Navigate to="/" replace />;
+  if (!role) {
+    return "admin";
   }
 
-  // ───────────────────────────────────────
-  // Role validation
-  // ───────────────────────────────────────
+  const value = role
+    .toString()
+    .toLowerCase()
+    .trim();
 
-  if (role) {
-    const allowedRoles = Array.isArray(role)
-      ? role
-      : [role];
+  const roleMap = {
 
-    // Admin can access protected modules
-    if (
-      user.role !== "admin" &&
-      !allowedRoles.includes(user.role)
-    ) {
-      return (
-        <Navigate
-          to={getRoleRoute(user.role)}
-          replace
-        />
-      );
-    }
-  }
+    verifier: "verifier",
 
-  return children;
+    verifyer: "verifier",
+
+    "employment verifier": "employment_verifier",
+
+    "education verifier": "education_verifier",
+
+    "address verifier": "address_verifier",
+
+    "database verifier": "database_verifier",
+
+    "criminal verifier": "criminal_verifier",
+
+    "drug test verifier": "drug_test_verifier",
+
+    "courtroom verifier": "courtroom_verifier",
+
+  };
+
+  return roleMap[value] || value;
 }
 
-// ─────────────────────────────────────────
-// Application
-// ─────────────────────────────────────────
+
+/* =========================================================
+   PRIVATE ROUTE
+   =========================================================
+
+   Usage:
+
+   <PrivateRoute>
+      <Page />
+   </PrivateRoute>
+
+   Any logged-in user can access.
+
+   OR
+
+   <PrivateRoute role="admin">
+      <Page />
+   </PrivateRoute>
+
+   Only admin can access.
+
+   OR
+
+   <PrivateRoute role={["admin", "client"]}>
+      <Page />
+   </PrivateRoute>
+
+   Admin + client can access.
+
+   ========================================================= */
+
+function PrivateRoute({ children, role }) {
+
+  const token = getToken();
+
+  const user = getUser();
+
+
+  /* -------------------------------------------------------
+     USER NOT LOGGED IN
+     ------------------------------------------------------- */
+
+  if (!token || !user) {
+
+    return (
+      <Navigate
+        to="/"
+        replace
+      />
+    );
+
+  }
+
+
+  /* -------------------------------------------------------
+     NO ROLE RESTRICTION
+     ------------------------------------------------------- */
+
+  if (!role) {
+
+    return children;
+
+  }
+
+
+  /* -------------------------------------------------------
+     NORMALIZE CURRENT USER ROLE
+     ------------------------------------------------------- */
+
+  const currentRole = normalizeRole(user.role);
+
+
+  /* -------------------------------------------------------
+     NORMALIZE ALLOWED ROLES
+     ------------------------------------------------------- */
+
+  const allowedRoles = Array.isArray(role)
+    ? role.map(normalizeRole)
+    : [normalizeRole(role)];
+
+
+  /* -------------------------------------------------------
+     ADMIN CAN ACCESS EVERYTHING
+     ------------------------------------------------------- */
+
+  if (currentRole === "admin") {
+
+    return children;
+
+  }
+
+
+  /* -------------------------------------------------------
+     USER HAS REQUIRED ROLE
+     ------------------------------------------------------- */
+
+  if (allowedRoles.includes(currentRole)) {
+
+    return children;
+
+  }
+
+
+  /* -------------------------------------------------------
+     WRONG ROLE
+     SEND USER TO THEIR OWN DASHBOARD
+     ------------------------------------------------------- */
+
+  return (
+    <Navigate
+      to={getRoleRoute(currentRole)}
+      replace
+    />
+  );
+}
+
+
+/* =========================================================
+   APPLICATION
+   ========================================================= */
 
 function App() {
+
   return (
+
     <BrowserRouter>
 
       <Routes>
 
-        {/* ═══════════════════════════════════
+
+        {/* =================================================
             PUBLIC ROUTES
-        ═══════════════════════════════════ */}
+            ================================================= */}
 
         <Route
           path="/"
@@ -1495,10 +2146,7 @@ function App() {
           element={<Signup />}
         />
 
-        {/* Client Registration
-            This is PUBLIC.
-            No login required. */}
-
+        {/* CLIENT REGISTRATION MUST BE PUBLIC */}
         <Route
           path="/client-register"
           element={<ClientRegistration />}
@@ -1525,22 +2173,9 @@ function App() {
         />
 
 
-        {/* ═══════════════════════════════════
-            CANDIDATE VERIFICATION
-            PUBLIC ROUTE
-        ═══════════════════════════════════ */}
-
-        <Route
-          path="/candidate-verification"
-          element={
-            <CandidateVerificationWizard />
-          }
-        />
-
-
-        {/* ═══════════════════════════════════
-            ADMIN ROUTES
-        ═══════════════════════════════════ */}
+        {/* =================================================
+            ADMIN DASHBOARD
+            ================================================= */}
 
         <Route
           path="/dashboard"
@@ -1551,23 +2186,68 @@ function App() {
           }
         />
 
+
+        {/* =================================================
+            ADMIN - ALL CASES
+            ================================================= */}
+
         <Route
-          path="/Trends"
+          path="/AllCases"
           element={
             <PrivateRoute role="admin">
-              <Trends />
+              <AllCases />
             </PrivateRoute>
           }
         />
 
+
+        {/* =================================================
+            ADMIN - ADD CASE
+            ================================================= */}
+
         <Route
-          path="/Apiintegretion"
+          path="/AddCase"
           element={
-            <PrivateRoute role="admin">
-              <Apiintegretion />
+            <PrivateRoute
+              role={["admin", "allocator", "client"]}
+            >
+              <AddCase />
             </PrivateRoute>
           }
         />
+
+
+        {/* =================================================
+            ADMIN - ALL CLIENTS
+            ================================================= */}
+
+        <Route
+          path="/AllClients"
+          element={
+            <PrivateRoute role="admin">
+              <AllClients />
+            </PrivateRoute>
+          }
+        />
+
+
+        {/* =================================================
+            ADMIN - ADD CLIENT
+            ================================================= */}
+
+        <Route
+          path="/AddClient"
+          element={
+            <PrivateRoute role="admin">
+              <AddClient />
+            </PrivateRoute>
+          }
+        />
+
+
+        {/* =================================================
+            ADMIN - USER MANAGEMENT
+            ================================================= */}
 
         <Route
           path="/UserManagement"
@@ -1577,6 +2257,11 @@ function App() {
             </PrivateRoute>
           }
         />
+
+
+        {/* =================================================
+            ADMIN - INSTITUTION
+            ================================================= */}
 
         <Route
           path="/AddInstitution"
@@ -1588,9 +2273,51 @@ function App() {
         />
 
 
-        {/* ═══════════════════════════════════
+        {/* =================================================
+            ADMIN - COMPANY
+            ================================================= */}
+
+        <Route
+          path="/AddCompany"
+          element={
+            <PrivateRoute role="admin">
+              <CompanyManagement />
+            </PrivateRoute>
+          }
+        />
+
+
+        {/* =================================================
+            ADMIN - TRENDS
+            ================================================= */}
+
+        <Route
+          path="/Trends"
+          element={
+            <PrivateRoute role="admin">
+              <Trends />
+            </PrivateRoute>
+          }
+        />
+
+
+        {/* =================================================
+            ADMIN - API INTEGRATION
+            ================================================= */}
+
+        <Route
+          path="/Apiintegretion"
+          element={
+            <PrivateRoute role="admin">
+              <Apiintegretion />
+            </PrivateRoute>
+          }
+        />
+
+
+        {/* =================================================
             ALLOCATOR
-        ═══════════════════════════════════ */}
+            ================================================= */}
 
         <Route
           path="/Allocator"
@@ -1602,76 +2329,144 @@ function App() {
         />
 
 
-        {/* ═══════════════════════════════════
-            CASE CREATION
-            Admin + Allocator + Client
-        ═══════════════════════════════════ */}
-
-        <Route
-          path="/AddCase"
-          element={
-            <PrivateRoute
-              role={[
-                "admin",
-                "allocator",
-                "client",
-              ]}
-            >
-              <AddCase />
-            </PrivateRoute>
-          }
-        />
-
-
-        {/* ═══════════════════════════════════
-            VERIFIER
-        ═══════════════════════════════════ */}
+        {/* =================================================
+            VERIFIER DASHBOARD
+            ================================================= */}
 
         <Route
           path="/Verifyer"
           element={
-            <PrivateRoute role="verifier">
+            <PrivateRoute
+              role={[
+                "verifier",
+                "employment_verifier",
+                "education_verifier",
+                "address_verifier",
+                "database_verifier",
+                "criminal_verifier",
+                "drug_test_verifier",
+                "courtroom_verifier",
+              ]}
+            >
               <Verifyer />
             </PrivateRoute>
           }
         />
 
+
+        {/* =================================================
+            EMPLOYMENT
+            ================================================= */}
+
         <Route
           path="/emploment"
           element={
-            <PrivateRoute role="verifier">
+            <PrivateRoute
+              role={[
+                "verifier",
+                "employment_verifier",
+                "check_manager",
+              ]}
+            >
               <Emploment />
             </PrivateRoute>
           }
         />
 
+
         <Route
           path="/StatusEmploment"
           element={
-            <PrivateRoute role="verifier">
+            <PrivateRoute
+              role={[
+                "verifier",
+                "employment_verifier",
+                "check_manager",
+              ]}
+            >
               <StatusEmploment />
             </PrivateRoute>
           }
         />
 
 
-        {/* ═══════════════════════════════════
-            CHECK MANAGER
-        ═══════════════════════════════════ */}
+        {/* =================================================
+            VERIFICATION CHECKS
+            ================================================= */}
 
         <Route
-          path="/AllCases"
+          path="/EmploymentCheck"
           element={
-            <PrivateRoute role="check_manager">
-              <AllCases />
+            <PrivateRoute role="admin">
+              <EmploymentCheck />
             </PrivateRoute>
           }
         />
 
 
-        {/* ═══════════════════════════════════
-            REPORT WRITING / SPECIALIST
-        ═══════════════════════════════════ */}
+        <Route
+          path="/EducationCheck"
+          element={
+            <PrivateRoute role="admin">
+              <EducationCheck />
+            </PrivateRoute>
+          }
+        />
+
+
+        <Route
+          path="/AddressCheck"
+          element={
+            <PrivateRoute role="admin">
+              <AddressCheck />
+            </PrivateRoute>
+          }
+        />
+
+
+        <Route
+          path="/DatabaseCheck"
+          element={
+            <PrivateRoute role="admin">
+              <DatabaseCheck />
+            </PrivateRoute>
+          }
+        />
+
+
+        <Route
+          path="/CriminalCheck"
+          element={
+            <PrivateRoute role="admin">
+              <CriminalCheck />
+            </PrivateRoute>
+          }
+        />
+
+
+        <Route
+          path="/DrugtestCheck"
+          element={
+            <PrivateRoute role="admin">
+              <DrugtestCheck />
+            </PrivateRoute>
+          }
+        />
+
+
+        <Route
+          path="/CourtroomCheck"
+          element={
+            <PrivateRoute role="admin">
+              <CourtroomCheck />
+            </PrivateRoute>
+          }
+        />
+
+
+        {/* =================================================
+            REPORT WRITING
+            ================================================= */}
 
         <Route
           path="/Specialist"
@@ -1683,9 +2478,9 @@ function App() {
         />
 
 
-        {/* ═══════════════════════════════════
-            PVT / QC
-        ═══════════════════════════════════ */}
+        {/* =================================================
+            QC / INTAKE
+            ================================================= */}
 
         <Route
           path="/Intake"
@@ -1697,9 +2492,9 @@ function App() {
         />
 
 
-        {/* ═══════════════════════════════════
-            CLIENT
-        ═══════════════════════════════════ */}
+        {/* =================================================
+            CLIENT DASHBOARD
+            ================================================= */}
 
         <Route
           path="/Client"
@@ -1710,6 +2505,11 @@ function App() {
           }
         />
 
+
+        {/* =================================================
+            CLIENT CASES
+            ================================================= */}
+
         <Route
           path="/ClientCases"
           element={
@@ -1718,6 +2518,11 @@ function App() {
             </PrivateRoute>
           }
         />
+
+
+        {/* =================================================
+            CLIENT BILLING
+            ================================================= */}
 
         <Route
           path="/ClientBilling"
@@ -1729,10 +2534,9 @@ function App() {
         />
 
 
-        {/* ═══════════════════════════════════
-            CANDIDATE PORTAL
-            Onboarding + Client + Admin
-        ═══════════════════════════════════ */}
+        {/* =================================================
+            CLIENT PORTAL
+            ================================================= */}
 
         <Route
           path="/clientportal"
@@ -1749,10 +2553,9 @@ function App() {
         />
 
 
-        {/* ═══════════════════════════════════
+        {/* =================================================
             SETTINGS
-            Any logged-in user
-        ═══════════════════════════════════ */}
+            ================================================= */}
 
         <Route
           path="/Settings"
@@ -1764,24 +2567,9 @@ function App() {
         />
 
 
-        {/* ═══════════════════════════════════
-            COMPANY MANAGEMENT
-            Any authenticated user
-        ═══════════════════════════════════ */}
-
-        <Route
-          path="/AddCompany"
-          element={
-            <PrivateRoute>
-              <CompanyManagement />
-            </PrivateRoute>
-          }
-        />
-
-
-        {/* ═══════════════════════════════════
-            FALLBACK
-        ═══════════════════════════════════ */}
+        {/* =================================================
+            UNKNOWN ROUTE
+            ================================================= */}
 
         <Route
           path="*"
@@ -1799,16 +2587,19 @@ function App() {
   );
 }
 
-// ─────────────────────────────────────────
-// React Mount
-// ─────────────────────────────────────────
+
+/* =========================================================
+   REACT ROOT
+   ========================================================= */
 
 const container = document.getElementById("app");
 
 if (!container) {
+
   throw new Error(
-    'Root element "#app" was not found.'
+    "React root element #app was not found."
   );
+
 }
 
 const root = ReactDOM.createRoot(container);
