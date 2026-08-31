@@ -1875,7 +1875,7 @@ import CourtroomCheck from "./pages/CourtroomCheck";
    CLIENT MANAGEMENT
    ========================================================= */
 
-import AllClients from "./pages/AllClients";
+import AllClients from "./pages/Allclients";
 import AddClient from "./pages/AddClient";
 import ClientRegistration from "./pages/ClientRegistration";
 import ClientCases from "./pages/ClientCases";
