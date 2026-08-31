@@ -290,6 +290,7 @@
 import React, { useState } from "react";
 import Sidebar from "./Sidebar";
 import Header from "./Header";
+import "../../css/style.css";
 
 export default function DatabaseVerificationCheck() {
   const [showAssignPanel, setShowAssignPanel] = useState(true);

@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import Sidebar from "./Sidebar";
 import Header from "./Header";
+import "../../css/style.css";
 
 export default function AddressVerification() {
   const [activeTab, setActiveTab] = useState("all");
