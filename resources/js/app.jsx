@@ -701,7 +701,10 @@ import AddressVerification from "./pages/AddressVerification";
 import Settings from "./pages/Settings";
 import Trends from "./pages/Trends";
 
-
+// ─────────────────────────────────────────
+// Candidate Self-Service
+// ─────────────────────────────────────────
+import CandidateVerificationWizard from "./pages/CandidateVerificationWizard";
 // ═════════════════════════════════════════
 // AUTHENTICATION HELPERS
 // ═════════════════════════════════════════
@@ -841,6 +844,10 @@ function App() {
           path="/client-register"
           element={<ClientRegistration />}
         />
+        <Route
+  path="/candidate-verification"
+  element={<CandidateVerificationWizard />}
+/>
 
         <Route
           path="/forgetpassword"
