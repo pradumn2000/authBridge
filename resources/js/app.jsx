@@ -1897,6 +1897,7 @@ import Settings from "./pages/Settings";
 import Trends from "./pages/Trends";
 import Apiintegretion from "./pages/Apiintegretion";
 
+import CandidateVerificationWizard from "./pages/bg";
 
 /* =========================================================
    AUTH HELPERS
@@ -2171,6 +2172,13 @@ function App() {
           path="/confirmpassword"
           element={<Confrimpassword />}
         />
+
+         <Route
+           path="/candidate-verification"
+         element={
+            <CandidateVerificationWizard />
+         }
+         />
 
 
         {/* =================================================
