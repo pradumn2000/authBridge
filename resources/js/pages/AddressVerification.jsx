@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import "../../css/style.css";
 import Sidebar from "./Sidebar";
 import Header from "./Header";
 
