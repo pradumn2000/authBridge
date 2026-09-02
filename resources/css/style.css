@@ -6247,6 +6247,7 @@ span.tat-label-dot.orange {
     position: sticky;
     top: 0;
     left: 0;
+    line-height: normal;
 }
 #content main {
     background-color: var(--bg-color);
