@@ -6238,7 +6238,7 @@ span.tat-label-dot.orange {
 }
 #content nav {
     background-color: var(--primary-color);
-    z-index: 9;
+    z-index: 10;
     align-items: center;
     gap: 20px;
     height: 66px;

@@ -310,11 +310,13 @@ export default function DatabaseCheck() {
   ];
 
   return (
-    <div style={{ display: "flex", minHeight: "100vh", backgroundColor: "#f8fafc", fontFamily: "Inter, sans-serif" }}>
-      <Sidebar />
+    <div style={{ display: "flex", minHeight: "100vh" }}>
+          <div id="sidebar">
+            <Sidebar />
+          </div>
 
-      <div style={{ flex: 1, display: "flex", flexDirection: "column", minWidth: 0 }}>
-        <Header />
+      <div id="content">
+          <Header />
 
         <main style={{ padding: "20px" }}>
           
