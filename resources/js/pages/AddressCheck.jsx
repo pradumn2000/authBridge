@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import "../../css/style.css";
 import Sidebar from "./Sidebar";
-import Header from "./Header";
+import "../../css/style.css";
+// import Header from "./Header";
 
 
 export default function AddressVerification() {
@@ -153,7 +153,7 @@ export default function AddressVerification() {
       {/* 2. Main Content Container */}
       <div style={{ display: "flex", flexDirection: "column", minWidth: 0,width: "calc(100% - 270px)",   position: "relative",     left: "270px",}}>
         {/* Fixed Top Header (Standard Component) */}
-        <Header />
+        {/* <Header /> */}
 
         <main style={{ padding: "20px" }}>
           
