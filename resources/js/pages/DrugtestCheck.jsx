@@ -31,12 +31,27 @@ export default function DrugTestVerification() {
         }
 
         .dtv-main-content {
-          flex: 1;
+          {/* flex: 1; */}
           display: flex;
           flex-direction: column;
           min-width: 0;
+              width: calc(100% - 270px);
+    transition: all .3s;
+    position: relative;
+    left: 270px;
         }
-
+nav {
+    background-color: var(--primary-color);
+    z-index: 9;
+    align-items: center;
+    gap: 20px;
+    height: 66px;
+    padding: 0 24px;
+    display: flex;
+    position: sticky;
+    top: 0;
+    left: 0;
+}
         .dtv-container {
           padding: 20px;
         }

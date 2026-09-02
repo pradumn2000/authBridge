@@ -1,7 +1,8 @@
 import React, { useState } from "react";
+import "../../css/style.css";
 import Sidebar from "./Sidebar";
 import Header from "./Header";
-import "../../css/style.css";
+
 
 export default function AddressVerification() {
   const [activeTab, setActiveTab] = useState("all");
@@ -163,7 +164,7 @@ export default function AddressVerification() {
               <p style={{ fontSize: "12px", color: "#64748b", margin: 0 }}>Manage and track address verification for all candidates</p>
             </div>
             
-            <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+            {/* <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
               <button style={{ border: "none", background: "none", fontSize: "16px", cursor: "pointer" }}>🔍</button>
               <div style={{ position: "relative", cursor: "pointer" }}>
                 <span style={{ fontSize: "16px" }}>🔔</span>
@@ -177,7 +178,7 @@ export default function AddressVerification() {
                 </div>
                 <span style={{ fontSize: "10px", color: "#64748b" }}>▼</span>
               </div>
-            </div>
+            </div> */}
           </div>
 
           {/* Metric Summary Cards Grid */}
@@ -257,7 +258,7 @@ export default function AddressVerification() {
             <div style={{ width: "100%", overflowX: "auto" }}>
               
               {/* Category Navigation Tabs */}
-              <div style={{ display: "flex", borderBottom: "1px solid #e2e8f0", marginBottom: "12px", gap: "12px", overflowX: "auto" }}>
+              {/* <div style={{ display: "flex", borderBottom: "1px solid #e2e8f0", marginBottom: "12px", gap: "12px", overflowX: "auto" }}>
                 {[
                   { id: "all", label: "All (250)" },
                   { id: "perm", label: "Permanent Address (125)" },
@@ -287,7 +288,7 @@ export default function AddressVerification() {
                     {tab.label}
                   </button>
                 ))}
-              </div>
+              </div> */}
 
               {/* Table Data */}
               <div style={{ background: "#fff", border: "1px solid #e2e8f0", borderRadius: "6px", overflow: "hidden" }}>
@@ -414,7 +415,7 @@ export default function AddressVerification() {
                 </div>
 
                 {/* Allocation Method Options */}
-                <div>
+                {/* <div>
                   <label style={{ display: "block", fontSize: "10px", fontWeight: "700", color: "#374151", marginBottom: "4px" }}>Allocation Method</label>
                   <div style={{ display: "flex", flexDirection: "column", gap: "6px", fontSize: "11px", color: "#334155" }}>
                     <label style={{ display: "flex", alignItems: "center", gap: "6px", cursor: "pointer" }}>
@@ -427,7 +428,7 @@ export default function AddressVerification() {
                       <input type="radio" name="alloc" checked={allocationMethod === "expertise"} onChange={() => setAllocationMethod("expertise")} /> Auto Allocate by Company Expertise
                     </label>
                   </div>
-                </div>
+                </div> */}
 
                 {/* Stepper Count */}
                 <div>
