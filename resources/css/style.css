@@ -6248,6 +6248,7 @@ span.tat-label-dot.orange {
     top: 0;
     left: 0;
     line-height: normal;
+    color: inherit;
 }
 #content main {
     background-color: var(--bg-color);
