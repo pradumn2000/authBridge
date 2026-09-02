@@ -288,11 +288,11 @@
 
 
 import React, { useState } from "react";
+import "../../css/style.css";
 import Sidebar from "./Sidebar";
 import Header from "./Header";
-import "../../css/style.css";
 
-export default function DatabaseVerificationCheck() {
+export default function DatabaseCheck() {
   const [showAssignPanel, setShowAssignPanel] = useState(true);
   const [casesToAllocate, setCasesToAllocate] = useState(8);
 
