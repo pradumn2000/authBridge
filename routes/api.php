@@ -22,7 +22,16 @@ Route::post('/login', function (Request $request) {
         return response()->json(['message' => 'Invalid credentials'], 401);
     }
 
-    $user  = Auth::user();
+    $user = Auth::user();
+
+    // Disabled non-admin accounts cannot log in. Admins are always
+    // treated as active regardless of what's stored (belt-and-suspenders
+    // with the User model's saving() guard).
+    if ($user->role !== 'admin' && $user->status !== 'active') {
+        Auth::logout(); // undo the session Auth::attempt() just created
+        return response()->json(['message' => 'Your account has been disabled. Please contact an administrator.'], 403);
+    }
+
     $token = $user->createToken('authToken')->plainTextToken;
 
     return response()->json([
@@ -32,6 +41,7 @@ Route::post('/login', function (Request $request) {
             'name'         => $user->name,
             'email'        => $user->email,
             'role'         => $user->role,
+            'status'       => $user->status,
             'billingMode'  => $user->billing_mode,
             'agreedChecks' => $user->agreed_checks,
             'checkRates'   => $user->check_rates,
@@ -518,11 +528,15 @@ Route::middleware('auth:sanctum')->group(function () {
             'email'    => $request->email,
             'password' => Hash::make($request->password),
             'role'     => $request->role,
+            // New users are always created active. If role is 'admin', the
+            // User model's saving() guard enforces this too, so it can
+            // never be flipped off later regardless of the caller.
+            'status'   => 'active',
         ]);
 
         return response()->json([
             'message' => 'User created successfully',
-            'user'    => ['id' => $user->id, 'name' => $user->name, 'email' => $user->email, 'role' => $user->role],
+            'user'    => ['id' => $user->id, 'name' => $user->name, 'email' => $user->email, 'role' => $user->role, 'status' => $user->status],
         ], 201);
     });
 
@@ -532,11 +546,40 @@ Route::middleware('auth:sanctum')->group(function () {
             return response()->json(['message' => 'Unauthorized. Admin or allocator access required.'], 403);
         }
 
-        $users = \App\Models\User::select('id', 'name', 'email', 'role', 'created_at')
+        $users = \App\Models\User::select('id', 'name', 'email', 'role', 'status', 'created_at')
             ->orderBy('created_at', 'desc')
             ->get();
 
         return response()->json(['users' => $users]);
+    });
+
+    // ── UPDATE USER STATUS — enable / disable (admin only) ───
+    Route::patch('/users/{id}/status', function (Request $request, $id) {
+        if ($request->user()->role !== 'admin') {
+            return response()->json(['message' => 'Unauthorized. Admin access required.'], 403);
+        }
+
+        $request->validate(['status' => 'required|in:active,inactive']);
+
+        $user = \App\Models\User::find($id);
+        if (!$user) {
+            return response()->json(['message' => 'User not found'], 404);
+        }
+
+        if ($user->role === 'admin' && $request->status !== 'active') {
+            return response()->json(['message' => 'Admin accounts cannot be disabled.'], 422);
+        }
+
+        if ($user->id === $request->user()->id && $request->status !== 'active') {
+            return response()->json(['message' => 'You cannot disable your own account.'], 422);
+        }
+
+        $user->update(['status' => $request->status]);
+
+        return response()->json([
+            'message' => 'User status updated',
+            'user'    => ['id' => $user->id, 'status' => $user->status],
+        ]);
     });
 
     // ── DELETE USER (admin only) ─────────────────────────────

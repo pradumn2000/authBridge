@@ -30,6 +30,7 @@ class User extends Authenticatable
         'agreement_start_date',
         'agreement_end_date',
         'agreement_url',
+        'status',
     ];
 
     protected $hidden = [
@@ -38,12 +39,21 @@ class User extends Authenticatable
     ];
 
     protected $casts = [
-        'email_verified_at'    => 'datetime',
-        'password'             => 'hashed',
-        'agreed_checks'        => 'array',
-        'check_rates'          => 'array',
-        'check_tat'            => 'array',
+        'email_verified_at' => 'datetime',
+        'password' => 'hashed',
+        'agreed_checks' => 'array',
+        'check_rates' => 'array',
+        'check_tat' => 'array',
         'agreement_start_date' => 'date',
-        'agreement_end_date'   => 'date',
+        'agreement_end_date' => 'date',
     ];
+
+    protected static function booted(): void
+    {
+        static::saving(function (User $user) {
+            if ($user->role === 'admin') {
+                $user->status = 'active';
+            }
+        });
+    }
 }
