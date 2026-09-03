@@ -778,38 +778,64 @@ export default function AddressCheck() {
 
             {/* Right Column: Inline Panel (Assign Verification) */}
             {showAssignModal && (
-              <div style={{ width: "320px", background: "#fff", borderRadius: "8px", border: "1px solid #e2e8f0", padding: "18px" }}>
-                  <h3 style={{ fontSize: "16px", fontWeight: 700, marginBottom: "14px", color: "#0f172a" }}>Assign Verification</h3>
-                  <input type="text" placeholder="🔍 Search verifier..." style={{ width: "100%", padding: "9px 12px", borderRadius: "6px", border: "1px solid #cbd5e1", outline: "none", marginBottom: "16px", fontSize: "13px" }} />
-                  <div style={{ display: "flex", flexDirection: "column", gap: "12px", marginBottom: "20px" }}>
-                    {[
-                      { name: "Amit Kumar", title: "Employment Verifier", cases: 12, checked: true },
-                      { name: "Neha Patel", title: "Employment Verifier", cases: 8, checked: true },
-                      { name: "Rahul Verma", title: "Employment Verifier", cases: 15, checked: false },
-                    ].map((verifier, idx) => (
-                      <div key={idx} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "10px 12px", borderRadius: "8px", border: "1px solid #f1f5f9", background: "#f8fafc" }}>
-                        <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-                          <input type="checkbox" defaultChecked={verifier.checked} style={{ cursor: "pointer" }} />
-                          <div style={{ width: "32px", height: "32px", borderRadius: "50%", background: "#cbd5e1", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 700, fontSize: "12px", color: "#334155" }}>
-                            {verifier.name.charAt(0)}
-                          </div>
-                          <div>
-                            <p style={{ margin: 0, fontWeight: 700, fontSize: "13px", color: "#1e293b" }}>{verifier.name}</p>
-                            <span style={{ fontSize: "11px", color: "#64748b" }}>{verifier.title}</span>
-                          </div>
-                        </div>
-                        <div style={{ textAlign: "right" }}>
-                          <span style={{ fontSize: "13px", fontWeight: 800, color: "#2563eb", display: "block" }}>{verifier.cases}</span>
-                          <span style={{ fontSize: "10px", color: "#2563eb", fontWeight: 600 }}>Active Cases</span>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                  <div style={{ display: "flex", gap: "10px" }}>
-                    <button style={{ flex: 1, padding: "9px", borderRadius: "6px", border: "1px solid #cbd5e1", background: "#fff", fontWeight: 600, cursor: "pointer", fontSize: "13px" }}>Cancel</button>
-                    <button style={{ flex: 1, padding: "9px", borderRadius: "6px", border: "none", background: "#2563eb", color: "#fff", fontWeight: 600, cursor: "pointer", fontSize: "13px" }}>Allocate Cases</button>
+              <div style={{ background: "#fff", border: "1px solid #e2e8f0", borderRadius: "6px", padding: "14px", display: "flex", flexDirection: "column", gap: "12px", boxSizing: "border-box" }}>
+                
+                {/* Panel Header */}
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", borderBottom: "1px solid #f1f5f9", paddingBottom: "8px" }}>
+                  <h3 style={{ margin: 0, fontSize: "13px", fontWeight: "700", color: "#0f172a" }}>Assign Verification</h3>
+                  <button onClick={() => setShowAssignModal(false)} style={{ border: "none", background: "none", fontSize: "14px", cursor: "pointer", color: "#64748b" }}>✕</button>
+                </div>
+
+                {/* Verifier Search */}
+                <div>
+                  <label style={{ display: "block", fontSize: "10px", fontWeight: "700", color: "#374151", marginBottom: "4px" }}>Select Verifier</label>
+                  <div style={{ position: "relative" }}>
+                    <input type="text" placeholder="Search verifier..." style={{ width: "100%", padding: "5px 8px 5px 24px", borderRadius: "4px", border: "1px solid #cbd5e1", fontSize: "11px", outline: "none", boxSizing: "border-box" }} />
+                    <span style={{ position: "absolute", left: "6px", top: "5px", color: "#94a3b8", fontSize: "10px" }}>🔍</span>
                   </div>
                 </div>
+
+                {/* List of Verifiers */}
+                <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+                  {[
+                    { name: "Amit Kumar", title: "Employment Verifier", cases: 12, checked: true },
+                    { name: "Neha Patel", title: "Employment Verifier", cases: 8, checked: true },
+                    { name: "Rahul Verma", title: "Employment Verifier", cases: 15, checked: false },
+                  ].map((v, i) => (
+                    <div key={i} style={{ border: "1px solid #e2e8f0", borderRadius: "4px", padding: "8px", display: "flex", alignItems: "center", justifyContent: "space-between", background: v.checked ? "#f8fafc" : "#fff" }}>
+                      <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+                        <input type="checkbox" defaultChecked={v.checked} />
+                        <div style={{ width: "24px", height: "24px", borderRadius: "50%", background: "#cbd5e1", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "9px", fontWeight: 700 }}>{v.name.charAt(0)}</div>
+                        <div>
+                          <p style={{ margin: 0, fontSize: "11px", fontWeight: 700, color: "#1e293b" }}>{v.name}</p>
+                          <span style={{ fontSize: "9px", color: "#64748b" }}>{v.title}</span>
+                        </div>
+                      </div>
+                      <div style={{ textAlign: "right" }}>
+                        <span style={{ fontSize: "11px", fontWeight: "800", color: "#2563eb", display: "block" }}>{v.cases}</span>
+                        <span style={{ fontSize: "8px", color: "#2563eb" }}>Active Cases</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Stepper Count */}
+                <div>
+                  <label style={{ display: "block", fontSize: "10px", fontWeight: "700", color: "#374151", marginBottom: "4px" }}>Cases to Allocate</label>
+                  <div style={{ display: "flex", alignItems: "center", background: "#f1f5f9", borderRadius: "4px", width: "fit-content", padding: "2px" }}>
+                    <button onClick={() => setCasesToAllocate(Math.max(1, casesToAllocate - 1))} style={{ border: "none", background: "none", width: "24px", height: "24px", fontWeight: 700, cursor: "pointer" }}>-</button>
+                    <span style={{ width: "28px", textAlign: "center", fontSize: "11px", fontWeight: 700 }}>{casesToAllocate}</span>
+                    <button onClick={() => setCasesToAllocate(casesToAllocate + 1)} style={{ border: "none", background: "none", width: "24px", height: "24px", fontWeight: 700, cursor: "pointer" }}>+</button>
+                  </div>
+                </div>
+
+                {/* Action Buttons */}
+                <div style={{ display: "flex", gap: "8px", marginTop: "4px" }}>
+                  <button onClick={() => setShowAssignModal(false)} style={{ flex: 1, border: "1px solid #cbd5e1", background: "#fff", padding: "7px", borderRadius: "4px", fontSize: "11px", fontWeight: "600", cursor: "pointer" }}>Cancel</button>
+                  <button style={{ flex: 1, border: "none", background: "#2563eb", color: "#fff", padding: "7px", borderRadius: "4px", fontSize: "11px", fontWeight: "600", cursor: "pointer" }}>Allocate Cases</button>
+                </div>
+
+              </div>
             )}
 
           </div>
