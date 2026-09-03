@@ -93,19 +93,41 @@ export default function Allocator() {
 
   const token = localStorage.getItem("token");
 
-  useEffect(() => {
-    setLoading(true);
-    setError("");
-    fetch(`${API_URL}/api/cases`, {
-      headers: { Authorization: `Bearer ${token}`, Accept: "application/json" },
-    })
-      .then(r => r.json())
-      .then(data => setCases(data.cases || []))
-      .catch(() => setError("Failed to load cases."))
-      .finally(() => setLoading(false));
-  }, []);
+  // useEffect(() => {
+  //   setLoading(true);
+  //   setError("");
+  //   fetch(`${API_URL}/api/cases`, {
+  //     headers: { Authorization: `Bearer ${token}`, Accept: "application/json" },
+  //   })
+  //     .then(r => r.json())
+  //     .then(data => setCases(data.cases || []))
+  //     .catch(() => setError("Failed to load cases."))
+  //     .finally(() => setLoading(false));
+  // }, []);
 
   // Real verifiers, for the per-check assignment dropdowns.
+  useEffect(() => {
+  setLoading(true);
+  setError("");
+  fetch(`${API_URL}/api/cases`, {
+    headers: { Authorization: `Bearer ${token}`, Accept: "application/json" },
+  })
+    .then(r => r.json())
+    .then(data => {
+      const loaded = data.cases || [];
+      setCases(loaded);
+      // Seed local assignment state from what's already saved server-side
+      const seeded = {};
+      loaded.forEach(c => {
+        Object.entries(c.assigned_verifiers || {}).forEach(([checkKey, userId]) => {
+          seeded[`${c.case_id}:${checkKey}`] = userId;
+        });
+      });
+      setAssignments(seeded);
+    })
+    .catch(() => setError("Failed to load cases."))
+    .finally(() => setLoading(false));
+}, []);
   useEffect(() => {
     setUsersLoading(true);
     setUsersError("");
@@ -189,41 +211,84 @@ export default function Allocator() {
   // (not the blank "Assign ▾" option), fires an immediate confirmation
   // toast so the user gets feedback right when they pick a verifier —
   // not just when they click "CONFIRM ASSIGNMENTS".
-  const updateCardAssignment = (caseId, checkKey, assigneeId, assigneeName) => {
-    setAssignments(prev => ({ ...prev, [assignKey(caseId, checkKey)]: assigneeId }));
+  // const updateCardAssignment = (caseId, checkKey, assigneeId, assigneeName) => {
+  //   setAssignments(prev => ({ ...prev, [assignKey(caseId, checkKey)]: assigneeId }));
+
+  //   if (assigneeId && String(assigneeId).trim() !== "") {
+  //     setToastMessage(`${caseId} assigned to ${assigneeName}.`);
+  //     setToastError(false);
+  //     setShowToast(true);
+  //     setTimeout(() => setShowToast(false), 2000);
+  //   }
+  // };
+  const updateCardAssignment = async (caseId, checkKey, assigneeId, assigneeName) => {
+  const previous = assignments[assignKey(caseId, checkKey)];
+  setAssignments(prev => ({ ...prev, [assignKey(caseId, checkKey)]: assigneeId }));
+
+  try {
+    const res = await fetch(`${API_URL}/api/cases/${caseId}/assign`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ check_type: checkKey, user_id: assigneeId || null }),
+    });
+    if (!res.ok) throw new Error();
 
     if (assigneeId && String(assigneeId).trim() !== "") {
       setToastMessage(`${caseId} assigned to ${assigneeName}.`);
       setToastError(false);
-      setShowToast(true);
-      setTimeout(() => setShowToast(false), 2000);
+    } else {
+      setToastMessage(`${caseId} unassigned.`);
+      setToastError(false);
     }
-  };
+  } catch {
+    // Revert on failure so the UI doesn't lie about what's saved
+    setAssignments(prev => ({ ...prev, [assignKey(caseId, checkKey)]: previous }));
+    setToastMessage("Couldn't save that assignment — please try again.");
+    setToastError(true);
+  }
+  setShowToast(true);
+  setTimeout(() => setShowToast(false), 2000);
+};
+  // const handleConfirm = () => {
+  //   // Only count entries where a real user id was selected (non-empty)
+  //   const realAssignments = Object.entries(assignments).filter(
+  //     ([, assigneeId]) => assigneeId && String(assigneeId).trim() !== ""
+  //   );
 
-  const handleConfirm = () => {
-    // Only count entries where a real user id was selected (non-empty)
-    const realAssignments = Object.entries(assignments).filter(
-      ([, assigneeId]) => assigneeId && String(assigneeId).trim() !== ""
-    );
+  //   if (realAssignments.length === 0) {
+  //     setToastMessage("Please assign at least one case to a verifier before confirming.");
+  //     setToastError(true);
+  //     setShowToast(true);
+  //     setTimeout(() => setShowToast(false), 3000);
+  //     return;
+  //   }
 
-    if (realAssignments.length === 0) {
-      setToastMessage("Please assign at least one case to a verifier before confirming.");
-      setToastError(true);
-      setShowToast(true);
-      setTimeout(() => setShowToast(false), 3000);
-      return;
-    }
-
-    // TODO: POST assignments to a real endpoint once one exists.
-    // For now this only acknowledges the local selections made above.
-    setToastMessage(
-      `Assignment successful — ${realAssignments.length} case${realAssignments.length > 1 ? "s" : ""} assigned.`
-    );
-    setToastError(false);
-    setShowToast(true);
-    setTimeout(() => setShowToast(false), 2500);
-  };
-
+  //   // TODO: POST assignments to a real endpoint once one exists.
+  //   // For now this only acknowledges the local selections made above.
+  //   setToastMessage(
+  //     `Assignment successful — ${realAssignments.length} case${realAssignments.length > 1 ? "s" : ""} assigned.`
+  //   );
+  //   setToastError(false);
+  //   setShowToast(true);
+  //   setTimeout(() => setShowToast(false), 2500);
+  // };
+const handleConfirm = () => {
+  const realAssignments = Object.entries(assignments).filter(
+    ([, assigneeId]) => assigneeId && String(assigneeId).trim() !== ""
+  );
+  setToastMessage(
+    realAssignments.length === 0
+      ? "No verifiers assigned yet."
+      : `${realAssignments.length} assignment${realAssignments.length > 1 ? "s" : ""} saved.`
+  );
+  setToastError(realAssignments.length === 0);
+  setShowToast(true);
+  setTimeout(() => setShowToast(false), 2500);
+};
   const exportCSV = (rows) => {
     const headers = ["Case ID", "Candidate", "Client", "Checks", "Status", "TAT", "Created"];
     const csvRows = rows.map(c => [

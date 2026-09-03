@@ -701,14 +701,64 @@ Route::middleware('auth:sanctum')->group(function () {
     });
 
     // ── LIST CASES ────────────────────────────────────────────
-    Route::get('/cases', function (Request $request) {
-        $user = $request->user();
+    // Route::get('/cases', function (Request $request) {
+    //     $user = $request->user();
+    //     $query = BGVCase::orderByDesc('created_at');
+
+    //     if ($user->role === 'client') {
+    //         $query->where(function ($q) use ($user) {
+    //             $q->where('client_id', $user->id)
+    //               ->orWhere('created_by', $user->id);
+    //         });
+    //     }
+
+    //     if ($request->search) {
+    //         $s = $request->search;
+    //         $query->where(function ($q) use ($s) {
+    //             $q->where('case_id', 'like', "%$s%")
+    //               ->orWhere('candidate_name', 'like', "%$s%")
+    //               ->orWhere('client_name', 'like', "%$s%");
+    //         });
+    //     }
+
+    //     if ($request->status && $request->status !== 'all') {
+    //         $query->where('status', $request->status);
+    //     }
+
+    //     $cases = $query->get()->map(function ($c) {
+    //         return [
+    //             'id'            => $c->id,
+    //             'case_id'       => $c->case_id,
+    //             'candidate'     => $c->candidate_name,
+    //             'client'        => $c->client_name,
+    //             'client_id'     => $c->client_id,
+    //             'checks'        => $c->checks,
+    //             'check_details' => $c->check_details,
+    //             'check_tat'     => $c->check_tat,
+    //             'check_rates'   => $c->check_rates,
+    //             'overall_tat'   => $c->overall_tat,
+    //             'status'        => $c->status,
+    //             'priority'      => $c->priority,
+    //             'billing_mode'  => $c->billing_mode,
+    //             'total_amount'  => $c->total_amount,
+    //             'created_at'    => $c->created_at?->format('d M Y'),
+    //             // Legacy fallback only, for cases saved before check_tat/overall_tat
+    //             // existed — the frontend prefers overall_tat above and only
+    //             // drops to this (case age, not real TAT) when that's empty.
+    //             'tat'           => $c->created_at?->diffInDays(now()) . 'd',
+    //         ];
+    //     });
+
+    //     return response()->json(['cases' => $cases]);
+    // });
+        Route::get('/cases', function (Request $request) {
+        $user  = $request->user();
         $query = BGVCase::orderByDesc('created_at');
 
         if ($user->role === 'client') {
             $query->where(function ($q) use ($user) {
                 $q->where('client_id', $user->id)
-                  ->orWhere('created_by', $user->id);
+                ->orWhere('created_by', $user->id);
             });
         }
 
@@ -716,8 +766,8 @@ Route::middleware('auth:sanctum')->group(function () {
             $s = $request->search;
             $query->where(function ($q) use ($s) {
                 $q->where('case_id', 'like', "%$s%")
-                  ->orWhere('candidate_name', 'like', "%$s%")
-                  ->orWhere('client_name', 'like', "%$s%");
+                ->orWhere('candidate_name', 'like', "%$s%")
+                ->orWhere('client_name', 'like', "%$s%");
             });
         }
 
@@ -725,27 +775,79 @@ Route::middleware('auth:sanctum')->group(function () {
             $query->where('status', $request->status);
         }
 
-        $cases = $query->get()->map(function ($c) {
+        $verifierNames = \App\Models\User::pluck('name', 'id');
+
+        $qcStatusFor = fn ($status) => match ($status) {
+            'pending' => 'Not Reviewed',
+            'on-hold' => 'Incomplete',
+            default   => 'Approved',
+        };
+
+        $cases = $query->get()->map(function ($c) use ($verifierNames, $qcStatusFor) {
+            $checks      = $c->checks ?? [];
+            $totalChecks = count($checks);
+
+            $results    = $c->check_results ?? [];
+            $doneChecks = collect($results)
+                ->filter(fn ($r) => !($r['is_draft'] ?? false))
+                ->keys()
+                ->intersect($checks)
+                ->count();
+            $progress = $totalChecks > 0 ? (int) round(($doneChecks / $totalChecks) * 100) : 0;
+
+            $documentsCount = collect($c->check_details ?? [])
+                ->sum(fn ($detail) => count($detail['documents'] ?? []));
+
+            $assignedIds   = $c->assigned_verifiers ?? [];
+            $assignedNames = collect($checks)
+                ->map(fn ($chk) => $assignedIds[$chk] ?? null)
+                ->filter()
+                ->map(fn ($id) => $verifierNames[$id] ?? null)
+                ->filter()
+                ->unique()
+                ->values();
+
+            // Due date: created_at + the longest per-check TAT among this
+            // case's assigned checks (not the sum). Falls back to
+            // overall_tat/tat if check_tat is empty. Computed here, inside
+            // the closure, so it has access to this row's $c and $checks.
+            $checkTat = $c->check_tat ?? [];
+            $maxTat = collect($checks)
+                ->map(fn ($chk) => (float) ($checkTat[$chk] ?? 0))
+                ->filter(fn ($t) => $t > 0)
+                ->max();
+
+            if (!$maxTat) {
+                $maxTat = (float) ($c->overall_tat ?? $c->tat ?? 0);
+            }
+
+            $dueDate = ($maxTat > 0 && $c->created_at)
+                ? $c->created_at->copy()->addDays((int) round($maxTat))->format('d M Y')
+                : null;
+
             return [
-                'id'            => $c->id,
-                'case_id'       => $c->case_id,
-                'candidate'     => $c->candidate_name,
-                'client'        => $c->client_name,
-                'client_id'     => $c->client_id,
-                'checks'        => $c->checks,
-                'check_details' => $c->check_details,
-                'check_tat'     => $c->check_tat,
-                'check_rates'   => $c->check_rates,
-                'overall_tat'   => $c->overall_tat,
-                'status'        => $c->status,
-                'priority'      => $c->priority,
-                'billing_mode'  => $c->billing_mode,
-                'total_amount'  => $c->total_amount,
-                'created_at'    => $c->created_at?->format('d M Y'),
-                // Legacy fallback only, for cases saved before check_tat/overall_tat
-                // existed — the frontend prefers overall_tat above and only
-                // drops to this (case age, not real TAT) when that's empty.
-                'tat'           => $c->created_at?->diffInDays(now()) . 'd',
+                'id'                 => $c->id,
+                'case_id'            => $c->case_id,
+                'candidate'          => $c->candidate_name,
+                'client'             => $c->client_name,
+                'client_id'          => $c->client_id,
+                'checks'             => $c->checks,
+                'check_details'      => $c->check_details,
+                'check_tat'          => $c->check_tat,
+                'check_rates'        => $c->check_rates,
+                'overall_tat'        => $c->overall_tat,
+                'status'             => $c->status,
+                'priority'           => $c->priority,
+                'billing_mode'       => $c->billing_mode,
+                'total_amount'       => $c->total_amount,
+                'created_at'         => $c->created_at?->format('d M Y'),
+                'due_date'           => $dueDate,
+                'tat'                => $c->created_at?->diffInDays(now()) . 'd',
+                'progress'           => $progress,
+                'documents_count'    => $documentsCount,
+                'qc_status'          => $qcStatusFor($c->status),
+                'assigned_verifier'  => $assignedNames->isNotEmpty() ? $assignedNames->implode(', ') : null,
+                'assigned_verifiers' => $assignedIds,
             ];
         });
 
@@ -939,6 +1041,44 @@ Route::middleware('auth:sanctum')->group(function () {
 
         return response()->json(['message' => 'Check result saved', 'check_results' => $results]);
     });
+    // ── ASSIGN VERIFIER TO A CHECK (allocator/admin) ─────────────
+Route::patch('/cases/{caseId}/assign', function (Request $request, $caseId) {
+    if (!in_array($request->user()->role, ['admin', 'allocator'])) {
+        return response()->json(['message' => 'Unauthorized. Admin or allocator access required.'], 403);
+    }
+
+    $request->validate([
+        'check_type' => 'required|string',
+        'user_id'    => 'nullable|integer|exists:users,id', // omit/null to unassign
+    ]);
+
+    $case = BGVCase::where('case_id', $caseId)->first();
+    if (!$case) return response()->json(['message' => 'Case not found'], 404);
+
+    if (!in_array($request->check_type, $case->checks ?? [])) {
+        return response()->json(['message' => 'This check is not assigned to this case'], 422);
+    }
+
+    $assigned = $case->assigned_verifiers ?? [];
+    if ($request->filled('user_id')) {
+        $assigned[$request->check_type] = (int) $request->user_id;
+    } else {
+        unset($assigned[$request->check_type]);
+    }
+    $case->assigned_verifiers = $assigned;
+    $case->save();
+
+    \App\Models\CaseEvent::log(
+        $case->case_id,
+        'verifier_assigned',
+        ucfirst($request->check_type) . ' verifier ' . ($request->filled('user_id') ? 'assigned' : 'unassigned'),
+        $request->filled('user_id') ? "Assigned to user #{$request->user_id}" : 'Unassigned',
+        ['check_type' => $request->check_type, 'user_id' => $request->user_id],
+        $request->user()
+    );
+
+    return response()->json(['message' => 'Saved', 'assigned_verifiers' => $assigned]);
+});
 
     // ── SAVE CHECK FIELDS (client/staff — from CheckDetailForm) ──
     // Also accepts an admin-only `amount` — this is the ONLY write path for
