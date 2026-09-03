@@ -650,22 +650,15 @@ export default function AddressCheck() {
           </div>
 
           {/* Action Box */}
-          <div style={{ background: "#fff", border: "1px dashed #cbd5e1", borderRadius: "6px", padding: "10px 16px", display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "16px" }}>
-            <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-              <div style={{ width: "28px", height: "28px", borderRadius: "50%", background: "#eff6ff", color: "#2563eb", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: "700", fontSize: "12px" }}>+</div>
-              <div>
-                <h4 style={{ margin: 0, fontSize: "12px", fontWeight: "700", color: "#2563eb" }}>New Address Verification</h4>
-                <p style={{ margin: 0, fontSize: "10px", color: "#64748b" }}>Create a new verification request</p>
-              </div>
-            </div>
+          
             
             <div style={{ display: "flex", borderRadius: "4px", overflow: "hidden" }}>
               <button style={{ background: "#2563eb", color: "#fff", border: "none", padding: "6px 14px", fontWeight: "600", fontSize: "12px", cursor: "pointer" }}>
                 New Address Verification
               </button>
-              <button style={{ background: "#1d4ed8", color: "#fff", border: "none", padding: "6px 8px", borderLeft: "1px solid #3b82f6", cursor: "pointer" }}>▼</button>
+             
             </div>
-          </div>
+          
 
           {/* Multi-column Search/Filter Bar */}
           <div style={{ background: "#fff", border: "1px solid #e2e8f0", borderRadius: "6px", padding: "10px", marginBottom: "16px", display: "flex", flexDirection: "column", gap: "8px" }}>

@@ -452,15 +452,11 @@ export default function EducationVerification() {
 
   return (
     <div style={{ display: "flex", minHeight: "100vh" }}>
-      {/* 1. Sidebar Wrapper */}
       <div id="sidebar">
         <Sidebar />
       </div>
 
-      {/* 2. Main Content Wrapper */}
       <div id="content">
-        {/* Navbar Header */}
-        
           <Header />
         
 
@@ -925,6 +921,23 @@ export default function EducationVerification() {
                             />
                           </div>
                         </div>
+                      {/* Documents Upload Section */}
+      <div>
+        <label style={{ display: "block", fontSize: "12px", fontWeight: 700, marginBottom: "10px", color: "#374151" }}>DOCUMENTS * (Upload up to 4 documents)</label>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "12px" }}>
+          {[1, 2, 3, 4].map((docNum) => (
+            <div key={docNum} style={{ border: "2px dashed #cbd5e1", borderRadius: "8px", padding: "16px", textAlign: "center", background: "#f8fafc" }}>
+              <p style={{ fontSize: "12px", fontWeight: 700, margin: "0 0 4px 0", color: "#334155" }}>Document {docNum}</p>
+              <span style={{ fontSize: "10px", color: "#94a3b8", display: "block", marginBottom: "10px" }}>PDF, JPG, PNG (Max 10MB)</span>
+              <label style={{ background: "#eff6ff", color: "#2563eb", padding: "6px 12px", borderRadius: "4px", fontSize: "11px", fontWeight: 700, cursor: "pointer", display: "inline-block" }}>
+                ☁ Choose File
+                <input type="file" style={{ display: "none" }} />
+              </label>
+            </div>
+          ))}
+        </div>
+      </div>
+
                       </div>
                     )}
                   </div>

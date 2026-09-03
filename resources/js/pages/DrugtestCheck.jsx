@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import Sidebar from "./Sidebar";
+import "../../css/style.css";
 import Header from "./Header";
 
 export default function DrugTestVerification() {
@@ -316,9 +317,11 @@ nav {
       `}</style>
 
       <div className="dtv-wrapper">
-        <Sidebar />
+         <div id="sidebar">
+                <Sidebar />
+              </div>
 
-        <div className="dtv-main-content">
+        <div className="dtv-main-content"  id="content">
           <Header />
 
           <main className="dtv-container">
