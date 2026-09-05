@@ -518,7 +518,7 @@ export default function EmploymentCheck() {
                       borderRadius: "6px",
                       cursor: "pointer",
                       padding: "8px 20px",
-                      backgroundColor: activeTab === "allocation" ? "#2563eb" : "transparent",
+                      backgroundColor: activeTab === "allocation" ? "#1e2761" : "transparent",
                       color: activeTab === "allocation" ? "#ffffff" : "#64748b",
                       border: "none"
                     }}
@@ -547,23 +547,11 @@ export default function EmploymentCheck() {
 
               {activeTab === "allocation" && (
                 <button
-                  onClick={() => setActiveTab("employment")}
-                  style={{
-                    backgroundColor: "#2563eb",
-                    color: "#ffffff",
-                    border: "none",
-                    borderRadius: "6px",
-                    padding: "10px 20px",
-                    fontWeight: 600,
-                    fontSize: "14px",
-                    cursor: "pointer",
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "8px"
-                  }}
-                >
-                  + Add New Employment Case
-                </button>
+  onClick={() => setActiveTab("employment")}
+  className="secondary-cta"
+>
+  + Add New Employment Case
+</button>
               )}
             </div>
 
