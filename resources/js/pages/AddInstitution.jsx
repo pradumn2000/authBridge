@@ -1450,6 +1450,9 @@ export default function AddInstitution() {
   const [bulkResult, setBulkResult]     = useState(null);
   const [bulkBusy, setBulkBusy]         = useState(false);
   const [deleteConfirm, setDeleteConfirm] = useState(null);
+
+  // Accordion Toggle State
+  const [isVerificationOpen, setIsVerificationOpen] = useState(true);
   
   // Pagination states
   const [currentPage, setCurrentPage]   = useState(1);
@@ -1639,10 +1642,11 @@ export default function AddInstitution() {
         /* Form Sections & Fields */
         .uni-section-card {
           background: #ffffff;
-          border: 1px solid #00b074; /* Highlighted Border for Boxes */
+          border: 1px solid #00b074;
           border-radius: 8px;
           padding: 16px;
           margin-bottom: 12px;
+          transition: all 0.3s ease;
         }
 
         .uni-section-card-plain {
@@ -1659,6 +1663,11 @@ export default function AddInstitution() {
           display: flex;
           justify-content: space-between;
           align-items: center;
+        }
+
+        .uni-section-title.clickable {
+          cursor: pointer;
+          user-select: none;
         }
 
         .uni-form-grid-2 {
@@ -2088,32 +2097,41 @@ export default function AddInstitution() {
                 </div>
               </div>
 
-              {/* 2. Verification Fees (Highlighted Box) */}
+              {/* 2. Verification Fees (Toggleable Box) */}
               <div className="uni-section-card">
-                <div className="uni-section-title">
+                <div 
+                  className="uni-section-title clickable" 
+                  onClick={() => setIsVerificationOpen(!isVerificationOpen)}
+                  style={{ marginBottom: isVerificationOpen ? "12px" : "0px" }}
+                >
                   <span>Verification Fees (for National)</span>
-                  <span style={{ cursor: "pointer", fontSize: "10px" }}>▲</span>
+                  <span style={{ fontSize: "12px", color: "#64748b" }}>
+                    {isVerificationOpen ? "▲" : "▼"}
+                  </span>
                 </div>
-                <div className="uni-form-grid-2">
-                  <div className="uni-form-group">
-                    <label>Verification Fees *</label>
-                    <select value={form.verificationFeesType} onChange={(e) => set("verificationFeesType", e.target.value)}>
-                      <option value="" disabled>Select option</option>
-                      <option value="Normal">Normal</option>
-                      <option value="Year of Passing">Year of Passing</option>
-                      <option value="UGPG">UGPG</option>
-                    </select>
+
+                {isVerificationOpen && (
+                  <div className="uni-form-grid-2">
+                    <div className="uni-form-group">
+                      <label>Verification Fees *</label>
+                      <select value={form.verificationFeesType} onChange={(e) => set("verificationFeesType", e.target.value)}>
+                        <option value="" disabled>Select option</option>
+                        <option value="Normal">Normal</option>
+                        <option value="Year of Passing">Year of Passing</option>
+                        <option value="UGPG">UGPG</option>
+                      </select>
+                    </div>
+                    <div className="uni-form-group">
+                      <label>Fees Amount (INR) *</label>
+                      <input
+                        type="number"
+                        placeholder="₹ Enter amount"
+                        value={form.feesAmount}
+                        onChange={(e) => set("feesAmount", e.target.value)}
+                      />
+                    </div>
                   </div>
-                  <div className="uni-form-group">
-                    <label>Fees Amount (INR) *</label>
-                    <input
-                      type="number"
-                      placeholder="₹ Enter amount"
-                      value={form.feesAmount}
-                      onChange={(e) => set("feesAmount", e.target.value)}
-                    />
-                  </div>
-                </div>
+                )}
               </div>
 
               {/* 3. Regulatory Details */}
@@ -2226,7 +2244,7 @@ export default function AddInstitution() {
                 </div>
               </div>
 
-              {/* 5. Other Information (Highlighted Box) */}
+              {/* 5. Other Information */}
               <div className="uni-section-card">
                 <div className="uni-section-title">Other Information</div>
                 
