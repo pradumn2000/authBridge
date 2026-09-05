@@ -285,7 +285,7 @@
 //     gap: "8px",
 //   },
 // };
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import "../../css/style.css";
 import Sidebar from "./Sidebar";
 import Header from "./Header";
@@ -293,6 +293,8 @@ import Header from "./Header";
 export default function DatabaseCheck() {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [activeModal, setActiveModal] = useState(null); // 'identity' | 'global' | null
+  const [selectedFile, setSelectedFile] = useState(null);
+  const fileInputRef = useRef(null);
 
   const tableData = [
     { id: "CAN-10245", name: "Rahul Verma", client: "ABC Technologies", sources: "PAN, Aadhaar", verifier: "Amit Kumar (VER-1001)", date: "26-Aug-2026 10:38 AM", tat: "24", tatStatus: "On Time", status: "In Progress", updated: "26-Aug-2026 11:30 AM" },
@@ -307,7 +309,27 @@ export default function DatabaseCheck() {
     { id: "CAN-10254", name: "Pooja Iyer", client: "XYZ Ltd.", sources: "PAN, Aadhaar", verifier: "Neha Patel (VER-1002)", date: "23-Aug-2026 11:45 AM", tat: "24", tatStatus: "On Time", status: "Completed", updated: "23-Aug-2026 01:25 PM" },
   ];
 
-  const closeModal = () => setActiveModal(null);
+  const closeModal = () => {
+    setActiveModal(null);
+    setSelectedFile(null);
+  };
+
+  const handleFileChange = (e) => {
+    if (e.target.files && e.target.files[0]) {
+      setSelectedFile(e.target.files[0]);
+    }
+  };
+
+  const handleDragOver = (e) => {
+    e.preventDefault();
+  };
+
+  const handleDrop = (e) => {
+    e.preventDefault();
+    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+      setSelectedFile(e.dataTransfer.files[0]);
+    }
+  };
 
   return (
     <>
@@ -507,6 +529,16 @@ export default function DatabaseCheck() {
           cursor: pointer;
           color: #64748b;
           font-size: 12px;
+          transition: border-color 0.2s ease, background 0.2s ease;
+        }
+
+        .db-upload-box:hover {
+          border-color: #2563eb;
+          background: #f8fafc;
+        }
+
+        .db-file-input-hidden {
+          display: none;
         }
 
         .db-modal-footer {
@@ -769,13 +801,39 @@ export default function DatabaseCheck() {
               </div>
             </div>
 
+            {/* Input Type File Added Here */}
             <div className="db-section-card">
               <div className="db-section-title">Documents</div>
               <div className="db-form-group">
                 <label>Upload ID Proof Document *</label>
-                <div className="db-upload-box">
-                  📤 <strong>Click to upload</strong> or drag and drop<br />
-                  <span style={{ fontSize: "10px", color: "#94a3b8" }}>PDF, JPG, PNG (Max. 5MB)</span>
+                
+                <input 
+                  type="file" 
+                  ref={fileInputRef}
+                  className="db-file-input-hidden"
+                  accept=".pdf,.jpg,.jpeg,.png"
+                  onChange={handleFileChange}
+                />
+
+                <div 
+                  className="db-upload-box" 
+                  onClick={() => fileInputRef.current && fileInputRef.current.click()}
+                  onDragOver={handleDragOver}
+                  onDrop={handleDrop}
+                >
+                  {selectedFile ? (
+                    <div>
+                      📄 <strong style={{ color: "#2563eb" }}>{selectedFile.name}</strong>
+                      <div style={{ fontSize: "10px", color: "#64748b", marginTop: "4px" }}>
+                        {(selectedFile.size / (1024 * 1024)).toFixed(2)} MB - Click or drag to replace
+                      </div>
+                    </div>
+                  ) : (
+                    <>
+                      📤 <strong>Click to upload</strong> or drag and drop<br />
+                      <span style={{ fontSize: "10px", color: "#94a3b8" }}>PDF, JPG, PNG (Max. 5MB)</span>
+                    </>
+                  )}
                 </div>
               </div>
             </div>
