@@ -812,36 +812,38 @@ export default function EmploymentCheck() {
                           type="button"
                           onClick={() => setOpenEmployer(isOpen ? null : num)}
                           style={{
-                            width: "100%",
-                            padding: "14px 16px",
-                            display: "flex",
-                            justify: "space-between",
-                            alignItems: "center",
-                            background: "#ffffff",
-                            border: "none",
-                            cursor: "pointer",
-                            fontWeight: 700,
-                            fontSize: "14px",
-                            color: "#1e293b"
-                          }}
+  width: "100%",
+  padding: "14px 16px",
+  display: "flex",
+  justifyContent: "space-between",
+  alignItems: "center",
+  background: "#ffffff",
+  border: "none",
+  cursor: "pointer",
+  fontWeight: 700,
+  fontSize: "14px",
+  color: "#1e293b"
+}}
                         >
                           <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-                            <span style={{
-                              background: isOpen ? "#2563eb" : "#94a3b8",
-                              color: "#fff",
-                              borderRadius: "50%",
-                              width: "24px",
-                              height: "24px",
-                              display: "inline-flex",
-                              alignItems: "center",
-                              justify: "center",
-                              fontSize: "12px"
-                            }}>
-                              {num}
-                            </span>
+                            <span
+  style={{
+    background: isOpen ? "#1e2761" : "#94a3b8",
+    color: "#fff",
+    borderRadius: "50%",
+    width: "24px",
+    height: "24px",
+    display: "inline-flex",
+    alignItems: "center",
+    justifyContent: "center",
+    fontSize: "12px",
+  }}
+>
+  {num}
+</span>
                             Employer {num}
                           </div>
-                          <span style={{ fontSize: "16px", color: "#64748b" }}>
+                          <span style={{ fontSize: "16px", color: "#1e2761" }}>
                             {isOpen ? "➖" : "➕"}
                           </span>
                         </button>
