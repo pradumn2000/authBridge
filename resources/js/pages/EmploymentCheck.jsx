@@ -366,7 +366,7 @@ export default function EmploymentCheck() {
                 padding: "4px 10px",
                 borderRadius: "4px",
                 border: pageNum === currentPage ? "none" : "1px solid #cbd5e1",
-                background: pageNum === currentPage ? "#2563eb" : "#fff",
+                background: pageNum === currentPage ? "#1e2761" : "#fff",
                 color: pageNum === currentPage ? "#fff" : "#1e293b",
                 fontWeight: pageNum === currentPage ? 700 : 500,
                 cursor: "pointer"
@@ -384,7 +384,7 @@ export default function EmploymentCheck() {
               padding: "4px 10px",
               borderRadius: "4px",
               border: 10 === currentPage ? "none" : "1px solid #cbd5e1",
-              background: 10 === currentPage ? "#2563eb" : "#fff",
+              background: 10 === currentPage ? "#1e2761" : "#fff",
               color: 10 === currentPage ? "#fff" : "#1e293b",
               cursor: "pointer"
             }}
@@ -683,7 +683,7 @@ export default function EmploymentCheck() {
                     </div>
                     <div style={{ display: "flex", gap: "10px" }}>
                       <button style={{ flex: 1, padding: "9px", borderRadius: "6px", border: "1px solid #cbd5e1", background: "#fff", fontWeight: 600, cursor: "pointer", fontSize: "13px" }}>Cancel</button>
-                      <button style={{ flex: 1, padding: "9px", borderRadius: "6px", border: "none", background: "#2563eb", color: "#fff", fontWeight: 600, cursor: "pointer", fontSize: "13px" }}>Allocate Cases</button>
+                      <button style={{ flex: 1, padding: "9px", borderRadius: "6px", border: "none", background: "#1e2761", color: "#fff", fontWeight: 600, cursor: "pointer", fontSize: "13px" }}>Allocate Cases</button>
                     </div>
                   </div>
                 </div>
