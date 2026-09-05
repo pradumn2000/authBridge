@@ -373,7 +373,7 @@ export default function DatabaseCheck() {
           </div>
 
           {/* Main Grid: Table Left + Assign Panel Right */}
-          <div style={{ display: "grid", gridTemplateColumns: showAssignPanel ? "1fr 280px" : "1fr", gap: "16px", alignItems: "start" }}>
+          <div>
             
             {/* Left Table Section */}
             <div style={{ background: "#fff", border: "1px solid #e2e8f0", borderRadius: "8px", overflow: "hidden" }}>
