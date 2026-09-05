@@ -508,7 +508,7 @@ export default function EmploymentCheck() {
             
             {/* Top Navigation Bar */}
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px", borderBottom: "2px solid #e2e8f0", paddingBottom: "10px" }}>
-              {/* <ul className="nav nav-pills" style={{ gap: "10px", marginBottom: "0" }}>
+              <ul className="nav nav-pills" style={{ gap: "10px", marginBottom: "0" }}>
                 <li className="nav-item">
                   <button
                     className={`nav-link ${activeTab === "allocation" ? "active" : ""}`}
@@ -543,7 +543,7 @@ export default function EmploymentCheck() {
                     Employment Cases
                   </button>
                 </li>
-              </ul> */}
+              </ul>
 
               {activeTab === "allocation" && (
                 <button
