@@ -535,7 +535,7 @@ export default function EmploymentCheck() {
                       borderRadius: "6px",
                       cursor: "pointer",
                       padding: "8px 20px",
-                      backgroundColor: activeTab === "employment" ? "#2563eb" : "transparent",
+                      backgroundColor: activeTab === "employment" ? "#1e2761" : "transparent",
                       color: activeTab === "employment" ? "#ffffff" : "#64748b",
                       border: "none"
                     }}
