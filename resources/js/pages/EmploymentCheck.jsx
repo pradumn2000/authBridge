@@ -286,10 +286,11 @@
 import React, { useState } from "react";
 import Sidebar from "./Sidebar";
 import Header from "./Header";
+import "./EmploymentCheck.css";
 
 export default function EmploymentCheck() {
   const [activeTab, setActiveTab] = useState("allocation");
-  const [openEmployer, setOpenEmployer] = useState(1); // Track active accordion tab
+  const [openEmployer, setOpenEmployer] = useState(1);
 
   // Pagination States for Table 1 (Company Allocation)
   const [table1Page, setTable1Page] = useState(1);
@@ -315,111 +316,80 @@ export default function EmploymentCheck() {
     alert("Employment Case Saved Successfully!");
   };
 
-  // Reusable Pagination Component
+  // Dynamic Pagination Renderer
   const renderPagination = (currentPage, totalItems, itemsPerPage, onPageChange, onRowsChange) => {
-    const totalPages = Math.ceil(totalItems / itemsPerPage);
-    const startItem = (currentPage - 1) * itemsPerPage + 1;
+    const totalPages = Math.ceil(totalItems / itemsPerPage) || 1;
+    const startItem = totalItems === 0 ? 0 : (currentPage - 1) * itemsPerPage + 1;
     const endItem = Math.min(currentPage * itemsPerPage, totalItems);
 
+    const getPageNumbers = () => {
+      const pages = [];
+      if (totalPages <= 5) {
+        for (let i = 1; i <= totalPages; i++) pages.push(i);
+      } else {
+        pages.push(1);
+        if (currentPage > 3) pages.push("...");
+        
+        let start = Math.max(2, currentPage - 1);
+        let end = Math.min(totalPages - 1, currentPage + 1);
+
+        for (let i = start; i <= end; i++) {
+          if (!pages.includes(i)) pages.push(i);
+        }
+
+        if (currentPage < totalPages - 2) pages.push("...");
+        if (!pages.includes(totalPages)) pages.push(totalPages);
+      }
+      return pages;
+    };
+
     return (
-      <div
-        style={{
-          display: "flex",
-          justify: "space-between",
-          alignItems: "center",
-          marginTop: "16px",
-          paddingTop: "12px",
-          borderTop: "1px solid #f1f5f9",
-          fontSize: "12px",
-          color: "#64748b"
-        }}
-      >
+      <div className="pagination-container">
         {/* Left Side: Showing items count */}
-        <div>
-          Showing <span style={{ fontWeight: 600, color: "#1e293b" }}>{startItem}</span> to{" "}
-          <span style={{ fontWeight: 600, color: "#1e293b" }}>{endItem}</span> of{" "}
-          <span style={{ fontWeight: 600, color: "#1e293b" }}>{totalItems}</span> entries
+        <div className="pagination-info">
+          Showing <span>{startItem}</span> to <span>{endItem}</span> of <span>{totalItems}</span> entries
         </div>
 
-        {/* Center: Page Navigation Buttons */}
-        <div style={{ display: "flex", alignItems: "center", gap: "4px" }}>
+        {/* Center: Dynamic Page Navigation */}
+        <div className="pagination-controls">
           <button
             onClick={() => onPageChange(Math.max(1, currentPage - 1))}
             disabled={currentPage === 1}
-            style={{
-              padding: "4px 8px",
-              borderRadius: "4px",
-              border: "1px solid #cbd5e1",
-              background: "#fff",
-              cursor: currentPage === 1 ? "not-allowed" : "pointer",
-              opacity: currentPage === 1 ? 0.5 : 1
-            }}
+            className="pagination-btn arrow-btn"
           >
             ‹
           </button>
 
-          {[1, 2, 3, 4, 5].map((pageNum) => (
-            <button
-              key={pageNum}
-              onClick={() => onPageChange(pageNum)}
-              style={{
-                padding: "4px 10px",
-                borderRadius: "4px",
-                border: pageNum === currentPage ? "none" : "1px solid #cbd5e1",
-                background: pageNum === currentPage ? "#1e2761" : "#fff",
-                color: pageNum === currentPage ? "#fff" : "#1e293b",
-                fontWeight: pageNum === currentPage ? 700 : 500,
-                cursor: "pointer"
-              }}
-            >
-              {pageNum}
-            </button>
-          ))}
-
-          <span style={{ padding: "0 4px", color: "#94a3b8" }}>...</span>
-
-          <button
-            onClick={() => onPageChange(10)}
-            style={{
-              padding: "4px 10px",
-              borderRadius: "4px",
-              border: 10 === currentPage ? "none" : "1px solid #cbd5e1",
-              background: 10 === currentPage ? "#1e2761" : "#fff",
-              color: 10 === currentPage ? "#fff" : "#1e293b",
-              cursor: "pointer"
-            }}
-          >
-            10
-          </button>
+          {getPageNumbers().map((num, idx) =>
+            num === "..." ? (
+              <span key={`dots-${idx}`} className="pagination-ellipsis">...</span>
+            ) : (
+              <button
+                key={num}
+                onClick={() => onPageChange(num)}
+                className={`pagination-btn ${num === currentPage ? "active" : ""}`}
+              >
+                {num}
+              </button>
+            )
+          )}
 
           <button
             onClick={() => onPageChange(Math.min(totalPages, currentPage + 1))}
             disabled={currentPage === totalPages}
-            style={{
-              padding: "4px 8px",
-              borderRadius: "4px",
-              border: "1px solid #cbd5e1",
-              background: "#fff",
-              cursor: currentPage === totalPages ? "not-allowed" : "pointer",
-              opacity: currentPage === totalPages ? 0.5 : 1
-            }}
+            className="pagination-btn arrow-btn"
           >
             ›
           </button>
         </div>
 
         {/* Right Side: Rows per page selector */}
-        <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+        <div className="pagination-selector">
           <select
             value={itemsPerPage}
-            onChange={(e) => onRowsChange(Number(e.target.value))}
-            style={{
-              padding: "4px 8px",
-              borderRadius: "4px",
-              border: "1px solid #cbd5e1",
-              background: "#fff",
-              fontSize: "12px",
-              cursor: "pointer"
+            onChange={(e) => {
+              onRowsChange(Number(e.target.value));
+              onPageChange(1);
             }}
           >
             <option value={5}>5 / page</option>
@@ -432,60 +402,59 @@ export default function EmploymentCheck() {
     );
   };
 
-  // Common Accordion Form Body Component
+  // Reusable Employer Accordion Field Group
   const renderEmployerFields = (num) => (
-    <div style={{ background: "#fff", padding: "16px", borderTop: "1px solid #e2e8f0" }}>
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "16px", marginBottom: "16px" }}>
+    <div className="employer-fields-container">
+      <div className="form-grid grid-3">
         <div>
-          <label style={{ display: "block", fontSize: "12px", fontWeight: 700, marginBottom: "6px", color: "#374151" }}>COMPANY NAME *</label>
-          <input type="text" placeholder="Enter company name" style={{ width: "100%", padding: "8px 12px", borderRadius: "6px", border: "1px solid #cbd5e1", outline: "none" }} />
+          <label className="form-label">COMPANY NAME *</label>
+          <input type="text" placeholder="Enter company name" className="form-input" />
         </div>
         <div>
-          <label style={{ display: "block", fontSize: "12px", fontWeight: 700, marginBottom: "6px", color: "#374151" }}>DESIGNATION *</label>
-          <input type="text" placeholder="Enter designation" style={{ width: "100%", padding: "8px 12px", borderRadius: "6px", border: "1px solid #cbd5e1", outline: "none" }} />
+          <label className="form-label">DESIGNATION *</label>
+          <input type="text" placeholder="Enter designation" className="form-input" />
         </div>
         <div>
-          <label style={{ display: "block", fontSize: "12px", fontWeight: 700, marginBottom: "6px", color: "#374151" }}>EMPLOYEE ID</label>
-          <input type="text" placeholder="Enter employee ID" style={{ width: "100%", padding: "8px 12px", borderRadius: "6px", border: "1px solid #cbd5e1", outline: "none" }} />
+          <label className="form-label">EMPLOYEE ID</label>
+          <input type="text" placeholder="Enter employee ID" className="form-input" />
         </div>
       </div>
 
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px", marginBottom: "16px" }}>
+      <div className="form-grid grid-2">
         <div>
-          <label style={{ display: "block", fontSize: "12px", fontWeight: 700, marginBottom: "6px", color: "#374151" }}>HR EMAIL ID *</label>
-          <input type="email" placeholder="Enter HR email ID" style={{ width: "100%", padding: "8px 12px", borderRadius: "6px", border: "1px solid #cbd5e1", outline: "none" }} />
+          <label className="form-label">HR EMAIL ID *</label>
+          <input type="email" placeholder="Enter HR email ID" className="form-input" />
         </div>
         <div>
-          <label style={{ display: "block", fontSize: "12px", fontWeight: 700, marginBottom: "6px", color: "#374151" }}>HR PHONE NUMBER *</label>
-          <div style={{ display: "flex", gap: "8px" }}>
-            <select style={{ padding: "8px", borderRadius: "6px", border: "1px solid #cbd5e1", background: "#fff" }}>
+          <label className="form-label">HR PHONE NUMBER *</label>
+          <div className="phone-input-group">
+            <select className="form-select phone-code">
               <option>+91</option>
             </select>
-            <input type="text" placeholder="Enter phone number" style={{ width: "100%", padding: "8px 12px", borderRadius: "6px", border: "1px solid #cbd5e1", outline: "none" }} />
+            <input type="text" placeholder="Enter phone number" className="form-input" />
           </div>
         </div>
       </div>
 
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px", marginBottom: "20px" }}>
+      <div className="form-grid grid-2 mb-20">
         <div>
-          <label style={{ display: "block", fontSize: "12px", fontWeight: 700, marginBottom: "6px", color: "#374151" }}>DATE OF JOINING (DOJ) *</label>
-          <input type="date" style={{ width: "100%", padding: "8px 12px", borderRadius: "6px", border: "1px solid #cbd5e1", outline: "none" }} />
+          <label className="form-label">DATE OF JOINING (DOJ) *</label>
+          <input type="date" className="form-input" />
         </div>
         <div>
-          <label style={{ display: "block", fontSize: "12px", fontWeight: 700, marginBottom: "6px", color: "#374151" }}>DATE OF EXIT (DOE) *</label>
-          <input type="date" style={{ width: "100%", padding: "8px 12px", borderRadius: "6px", border: "1px solid #cbd5e1", outline: "none" }} />
+          <label className="form-label">DATE OF EXIT (DOE) *</label>
+          <input type="date" className="form-input" />
         </div>
       </div>
 
-      {/* Documents Upload Section */}
       <div>
-        <label style={{ display: "block", fontSize: "12px", fontWeight: 700, marginBottom: "10px", color: "#374151" }}>DOCUMENTS * (Upload up to 4 documents)</label>
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "12px" }}>
+        <label className="form-label">DOCUMENTS * (Upload up to 4 documents)</label>
+        <div className="upload-grid">
           {[1, 2, 3, 4].map((docNum) => (
-            <div key={docNum} style={{ border: "2px dashed #cbd5e1", borderRadius: "8px", padding: "16px", textAlign: "center", background: "#f8fafc" }}>
-              <p style={{ fontSize: "12px", fontWeight: 700, margin: "0 0 4px 0", color: "#334155" }}>Document {docNum}</p>
-              <span style={{ fontSize: "10px", color: "#94a3b8", display: "block", marginBottom: "10px" }}>PDF, JPG, PNG (Max 10MB)</span>
-              <label style={{ background: "#eff6ff", color: "#2563eb", padding: "6px 12px", borderRadius: "4px", fontSize: "11px", fontWeight: 700, cursor: "pointer", display: "inline-block" }}>
+            <div key={docNum} className="upload-card">
+              <p className="upload-title">Document {docNum}</p>
+              <span className="upload-subtitle">PDF, JPG, PNG (Max 10MB)</span>
+              <label className="upload-btn">
                 ☁ Choose File
                 <input type="file" style={{ display: "none" }} />
               </label>
@@ -503,121 +472,84 @@ export default function EmploymentCheck() {
       <section id="content">
         <Header />
 
-        <main style={{ padding: "20px", backgroundColor: "#f8fafc", minHeight: "100vh" }}>
-          <div style={{ maxWidth: "1280px", margin: "0 auto" }}>
+        <main className="main-container">
+          <div className="content-wrapper">
             
-            {/* Top Navigation Bar */}
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px", borderBottom: "2px solid #e2e8f0", paddingBottom: "10px" }}>
-              <ul className="nav nav-pills" style={{ gap: "10px", marginBottom: "0" }}>
-                <li className="nav-item">
-                  <button
-                    className={`nav-link ${activeTab === "allocation" ? "active" : ""}`}
-                    onClick={() => setActiveTab("allocation")}
-                    style={{
-                      fontWeight: 600,
-                      borderRadius: "6px",
-                      cursor: "pointer",
-                      padding: "8px 20px",
-                      backgroundColor: activeTab === "allocation" ? "#1e2761" : "transparent",
-                      color: activeTab === "allocation" ? "#ffffff" : "#64748b",
-                      border: "none"
-                    }}
-                  >
-                    Company Allocation
-                  </button>
-                </li>
-                <li className="nav-item">
-                  <button
-                    className={`nav-link ${activeTab === "employment" ? "active" : ""}`}
-                    onClick={() => setActiveTab("employment")}
-                    style={{
-                      fontWeight: 600,
-                      borderRadius: "6px",
-                      cursor: "pointer",
-                      padding: "8px 20px",
-                      backgroundColor: activeTab === "employment" ? "#1e2761" : "transparent",
-                      color: activeTab === "employment" ? "#ffffff" : "#64748b",
-                      border: "none"
-                    }}
-                  >
-                    Employment Cases
-                  </button>
-                </li>
-              </ul>
-
-              {activeTab === "allocation" && (
+            {/* Action Bar without Nav Tabs */}
+            {activeTab === "allocation" && (
+              <div className="action-bar-container">
                 <button
-  onClick={() => setActiveTab("employment")}
-  className="secondary-cta"
->
-  + Add New Employment Case
-</button>
-              )}
-            </div>
+                  onClick={() => setActiveTab("employment")}
+                  className="secondary-cta"
+                >
+                  + Add New Employment Case
+                </button>
+              </div>
+            )}
 
             {/* TAB 1: COMPANY ALLOCATION */}
             {activeTab === "allocation" && (
               <div>
                 {/* Search & Filter Bar */}
-                <div style={{ display: "flex", gap: "12px", marginBottom: "20px", flexWrap: "wrap" }}>
+                <div className="filter-bar">
                   <input
                     type="text"
                     placeholder="Search by Candidate, Case ID, Company..."
-                    style={{ flex: "2", padding: "10px 14px", borderRadius: "6px", border: "1px solid #cbd5e1", outline: "none" }}
+                    className="form-input search-input"
                   />
-                  <select style={{ flex: "1", padding: "10px 14px", borderRadius: "6px", border: "1px solid #cbd5e1", background: "#fff" }}>
+                  <select className="form-select filter-select">
                     <option value="">All States</option>
                   </select>
-                  <select style={{ flex: "1", padding: "10px 14px", borderRadius: "6px", border: "1px solid #cbd5e1", background: "#fff" }}>
+                  <select className="form-select filter-select">
                     <option value="">All Cities</option>
                   </select>
-                  <button style={{ padding: "10px 18px", borderRadius: "6px", border: "1px solid #cbd5e1", background: "#fff", cursor: "pointer", fontWeight: 600 }}>
+                  <button className="filter-btn">
                     🌪️ Filters
                   </button>
                 </div>
 
                 {/* Summary Stat Cards */}
-                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: "16px", marginBottom: "24px" }}>
-                  <div style={{ background: "#fff", padding: "16px", borderRadius: "8px", border: "1px solid #e2e8f0" }}>
-                    <span style={{ fontSize: "12px", color: "#64748b", fontWeight: 600 }}>Total Employment Cases</span>
-                    <h2 style={{ fontSize: "22px", margin: "4px 0", fontWeight: 800 }}>2,458</h2>
-                    <span style={{ fontSize: "11px", color: "#94a3b8" }}>Across all companies</span>
+                <div className="stats-grid">
+                  <div className="stat-card">
+                    <span className="stat-label">Total Employment Cases</span>
+                    <h2 className="stat-value">2,458</h2>
+                    <span className="stat-subtext">Across all companies</span>
                   </div>
-                  <div style={{ background: "#fff", padding: "16px", borderRadius: "8px", border: "1px solid #e2e8f0" }}>
-                    <span style={{ fontSize: "12px", color: "#64748b", fontWeight: 600 }}>Unassigned Cases</span>
-                    <h2 style={{ fontSize: "22px", margin: "4px 0", fontWeight: 800, color: "#d97706" }}>188</h2>
-                    <span style={{ fontSize: "11px", color: "#94a3b8" }}>Require allocation</span>
+                  <div className="stat-card">
+                    <span className="stat-label">Unassigned Cases</span>
+                    <h2 className="stat-value color-warning">188</h2>
+                    <span className="stat-subtext">Require allocation</span>
                   </div>
-                  <div style={{ background: "#fff", padding: "16px", borderRadius: "8px", border: "1px solid #e2e8f0" }}>
-                    <span style={{ fontSize: "12px", color: "#64748b", fontWeight: 600 }}>In Progress</span>
-                    <h2 style={{ fontSize: "22px", margin: "4px 0", fontWeight: 800, color: "#2563eb" }}>1,235</h2>
-                    <span style={{ fontSize: "11px", color: "#94a3b8" }}>With verifiers</span>
+                  <div className="stat-card">
+                    <span className="stat-label">In Progress</span>
+                    <h2 className="stat-value color-primary">1,235</h2>
+                    <span className="stat-subtext">With verifiers</span>
                   </div>
-                  <div style={{ background: "#fff", padding: "16px", borderRadius: "8px", border: "1px solid #e2e8f0" }}>
-                    <span style={{ fontSize: "12px", color: "#64748b", fontWeight: 600 }}>Completed (This Month)</span>
-                    <h2 style={{ fontSize: "22px", margin: "4px 0", fontWeight: 800, color: "#16a34a" }}>1,035</h2>
-                    <span style={{ fontSize: "11px", color: "#94a3b8" }}>This month</span>
+                  <div className="stat-card">
+                    <span className="stat-label">Completed (This Month)</span>
+                    <h2 className="stat-value color-success">1,035</h2>
+                    <span className="stat-subtext">This month</span>
                   </div>
                 </div>
 
                 {/* Table 1 & Verifier Selection Section */}
-                <div style={{ display: "flex", gap: "20px", marginBottom: "24px", alignItems: "flex-start" }}>
-                  <div style={{ flex: 1, background: "#fff", borderRadius: "8px", border: "1px solid #e2e8f0", padding: "18px" }}>
-                    <h3 style={{ fontSize: "16px", fontWeight: 700, marginBottom: "14px", color: "#1e293b" }}>Company-wise Case Allocation</h3>
-                    <div style={{ overflowX: "auto" }}>
-                      <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "13px" }}>
+                <div className="allocation-layout">
+                  <div className="table-card flex-1">
+                    <h3 className="card-title">Company-wise Case Allocation</h3>
+                    <div className="table-wrapper">
+                      <table className="custom-table">
                         <thead>
-                          <tr style={{ background: "#f8fafc", textAlign: "left", color: "#64748b" }}>
-                            <th style={{ padding: "10px" }}><input type="checkbox" /></th>
-                            <th style={{ padding: "10px" }}>#</th>
-                            <th style={{ padding: "10px" }}>Client Name</th>
-                            <th style={{ padding: "10px" }}>Company Name</th>
-                            <th style={{ padding: "10px" }}>New Cases</th>
-                            <th style={{ padding: "10px" }}>Pending</th>
-                            <th style={{ padding: "10px" }}>In Progress</th>
-                            <th style={{ padding: "10px" }}>Completed</th>
-                            <th style={{ padding: "10px" }}>Verifiers (Name)</th>
-                            <th style={{ padding: "10px" }}>Action</th>
+                          <tr>
+                            <th><input type="checkbox" /></th>
+                            <th>#</th>
+                            <th>Client Name</th>
+                            <th>Company Name</th>
+                            <th>New Cases</th>
+                            <th>Pending</th>
+                            <th>In Progress</th>
+                            <th>Completed</th>
+                            <th>Verifiers (Name)</th>
+                            <th>Action</th>
                           </tr>
                         </thead>
                         <tbody>
@@ -628,18 +560,18 @@ export default function EmploymentCheck() {
                             { id: 4, client: "Tata Group", company: "Tata Consultancy Services", newCases: 27, pending: 9, progress: 10, done: 8, verifiers: "Rahul Verma, Smita Joshi, Amit Kumar" },
                             { id: 5, client: "Wipro Enterprises", company: "Wipro Ltd.", newCases: 15, pending: 4, progress: 5, done: 6, verifiers: "Amit Kumar, Neha Patel" }
                           ].map((row) => (
-                            <tr key={row.id} style={{ borderBottom: "1px solid #f1f5f9" }}>
-                              <td style={{ padding: "10px" }}><input type="checkbox" defaultChecked={row.id <= 2} /></td>
-                              <td style={{ padding: "10px" }}>{row.id}</td>
-                              <td style={{ padding: "10px", fontWeight: 600 }}>{row.client}</td>
-                              <td style={{ padding: "10px" }}>{row.company}</td>
-                              <td style={{ padding: "10px", color: "#2563eb", fontWeight: 700 }}>{row.newCases}</td>
-                              <td style={{ padding: "10px", color: "#d97706", fontWeight: 700 }}>{row.pending}</td>
-                              <td style={{ padding: "10px", color: "#028090", fontWeight: 700 }}>{row.progress}</td>
-                              <td style={{ padding: "10px", color: "#16a34a", fontWeight: 700 }}>{row.done}</td>
-                              <td style={{ padding: "10px", color: "#64748b" }}>{row.verifiers}</td>
-                              <td style={{ padding: "10px" }}>
-                                <button style={{ background: "#eff6ff", color: "#2563eb", border: "none", padding: "5px 12px", borderRadius: "4px", fontWeight: 600, cursor: "pointer" }}>
+                            <tr key={row.id}>
+                              <td><input type="checkbox" defaultChecked={row.id <= 2} /></td>
+                              <td>{row.id}</td>
+                              <td className="font-semibold">{row.client}</td>
+                              <td>{row.company}</td>
+                              <td className="text-primary font-bold">{row.newCases}</td>
+                              <td className="text-warning font-bold">{row.pending}</td>
+                              <td className="text-info font-bold">{row.progress}</td>
+                              <td className="text-success font-bold">{row.done}</td>
+                              <td className="text-muted">{row.verifiers}</td>
+                              <td>
+                                <button className="action-btn">
                                   Allocate
                                 </button>
                               </td>
@@ -654,58 +586,58 @@ export default function EmploymentCheck() {
                   </div>
 
                   {/* Select Verifier Panel */}
-                  <div style={{ width: "320px", background: "#fff", borderRadius: "8px", border: "1px solid #e2e8f0", padding: "18px" }}>
-                    <h3 style={{ fontSize: "16px", fontWeight: 700, marginBottom: "14px", color: "#0f172a" }}>Select Verifier</h3>
-                    <input type="text" placeholder="🔍 Search verifier..." style={{ width: "100%", padding: "9px 12px", borderRadius: "6px", border: "1px solid #cbd5e1", outline: "none", marginBottom: "16px", fontSize: "13px" }} />
-                    <div style={{ display: "flex", flexDirection: "column", gap: "12px", marginBottom: "20px" }}>
+                  <div className="verifier-panel">
+                    <h3 className="card-title">Select Verifier</h3>
+                    <input type="text" placeholder="🔍 Search verifier..." className="form-input search-verifier" />
+                    <div className="verifier-list">
                       {[
                         { name: "Amit Kumar", title: "Employment Verifier", cases: 12, checked: true },
                         { name: "Neha Patel", title: "Employment Verifier", cases: 8, checked: true },
                         { name: "Rahul Verma", title: "Employment Verifier", cases: 15, checked: false },
                       ].map((verifier, idx) => (
-                        <div key={idx} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "10px 12px", borderRadius: "8px", border: "1px solid #f1f5f9", background: "#f8fafc" }}>
-                          <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-                            <input type="checkbox" defaultChecked={verifier.checked} style={{ cursor: "pointer" }} />
-                            <div style={{ width: "32px", height: "32px", borderRadius: "50%", background: "#cbd5e1", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 700, fontSize: "12px", color: "#334155" }}>
+                        <div key={idx} className="verifier-item">
+                          <div className="verifier-info">
+                            <input type="checkbox" defaultChecked={verifier.checked} />
+                            <div className="avatar">
                               {verifier.name.charAt(0)}
                             </div>
                             <div>
-                              <p style={{ margin: 0, fontWeight: 700, fontSize: "13px", color: "#1e293b" }}>{verifier.name}</p>
-                              <span style={{ fontSize: "11px", color: "#64748b" }}>{verifier.title}</span>
+                              <p className="verifier-name">{verifier.name}</p>
+                              <span className="verifier-title">{verifier.title}</span>
                             </div>
                           </div>
-                          <div style={{ textAlign: "right" }}>
-                            <span style={{ fontSize: "13px", fontWeight: 800, color: "#2563eb", display: "block" }}>{verifier.cases}</span>
-                            <span style={{ fontSize: "10px", color: "#2563eb", fontWeight: 600 }}>Active Cases</span>
+                          <div className="text-right">
+                            <span className="case-count">{verifier.cases}</span>
+                            <span className="case-label">Active Cases</span>
                           </div>
                         </div>
                       ))}
                     </div>
-                    <div style={{ display: "flex", gap: "10px" }}>
-                      <button style={{ flex: 1, padding: "9px", borderRadius: "6px", border: "1px solid #cbd5e1", background: "#fff", fontWeight: 600, cursor: "pointer", fontSize: "13px" }}>Cancel</button>
-                      <button style={{ flex: 1, padding: "9px", borderRadius: "6px", border: "none", background: "#1e2761", color: "#fff", fontWeight: 600, cursor: "pointer", fontSize: "13px" }}>Allocate Cases</button>
+                    <div className="panel-actions">
+                      <button className="btn-cancel">Cancel</button>
+                      <button className="btn-submit">Allocate Cases</button>
                     </div>
                   </div>
                 </div>
 
                 {/* Table 2: Recent Employment Cases */}
-                <div style={{ background: "#fff", borderRadius: "8px", border: "1px solid #e2e8f0", padding: "18px" }}>
-                  <h3 style={{ fontSize: "16px", fontWeight: 700, marginBottom: "14px", color: "#1e293b" }}>Recent Employment Cases</h3>
-                  <div style={{ overflowX: "auto" }}>
-                    <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "13px" }}>
+                <div className="table-card">
+                  <h3 className="card-title">Recent Employment Cases</h3>
+                  <div className="table-wrapper">
+                    <table className="custom-table">
                       <thead>
-                        <tr style={{ background: "#f8fafc", textAlign: "left", color: "#64748b" }}>
-                          <th style={{ padding: "10px" }}><input type="checkbox" /></th>
-                          <th style={{ padding: "10px" }}>Case ID</th>
-                          <th style={{ padding: "10px" }}>Candidate Name</th>
-                          <th style={{ padding: "10px" }}>Client Name</th>
-                          <th style={{ padding: "10px" }}>Company Name</th>
-                          <th style={{ padding: "10px" }}>HR Email ID</th>
-                          <th style={{ padding: "10px" }}>HR Phone Number</th>
-                          <th style={{ padding: "10px" }}>Verifier (Name)</th>
-                          <th style={{ padding: "10px" }}>SLA</th>
-                          <th style={{ padding: "10px" }}>Status</th>
-                          <th style={{ padding: "10px" }}>Action</th>
+                        <tr>
+                          <th><input type="checkbox" /></th>
+                          <th>Case ID</th>
+                          <th>Candidate Name</th>
+                          <th>Client Name</th>
+                          <th>Company Name</th>
+                          <th>HR Email ID</th>
+                          <th>HR Phone Number</th>
+                          <th>Verifier (Name)</th>
+                          <th>SLA</th>
+                          <th>Status</th>
+                          <th>Action</th>
                         </tr>
                       </thead>
                       <tbody>
@@ -716,23 +648,26 @@ export default function EmploymentCheck() {
                           { id: "EMP-10248", candidate: "Sneha Joshi", client: "Tata Group", company: "Tata Consultancy Services", hr: "hr@tcs.com", phone: "+91 88765 12345", verifier: "Rahul Verma", sla: "3 Days", status: "In Progress", statusBg: "#fef3c7", statusColor: "#d97706" },
                           { id: "EMP-10249", candidate: "Karan Verma", client: "Wipro Enterprises", company: "Wipro Ltd.", hr: "hr@wipro.com", phone: "+91 99087 66554", verifier: "Amit Kumar", sla: "5 Days", status: "Awaiting Response", statusBg: "#f3e8ff", statusColor: "#7e22ce" }
                         ].map((row) => (
-                          <tr key={row.id} style={{ borderBottom: "1px solid #f1f5f9" }}>
-                            <td style={{ padding: "10px" }}><input type="checkbox" defaultChecked={row.id === "EMP-10245" || row.id === "EMP-10246"} /></td>
-                            <td style={{ padding: "10px", color: "#2563eb", fontWeight: 700 }}>{row.id}</td>
-                            <td style={{ padding: "10px", fontWeight: 600 }}>{row.candidate}</td>
-                            <td style={{ padding: "10px" }}>{row.client}</td>
-                            <td style={{ padding: "10px" }}>{row.company}</td>
-                            <td style={{ padding: "10px", color: "#64748b" }}>{row.hr}</td>
-                            <td style={{ padding: "10px", color: "#64748b" }}>{row.phone}</td>
-                            <td style={{ padding: "10px" }}>{row.verifier}</td>
-                            <td style={{ padding: "10px" }}>{row.sla}</td>
-                            <td style={{ padding: "10px" }}>
-                              <span style={{ background: row.statusBg, color: row.statusColor, padding: "4px 8px", borderRadius: "4px", fontWeight: 700, fontSize: "11px" }}>
+                          <tr key={row.id}>
+                            <td><input type="checkbox" defaultChecked={row.id === "EMP-10245" || row.id === "EMP-10246"} /></td>
+                            <td className="text-primary font-bold">{row.id}</td>
+                            <td className="font-semibold">{row.candidate}</td>
+                            <td>{row.client}</td>
+                            <td>{row.company}</td>
+                            <td className="text-muted">{row.hr}</td>
+                            <td className="text-muted">{row.phone}</td>
+                            <td>{row.verifier}</td>
+                            <td>{row.sla}</td>
+                            <td>
+                              <span
+                                className="status-badge"
+                                style={{ background: row.statusBg, color: row.statusColor }}
+                              >
                                 {row.status}
                               </span>
                             </td>
-                            <td style={{ padding: "10px" }}>
-                              <button style={{ background: "none", border: "none", color: "#2563eb", fontWeight: 600, cursor: "pointer" }}>View</button>
+                            <td>
+                              <button className="link-btn">View</button>
                             </td>
                           </tr>
                         ))}
@@ -748,28 +683,28 @@ export default function EmploymentCheck() {
 
             {/* TAB 2: EMPLOYMENT CASES (ACCORDION FORM) */}
             {activeTab === "employment" && (
-              <div style={{ background: "#fff", borderRadius: "10px", border: "1px solid #e2e8f0", padding: "24px" }}>
+              <div className="form-card">
                 
                 {/* Header Actions */}
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px" }}>
+                <div className="form-header">
                   <div>
-                    <h2 style={{ fontSize: "20px", fontWeight: 700, color: "#0f172a", margin: 0 }}>Add Employment Case</h2>
-                    <p style={{ fontSize: "13px", color: "#64748b", margin: "4px 0 0 0" }}>
+                    <h2 className="form-title">Add Employment Case</h2>
+                    <p className="form-subtitle">
                       Add candidate employment details. You can add up to 4 previous employers.
                     </p>
                   </div>
-                  <div style={{ display: "flex", gap: "10px" }}>
+                  <div className="form-actions">
                     <button
                       type="button"
                       onClick={() => setActiveTab("allocation")}
-                      style={{ padding: "8px 16px", borderRadius: "6px", border: "1px solid #cbd5e1", background: "#fff", fontWeight: 600, cursor: "pointer" }}
+                      className="btn-outline"
                     >
                       ✕ Cancel
                     </button>
                     <button
                       type="button"
                       onClick={handleSaveCase}
-                      style={{ padding: "8px 20px", borderRadius: "6px", border: "none", background: "#1e2761", color: "#fff", fontWeight: 600, cursor: "pointer" }}
+                      className="btn-primary"
                     >
                       💾 Save Case
                     </button>
@@ -777,71 +712,60 @@ export default function EmploymentCheck() {
                 </div>
 
                 {/* Candidate Details Card */}
-                <div style={{ background: "#f8fafc", padding: "18px", borderRadius: "8px", border: "1px solid #e2e8f0", marginBottom: "24px" }}>
-                  <h4 style={{ fontSize: "14px", fontWeight: 700, color: "#2563eb", marginBottom: "12px" }}>Candidate Details</h4>
-                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px" }}>
+                <div className="candidate-section">
+                  <h4 className="section-title">Candidate Details</h4>
+                  <div className="form-grid grid-2">
                     <div>
-                      <label style={{ display: "block", fontSize: "12px", fontWeight: 700, marginBottom: "6px", color: "#374151" }}>CANDIDATE NAME *</label>
+                      <label className="form-label">CANDIDATE NAME *</label>
                       <input
                         type="text"
                         placeholder="Enter candidate name"
                         value={formData.candidateName}
                         onChange={(e) => handleInputChange("candidateName", e.target.value)}
-                        style={{ width: "100%", padding: "9px 12px", borderRadius: "6px", border: "1px solid #cbd5e1", outline: "none", background: "#fff" }}
+                        className="form-input bg-white"
                       />
                     </div>
                     <div>
-                      <label style={{ display: "block", fontSize: "12px", fontWeight: 700, marginBottom: "6px", color: "#374151" }}>DATE *</label>
+                      <label className="form-label">DATE *</label>
                       <input
                         type="date"
                         value={formData.date}
                         onChange={(e) => handleInputChange("date", e.target.value)}
-                        style={{ width: "100%", padding: "9px 12px", borderRadius: "6px", border: "1px solid #cbd5e1", outline: "none", background: "#fff" }}
+                        className="form-input bg-white"
                       />
                     </div>
                   </div>
                 </div>
 
                 {/* Employers Accordion */}
-                <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+                <div className="accordion-wrapper">
                   {[1, 2, 3, 4].map((num) => {
                     const isOpen = openEmployer === num;
                     return (
-                      <div key={num} style={{ border: "1px solid #cbd5e1", borderRadius: "8px", overflow: "hidden" }}>
+                      <div key={num} className="accordion-item">
                         <button
                           type="button"
                           onClick={() => setOpenEmployer(isOpen ? null : num)}
-                          style={{
-  width: "100%",
-  padding: "14px 16px",
-  display: "flex",
-  justifyContent: "space-between",
-  alignItems: "center",
-  background: "#ffffff",
-  border: "none",
-  cursor: "pointer",
-  fontWeight: 700,
-  fontSize: "14px",
-  color: "#1e293b"
-}}
+                          className="accordion-header"
                         >
-                          <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                          <div className="accordion-header-left">
                             <span
-  style={{
-    background: isOpen ? "#1e2761" : "#94a3b8",
-    color: "#fff",
-    borderRadius: "50%",
-    width: "24px",
-    height: "24px",
-    display: "inline-flex",
-    alignItems: "center",
-    justifyContent: "center",
-    fontSize: "12px",
-  }}
->
-  {num}
-</span>
-                            Employer {num}
+                              className="badge-number"
+                              style={{
+                                background: isOpen ? "#1e2761" : "#94a3b8",
+                                color: "#fff",
+                                borderRadius: "50%",
+                                width: "24px",
+                                height: "24px",
+                                display: "inline-flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                fontSize: "12px",
+                              }}
+                            >
+                              {num}
+                            </span>
+                            <span>Employer {num}</span>
                           </div>
                           <span style={{ fontSize: "16px", color: "#1e2761" }}>
                             {isOpen ? "➖" : "➕"}
@@ -856,18 +780,18 @@ export default function EmploymentCheck() {
                 </div>
 
                 {/* Bottom Action Footer */}
-                <div style={{ display: "flex", justifyContent: "flex-end", gap: "12px", marginTop: "24px" }}>
+                <div className="form-footer-actions">
                   <button
                     type="button"
                     onClick={() => setActiveTab("allocation")}
-                    style={{ padding: "10px 20px", borderRadius: "6px", border: "1px solid #cbd5e1", background: "#fff", fontWeight: 600, cursor: "pointer" }}
+                    className="btn-outline"
                   >
                     ✕ Cancel
                   </button>
                   <button
                     type="button"
                     onClick={handleSaveCase}
-                    style={{ padding: "10px 24px", borderRadius: "6px", border: "none", background: "#1e2761", color: "#fff", fontWeight: 600, cursor: "pointer" }}
+                    className="btn-primary"
                   >
                     💾 Save Case
                   </button>
