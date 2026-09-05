@@ -286,7 +286,6 @@
 //   },
 // };
 
-
 import React, { useState } from "react";
 import "../../css/style.css";
 import Sidebar from "./Sidebar";
@@ -295,6 +294,7 @@ import Header from "./Header";
 export default function DatabaseCheck() {
   const [showAssignPanel, setShowAssignPanel] = useState(true);
   const [casesToAllocate, setCasesToAllocate] = useState(8);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   const tableData = [
     { id: "CAN-10245", name: "Rahul Verma", client: "ABC Technologies", sources: "PAN, Aadhaar", verifier: "Amit Kumar (VER-1001)", date: "26-Aug-2026 10:38 AM", tat: "24", tatStatus: "On Time", status: "In Progress", updated: "26-Aug-2026 11:30 AM" },
@@ -310,141 +310,233 @@ export default function DatabaseCheck() {
   ];
 
   return (
-    <div style={{ display: "flex", minHeight: "100vh" }}>
-          <div id="sidebar">
-            <Sidebar />
-          </div>
+    <>
+      {/* Component Level Styles for Dropdown */}
+      <style>{`
+        .dropdown-container {
+          position: relative;
+          display: inline-block;
+          margin-top: 12px;
+        }
 
-      <div id="content">
+        .dropdown-btn {
+          border: 1px solid #2563eb;
+          background: #ffffff;
+          color: #2563eb;
+          padding: 6px 12px;
+          border-radius: 6px;
+          font-size: 12px;
+          font-weight: 600;
+          cursor: pointer;
+          transition: background-color 0.2s ease;
+        }
+
+        .dropdown-btn:hover {
+          background: #f0f5ff;
+        }
+
+        .dropdown-menu {
+          position: absolute;
+          top: 100%;
+          left: 0;
+          margin-top: 6px;
+          background: #ffffff;
+          border: 1px solid #e2e8f0;
+          border-radius: 8px;
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+          min-width: 310px;
+          z-index: 50;
+          padding: 6px 0;
+          display: flex;
+          flex-direction: column;
+        }
+
+        .dropdown-item {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          width: 100%;
+          padding: 10px 14px;
+          border: none;
+          background: transparent;
+          color: #1e293b;
+          font-size: 12px;
+          font-weight: 600;
+          text-align: left;
+          cursor: pointer;
+          transition: background 0.2s ease;
+        }
+
+        .dropdown-item:hover {
+          background: #f8fafc;
+        }
+
+        .dropdown-item .icon {
+          font-size: 14px;
+        }
+      `}</style>
+
+      <div style={{ display: "flex", minHeight: "100vh" }}>
+        <div id="sidebar">
+          <Sidebar />
+        </div>
+
+        <div id="content">
           <Header />
 
-        <main style={{ padding: "20px" }}>
-          
-          {/* Top Title Bar & Export */}
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "16px" }}>
-            <div>
-              <h1 style={{ fontSize: "18px", fontWeight: "800", color: "#0f172a", margin: 0 }}>DATABASE VERIFICATION CHECK</h1>
-              <p style={{ fontSize: "12px", color: "#64748b", margin: "2px 0 0 0" }}>Manage and track database verification requests assigned to verifiers</p>
-            </div>
-            <button style={{ border: "1px solid #cbd5e1", background: "#fff", padding: "6px 14px", borderRadius: "6px", fontSize: "12px", fontWeight: "600", cursor: "pointer", display: "flex", alignItems: "center", gap: "6px" }}>
-              <span>📥</span> Export
-            </button>
-          </div>
-
-          {/* Top Metric Cards */}
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: "14px", marginBottom: "20px" }}>
-            {[
-              { label: "Total Requests", val: "248", sub: "All Database Verifications", icon: "📄", bg: "#eff6ff", color: "#2563eb" },
-              { label: "Assigned", val: "112", sub: "Pending Verification", icon: "👤", bg: "#fff7ed", color: "#ea580c" },
-              { label: "In Progress", val: "74", sub: "Verification in Progress", icon: "🕒", bg: "#eff6ff", color: "#0284c7" },
-              { label: "Completed", val: "142", sub: "Successfully Completed", icon: "Check", bg: "#f0fdf4", color: "#16a34a" },
-              { label: "Discrepancy", val: "18", sub: "Discrepancy Raised", icon: "⚠️", bg: "#fef2f2", color: "#dc2626" },
-            ].map((card, i) => (
-              <div key={i} style={{ background: "#fff", border: "1px solid #e2e8f0", borderRadius: "8px", padding: "14px", display: "flex", alignItems: "center", gap: "12px" }}>
-                <div style={{ width: "36px", height: "36px", borderRadius: "50%", background: card.bg, color: card.color, display: "flex", alignItems: "center", justifyContent: "center", fontWeight: "700" }}>
-                  {card.icon === "Check" ? "✓" : card.icon}
-                </div>
-                <div>
-                  <h3 style={{ fontSize: "18px", fontWeight: "800", color: "#0f172a", margin: 0 }}>{card.val}</h3>
-                  <span style={{ fontSize: "11px", color: "#64748b", display: "block" }}>{card.sub}</span>
-                </div>
+          <main style={{ padding: "20px" }}>
+            
+            {/* Top Title Bar & Export */}
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "16px" }}>
+              <div>
+                <h1 style={{ fontSize: "18px", fontWeight: "800", color: "#0f172a", margin: 0 }}>
+                  DATABASE VERIFICATION CHECK
+                </h1>
+                <p style={{ fontSize: "12px", color: "#64748b", margin: "2px 0 0 0" }}>
+                  Manage and track database verification requests assigned to verifiers
+                </p>
               </div>
-            ))}
-          </div>
-
-          {/* Filters Bar */}
-          <div style={{ background: "#fff", border: "1px solid #e2e8f0", borderRadius: "8px", padding: "12px 16px", marginBottom: "16px" }}>
-            <div style={{ display: "grid", gridTemplateColumns: "1.5fr 1fr 1fr 1fr 1fr 1.2fr auto auto", gap: "10px", alignItems: "center" }}>
-              <input type="text" placeholder="Search by Case ID / Candidate Name..." style={{ padding: "7px 10px", borderRadius: "6px", border: "1px solid #cbd5e1", fontSize: "12px", outline: "none" }} />
-              <select style={{ padding: "7px 10px", borderRadius: "6px", border: "1px solid #cbd5e1", fontSize: "12px", color: "#64748b" }}><option>- All -</option></select>
-              <select style={{ padding: "7px 10px", borderRadius: "6px", border: "1px solid #cbd5e1", fontSize: "12px", color: "#64748b" }}><option>- All -</option></select>
-              <select style={{ padding: "7px 10px", borderRadius: "6px", border: "1px solid #cbd5e1", fontSize: "12px", color: "#64748b" }}><option>- All -</option></select>
-              <select style={{ padding: "7px 10px", borderRadius: "6px", border: "1px solid #cbd5e1", fontSize: "12px", color: "#64748b" }}><option>- All -</option></select>
-              <input type="text" defaultValue="26-May-2026 - 26-Aug-2026" style={{ padding: "7px 10px", borderRadius: "6px", border: "1px solid #cbd5e1", fontSize: "12px", color: "#334155" }} />
-              <button style={{ border: "1px solid #cbd5e1", background: "#fff", padding: "7px 12px", borderRadius: "6px", fontSize: "12px", fontWeight: "600", cursor: "pointer" }}>Clear</button>
-              <button style={{ border: "none", background: "#2563eb", color: "#fff", padding: "7px 14px", borderRadius: "6px", fontSize: "12px", fontWeight: "600", cursor: "pointer" }}>Apply Filters</button>
-            </div>
-
-            <div style={{ marginTop: "12px" }}>
-              <button style={{ border: "1px solid #2563eb", background: "#fff", color: "#2563eb", padding: "6px 12px", borderRadius: "6px", fontSize: "12px", fontWeight: "600", cursor: "pointer" }}>
-                + Add New Database Verification
+              <button style={{ border: "1px solid #cbd5e1", background: "#fff", padding: "6px 14px", borderRadius: "6px", fontSize: "12px", fontWeight: "600", cursor: "pointer", display: "flex", alignItems: "center", gap: "6px" }}>
+                <span>📥</span> Export
               </button>
             </div>
-          </div>
 
-          {/* Main Grid: Table Left + Assign Panel Right */}
-          <div>
-            
-            {/* Left Table Section */}
-            <div style={{ background: "#fff", border: "1px solid #e2e8f0", borderRadius: "8px", overflow: "hidden" }}>
-              <table style={{ width: "100%", borderCollapse: "collapse", textAlign: "left", fontSize: "11px" }}>
-                <thead>
-                  <tr style={{ background: "#f8fafc", color: "#64748b", borderBottom: "1px solid #e2e8f0" }}>
-                    <th style={{ padding: "10px" }}><input type="checkbox" /></th>
-                    <th style={{ padding: "10px" }}>Case ID</th>
-                    <th style={{ padding: "10px" }}>Candidate Name</th>
-                    <th style={{ padding: "10px" }}>Client</th>
-                    <th style={{ padding: "10px" }}>Database Sources</th>
-                    <th style={{ padding: "10px" }}>Verifier Name</th>
-                    <th style={{ padding: "10px" }}>Assigned Date</th>
-                    <th style={{ padding: "10px" }}>TAT (hrs)</th>
-                    <th style={{ padding: "10px" }}>TAT Status</th>
-                    <th style={{ padding: "10px" }}>Status</th>
-                    <th style={{ padding: "10px" }}>Last Updated</th>
-                    <th style={{ padding: "10px" }}>Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {tableData.map((row, i) => (
-                    <tr key={i} style={{ borderBottom: "1px solid #f1f5f9" }}>
-                      <td style={{ padding: "10px" }}><input type="checkbox" /></td>
-                      <td style={{ padding: "10px", color: "#2563eb", fontWeight: 600 }}>{row.id}</td>
-                      <td style={{ padding: "10px", color: "#0f172a", fontWeight: 600 }}>{row.name}</td>
-                      <td style={{ padding: "10px", color: "#334155" }}>{row.client}</td>
-                      <td style={{ padding: "10px", color: "#334155" }}>{row.sources}</td>
-                      <td style={{ padding: "10px", color: "#334155" }}>{row.verifier}</td>
-                      <td style={{ padding: "10px", color: "#64748b" }}>{row.date}</td>
-                      <td style={{ padding: "10px", color: "#334155" }}>{row.tat}</td>
-                      <td style={{ padding: "10px" }}>
-                        <span style={{ color: row.tatStatus === "On Time" ? "#16a34a" : "#dc2626", fontWeight: 600 }}>{row.tatStatus}</span>
-                      </td>
-                      <td style={{ padding: "10px" }}>
-                        <span style={{
-                          background: row.status === "Completed" ? "#f0fdf4" : row.status === "In Progress" ? "#eff6ff" : "#fff7ed",
-                          color: row.status === "Completed" ? "#16a34a" : row.status === "In Progress" ? "#2563eb" : "#ea580c",
-                          padding: "2px 6px", borderRadius: "4px", fontSize: "10px", fontWeight: 700
-                        }}>
-                          {row.status}
-                        </span>
-                      </td>
-                      <td style={{ padding: "10px", color: "#64748b" }}>{row.updated}</td>
-                      <td style={{ padding: "10px", color: "#94a3b8", cursor: "pointer" }}>⋮</td>
+            {/* Top Metric Cards */}
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: "14px", marginBottom: "20px" }}>
+              {[
+                { label: "Total Requests", val: "248", sub: "All Database Verifications", icon: "📄", bg: "#eff6ff", color: "#2563eb" },
+                { label: "Assigned", val: "112", sub: "Pending Verification", icon: "👤", bg: "#fff7ed", color: "#ea580c" },
+                { label: "In Progress", val: "74", sub: "Verification in Progress", icon: "🕒", bg: "#eff6ff", color: "#0284c7" },
+                { label: "Completed", val: "142", sub: "Successfully Completed", icon: "Check", bg: "#f0fdf4", color: "#16a34a" },
+                { label: "Discrepancy", val: "18", sub: "Discrepancy Raised", icon: "⚠️", bg: "#fef2f2", color: "#dc2626" },
+              ].map((card, i) => (
+                <div key={i} style={{ background: "#fff", border: "1px solid #e2e8f0", borderRadius: "8px", padding: "14px", display: "flex", alignItems: "center", gap: "12px" }}>
+                  <div style={{ width: "36px", height: "36px", borderRadius: "50%", background: card.bg, color: card.color, display: "flex", alignItems: "center", justifyContent: "center", fontWeight: "700" }}>
+                    {card.icon === "Check" ? "✓" : card.icon}
+                  </div>
+                  <div>
+                    <h3 style={{ fontSize: "18px", fontWeight: "800", color: "#0f172a", margin: 0 }}>{card.val}</h3>
+                    <span style={{ fontSize: "11px", color: "#64748b", display: "block" }}>{card.sub}</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* Filters Bar */}
+            <div style={{ background: "#fff", border: "1px solid #e2e8f0", borderRadius: "8px", padding: "12px 16px", marginBottom: "16px" }}>
+              <div style={{ display: "grid", gridTemplateColumns: "1.5fr 1fr 1fr 1fr 1fr 1.2fr auto auto", gap: "10px", alignItems: "center" }}>
+                <input type="text" placeholder="Search by Case ID / Candidate Name..." style={{ padding: "7px 10px", borderRadius: "6px", border: "1px solid #cbd5e1", fontSize: "12px", outline: "none" }} />
+                <select style={{ padding: "7px 10px", borderRadius: "6px", border: "1px solid #cbd5e1", fontSize: "12px", color: "#64748b" }}><option>- All -</option></select>
+                <select style={{ padding: "7px 10px", borderRadius: "6px", border: "1px solid #cbd5e1", fontSize: "12px", color: "#64748b" }}><option>- All -</option></select>
+                <select style={{ padding: "7px 10px", borderRadius: "6px", border: "1px solid #cbd5e1", fontSize: "12px", color: "#64748b" }}><option>- All -</option></select>
+                <select style={{ padding: "7px 10px", borderRadius: "6px", border: "1px solid #cbd5e1", fontSize: "12px", color: "#64748b" }}><option>- All -</option></select>
+                <input type="text" defaultValue="26-May-2026 - 26-Aug-2026" style={{ padding: "7px 10px", borderRadius: "6px", border: "1px solid #cbd5e1", fontSize: "12px", color: "#334155" }} />
+                <button style={{ border: "1px solid #cbd5e1", background: "#fff", padding: "7px 12px", borderRadius: "6px", fontSize: "12px", fontWeight: "600", cursor: "pointer" }}>Clear</button>
+                <button style={{ border: "none", background: "#2563eb", color: "#fff", padding: "7px 14px", borderRadius: "6px", fontSize: "12px", fontWeight: "600", cursor: "pointer" }}>Apply Filters</button>
+              </div>
+
+              {/* Dynamic Dropdown Button */}
+              <div className="dropdown-container">
+                <button 
+                  type="button"
+                  className="dropdown-btn" 
+                  onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                >
+                  + Add New Database Verification
+                </button>
+
+                {isDropdownOpen && (
+                  <div className="dropdown-menu">
+                    <button 
+                      type="button"
+                      className="dropdown-item" 
+                      onClick={() => setIsDropdownOpen(false)}
+                    >
+                      <span className="icon">🏦</span>
+                      <span>Identity Verification (Database)</span>
+                    </button>
+                    <button 
+                      type="button"
+                      className="dropdown-item" 
+                      onClick={() => setIsDropdownOpen(false)}
+                    >
+                      <span className="icon">🏛️</span>
+                      <span>Global Check (London Stock Exchange Group)</span>
+                    </button>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Main Grid: Table Left */}
+            <div>
+              <div style={{ background: "#fff", border: "1px solid #e2e8f0", borderRadius: "8px", overflow: "hidden" }}>
+                <table style={{ width: "100%", borderCollapse: "collapse", textAlign: "left", fontSize: "11px" }}>
+                  <thead>
+                    <tr style={{ background: "#f8fafc", color: "#64748b", borderBottom: "1px solid #e2e8f0" }}>
+                      <th style={{ padding: "10px" }}><input type="checkbox" /></th>
+                      <th style={{ padding: "10px" }}>Case ID</th>
+                      <th style={{ padding: "10px" }}>Candidate Name</th>
+                      <th style={{ padding: "10px" }}>Client</th>
+                      <th style={{ padding: "10px" }}>Database Sources</th>
+                      <th style={{ padding: "10px" }}>Verifier Name</th>
+                      <th style={{ padding: "10px" }}>Assigned Date</th>
+                      <th style={{ padding: "10px" }}>TAT (hrs)</th>
+                      <th style={{ padding: "10px" }}>TAT Status</th>
+                      <th style={{ padding: "10px" }}>Status</th>
+                      <th style={{ padding: "10px" }}>Last Updated</th>
+                      <th style={{ padding: "10px" }}>Actions</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody>
+                    {tableData.map((row, i) => (
+                      <tr key={i} style={{ borderBottom: "1px solid #f1f5f9" }}>
+                        <td style={{ padding: "10px" }}><input type="checkbox" /></td>
+                        <td style={{ padding: "10px", color: "#2563eb", fontWeight: 600 }}>{row.id}</td>
+                        <td style={{ padding: "10px", color: "#0f172a", fontWeight: 600 }}>{row.name}</td>
+                        <td style={{ padding: "10px", color: "#334155" }}>{row.client}</td>
+                        <td style={{ padding: "10px", color: "#334155" }}>{row.sources}</td>
+                        <td style={{ padding: "10px", color: "#334155" }}>{row.verifier}</td>
+                        <td style={{ padding: "10px", color: "#64748b" }}>{row.date}</td>
+                        <td style={{ padding: "10px", color: "#334155" }}>{row.tat}</td>
+                        <td style={{ padding: "10px" }}>
+                          <span style={{ color: row.tatStatus === "On Time" ? "#16a34a" : "#dc2626", fontWeight: 600 }}>{row.tatStatus}</span>
+                        </td>
+                        <td style={{ padding: "10px" }}>
+                          <span style={{
+                            background: row.status === "Completed" ? "#f0fdf4" : row.status === "In Progress" ? "#eff6ff" : "#fff7ed",
+                            color: row.status === "Completed" ? "#16a34a" : row.status === "In Progress" ? "#2563eb" : "#ea580c",
+                            padding: "2px 6px", borderRadius: "4px", fontSize: "10px", fontWeight: 700
+                          }}>
+                            {row.status}
+                          </span>
+                        </td>
+                        <td style={{ padding: "10px", color: "#64748b" }}>{row.updated}</td>
+                        <td style={{ padding: "10px", color: "#94a3b8", cursor: "pointer" }}>⋮</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
 
-              {/* Table Footer */}
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "10px 14px", borderTop: "1px solid #e2e8f0", fontSize: "11px", color: "#64748b" }}>
-                <span>Showing 1 to 10 of 248 entries</span>
-                <div style={{ display: "flex", gap: "4px" }}>
-                  <button style={{ border: "1px solid #cbd5e1", background: "#fff", padding: "4px 8px", borderRadius: "4px" }}>‹</button>
-                  <button style={{ border: "none", background: "#2563eb", color: "#fff", padding: "4px 8px", borderRadius: "4px", fontWeight: 700 }}>1</button>
-                  <button style={{ border: "1px solid #cbd5e1", background: "#fff", padding: "4px 8px", borderRadius: "4px" }}>2</button>
-                  <button style={{ border: "1px solid #cbd5e1", background: "#fff", padding: "4px 8px", borderRadius: "4px" }}>3</button>
-                  <button style={{ border: "1px solid #cbd5e1", background: "#fff", padding: "4px 8px", borderRadius: "4px" }}>...</button>
-                  <button style={{ border: "1px solid #cbd5e1", background: "#fff", padding: "4px 8px", borderRadius: "4px" }}>25</button>
-                  <button style={{ border: "1px solid #cbd5e1", background: "#fff", padding: "4px 8px", borderRadius: "4px" }}>›</button>
+                {/* Table Footer */}
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "10px 14px", borderTop: "1px solid #e2e8f0", fontSize: "11px", color: "#64748b" }}>
+                  <span>Showing 1 to 10 of 248 entries</span>
+                  <div style={{ display: "flex", gap: "4px" }}>
+                    <button style={{ border: "1px solid #cbd5e1", background: "#fff", padding: "4px 8px", borderRadius: "4px" }}>‹</button>
+                    <button style={{ border: "none", background: "#2563eb", color: "#fff", padding: "4px 8px", borderRadius: "4px", fontWeight: 700 }}>1</button>
+                    <button style={{ border: "1px solid #cbd5e1", background: "#fff", padding: "4px 8px", borderRadius: "4px" }}>2</button>
+                    <button style={{ border: "1px solid #cbd5e1", background: "#fff", padding: "4px 8px", borderRadius: "4px" }}>3</button>
+                    <button style={{ border: "1px solid #cbd5e1", background: "#fff", padding: "4px 8px", borderRadius: "4px" }}>...</button>
+                    <button style={{ border: "1px solid #cbd5e1", background: "#fff", padding: "4px 8px", borderRadius: "4px" }}>25</button>
+                    <button style={{ border: "1px solid #cbd5e1", background: "#fff", padding: "4px 8px", borderRadius: "4px" }}>›</button>
+                  </div>
                 </div>
               </div>
             </div>
 
-           
-
-          </div>
-
-        </main>
+          </main>
+        </div>
       </div>
-    </div>
+    </>
   );
 }
