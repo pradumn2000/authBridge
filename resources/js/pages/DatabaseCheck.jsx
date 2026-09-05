@@ -439,58 +439,7 @@ export default function DatabaseCheck() {
               </div>
             </div>
 
-            {/* Right Side Panel (Select Verifier) WITHOUT Allocation Method */}
-            {showAssignPanel && (
-              <div style={{ background: "#fff", border: "1px solid #e2e8f0", borderRadius: "8px", padding: "16px", display: "flex", flexDirection: "column", gap: "16px" }}>
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", borderBottom: "1px solid #f1f5f9", paddingBottom: "10px" }}>
-                  <h3 style={{ margin: 0, fontSize: "13px", fontWeight: "700", color: "#0f172a" }}>Select Verifier</h3>
-                  <button onClick={() => setShowAssignPanel(false)} style={{ border: "none", background: "none", fontSize: "14px", cursor: "pointer", color: "#64748b" }}>✕</button>
-                </div>
-
-                {/* Verifier Search */}
-                <input type="text" placeholder="Search verifier..." style={{ width: "100%", padding: "6px 10px", borderRadius: "6px", border: "1px solid #cbd5e1", fontSize: "11px", boxSizing: "border-box" }} />
-
-                {/* Verifiers List */}
-                <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
-                  {[
-                    { name: "Amit Kumar", title: "Education Verifier", cases: 12, checked: true },
-                    { name: "Neha Patel", title: "Education Verifier", cases: 8, checked: false },
-                    { name: "Rahul Verma", title: "Education Verifier", cases: 15, checked: false },
-                  ].map((v, i) => (
-                    <div key={i} style={{ border: "1px solid #e2e8f0", borderRadius: "6px", padding: "8px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-                      <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-                        <input type="radio" name="verifierSelect" defaultChecked={v.checked} />
-                        <div style={{ width: "28px", height: "28px", borderRadius: "50%", background: "#cbd5e1" }} />
-                        <div>
-                          <p style={{ margin: 0, fontSize: "11px", fontWeight: 700, color: "#1e293b" }}>{v.name}</p>
-                          <span style={{ fontSize: "9px", color: "#64748b" }}>{v.title}</span>
-                        </div>
-                      </div>
-                      <div style={{ textAlign: "right" }}>
-                        <span style={{ fontSize: "11px", fontWeight: "800", color: "#2563eb", display: "block" }}>{v.cases}</span>
-                        <span style={{ fontSize: "8px", color: "#2563eb" }}>Active Cases</span>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-
-                {/* Cases to Allocate Stepper */}
-                <div>
-                  <label style={{ display: "block", fontSize: "11px", fontWeight: "700", color: "#374151", marginBottom: "6px" }}>Cases to Allocate</label>
-                  <div style={{ display: "flex", alignItems: "center", background: "#f1f5f9", borderRadius: "6px", width: "fit-content", padding: "2px" }}>
-                    <button onClick={() => setCasesToAllocate(Math.max(1, casesToAllocate - 1))} style={{ border: "none", background: "none", width: "28px", height: "28px", fontWeight: 700, cursor: "pointer" }}>-</button>
-                    <span style={{ width: "32px", textAlign: "center", fontSize: "12px", fontWeight: 700 }}>{casesToAllocate}</span>
-                    <button onClick={() => setCasesToAllocate(casesToAllocate + 1)} style={{ border: "none", background: "none", width: "28px", height: "28px", fontWeight: 700, cursor: "pointer" }}>+</button>
-                  </div>
-                </div>
-
-                {/* Footer Buttons */}
-                <div style={{ display: "flex", gap: "8px", marginTop: "8px" }}>
-                  <button onClick={() => setShowAssignPanel(false)} style={{ flex: 1, border: "1px solid #cbd5e1", background: "#fff", padding: "8px", borderRadius: "6px", fontSize: "11px", fontWeight: "600", cursor: "pointer" }}>Cancel</button>
-                  <button style={{ flex: 1, border: "none", background: "#2563eb", color: "#fff", padding: "8px", borderRadius: "6px", fontSize: "11px", fontWeight: "600", cursor: "pointer" }}>Allocate Cases</button>
-                </div>
-              </div>
-            )}
+           
 
           </div>
 
