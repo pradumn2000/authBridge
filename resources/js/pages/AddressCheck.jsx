@@ -652,7 +652,13 @@ export default function AddressCheck() {
           {/* Action Box */}
           
             
-            <div style={{ display: "flex", borderRadius: "4px", overflow: "hidden" }}>
+            <div style={{ 
+  display: "flex", 
+  borderRadius: "4px", 
+  overflow: "hidden", 
+  justifyContent: "flex-end", 
+  marginBottom: "15px" 
+}}>
               <button style={{ background: "#2563eb", color: "#fff", border: "none", padding: "6px 14px", fontWeight: "600", fontSize: "12px", cursor: "pointer" }}>
                 New Address Verification
               </button>

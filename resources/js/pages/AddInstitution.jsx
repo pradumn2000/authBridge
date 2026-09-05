@@ -1386,7 +1386,6 @@
 //     </>
 //   );
 // }
-
 import { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import Sidebar from "./Sidebar";
@@ -1400,14 +1399,42 @@ const TYPES = [
 const VALID_TYPES = TYPES.map((t) => t.key);
 
 const EMPTY_FORM = {
-  type: "university",
+  // Basic Information
   name: "",
+  type: "",
   code: "",
   state: "",
+  city: "",
+  pinCode: "",
+  scope: "National", // National / International
   website: "",
-  stature: "",
-  aicte: "",
-  scope: "",   
+  email: "",
+  phone: "",
+  alternatePhone: "",
+
+  // Verification Fees
+  verificationFeesType: "",
+  feesAmount: "",
+
+  // Regulatory Details
+  regulatoryBody: "",
+  ugcRecognized: "Yes",
+  aicteApproved: "No",
+
+  // Address
+  addressLine1: "",
+  addressLine2: "",
+  landmark: "",
+  country: "India",
+
+  // Other Information
+  charges: "",
+  status: "Active",
+  serviceCharges: "",
+  gstApplicable: "Yes",
+  gstPercent: "",
+  serviceChargesWithGst: "",
+  notes: "",
 };
 
 export default function AddInstitution() {
@@ -1423,8 +1450,11 @@ export default function AddInstitution() {
   const [bulkResult, setBulkResult]     = useState(null);
   const [bulkBusy, setBulkBusy]         = useState(false);
   const [deleteConfirm, setDeleteConfirm] = useState(null);
+
+  // Accordion Toggle State
+  const [isVerificationOpen, setIsVerificationOpen] = useState(true);
   
-  // Pagination states added
+  // Pagination states
   const [currentPage, setCurrentPage]   = useState(1);
   const usersPerPage                    = 10;
   
@@ -1450,7 +1480,7 @@ export default function AddInstitution() {
   // ── Manual add ────────────────────────────────────────────────────────────
   const handleAdd = async (e) => {
     e.preventDefault();
-    if (!form.name.trim()) { setFormError("Name is required."); return; }
+    if (!form.name.trim()) { setFormError("University / Institution Name is required."); return; }
     setFormError("");
     setSubmitting(true);
     try {
@@ -1539,7 +1569,7 @@ export default function AddInstitution() {
     }
   };
 
-  // Calculate pagination variables safely
+  // Pagination calculations
   const indexOfLastUser = currentPage * usersPerPage;
   const indexOfFirstUser = indexOfLastUser - usersPerPage;
   const currentUsers = filtered.slice(indexOfFirstUser, indexOfLastUser);
@@ -1551,6 +1581,174 @@ export default function AddInstitution() {
 
   return (
     <>
+      <style>{`
+        /* Modal Outer Container */
+        .uni-modal-overlay {
+          position: fixed;
+          top: 0;
+          left: 0;
+          width: 100vw;
+          height: 100vh;
+          background: rgba(15, 23, 42, 0.5);
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          z-index: 1000;
+        }
+
+        .uni-modal-card {
+          background: #ffffff;
+          border-radius: 12px;
+          width: 650px;
+          max-width: 95%;
+          max-height: 90vh;
+          overflow-y: auto;
+          box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+          padding: 24px;
+          display: flex;
+          flex-direction: column;
+          gap: 16px;
+        }
+
+        .uni-modal-header {
+          display: flex;
+          justify-content: space-between;
+          align-items: flex-start;
+          border-bottom: 1px solid #f1f5f9;
+          padding-bottom: 12px;
+        }
+
+        .uni-modal-title {
+          font-size: 18px;
+          font-weight: 800;
+          color: #0f172a;
+          margin: 0;
+        }
+
+        .uni-modal-subtitle {
+          font-size: 12px;
+          color: #64748b;
+          margin-top: 4px;
+        }
+
+        .uni-modal-close {
+          background: none;
+          border: none;
+          font-size: 20px;
+          cursor: pointer;
+          color: #64748b;
+        }
+
+        /* Form Sections & Fields */
+        .uni-section-card {
+          background: #ffffff;
+          border: 1px solid #00b074;
+          border-radius: 8px;
+          padding: 16px;
+          margin-bottom: 12px;
+          transition: all 0.3s ease;
+        }
+
+        .uni-section-card-plain {
+          background: #ffffff;
+          padding: 4px 0;
+          margin-bottom: 8px;
+        }
+
+        .uni-section-title {
+          font-size: 13px;
+          font-weight: 700;
+          color: #0f172a;
+          margin-bottom: 12px;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+        }
+
+        .uni-section-title.clickable {
+          cursor: pointer;
+          user-select: none;
+        }
+
+        .uni-form-grid-2 {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 12px;
+        }
+
+        .uni-form-group {
+          display: flex;
+          flex-direction: column;
+          gap: 4px;
+          margin-bottom: 10px;
+        }
+
+        .uni-form-group label {
+          font-size: 11px;
+          font-weight: 600;
+          color: #334155;
+        }
+
+        .uni-form-group input,
+        .uni-form-group select,
+        .uni-form-group textarea {
+          padding: 8px 12px;
+          border-radius: 6px;
+          border: 1px solid #cbd5e1;
+          font-size: 12px;
+          outline: none;
+          background: #fff;
+        }
+
+        .uni-radio-group {
+          display: flex;
+          align-items: center;
+          gap: 16px;
+          margin-top: 6px;
+        }
+
+        .uni-radio-label {
+          display: flex;
+          align-items: center;
+          gap: 6px;
+          font-size: 12px;
+          font-weight: 600;
+          color: #334155;
+          cursor: pointer;
+        }
+
+        .uni-modal-footer {
+          display: flex;
+          justify-content: flex-end;
+          gap: 12px;
+          margin-top: 10px;
+          padding-top: 12px;
+          border-top: 1px solid #f1f5f9;
+        }
+
+        .uni-btn-cancel {
+          border: 1px solid #cbd5e1;
+          background: #ffffff;
+          padding: 8px 24px;
+          border-radius: 6px;
+          font-size: 12px;
+          font-weight: 600;
+          cursor: pointer;
+          color: #334155;
+        }
+
+        .uni-btn-submit {
+          border: none;
+          background: #00b074;
+          color: #ffffff;
+          padding: 8px 24px;
+          border-radius: 6px;
+          font-size: 12px;
+          font-weight: 600;
+          cursor: pointer;
+        }
+      `}</style>
+
       <Sidebar />
       <section id="content">
         <Header />
@@ -1606,12 +1804,12 @@ export default function AddInstitution() {
                   <img src="images/dashboard/export-icon.svg" alt="" /> Export
                 </button>
 
-                {/* Add button */}
+                {/* Add button to open Modal */}
                 <button
                   className="primary-cta"
-                  onClick={() => { setShowForm((v) => !v); setFormError(""); setFormSuccess(""); }}
+                  onClick={() => { setShowForm(true); setFormError(""); setFormSuccess(""); }}
                 >
-                  {showForm ? "Cancel" : "+ Add Institution"}
+                  + Add University
                 </button>
               </div>
             </div>
@@ -1632,118 +1830,6 @@ export default function AddInstitution() {
                 {bulkResult.error
                   ? `⚠ ${bulkResult.error}`
                   : `✔ ${bulkResult.count} institution(s) imported.${bulkResult.skipped ? ` (${bulkResult.skipped} skipped)` : ""}`}
-              </div>
-            )}
-
-            {/* ── Manual add form ── */}
-            {showForm && (
-              <div className="form-container-box">
-                <div className="form-header-bar">Add New Institution</div>
-
-                <form onSubmit={handleAdd}>
-                  <div className="form-grid-inputs">
-
-                    <div className="form-field-group">
-                      <label>Name *</label>
-                      <input
-                        type="text"
-                        className="form-theme-input"
-                        placeholder="Institution name"
-                        value={form.name}
-                        onChange={(e) => set("name", e.target.value)}
-                        required
-                      />
-                    </div>
-
-                    <div className="form-field-group">
-                      <label>Short Code</label>
-                      <input
-                        type="text"
-                        className="form-theme-input"
-                        placeholder="e.g. DU"
-                        value={form.code}
-                        onChange={(e) => set("code", e.target.value.toUpperCase())}
-                        maxLength={8}
-                      />
-                    </div>
-
-                    <div className="form-field-group">
-                      <label>State</label>
-                      <input
-                        type="text"
-                        className="form-theme-input"
-                        placeholder="e.g. Maharashtra"
-                        value={form.state}
-                        onChange={(e) => set("state", e.target.value)}
-                      />
-                    </div>
-
-                    <div className="form-field-group">
-                      <label>Website</label>
-                      <input
-                        type="url"
-                        className="form-theme-input"
-                        placeholder="https://..."
-                        value={form.website}
-                        onChange={(e) => set("website", e.target.value)}
-                      />
-                    </div>
-
-                    <div className="form-field-group">
-                      <label>Stature</label>
-                      <select
-                        className="form-theme-input"
-                        value={form.stature}
-                        onChange={(e) => set("stature", e.target.value)}
-                      >
-                        <option value="">Select</option>
-                        <option value="government">Government</option>
-                        <option value="private">Private</option>
-                        <option value="autonomous">Autonomous</option>
-                        <option value="deemed">Deemed University</option>
-                      </select>
-                    </div>
-
-                    <div className="form-field-group">
-                      <label>AICTE Status</label>
-                      <select
-                        className="form-theme-input"
-                        value={form.aicte}
-                        onChange={(e) => set("aicte", e.target.value)}
-                      >
-                        <option value="">Select</option>
-                        <option value="approved">Approved</option>
-                        <option value="not_approved">Not Approved</option>
-                        <option value="applied">Applied / Pending</option>
-                      </select>
-                    </div>
-                    <div className="form-field-group">
-                      <label>Scope</label>
-                      <select
-                        className="form-theme-input"
-                        value={form.scope}
-                        onChange={(e) => set("scope", e.target.value)}
-                      >
-                        <option value="">Select</option>
-                        <option value="national">National</option>
-                        <option value="international">International</option>
-                      </select>
-                    </div>
-
-                  </div>
-
-                  {formError   && <p style={{ color: "#dc2626", fontSize: "13px", marginBottom: "8px" }}>{formError}</p>}
-                  {formSuccess && <p style={{ color: "#16a34a", fontSize: "13px", marginBottom: "8px" }}>✔ {formSuccess}</p>}
-
-                  <div className="form-actions-flex">
-                    <button type="submit" className="primary-cta pad-btn" disabled={submitting}>
-                      {submitting ? "Saving…" : "Add Institution"}
-                    </button>
-                    <button type="button" className="secondary-cta pad-btn" onClick={() => setShowForm(false)}>
-                      Cancel
-                    </button>
-                  </div>
-                </form>
               </div>
             )}
 
@@ -1769,13 +1855,13 @@ export default function AddInstitution() {
                 <tbody>
                   {loading ? (
                     <tr>
-                      <td colSpan="10" className="empty-table-cell" style={{ color: "#94a3b8" }}>
+                      <td colSpan="12" className="empty-table-cell" style={{ color: "#94a3b8" }}>
                         Loading institutions…
                       </td>
                     </tr>
                   ) : currentUsers.length === 0 ? (
                     <tr>
-                      <td colSpan="10" className="empty-table-cell" style={{ color: "#94a3b8" }}>
+                      <td colSpan="12" className="empty-table-cell" style={{ color: "#94a3b8" }}>
                         No institutions found. {search && "Try clearing the search."}
                       </td>
                     </tr>
@@ -1784,15 +1870,16 @@ export default function AddInstitution() {
                       <tr key={inst.id}>
                         <td style={{ color: "#64748b", fontSize: "12px" }}>{indexOfFirstUser + i + 1}</td>
                         <td className="company-name-cell">{inst.name}</td>
+                        <td>{inst.type || "University"}</td>
                         <td className="code-cell" style={{ color: "#64748b" }}>{inst.code || "—"}</td>
                         <td>{inst.state || "—"}</td>
                         <td>
-                          {inst.stature ? (
+                          {inst.stature || inst.regulatoryBody ? (
                             <span style={{
                               padding: "3px 10px", borderRadius: "20px", fontSize: "11px", fontWeight: 700,
                               background: "#eff6ff", color: "#1d4ed8"
                             }}>
-                              {inst.stature}
+                              {inst.stature || inst.regulatoryBody}
                             </span>
                           ) : "—"}
                         </td>
@@ -1800,8 +1887,8 @@ export default function AddInstitution() {
                           {inst.aicte ? (
                             <span style={{
                               padding: "3px 10px", borderRadius: "20px", fontSize: "11px", fontWeight: 700,
-                              background: inst.aicte === "approved" ? "#f0fdf4" : inst.aicte === "not_approved" ? "#fef2f2" : "#fffbeb",
-                              color: inst.aicte === "approved" ? "#15803d" : inst.aicte === "not_approved" ? "#b91c1c" : "#b45309",
+                              background: inst.aicte === "approved" || inst.aicte === "Yes" ? "#f0fdf4" : "#fef2f2",
+                              color: inst.aicte === "approved" || inst.aicte === "Yes" ? "#15803d" : "#b91c1c",
                             }}>
                               {inst.aicte}
                             </span>
@@ -1812,15 +1899,12 @@ export default function AddInstitution() {
                             ? <a href={inst.website} target="_blank" rel="noreferrer" className="table-link-anchor">Visit ↗</a>
                             : "—"}
                         </td>
+                        <td>{inst.email || "—"}</td>
+                        <td>{inst.charges ? `₹ ${inst.charges}` : "—"}</td>
                         <td>
-                          <span style={{ color: inst.verified ? "#16a34a" : "#94a3b8", fontWeight: 700, fontSize: "13px" }}>
-                            {inst.verified ? "✔ Yes" : "Pending"}
+                          <span style={{ color: inst.status === "Active" ? "#16a34a" : "#94a3b8", fontWeight: 700, fontSize: "12px" }}>
+                            {inst.status || "Active"}
                           </span>
-                        </td>
-                        <td style={{ fontSize: "12px", color: "#64748b" }}>
-                          {inst.created_at
-                            ? new Date(inst.created_at).toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" })
-                            : "—"}
                         </td>
                         <td>
                           <button
@@ -1837,7 +1921,7 @@ export default function AddInstitution() {
                 </tbody>
               </table>
 
-               {/* Pagination Controls */}
+              {/* Pagination Controls */}
               {totalPages > 1 && (
                 <div style={{ display: "flex", justifyContent: "center", padding: "20px", gap: "5px" }}>
                   <button onClick={() => setCurrentPage(1)} disabled={currentPage === 1} style={{ padding: "5px 10px" }}>«</button>
@@ -1857,6 +1941,421 @@ export default function AddInstitution() {
           </div>
         </main>
       </section>
+
+      {/* ── MODAL: Add University Form ── */}
+      {showForm && (
+        <div className="uni-modal-overlay">
+          <div className="uni-modal-card">
+            
+            {/* Modal Header */}
+            <div className="uni-modal-header">
+              <div>
+                <h3 className="uni-modal-title">Add University</h3>
+                <p className="uni-modal-subtitle">Add a new university / institution to the database.</p>
+              </div>
+              <button className="uni-modal-close" onClick={() => setShowForm(false)}>✕</button>
+            </div>
+
+            <form onSubmit={handleAdd}>
+              {/* 1. Basic Information */}
+              <div className="uni-section-card-plain">
+                <div className="uni-section-title">Basic Information</div>
+                
+                <div className="uni-form-grid-2">
+                  <div className="uni-form-group">
+                    <label>University / Institution Name *</label>
+                    <input
+                      type="text"
+                      placeholder="Enter university / institution name"
+                      value={form.name}
+                      onChange={(e) => set("name", e.target.value)}
+                      required
+                    />
+                  </div>
+                  <div className="uni-form-group">
+                    <label>Type *</label>
+                    <select value={form.type} onChange={(e) => set("type", e.target.value)} required>
+                      <option value="" disabled>Select type</option>
+                      <option value="university">University</option>
+                      <option value="college">College</option>
+                      <option value="institute">Institute</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div className="uni-form-grid-2">
+                  <div className="uni-form-group">
+                    <label>Code / Short Name *</label>
+                    <input
+                      type="text"
+                      placeholder="Enter code"
+                      value={form.code}
+                      onChange={(e) => set("code", e.target.value.toUpperCase())}
+                      required
+                    />
+                  </div>
+                  <div className="uni-form-group">
+                    <label>State *</label>
+                    <select value={form.state} onChange={(e) => set("state", e.target.value)} required>
+                      <option value="" disabled>Select state</option>
+                      <option value="Maharashtra">Maharashtra</option>
+                      <option value="Delhi">Delhi</option>
+                      <option value="Karnataka">Karnataka</option>
+                      <option value="Uttar Pradesh">Uttar Pradesh</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div className="uni-form-grid-2">
+                  <div className="uni-form-group">
+                    <label>City *</label>
+                    <input
+                      type="text"
+                      placeholder="Enter city"
+                      value={form.city}
+                      onChange={(e) => set("city", e.target.value)}
+                      required
+                    />
+                  </div>
+                  <div className="uni-form-group">
+                    <label>Pin Code</label>
+                    <input
+                      type="text"
+                      placeholder="Enter pin code"
+                      value={form.pinCode}
+                      onChange={(e) => set("pinCode", e.target.value)}
+                    />
+                  </div>
+                </div>
+
+                <div className="uni-form-grid-2">
+                  <div className="uni-form-group">
+                    <label>National / International *</label>
+                    <div className="uni-radio-group">
+                      <label className="uni-radio-label">
+                        <input
+                          type="radio"
+                          name="scope"
+                          value="National"
+                          checked={form.scope === "National"}
+                          onChange={(e) => set("scope", e.target.value)}
+                        />
+                        National
+                      </label>
+                      <label className="uni-radio-label">
+                        <input
+                          type="radio"
+                          name="scope"
+                          value="International"
+                          checked={form.scope === "International"}
+                          onChange={(e) => set("scope", e.target.value)}
+                        />
+                        International
+                      </label>
+                    </div>
+                  </div>
+                  <div className="uni-form-group">
+                    <label>Website</label>
+                    <input
+                      type="url"
+                      placeholder="Enter website URL"
+                      value={form.website}
+                      onChange={(e) => set("website", e.target.value)}
+                    />
+                  </div>
+                </div>
+
+                <div className="uni-form-grid-2">
+                  <div className="uni-form-group">
+                    <label>Email</label>
+                    <input
+                      type="email"
+                      placeholder="Enter email address"
+                      value={form.email}
+                      onChange={(e) => set("email", e.target.value)}
+                    />
+                  </div>
+                  <div className="uni-form-group">
+                    <label>Phone Number</label>
+                    <input
+                      type="text"
+                      placeholder="Enter phone number"
+                      value={form.phone}
+                      onChange={(e) => set("phone", e.target.value)}
+                    />
+                  </div>
+                </div>
+
+                <div className="uni-form-group" style={{ width: "48%" }}>
+                  <label>Alternate Number</label>
+                  <input
+                    type="text"
+                    placeholder="Enter alternate number"
+                    value={form.alternatePhone}
+                    onChange={(e) => set("alternatePhone", e.target.value)}
+                  />
+                </div>
+              </div>
+
+              {/* 2. Verification Fees (Toggleable Box) */}
+              <div className="uni-section-card">
+                <div 
+                  className="uni-section-title clickable" 
+                  onClick={() => setIsVerificationOpen(!isVerificationOpen)}
+                  style={{ marginBottom: isVerificationOpen ? "12px" : "0px" }}
+                >
+                  <span>Verification Fees (for National)</span>
+                  <span style={{ fontSize: "12px", color: "#64748b" }}>
+                    {isVerificationOpen ? "▲" : "▼"}
+                  </span>
+                </div>
+
+                {isVerificationOpen && (
+                  <div className="uni-form-grid-2">
+                    <div className="uni-form-group">
+                      <label>Verification Fees *</label>
+                      <select value={form.verificationFeesType} onChange={(e) => set("verificationFeesType", e.target.value)}>
+                        <option value="" disabled>Select option</option>
+                        <option value="Normal">Normal</option>
+                        <option value="Year of Passing">Year of Passing</option>
+                        <option value="UGPG">UGPG</option>
+                      </select>
+                    </div>
+                    <div className="uni-form-group">
+                      <label>Fees Amount (INR) *</label>
+                      <input
+                        type="number"
+                        placeholder="₹ Enter amount"
+                        value={form.feesAmount}
+                        onChange={(e) => set("feesAmount", e.target.value)}
+                      />
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* 3. Regulatory Details */}
+              <div className="uni-section-card-plain">
+                <div className="uni-section-title">Regulatory Details</div>
+                <div className="uni-form-grid-2">
+                  <div className="uni-form-group">
+                    <label>Regulatory Body *</label>
+                    <select value={form.regulatoryBody} onChange={(e) => set("regulatoryBody", e.target.value)}>
+                      <option value="" disabled>Select regulatory body</option>
+                      <option value="UGC">UGC</option>
+                      <option value="AICTE">AICTE</option>
+                      <option value="MCI">MCI</option>
+                      <option value="BCI">BCI</option>
+                    </select>
+                  </div>
+                  <div className="uni-form-group">
+                    <label>UGC Recognized</label>
+                    <div className="uni-radio-group">
+                      <label className="uni-radio-label">
+                        <input
+                          type="radio"
+                          name="ugcRecognized"
+                          value="Yes"
+                          checked={form.ugcRecognized === "Yes"}
+                          onChange={(e) => set("ugcRecognized", e.target.value)}
+                        />
+                        Yes
+                      </label>
+                      <label className="uni-radio-label">
+                        <input
+                          type="radio"
+                          name="ugcRecognized"
+                          value="No"
+                          checked={form.ugcRecognized === "No"}
+                          onChange={(e) => set("ugcRecognized", e.target.value)}
+                        />
+                        No
+                      </label>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="uni-form-group">
+                  <label>AICTE Approved</label>
+                  <div className="uni-radio-group">
+                    <label className="uni-radio-label">
+                      <input
+                        type="radio"
+                        name="aicteApproved"
+                        value="Yes"
+                        checked={form.aicteApproved === "Yes"}
+                        onChange={(e) => set("aicteApproved", e.target.value)}
+                      />
+                      Yes
+                    </label>
+                    <label className="uni-radio-label">
+                      <input
+                        type="radio"
+                        name="aicteApproved"
+                        value="No"
+                        checked={form.aicteApproved === "No"}
+                        onChange={(e) => set("aicteApproved", e.target.value)}
+                      />
+                      No
+                    </label>
+                  </div>
+                </div>
+              </div>
+
+              {/* 4. Address */}
+              <div className="uni-section-card-plain">
+                <div className="uni-section-title">Address</div>
+                <div className="uni-form-group">
+                  <label>Address Line 1 *</label>
+                  <input
+                    type="text"
+                    placeholder="Enter address line 1"
+                    value={form.addressLine1}
+                    onChange={(e) => set("addressLine1", e.target.value)}
+                  />
+                </div>
+                <div className="uni-form-group">
+                  <label>Address Line 2 (Optional)</label>
+                  <input
+                    type="text"
+                    placeholder="Enter address line 2 (optional)"
+                    value={form.addressLine2}
+                    onChange={(e) => set("addressLine2", e.target.value)}
+                  />
+                </div>
+                <div className="uni-form-grid-2">
+                  <div className="uni-form-group">
+                    <label>Landmark</label>
+                    <input
+                      type="text"
+                      placeholder="Enter landmark"
+                      value={form.landmark}
+                      onChange={(e) => set("landmark", e.target.value)}
+                    />
+                  </div>
+                  <div className="uni-form-group">
+                    <label>Country *</label>
+                    <select value={form.country} onChange={(e) => set("country", e.target.value)}>
+                      <option value="India">India</option>
+                      <option value="USA">USA</option>
+                      <option value="UK">UK</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              {/* 5. Other Information */}
+              <div className="uni-section-card">
+                <div className="uni-section-title">Other Information</div>
+                
+                <div className="uni-form-grid-2">
+                  <div className="uni-form-group">
+                    <label>1. Charges (INR) *</label>
+                    <input
+                      type="number"
+                      placeholder="₹ Enter charges"
+                      value={form.charges}
+                      onChange={(e) => set("charges", e.target.value)}
+                    />
+                  </div>
+                  <div className="uni-form-group">
+                    <label>Status *</label>
+                    <select value={form.status} onChange={(e) => set("status", e.target.value)}>
+                      <option value="Active">Active</option>
+                      <option value="Inactive">Inactive</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div className="uni-form-grid-2">
+                  <div className="uni-form-group">
+                    <label>2. Service Charges (INR) *</label>
+                    <input
+                      type="number"
+                      placeholder="₹ Enter service charges"
+                      value={form.serviceCharges}
+                      onChange={(e) => set("serviceCharges", e.target.value)}
+                    />
+                  </div>
+                  <div className="uni-form-group">
+                    <label>GST Applicable *</label>
+                    <div className="uni-radio-group">
+                      <label className="uni-radio-label">
+                        <input
+                          type="radio"
+                          name="gstApplicable"
+                          value="Yes"
+                          checked={form.gstApplicable === "Yes"}
+                          onChange={(e) => set("gstApplicable", e.target.value)}
+                        />
+                        Yes
+                      </label>
+                      <label className="uni-radio-label">
+                        <input
+                          type="radio"
+                          name="gstApplicable"
+                          value="No"
+                          checked={form.gstApplicable === "No"}
+                          onChange={(e) => set("gstApplicable", e.target.value)}
+                        />
+                        No
+                      </label>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="uni-form-grid-2">
+                  <div className="uni-form-group">
+                    <label>3. GST % *</label>
+                    <select value={form.gstPercent} onChange={(e) => set("gstPercent", e.target.value)}>
+                      <option value="" disabled>Select GST %</option>
+                      <option value="18">18%</option>
+                      <option value="12">12%</option>
+                      <option value="5">5%</option>
+                      <option value="0">0%</option>
+                    </select>
+                  </div>
+                  <div className="uni-form-group">
+                    <label>Service Charges + GST (INR)</label>
+                    <input
+                      type="text"
+                      placeholder="₹ Auto calculated"
+                      value={form.serviceChargesWithGst}
+                      readOnly
+                      style={{ background: "#f8fafc" }}
+                    />
+                  </div>
+                </div>
+
+                <div className="uni-form-group">
+                  <label>Notes (Optional)</label>
+                  <textarea
+                    rows="2"
+                    placeholder="Enter any additional notes"
+                    value={form.notes}
+                    onChange={(e) => set("notes", e.target.value)}
+                  ></textarea>
+                  <span style={{ fontSize: "10px", color: "#94a3b8", textAlign: "right" }}>0 / 500</span>
+                </div>
+              </div>
+
+              {formError   && <p style={{ color: "#dc2626", fontSize: "13px", marginBottom: "8px" }}>{formError}</p>}
+              {formSuccess && <p style={{ color: "#16a34a", fontSize: "13px", marginBottom: "8px" }}>✔ {formSuccess}</p>}
+
+              {/* Modal Footer Actions */}
+              <div className="uni-modal-footer">
+                <button type="button" className="uni-btn-cancel" onClick={() => setShowForm(false)}>
+                  Cancel
+                </button>
+                <button type="submit" className="uni-btn-submit" disabled={submitting}>
+                  {submitting ? "Saving…" : "Save University"}
+                </button>
+              </div>
+            </form>
+
+          </div>
+        </div>
+      )}
 
       {/* ── Delete confirm modal ── */}
       {deleteConfirm && (

@@ -479,11 +479,11 @@ export default function EducationVerification() {
             {/* CONDITIONAL BUTTON */}
             {activeTab === "allocation" && (
               <button
-                onClick={() => setActiveTab("education")}
-                style={{ backgroundColor: "#2563eb", color: "#ffffff", border: "none", borderRadius: "6px", padding: "9px 20px", fontWeight: 600, fontSize: "13.5px", cursor: "pointer" }}
-              >
-                + New Education Case
-              </button>
+  onClick={() => setActiveTab("education")}
+  className="secondary-cta import"
+>
+  + New Education Case
+</button>
             )}
           </div>
 
@@ -498,8 +498,8 @@ export default function EducationVerification() {
                   background: "transparent",
                   fontWeight: activeTab === "allocation" ? 700 : 500,
                   fontSize: "14px",
-                  color: activeTab === "allocation" ? "#2563eb" : "#64748b",
-                  borderBottom: activeTab === "allocation" ? "2.5px solid #2563eb" : "none",
+                  color: activeTab === "allocation" ? "#1e2761" : "#64748b",
+                  borderBottom: activeTab === "allocation" ? "2.5px solid #1e2761" : "none",
                   cursor: "pointer",
                 }}
               >
@@ -513,8 +513,8 @@ export default function EducationVerification() {
                   background: "transparent",
                   fontWeight: activeTab === "education" ? 700 : 500,
                   fontSize: "14px",
-                  color: activeTab === "education" ? "#2563eb" : "#64748b",
-                  borderBottom: activeTab === "education" ? "2.5px solid #2563eb" : "none",
+                  color: activeTab === "education" ? "#1e2761" : "#64748b",
+                  borderBottom: activeTab === "education" ? "2.5px solid #1e2761" : "none",
                   cursor: "pointer",
                 }}
               >
@@ -743,15 +743,15 @@ export default function EducationVerification() {
                     <div
                       onClick={() => toggleAccordion(q.id)}
                       style={{
-                        display: "flex",
-                        justify: "space-between",
-                        alignItems: "center",
-                        padding: "14px 16px",
-                        background: "#ffffff",
-                        cursor: "pointer",
-                        borderBottom: q.isOpen ? "1px solid #f1f5f9" : "none",
-                        userSelect: "none",
-                      }}
+  display: "flex",
+  justifyContent: "space-between",
+  alignItems: "center",
+  padding: "14px 16px",
+  background: "#ffffff",
+  cursor: "pointer",
+  borderBottom: q.isOpen ? "1px solid #f1f5f9" : "none",
+  userSelect: "none",
+}}
                     >
                       <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
                         <span style={{ color: "#94a3b8", fontSize: "14px", cursor: "grab" }}>⣿</span>
@@ -953,11 +953,11 @@ export default function EducationVerification() {
                   Cancel
                 </button>
                 <button
-                  onClick={() => alert("Form Submitted Successfully!")}
-                  style={{ padding: "9px 24px", borderRadius: "6px", border: "none", background: "#2563eb", color: "#fff", fontWeight: 600, fontSize: "13px", cursor: "pointer" }}
-                >
-                  Submit Details
-                </button>
+  onClick={() => alert("Form Submitted Successfully!")}
+  className="secondary-cta"
+>
+  Submit Details
+</button>
               </div>
             </div>
           )}
