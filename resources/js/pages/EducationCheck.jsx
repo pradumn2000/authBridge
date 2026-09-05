@@ -743,15 +743,15 @@ export default function EducationVerification() {
                     <div
                       onClick={() => toggleAccordion(q.id)}
                       style={{
-                        display: "flex",
-                        justify: "space-between",
-                        alignItems: "center",
-                        padding: "14px 16px",
-                        background: "#ffffff",
-                        cursor: "pointer",
-                        borderBottom: q.isOpen ? "1px solid #f1f5f9" : "none",
-                        userSelect: "none",
-                      }}
+  display: "flex",
+  justifyContent: "space-between",
+  alignItems: "center",
+  padding: "14px 16px",
+  background: "#ffffff",
+  cursor: "pointer",
+  borderBottom: q.isOpen ? "1px solid #f1f5f9" : "none",
+  userSelect: "none",
+}}
                     >
                       <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
                         <span style={{ color: "#94a3b8", fontSize: "14px", cursor: "grab" }}>⣿</span>
@@ -953,11 +953,11 @@ export default function EducationVerification() {
                   Cancel
                 </button>
                 <button
-                  onClick={() => alert("Form Submitted Successfully!")}
-                  style={{ padding: "9px 24px", borderRadius: "6px", border: "none", background: "#2563eb", color: "#fff", fontWeight: 600, fontSize: "13px", cursor: "pointer" }}
-                >
-                  Submit Details
-                </button>
+  onClick={() => alert("Form Submitted Successfully!")}
+  className="secondary-cta"
+>
+  Submit Details
+</button>
               </div>
             </div>
           )}

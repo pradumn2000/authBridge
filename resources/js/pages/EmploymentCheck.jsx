@@ -769,7 +769,7 @@ export default function EmploymentCheck() {
                     <button
                       type="button"
                       onClick={handleSaveCase}
-                      style={{ padding: "8px 20px", borderRadius: "6px", border: "none", background: "#2563eb", color: "#fff", fontWeight: 600, cursor: "pointer" }}
+                      style={{ padding: "8px 20px", borderRadius: "6px", border: "none", background: "#1e2761", color: "#fff", fontWeight: 600, cursor: "pointer" }}
                     >
                       💾 Save Case
                     </button>
@@ -867,7 +867,7 @@ export default function EmploymentCheck() {
                   <button
                     type="button"
                     onClick={handleSaveCase}
-                    style={{ padding: "10px 24px", borderRadius: "6px", border: "none", background: "#2563eb", color: "#fff", fontWeight: 600, cursor: "pointer" }}
+                    style={{ padding: "10px 24px", borderRadius: "6px", border: "none", background: "#1e2761", color: "#fff", fontWeight: 600, cursor: "pointer" }}
                   >
                     💾 Save Case
                   </button>
