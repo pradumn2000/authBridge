@@ -1137,7 +1137,7 @@ import {
 
 export default function CandidateVerificationWizard() {
   const [isOpen, setIsOpen] = useState(false);
-  const [currentStep, setCurrentStep] = useState(4); // Defaulted to 4 for viewing
+  const [currentStep, setCurrentStep] = useState(1);
 
   // Form States
   const [dpdpAccepted, setDpdpAccepted] = useState(false);
@@ -1145,6 +1145,8 @@ export default function CandidateVerificationWizard() {
     fullName: 'Priya Sharma',
     candidateId: '',
     clientName: '',
+    dob: '',
+    gender: '',
     mobile: '+91 98765 43210',
     email: 'priya.sharma@email.com',
     currentAddress: '',
@@ -1276,7 +1278,7 @@ export default function CandidateVerificationWizard() {
     setEmployers(updated);
   };
 
-  // Styles Object
+  // Internal CSS Styles Object
   const styles = {
     container: {
       minHeight: '100vh',
@@ -1760,6 +1762,7 @@ export default function CandidateVerificationWizard() {
     }
   };
 
+  // Helper for Stepper Item style
   const getStepCircleStyle = (step) => {
     const isCompleted = step < currentStep;
     const isCurrent = step === currentStep;
@@ -1779,6 +1782,7 @@ export default function CandidateVerificationWizard() {
     };
   };
 
+  // Stepper Header
   const renderStepper = () => (
     <div style={styles.stepperContainer}>
       {[1, 2, 3, 4, 5, 6, 7].map((step) => {
@@ -1804,6 +1808,8 @@ export default function CandidateVerificationWizard() {
 
   return (
     <div style={styles.container}>
+      
+      {/* INITIAL LAUNCH BUTTON */}
       {!isOpen ? (
         <div style={styles.initialCard}>
           <div style={styles.iconHeaderCircle}>
@@ -1819,7 +1825,10 @@ export default function CandidateVerificationWizard() {
           </button>
         </div>
       ) : (
+        /* WIZARD CONTAINER */
         <div style={styles.card}>
+          
+          {/* STEPPER HEADER */}
           {currentStep > 1 && currentStep < 7 && renderStepper()}
 
           <div style={styles.innerPadding}>
@@ -2163,7 +2172,7 @@ export default function CandidateVerificationWizard() {
                         </div>
 
                         {/* SECOND ROW */}
-                        <div style={styles.grid4 || { display: 'grid', gridTemplateColumns: '1.2fr 1fr 1fr 1fr', gap: '12px', marginBottom: '16px' }}>
+                        <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 1fr 1fr 1fr', gap: '12px', marginBottom: '16px' }}>
                           <div>
                             <label style={styles.label}>National / International *</label>
                             <div style={styles.radioGroup}>
