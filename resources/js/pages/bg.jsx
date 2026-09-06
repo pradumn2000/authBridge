@@ -1126,14 +1126,27 @@ import {
   Check, 
   X, 
   Eye, 
-  Download 
+  Download,
+  User,
+  ShieldCheck,
+  FileCheck,
+  Briefcase,
+  CheckCircle2
 } from 'lucide-react';
 
-export default function VerificationForm() {
+export default function CompleteVerificationFlow() {
   const [currentStep, setCurrentStep] = useState(4);
   const [activeTab, setActiveTab] = useState('education'); // 'education' | 'employment'
 
-  // Candidate Information State
+  // STEP 1-3 STATES
+  const [serviceType, setServiceType] = useState('bgv');
+  const [organizationDetails, setOrganizationDetails] = useState({
+    companyName: '',
+    orgType: 'pvt_ltd',
+    regNumber: ''
+  });
+
+  // STEP 4 STATES
   const [candidateInfo, setCandidateInfo] = useState({
     candidateName: '',
     candidateId: '',
@@ -1142,7 +1155,6 @@ export default function VerificationForm() {
     emailAddress: ''
   });
 
-  // Qualifications State
   const [qualifications, setQualifications] = useState([
     {
       qualificationType: '',
@@ -1158,13 +1170,12 @@ export default function VerificationForm() {
     }
   ]);
 
-  // Employers State (Existing Flow)
   const [employers, setEmployers] = useState([
-    { doe: '', documents: [null, null, null, null] }
+    { companyName: '', designation: '', doe: '', documents: [null, null, null, null] }
   ]);
 
-  // Personal Details & Documents (Existing Flow)
-  const [personalDetails] = useState({
+  // STEP 5-7 STATES
+  const [personalDetails, setPersonalDetails] = useState({
     fullName: 'Gole Pandey',
     mobile: '+91 9876543210',
     email: 'gole.pandey@example.com'
@@ -1182,7 +1193,7 @@ export default function VerificationForm() {
 
   const [declarationAccepted, setDeclarationAccepted] = useState(false);
 
-  // Handlers
+  // HANDLERS
   const handleCandidateChange = (field, value) => {
     setCandidateInfo(prev => ({ ...prev, [field]: value }));
   };
@@ -1232,15 +1243,43 @@ export default function VerificationForm() {
   };
 
   const addEmployer = () => {
-    setEmployers([...employers, { doe: '', documents: [null, null, null, null] }]);
+    setEmployers([...employers, { companyName: '', designation: '', doe: '', documents: [null, null, null, null] }]);
   };
 
   const nextStep = () => setCurrentStep(prev => Math.min(prev + 1, 7));
   const prevStep = () => setCurrentStep(prev => Math.max(prev - 1, 1));
 
-  // Inlined Styles
+  // STEPPER CONFIGURATION
+  const stepsList = [
+    { id: 1, title: 'Service Selection' },
+    { id: 2, title: 'Organization' },
+    { id: 3, title: 'Personal Info' },
+    { id: 4, title: 'BGV Details' },
+    { id: 5, title: 'Doc Upload' },
+    { id: 6, title: 'Review & Submit' },
+    { id: 7, title: 'Status' }
+  ];
+
+  // STYLES
   const styles = {
-    container: { maxWidth: '1000px', margin: '0 auto', padding: '24px', fontFamily: 'sans-serif' },
+    container: { maxWidth: '1050px', margin: '0 auto', padding: '20px', fontFamily: "'Inter', sans-serif" },
+    stepperHeader: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '28px', backgroundColor: '#fff', padding: '16px 20px', borderRadius: '12px', border: '1px solid #e2e8f0' },
+    stepItem: { display: 'flex', flexDirection: 'column', alignItems: 'center', flex: 1, position: 'relative' },
+    stepCircle: (active, completed) => ({
+      width: '32px',
+      height: '32px',
+      borderRadius: '50%',
+      backgroundColor: active ? '#2563eb' : completed ? '#16a34a' : '#f1f5f9',
+      color: active || completed ? '#ffffff' : '#64748b',
+      display: 'flex',
+      alignItems: 'center',
+      justify: 'center',
+      fontWeight: '700',
+      fontSize: '13px',
+      marginBottom: '6px',
+      zIndex: 2
+    }),
+    stepLabel: (active) => ({ fontSize: '11px', fontWeight: active ? '700' : '500', color: active ? '#2563eb' : '#64748b', textAlign: 'center' }),
     card: { backgroundColor: '#ffffff', borderRadius: '12px', border: '1px solid #e2e8f0', padding: '24px', boxShadow: '0 1px 3px rgba(0,0,0,0.05)' },
     stepBadge: { fontSize: '12px', fontWeight: '700', color: '#2563eb', textTransform: 'uppercase', letterSpacing: '0.5px' },
     stepHeaderTitle: { fontSize: '22px', fontWeight: '700', color: '#0f172a', margin: '4px 0' },
@@ -1271,9 +1310,158 @@ export default function VerificationForm() {
 
   return (
     <div style={styles.container}>
+      
+      {/* 1 TO 7 STEPPER HEADER */}
+      <div style={styles.stepperHeader}>
+        {stepsList.map((st) => {
+          const isActive = currentStep === st.id;
+          const isCompleted = currentStep > st.id;
+          return (
+            <div key={st.id} style={styles.stepItem}>
+              <div style={styles.stepCircle(isActive, isCompleted)}>
+                {isCompleted ? <Check size={16} /> : st.id}
+              </div>
+              <span style={styles.stepLabel(isActive)}>{st.title}</span>
+            </div>
+          );
+        })}
+      </div>
+
       <div style={styles.card}>
 
-        {/* STEP 4: BACKGROUND VERIFICATION DETAILS */}
+        {/* STEP 1: SERVICE SELECTION */}
+        {currentStep === 1 && (
+          <div>
+            <span style={styles.stepBadge}>Step 1 of 7</span>
+            <h2 style={styles.stepHeaderTitle}>Select Verification Service</h2>
+            <p style={styles.subtitle}>Choose the type of background check service required.</p>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '20px' }}>
+              <div 
+                onClick={() => setServiceType('bgv')}
+                style={{ border: serviceType === 'bgv' ? '2px solid #2563eb' : '1px solid #cbd5e1', padding: '16px', borderRadius: '8px', cursor: 'pointer', backgroundColor: serviceType === 'bgv' ? '#eff6ff' : '#fff' }}
+              >
+                <ShieldCheck size={28} color="#2563eb" />
+                <h4 style={{ margin: '8px 0 4px 0', fontSize: '15px' }}>Comprehensive BGV</h4>
+                <p style={{ margin: 0, fontSize: '12px', color: '#64748b' }}>Includes Education, Employment, and Criminal verification.</p>
+              </div>
+              <div 
+                onClick={() => setServiceType('edu_only')}
+                style={{ border: serviceType === 'edu_only' ? '2px solid #2563eb' : '1px solid #cbd5e1', padding: '16px', borderRadius: '8px', cursor: 'pointer', backgroundColor: serviceType === 'edu_only' ? '#eff6ff' : '#fff' }}
+              >
+                <FileCheck size={28} color="#2563eb" />
+                <h4 style={{ margin: '8px 0 4px 0', fontSize: '15px' }}>Education Verification Only</h4>
+                <p style={{ margin: 0, fontSize: '12px', color: '#64748b' }}>Fast-track qualification check from universities.</p>
+              </div>
+            </div>
+            <div style={styles.footer}>
+              <button disabled style={{ ...styles.btnSecondary, opacity: 0.5, cursor: 'not-allowed' }}><ChevronLeft size={16} /> Back</button>
+              <button onClick={nextStep} style={styles.btnPrimary}>
+                <span>Continue</span>
+                <ChevronRight size={16} />
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* STEP 2: ORGANIZATION DETAILS */}
+        {currentStep === 2 && (
+          <div>
+            <span style={styles.stepBadge}>Step 2 of 7</span>
+            <h2 style={styles.stepHeaderTitle}>Organization Details</h2>
+            <p style={styles.subtitle}>Provide organization information for billing and case routing.</p>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+              <div>
+                <label style={styles.label}>Company / Organization Name *</label>
+                <input 
+                  type="text" 
+                  placeholder="Enter Organization Name" 
+                  style={styles.input} 
+                  value={organizationDetails.companyName}
+                  onChange={(e) => setOrganizationDetails({ ...organizationDetails, companyName: e.target.value })}
+                />
+              </div>
+              <div>
+                <label style={styles.label}>Organization Type *</label>
+                <select 
+                  style={styles.input}
+                  value={organizationDetails.orgType}
+                  onChange={(e) => setOrganizationDetails({ ...organizationDetails, orgType: e.target.value })}
+                >
+                  <option value="pvt_ltd">Private Limited Company</option>
+                  <option value="public_ltd">Public Limited Company</option>
+                  <option value="llp">LLP / Partnership</option>
+                  <option value="other">Other</option>
+                </select>
+              </div>
+              <div>
+                <label style={styles.label}>Registration Number / CIN (Optional)</label>
+                <input 
+                  type="text" 
+                  placeholder="Enter CIN or Registration No." 
+                  style={styles.input} 
+                  value={organizationDetails.regNumber}
+                  onChange={(e) => setOrganizationDetails({ ...organizationDetails, regNumber: e.target.value })}
+                />
+              </div>
+            </div>
+            <div style={styles.footer}>
+              <button onClick={prevStep} style={styles.btnSecondary}><ChevronLeft size={16} /> Back</button>
+              <button onClick={nextStep} style={styles.btnPrimary}>
+                <span>Continue</span>
+                <ChevronRight size={16} />
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* STEP 3: PERSONAL INFORMATION */}
+        {currentStep === 3 && (
+          <div>
+            <span style={styles.stepBadge}>Step 3 of 7</span>
+            <h2 style={styles.stepHeaderTitle}>Personal Details</h2>
+            <p style={styles.subtitle}>Enter the candidate's primary contact details.</p>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+              <div>
+                <label style={styles.label}>Full Name *</label>
+                <input 
+                  type="text" 
+                  style={styles.input} 
+                  value={personalDetails.fullName}
+                  onChange={(e) => setPersonalDetails({ ...personalDetails, fullName: e.target.value })}
+                />
+              </div>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+                <div>
+                  <label style={styles.label}>Mobile Number *</label>
+                  <input 
+                    type="text" 
+                    style={styles.input} 
+                    value={personalDetails.mobile}
+                    onChange={(e) => setPersonalDetails({ ...personalDetails, mobile: e.target.value })}
+                  />
+                </div>
+                <div>
+                  <label style={styles.label}>Email Address *</label>
+                  <input 
+                    type="email" 
+                    style={styles.input} 
+                    value={personalDetails.email}
+                    onChange={(e) => setPersonalDetails({ ...personalDetails, email: e.target.value })}
+                  />
+                </div>
+              </div>
+            </div>
+            <div style={styles.footer}>
+              <button onClick={prevStep} style={styles.btnSecondary}><ChevronLeft size={16} /> Back</button>
+              <button onClick={nextStep} style={styles.btnPrimary}>
+                <span>Continue</span>
+                <ChevronRight size={16} />
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* STEP 4: BACKGROUND VERIFICATION DETAILS (SCREENSHOT MATCH) */}
         {currentStep === 4 && (
           <div>
             <span style={styles.stepBadge}>Step 4 of 7</span>
@@ -1314,7 +1502,7 @@ export default function VerificationForm() {
               </button>
             </div>
 
-            {/* TAB 1: EDUCATION DETAILS (SCREENSHOT MATCH) */}
+            {/* TAB 1: EDUCATION DETAILS */}
             {activeTab === 'education' && (
               <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
                 
@@ -1384,7 +1572,6 @@ export default function VerificationForm() {
                       ░ Qualification {qIdx + 1}
                     </h3>
 
-                    {/* Row 1 */}
                     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(170px, 1fr))', gap: '12px', marginBottom: '16px' }}>
                       <div>
                         <label style={styles.label}>Qualification Type *</label>
@@ -1452,7 +1639,6 @@ export default function VerificationForm() {
                       </div>
                     </div>
 
-                    {/* Row 2 */}
                     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(170px, 1fr))', gap: '12px', marginBottom: '20px' }}>
                       <div>
                         <label style={styles.label}>National / International *</label>
@@ -1510,7 +1696,6 @@ export default function VerificationForm() {
                       </div>
                     </div>
 
-                    {/* Documents Upload Grid */}
                     <div>
                       <label style={styles.label}>DOCUMENTS * (Upload up to 4 documents)</label>
                       <div style={styles.docGrid}>
@@ -1548,7 +1733,7 @@ export default function VerificationForm() {
               </div>
             )}
 
-            {/* TAB 2: EMPLOYMENT DETAILS (ORIGINAL CODE FLOW) */}
+            {/* TAB 2: EMPLOYMENT DETAILS */}
             {activeTab === 'employment' && (
               <div>
                 {employers.map((emp, idx) => (
@@ -1598,7 +1783,6 @@ export default function VerificationForm() {
               </div>
             )}
 
-            {/* Step 4 Footer */}
             <div style={styles.footer}>
               <button onClick={prevStep} style={styles.btnSecondary}><ChevronLeft size={16} /> Back</button>
               <button onClick={nextStep} style={styles.btnPrimary}>
