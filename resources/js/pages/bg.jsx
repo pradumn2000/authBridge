@@ -1119,808 +1119,980 @@
 // }
 import React, { useState } from 'react';
 import { 
-  ChevronLeft, 
   ChevronRight, 
+  ChevronLeft, 
   Upload, 
   FileText, 
   Check, 
-  X, 
   Eye, 
-  Download,
-  User,
-  ShieldCheck,
-  FileCheck,
-  Briefcase,
-  CheckCircle2
+  Download, 
+  X, 
+  Plus, 
+  Trash2 
 } from 'lucide-react';
 
-export default function CompleteVerificationFlow() {
-  const [currentStep, setCurrentStep] = useState(4);
-  const [activeTab, setActiveTab] = useState('education'); // 'education' | 'employment'
+export default function VerificationPortalModal() {
+  const [isOpen, setIsOpen] = useState(true);
+  const [currentStep, setCurrentStep] = useState(1);
 
-  // STEP 1-3 STATES
-  const [serviceType, setServiceType] = useState('bgv');
-  const [organizationDetails, setOrganizationDetails] = useState({
-    companyName: '',
-    orgType: 'pvt_ltd',
-    regNumber: ''
+  // Step 1 State: Scope / Service Selection
+  const [selectedServices, setSelectedServices] = useState({
+    identity: true,
+    address: true,
+    employment: true,
+    education: false,
+    criminal: true,
   });
 
-  // STEP 4 STATES
-  const [candidateInfo, setCandidateInfo] = useState({
-    candidateName: '',
-    candidateId: '',
-    clientName: '',
-    mobileNumber: '',
-    emailAddress: ''
+  // Step 2 State: Identification Details
+  const [idDetails, setIdDetails] = useState({
+    idType: 'PAN',
+    idNumber: '',
+    idDocument: null,
   });
 
-  const [qualifications, setQualifications] = useState([
-    {
-      qualificationType: '',
-      courseStream: '',
-      specialization: '',
-      institute: '',
-      board: '',
-      isNational: 'National',
-      modeOfStudy: '',
-      yearOfPassing: '',
-      charges: '',
-      documents: [null, null, null, null]
-    }
-  ]);
-
-  const [employers, setEmployers] = useState([
-    { companyName: '', designation: '', doe: '', documents: [null, null, null, null] }
-  ]);
-
-  // STEP 5-7 STATES
+  // Step 3 State: Personal & Address Details
   const [personalDetails, setPersonalDetails] = useState({
-    fullName: 'Gole Pandey',
-    mobile: '+91 9876543210',
-    email: 'gole.pandey@example.com'
+    fullName: '',
+    email: '',
+    mobile: '',
+    dob: '',
+    gender: 'Male',
+    currentAddress: '',
+    permanentAddress: '',
+    sameAsCurrent: false,
   });
 
+  // Step 4 State: Employment Details
+  const [employers, setEmployers] = useState([
+    {
+      companyName: '',
+      designation: '',
+      employeeId: '',
+      doj: '',
+      doe: '',
+      isCurrent: false,
+      documents: [null, null, null, null],
+    },
+  ]);
+
+  // Step 5 State: Document Upload & OCR
   const [uploadedFile, setUploadedFile] = useState({
-    name: 'Degree_Certificate.pdf',
-    status: 'Uploaded Successfully',
+    name: 'Relieving_Letter_Final.pdf',
+    status: 'OCR Processed Successfully',
     ocrData: [
-      { label: 'Name', value: 'Gole Pandey' },
-      { label: 'Degree', value: 'Bachelor of Technology' },
-      { label: 'Year', value: '2024' }
-    ]
+      { label: 'Company Name', value: 'Tech Solutions Pvt Ltd' },
+      { label: 'Designation', value: 'Senior Software Engineer' },
+      { label: 'Date of Leaving', value: '15 Jan 2026' },
+      { label: 'Employee ID', value: 'TS-8849' },
+    ],
   });
 
+  // Step 6 State: Declaration
   const [declarationAccepted, setDeclarationAccepted] = useState(false);
 
-  // HANDLERS
-  const handleCandidateChange = (field, value) => {
-    setCandidateInfo(prev => ({ ...prev, [field]: value }));
-  };
+  // Handlers for Navigation
+  const nextStep = () => setCurrentStep((prev) => Math.min(prev + 1, 7));
+  const prevStep = () => setCurrentStep((prev) => Math.max(prev - 1, 1));
 
-  const handleQualificationChange = (qIdx, field, value) => {
-    const updated = [...qualifications];
-    updated[qIdx][field] = value;
-    setQualifications(updated);
-  };
-
-  const addQualification = () => {
-    setQualifications([
-      ...qualifications,
-      {
-        qualificationType: '',
-        courseStream: '',
-        specialization: '',
-        institute: '',
-        board: '',
-        isNational: 'National',
-        modeOfStudy: '',
-        yearOfPassing: '',
-        charges: '',
-        documents: [null, null, null, null]
-      }
-    ]);
-  };
-
-  const handleEduFileUpload = (qIdx, dIdx, file) => {
-    if (!file) return;
-    const updated = [...qualifications];
-    updated[qIdx].documents[dIdx] = file;
-    setQualifications(updated);
-  };
-
-  const handleEmployerChange = (idx, field, value) => {
+  // Handlers for Step 4 (Employers)
+  const handleEmployerChange = (index, field, value) => {
     const updated = [...employers];
-    updated[idx][field] = value;
-    setEmployers(updated);
-  };
-
-  const handleFileUpload = (idx, dIdx, file) => {
-    if (!file) return;
-    const updated = [...employers];
-    updated[idx].documents[dIdx] = file;
+    updated[index][field] = value;
     setEmployers(updated);
   };
 
   const addEmployer = () => {
-    setEmployers([...employers, { companyName: '', designation: '', doe: '', documents: [null, null, null, null] }]);
+    setEmployers([
+      ...employers,
+      {
+        companyName: '',
+        designation: '',
+        employeeId: '',
+        doj: '',
+        doe: '',
+        isCurrent: false,
+        documents: [null, null, null, null],
+      },
+    ]);
   };
 
-  const nextStep = () => setCurrentStep(prev => Math.min(prev + 1, 7));
-  const prevStep = () => setCurrentStep(prev => Math.max(prev - 1, 1));
+  const removeEmployer = (index) => {
+    if (employers.length > 1) {
+      setEmployers(employers.filter((_, i) => i !== index));
+    }
+  };
 
-  // STEPPER CONFIGURATION
-  const stepsList = [
-    { id: 1, title: 'Service Selection' },
-    { id: 2, title: 'Organization' },
-    { id: 3, title: 'Personal Info' },
-    { id: 4, title: 'BGV Details' },
-    { id: 5, title: 'Doc Upload' },
-    { id: 6, title: 'Review & Submit' },
-    { id: 7, title: 'Status' }
-  ];
+  const handleFileUpload = (empIndex, docIndex, file) => {
+    const updated = [...employers];
+    updated[empIndex].documents[docIndex] = file;
+    setEmployers(updated);
+  };
 
-  // STYLES
+  // Inline Styles
   const styles = {
-    container: { maxWidth: '1050px', margin: '0 auto', padding: '20px', fontFamily: "'Inter', sans-serif" },
-    stepperHeader: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '28px', backgroundColor: '#fff', padding: '16px 20px', borderRadius: '12px', border: '1px solid #e2e8f0' },
-    stepItem: { display: 'flex', flexDirection: 'column', alignItems: 'center', flex: 1, position: 'relative' },
-    stepCircle: (active, completed) => ({
-      width: '32px',
-      height: '32px',
-      borderRadius: '50%',
-      backgroundColor: active ? '#2563eb' : completed ? '#16a34a' : '#f1f5f9',
-      color: active || completed ? '#ffffff' : '#64748b',
+    overlay: {
+      position: 'fixed',
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: 0,
+      backgroundColor: 'rgba(15, 23, 42, 0.6)',
+      backdropFilter: 'blur(4px)',
+      display: 'flex',
+      justifyContent: 'flex-end',
+      zIndex: 1000,
+    },
+    modalContainer: {
+      width: '100%',
+      maxWidth: '620px',
+      height: '100vh',
+      backgroundColor: '#ffffff',
+      boxShadow: '-4px 0 24px rgba(0, 0, 0, 0.15)',
+      display: 'flex',
+      flexDirection: 'column',
+      overflowY: 'auto',
+      fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
+    },
+    header: {
+      padding: '20px 24px',
+      borderBottom: '1px solid #e2e8f0',
+      display: 'flex',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      backgroundColor: '#f8fafc',
+      position: 'sticky',
+      top: 0,
+      zIndex: 10,
+    },
+    title: {
+      fontSize: '18px',
+      fontWeight: '700',
+      color: '#0f172a',
+      margin: 0,
+    },
+    body: {
+      padding: '24px',
+      flex: 1,
+    },
+    stepBadge: {
+      fontSize: '11px',
+      fontWeight: '700',
+      color: '#2563eb',
+      textTransform: 'uppercase',
+      letterSpacing: '0.5px',
+      marginBottom: '4px',
+      display: 'block',
+    },
+    stepHeaderTitle: {
+      fontSize: '20px',
+      fontWeight: '700',
+      color: '#0f172a',
+      margin: '0 0 4px 0',
+    },
+    subtitle: {
+      fontSize: '13px',
+      color: '#64748b',
+      margin: '0 0 20px 0',
+    },
+    sectionBox: {
+      border: '1px solid #e2e8f0',
+      borderRadius: '10px',
+      padding: '16px',
+      marginBottom: '16px',
+      backgroundColor: '#ffffff',
+    },
+    sectionBoxGray: {
+      backgroundColor: '#f8fafc',
+      border: '1px solid #e2e8f0',
+      borderRadius: '10px',
+      padding: '16px',
+      marginBottom: '16px',
+    },
+    sectionBoxAmber: {
+      backgroundColor: '#fffbeb',
+      border: '1px solid #fef3c7',
+      borderRadius: '10px',
+      padding: '16px',
+      marginBottom: '16px',
+    },
+    sectionTitle: {
+      fontSize: '14px',
+      fontWeight: '700',
+      color: '#1e293b',
+      margin: '0 0 12px 0',
+    },
+    formGroup: {
+      marginBottom: '14px',
+    },
+    gridTwo: {
+      display: 'grid',
+      gridTemplateColumns: '1fr 1fr',
+      gap: '12px',
+    },
+    label: {
+      fontSize: '12px',
+      fontWeight: '600',
+      color: '#475569',
+      marginBottom: '6px',
+      display: 'block',
+    },
+    input: {
+      width: '100%',
+      padding: '10px 12px',
+      fontSize: '13px',
+      borderRadius: '6px',
+      border: '1px solid #cbd5e1',
+      outline: 'none',
+      boxSizing: 'border-box',
+    },
+    select: {
+      width: '100%',
+      padding: '10px 12px',
+      fontSize: '13px',
+      borderRadius: '6px',
+      border: '1px solid #cbd5e1',
+      backgroundColor: '#ffffff',
+      outline: 'none',
+      boxSizing: 'border-box',
+    },
+    textarea: {
+      width: '100%',
+      padding: '10px 12px',
+      fontSize: '13px',
+      borderRadius: '6px',
+      border: '1px solid #cbd5e1',
+      outline: 'none',
+      resize: 'vertical',
+      minHeight: '60px',
+      boxSizing: 'border-box',
+    },
+    checkboxRow: {
       display: 'flex',
       alignItems: 'center',
-      justify: 'center',
-      fontWeight: '700',
+      gap: '8px',
       fontSize: '13px',
-      marginBottom: '6px',
-      zIndex: 2
-    }),
-    stepLabel: (active) => ({ fontSize: '11px', fontWeight: active ? '700' : '500', color: active ? '#2563eb' : '#64748b', textAlign: 'center' }),
-    card: { backgroundColor: '#ffffff', borderRadius: '12px', border: '1px solid #e2e8f0', padding: '24px', boxShadow: '0 1px 3px rgba(0,0,0,0.05)' },
-    stepBadge: { fontSize: '12px', fontWeight: '700', color: '#2563eb', textTransform: 'uppercase', letterSpacing: '0.5px' },
-    stepHeaderTitle: { fontSize: '22px', fontWeight: '700', color: '#0f172a', margin: '4px 0' },
-    subtitle: { fontSize: '14px', color: '#64748b', marginBottom: '20px' },
-    label: { display: 'block', fontSize: '11px', fontWeight: '700', color: '#475569', marginBottom: '6px', textTransform: 'uppercase' },
-    input: { width: '100%', padding: '10px 12px', borderRadius: '6px', border: '1px solid #cbd5e1', fontSize: '13px', outline: 'none', boxSizing: 'border-box', backgroundColor: '#fff' },
-    docGrid: { display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '12px', marginTop: '8px' },
-    docBox: { border: '1px dashed #cbd5e1', borderRadius: '8px', padding: '16px', textAlign: 'center', backgroundColor: '#f8fafc' },
-    uploadBtnLabel: { display: 'inline-flex', alignItems: 'center', gap: '6px', padding: '6px 12px', backgroundColor: '#eff6ff', color: '#2563eb', borderRadius: '6px', fontSize: '12px', fontWeight: '600', cursor: 'pointer', border: '1px solid #bfdbfe' },
-    btnDashedAdd: { width: '100%', padding: '12px', border: '2px dashed #93c5fd', backgroundColor: '#eff6ff', color: '#2563eb', fontWeight: '600', borderRadius: '8px', cursor: 'pointer', marginTop: '12px', fontSize: '14px' },
-    footer: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '32px', paddingTop: '16px', borderTop: '1px solid #e2e8f0' },
-    btnPrimary: { display: 'flex', alignItems: 'center', gap: '8px', backgroundColor: '#2563eb', color: '#ffffff', border: 'none', padding: '10px 20px', borderRadius: '6px', fontWeight: '600', cursor: 'pointer' },
-    btnSecondary: { display: 'flex', alignItems: 'center', gap: '8px', backgroundColor: '#ffffff', color: '#475569', border: '1px solid #cbd5e1', padding: '10px 20px', borderRadius: '6px', fontWeight: '600', cursor: 'pointer' },
-    sectionBox: { border: '1px solid #e2e8f0', borderRadius: '8px', padding: '16px', backgroundColor: '#ffffff', marginBottom: '16px' },
-    sectionBoxAmber: { border: '1px solid #fde68a', borderRadius: '8px', padding: '16px', backgroundColor: '#fffbeb', marginBottom: '16px' },
-    flexRowBetween: { display: 'flex', justifyContent: 'space-between', alignItems: 'center' },
-    flexColumnGap: { display: 'flex', flexDirection: 'column' },
-    progressBarBg: { width: '100%', height: '8px', backgroundColor: '#e2e8f0', borderRadius: '4px', overflow: 'hidden' },
-    progressBarFill: { width: '96%', height: '100%', backgroundColor: '#059669' },
-    ocrRow: { display: 'grid', gridTemplateColumns: '1fr 1fr auto', padding: '10px 16px', fontSize: '13px', alignItems: 'center' },
-    badgeGreen: { fontSize: '11px', color: '#059669', backgroundColor: '#dcfce7', padding: '2px 8px', borderRadius: '12px', fontWeight: '600' },
-    btnAccept: { display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px', padding: '10px', backgroundColor: '#16a34a', color: '#fff', border: 'none', borderRadius: '6px', fontWeight: '600', cursor: 'pointer' },
-    btnFlag: { display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px', padding: '10px', backgroundColor: '#dc2626', color: '#fff', border: 'none', borderRadius: '6px', fontWeight: '600', cursor: 'pointer' },
-    successIconCircle: { width: '64px', height: '64px', borderRadius: '50%', backgroundColor: '#dcfce7', color: '#16a34a', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px auto' },
-    btnOutlineFull: { width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', padding: '12px', border: '1px solid #cbd5e1', backgroundColor: '#fff', borderRadius: '6px', fontWeight: '600', color: '#334155', cursor: 'pointer', marginTop: '16px' },
-    sectionTitle: { fontSize: '14px', fontWeight: '700', color: '#0f172a', margin: '0 0 12px 0' }
+      color: '#334155',
+      cursor: 'pointer',
+      margin: '8px 0',
+    },
+    docGrid: {
+      display: 'grid',
+      gridTemplateColumns: '1fr 1fr',
+      gap: '10px',
+      marginTop: '8px',
+    },
+    docBox: {
+      border: '1px dashed #cbd5e1',
+      borderRadius: '8px',
+      padding: '12px',
+      textAlign: 'center',
+      backgroundColor: '#f8fafc',
+    },
+    uploadBtnLabel: {
+      display: 'inline-flex',
+      alignItems: 'center',
+      gap: '6px',
+      fontSize: '12px',
+      fontWeight: '600',
+      color: '#2563eb',
+      cursor: 'pointer',
+    },
+    btnDashedAdd: {
+      width: '100%',
+      padding: '10px',
+      border: '1px dashed #2563eb',
+      backgroundColor: '#eff6ff',
+      color: '#2563eb',
+      fontWeight: '600',
+      fontSize: '13px',
+      borderRadius: '8px',
+      cursor: 'pointer',
+      marginBottom: '16px',
+    },
+    footer: {
+      display: 'flex',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      marginTop: '24px',
+      paddingTop: '16px',
+      borderTop: '1px solid #e2e8f0',
+    },
+    btnSecondary: {
+      display: 'inline-flex',
+      alignItems: 'center',
+      gap: '6px',
+      padding: '10px 16px',
+      border: '1px solid #cbd5e1',
+      backgroundColor: '#ffffff',
+      color: '#475569',
+      borderRadius: '6px',
+      fontWeight: '600',
+      fontSize: '13px',
+      cursor: 'pointer',
+    },
+    btnPrimary: {
+      display: 'inline-flex',
+      alignItems: 'center',
+      gap: '6px',
+      padding: '10px 20px',
+      backgroundColor: '#2563eb',
+      color: '#ffffff',
+      border: 'none',
+      borderRadius: '6px',
+      fontWeight: '600',
+      fontSize: '13px',
+      cursor: 'pointer',
+    },
+    btnAccept: {
+      display: 'inline-flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      gap: '6px',
+      width: '100%',
+      padding: '10px',
+      backgroundColor: '#16a34a',
+      color: '#ffffff',
+      border: 'none',
+      borderRadius: '6px',
+      fontWeight: '600',
+      fontSize: '13px',
+      cursor: 'pointer',
+    },
+    btnFlag: {
+      display: 'inline-flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      gap: '6px',
+      width: '100%',
+      padding: '10px',
+      backgroundColor: '#dc2626',
+      color: '#ffffff',
+      border: 'none',
+      borderRadius: '6px',
+      fontWeight: '600',
+      fontSize: '13px',
+      cursor: 'pointer',
+    },
+    btnOutlineFull: {
+      display: 'inline-flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      gap: '6px',
+      width: '100%',
+      padding: '10px',
+      border: '1px solid #cbd5e1',
+      backgroundColor: '#ffffff',
+      color: '#1e293b',
+      borderRadius: '6px',
+      fontWeight: '600',
+      fontSize: '13px',
+      cursor: 'pointer',
+      marginTop: '12px',
+    },
+    flexRowBetween: {
+      display: 'flex',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+    },
+    flexColumnGap: {
+      display: 'flex',
+      flexDirection: 'column',
+      gap: '8px',
+    },
+    progressBarBg: {
+      height: '6px',
+      backgroundColor: '#e2e8f0',
+      borderRadius: '3px',
+      overflow: 'hidden',
+    },
+    progressBarFill: {
+      width: '96%',
+      height: '100%',
+      backgroundColor: '#16a34a',
+    },
+    ocrRow: {
+      display: 'flex',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      padding: '8px 12px',
+      fontSize: '12px',
+    },
+    badgeGreen: {
+      fontSize: '11px',
+      fontWeight: '600',
+      color: '#16a34a',
+      backgroundColor: '#dcfce7',
+      padding: '2px 8px',
+      borderRadius: '12px',
+    },
+    successIconCircle: {
+      width: '64px',
+      height: '64px',
+      borderRadius: '50%',
+      backgroundColor: '#dcfce7',
+      color: '#16a34a',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      margin: '0 auto 16px auto',
+    },
   };
 
+  if (!isOpen) return null;
+
   return (
-    <div style={styles.container}>
-      
-      {/* 1 TO 7 STEPPER HEADER */}
-      <div style={styles.stepperHeader}>
-        {stepsList.map((st) => {
-          const isActive = currentStep === st.id;
-          const isCompleted = currentStep > st.id;
-          return (
-            <div key={st.id} style={styles.stepItem}>
-              <div style={styles.stepCircle(isActive, isCompleted)}>
-                {isCompleted ? <Check size={16} /> : st.id}
-              </div>
-              <span style={styles.stepLabel(isActive)}>{st.title}</span>
-            </div>
-          );
-        })}
-      </div>
+    <div style={styles.overlay}>
+      <div style={styles.modalContainer}>
+        {/* Modal Top Header */}
+        <div style={styles.header}>
+          <h3 style={styles.title}>Background Verification Portal</h3>
+          <X 
+            size={20} 
+            color="#64748b" 
+            style={{ cursor: 'pointer' }} 
+            onClick={() => setIsOpen(false)} 
+          />
+        </div>
 
-      <div style={styles.card}>
+        {/* Modal Dynamic Body Content */}
+        <div style={styles.body}>
 
-        {/* STEP 1: SERVICE SELECTION */}
-        {currentStep === 1 && (
-          <div>
-            <span style={styles.stepBadge}>Step 1 of 7</span>
-            <h2 style={styles.stepHeaderTitle}>Select Verification Service</h2>
-            <p style={styles.subtitle}>Choose the type of background check service required.</p>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '20px' }}>
-              <div 
-                onClick={() => setServiceType('bgv')}
-                style={{ border: serviceType === 'bgv' ? '2px solid #2563eb' : '1px solid #cbd5e1', padding: '16px', borderRadius: '8px', cursor: 'pointer', backgroundColor: serviceType === 'bgv' ? '#eff6ff' : '#fff' }}
-              >
-                <ShieldCheck size={28} color="#2563eb" />
-                <h4 style={{ margin: '8px 0 4px 0', fontSize: '15px' }}>Comprehensive BGV</h4>
-                <p style={{ margin: 0, fontSize: '12px', color: '#64748b' }}>Includes Education, Employment, and Criminal verification.</p>
-              </div>
-              <div 
-                onClick={() => setServiceType('edu_only')}
-                style={{ border: serviceType === 'edu_only' ? '2px solid #2563eb' : '1px solid #cbd5e1', padding: '16px', borderRadius: '8px', cursor: 'pointer', backgroundColor: serviceType === 'edu_only' ? '#eff6ff' : '#fff' }}
-              >
-                <FileCheck size={28} color="#2563eb" />
-                <h4 style={{ margin: '8px 0 4px 0', fontSize: '15px' }}>Education Verification Only</h4>
-                <p style={{ margin: 0, fontSize: '12px', color: '#64748b' }}>Fast-track qualification check from universities.</p>
-              </div>
-            </div>
-            <div style={styles.footer}>
-              <button disabled style={{ ...styles.btnSecondary, opacity: 0.5, cursor: 'not-allowed' }}><ChevronLeft size={16} /> Back</button>
-              <button onClick={nextStep} style={styles.btnPrimary}>
-                <span>Continue</span>
-                <ChevronRight size={16} />
-              </button>
-            </div>
-          </div>
-        )}
+          {/* STEP 1: SERVICE SELECTION */}
+          {currentStep === 1 && (
+            <div>
+              <span style={styles.stepBadge}>Step 1 of 7</span>
+              <h2 style={styles.stepHeaderTitle}>Verification Scope</h2>
+              <p style={styles.subtitle}>Select the checks required for this background verification process.</p>
 
-        {/* STEP 2: ORGANIZATION DETAILS */}
-        {currentStep === 2 && (
-          <div>
-            <span style={styles.stepBadge}>Step 2 of 7</span>
-            <h2 style={styles.stepHeaderTitle}>Organization Details</h2>
-            <p style={styles.subtitle}>Provide organization information for billing and case routing.</p>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-              <div>
-                <label style={styles.label}>Company / Organization Name *</label>
-                <input 
-                  type="text" 
-                  placeholder="Enter Organization Name" 
-                  style={styles.input} 
-                  value={organizationDetails.companyName}
-                  onChange={(e) => setOrganizationDetails({ ...organizationDetails, companyName: e.target.value })}
-                />
-              </div>
-              <div>
-                <label style={styles.label}>Organization Type *</label>
-                <select 
-                  style={styles.input}
-                  value={organizationDetails.orgType}
-                  onChange={(e) => setOrganizationDetails({ ...organizationDetails, orgType: e.target.value })}
-                >
-                  <option value="pvt_ltd">Private Limited Company</option>
-                  <option value="public_ltd">Public Limited Company</option>
-                  <option value="llp">LLP / Partnership</option>
-                  <option value="other">Other</option>
-                </select>
-              </div>
-              <div>
-                <label style={styles.label}>Registration Number / CIN (Optional)</label>
-                <input 
-                  type="text" 
-                  placeholder="Enter CIN or Registration No." 
-                  style={styles.input} 
-                  value={organizationDetails.regNumber}
-                  onChange={(e) => setOrganizationDetails({ ...organizationDetails, regNumber: e.target.value })}
-                />
-              </div>
-            </div>
-            <div style={styles.footer}>
-              <button onClick={prevStep} style={styles.btnSecondary}><ChevronLeft size={16} /> Back</button>
-              <button onClick={nextStep} style={styles.btnPrimary}>
-                <span>Continue</span>
-                <ChevronRight size={16} />
-              </button>
-            </div>
-          </div>
-        )}
-
-        {/* STEP 3: PERSONAL INFORMATION */}
-        {currentStep === 3 && (
-          <div>
-            <span style={styles.stepBadge}>Step 3 of 7</span>
-            <h2 style={styles.stepHeaderTitle}>Personal Details</h2>
-            <p style={styles.subtitle}>Enter the candidate's primary contact details.</p>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-              <div>
-                <label style={styles.label}>Full Name *</label>
-                <input 
-                  type="text" 
-                  style={styles.input} 
-                  value={personalDetails.fullName}
-                  onChange={(e) => setPersonalDetails({ ...personalDetails, fullName: e.target.value })}
-                />
-              </div>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
-                <div>
-                  <label style={styles.label}>Mobile Number *</label>
-                  <input 
-                    type="text" 
-                    style={styles.input} 
-                    value={personalDetails.mobile}
-                    onChange={(e) => setPersonalDetails({ ...personalDetails, mobile: e.target.value })}
-                  />
-                </div>
-                <div>
-                  <label style={styles.label}>Email Address *</label>
-                  <input 
-                    type="email" 
-                    style={styles.input} 
-                    value={personalDetails.email}
-                    onChange={(e) => setPersonalDetails({ ...personalDetails, email: e.target.value })}
-                  />
-                </div>
-              </div>
-            </div>
-            <div style={styles.footer}>
-              <button onClick={prevStep} style={styles.btnSecondary}><ChevronLeft size={16} /> Back</button>
-              <button onClick={nextStep} style={styles.btnPrimary}>
-                <span>Continue</span>
-                <ChevronRight size={16} />
-              </button>
-            </div>
-          </div>
-        )}
-
-        {/* STEP 4: BACKGROUND VERIFICATION DETAILS (SCREENSHOT MATCH) */}
-        {currentStep === 4 && (
-          <div>
-            <span style={styles.stepBadge}>Step 4 of 7</span>
-            <h2 style={styles.stepHeaderTitle}>Background Verification Details</h2>
-            <p style={styles.subtitle}>Fill in your educational background and work experience.</p>
-
-            {/* TAB NAVIGATION */}
-            <div style={{ display: 'flex', borderBottom: '2px solid #e2e8f0', marginBottom: '24px' }}>
-              <button 
-                onClick={() => setActiveTab('education')}
-                style={{
-                  padding: '10px 20px',
-                  fontWeight: '700',
-                  fontSize: '14px',
-                  border: 'none',
-                  background: 'none',
-                  cursor: 'pointer',
-                  borderBottom: activeTab === 'education' ? '3px solid #2563eb' : 'none',
-                  color: activeTab === 'education' ? '#2563eb' : '#64748b'
-                }}
-              >
-                Education Details
-              </button>
-              <button 
-                onClick={() => setActiveTab('employment')}
-                style={{
-                  padding: '10px 20px',
-                  fontWeight: '700',
-                  fontSize: '14px',
-                  border: 'none',
-                  background: 'none',
-                  cursor: 'pointer',
-                  borderBottom: activeTab === 'employment' ? '3px solid #2563eb' : 'none',
-                  color: activeTab === 'employment' ? '#2563eb' : '#64748b'
-                }}
-              >
-                Employment Details
-              </button>
-            </div>
-
-            {/* TAB 1: EDUCATION DETAILS */}
-            {activeTab === 'education' && (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-                
-                {/* Candidate Information Block */}
-                <div style={{ border: '1px solid #e2e8f0', borderRadius: '8px', padding: '16px', backgroundColor: '#fff' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', marginBottom: '16px', fontWeight: '700', color: '#1e293b', fontSize: '14px' }}>
-                    <span>👤 Candidate Information</span>
-                  </div>
-                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(170px, 1fr))', gap: '12px' }}>
-                    <div>
-                      <label style={styles.label}>CANDIDATE NAME *</label>
-                      <input 
-                        type="text" 
-                        placeholder="Enter Candidate Name" 
-                        style={styles.input} 
-                        value={candidateInfo.candidateName}
-                        onChange={(e) => handleCandidateChange('candidateName', e.target.value)}
+              <div style={styles.sectionBox}>
+                <h3 style={styles.sectionTitle}>Required Verification Modules</h3>
+                <div style={styles.flexColumnGap}>
+                  {[
+                    { key: 'identity', label: 'Identity Verification (PAN / Voter ID / Driving License)' },
+                    { key: 'address', label: 'Current & Permanent Address Verification' },
+                    { key: 'employment', label: 'Past Employment History & Documents' },
+                    { key: 'education', label: 'Highest Education Qualification Check' },
+                    { key: 'criminal', label: 'Court Record & Criminal History Check' },
+                  ].map((service) => (
+                    <label key={service.key} style={styles.checkboxRow}>
+                      <input
+                        type="checkbox"
+                        checked={selectedServices[service.key]}
+                        onChange={(e) =>
+                          setSelectedServices({ ...selectedServices, [service.key]: e.target.checked })
+                        }
                       />
-                    </div>
-                    <div>
-                      <label style={styles.label}>CANDIDATE ID *</label>
-                      <input 
-                        type="text" 
-                        placeholder="Enter Candidate ID" 
-                        style={styles.input} 
-                        value={candidateInfo.candidateId}
-                        onChange={(e) => handleCandidateChange('candidateId', e.target.value)}
-                      />
-                    </div>
-                    <div>
-                      <label style={styles.label}>CLIENT NAME *</label>
-                      <input 
-                        type="text" 
-                        placeholder="Enter Client Name" 
-                        style={styles.input} 
-                        value={candidateInfo.clientName}
-                        onChange={(e) => handleCandidateChange('clientName', e.target.value)}
-                      />
-                    </div>
-                    <div>
-                      <label style={styles.label}>MOBILE NUMBER *</label>
-                      <input 
-                        type="text" 
-                        placeholder="Enter Mobile Number" 
-                        style={styles.input} 
-                        value={candidateInfo.mobileNumber}
-                        onChange={(e) => handleCandidateChange('mobileNumber', e.target.value)}
-                      />
-                    </div>
-                    <div>
-                      <label style={styles.label}>EMAIL ADDRESS *</label>
-                      <input 
-                        type="email" 
-                        placeholder="Enter Email Address" 
-                        style={styles.input} 
-                        value={candidateInfo.emailAddress}
-                        onChange={(e) => handleCandidateChange('emailAddress', e.target.value)}
-                      />
-                    </div>
-                  </div>
-                </div>
-
-                {/* Qualification Blocks */}
-                {qualifications.map((qual, qIdx) => (
-                  <div key={qIdx} style={{ border: '1px solid #e2e8f0', borderRadius: '8px', padding: '20px', backgroundColor: '#fff' }}>
-                    <h3 style={{ fontSize: '15px', fontWeight: '700', color: '#1e293b', marginBottom: '16px' }}>
-                      ░ Qualification {qIdx + 1}
-                    </h3>
-
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(170px, 1fr))', gap: '12px', marginBottom: '16px' }}>
-                      <div>
-                        <label style={styles.label}>Qualification Type *</label>
-                        <select 
-                          style={styles.input}
-                          value={qual.qualificationType}
-                          onChange={(e) => handleQualificationChange(qIdx, 'qualificationType', e.target.value)}
-                        >
-                          <option value="">Select Qualification Type</option>
-                          <option value="10th">10th Standard</option>
-                          <option value="12th">12th Standard</option>
-                          <option value="graduation">Graduation / Bachelor</option>
-                          <option value="post_graduation">Post Graduation / Master</option>
-                          <option value="diploma">Diploma</option>
-                        </select>
-                      </div>
-                      <div>
-                        <label style={styles.label}>Course / Stream *</label>
-                        <select 
-                          style={styles.input}
-                          value={qual.courseStream}
-                          onChange={(e) => handleQualificationChange(qIdx, 'courseStream', e.target.value)}
-                        >
-                          <option value="">Select Course / Stream</option>
-                          <option value="btech">B.Tech / B.E.</option>
-                          <option value="bca">BCA</option>
-                          <option value="bsc">B.Sc</option>
-                          <option value="mca">MCA</option>
-                        </select>
-                      </div>
-                      <div>
-                        <label style={styles.label}>Specialization (Optional)</label>
-                        <input 
-                          type="text" 
-                          placeholder="Enter Specialization" 
-                          style={styles.input} 
-                          value={qual.specialization}
-                          onChange={(e) => handleQualificationChange(qIdx, 'specialization', e.target.value)}
-                        />
-                      </div>
-                      <div>
-                        <label style={styles.label}>Institute / University *</label>
-                        <input 
-                          type="text" 
-                          placeholder="Enter Institute / School / Univ" 
-                          style={styles.input} 
-                          value={qual.institute}
-                          onChange={(e) => handleQualificationChange(qIdx, 'institute', e.target.value)}
-                        />
-                      </div>
-                      <div>
-                        <label style={styles.label}>Board / University *</label>
-                        <select 
-                          style={styles.input}
-                          value={qual.board}
-                          onChange={(e) => handleQualificationChange(qIdx, 'board', e.target.value)}
-                        >
-                          <option value="">Select Board / University</option>
-                          <option value="cbse">CBSE</option>
-                          <option value="icse">ICSE</option>
-                          <option value="state">State Board</option>
-                          <option value="aktu">AKTU</option>
-                          <option value="du">Delhi University</option>
-                        </select>
-                      </div>
-                    </div>
-
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(170px, 1fr))', gap: '12px', marginBottom: '20px' }}>
-                      <div>
-                        <label style={styles.label}>National / International *</label>
-                        <div style={{ display: 'flex', gap: '16px', alignItems: 'center', marginTop: '8px' }}>
-                          <label style={{ fontSize: '13px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px', fontWeight: '600' }}>
-                            <input 
-                              type="radio" 
-                              name={`nat_int_${qIdx}`} 
-                              checked={qual.isNational === 'National'} 
-                              onChange={() => handleQualificationChange(qIdx, 'isNational', 'National')}
-                            /> National
-                          </label>
-                          <label style={{ fontSize: '13px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px', fontWeight: '600' }}>
-                            <input 
-                              type="radio" 
-                              name={`nat_int_${qIdx}`} 
-                              checked={qual.isNational === 'International'} 
-                              onChange={() => handleQualificationChange(qIdx, 'isNational', 'International')}
-                            /> International
-                          </label>
-                        </div>
-                      </div>
-                      <div>
-                        <label style={styles.label}>Mode of Study *</label>
-                        <select 
-                          style={styles.input}
-                          value={qual.modeOfStudy}
-                          onChange={(e) => handleQualificationChange(qIdx, 'modeOfStudy', e.target.value)}
-                        >
-                          <option value="">Select Mode</option>
-                          <option value="full_time">Full Time</option>
-                          <option value="part_time">Part Time</option>
-                          <option value="distance">Distance / Correspondence</option>
-                        </select>
-                      </div>
-                      <div>
-                        <label style={styles.label}>Year of Passing *</label>
-                        <input 
-                          type="text" 
-                          placeholder="YYYY" 
-                          style={styles.input} 
-                          value={qual.yearOfPassing}
-                          onChange={(e) => handleQualificationChange(qIdx, 'yearOfPassing', e.target.value)}
-                        />
-                      </div>
-                      <div>
-                        <label style={styles.label}>Education Charges (₹)</label>
-                        <input 
-                          type="text" 
-                          placeholder="Enter Charges" 
-                          style={styles.input} 
-                          value={qual.charges}
-                          onChange={(e) => handleQualificationChange(qIdx, 'charges', e.target.value)}
-                        />
-                      </div>
-                    </div>
-
-                    <div>
-                      <label style={styles.label}>DOCUMENTS * (Upload up to 4 documents)</label>
-                      <div style={styles.docGrid}>
-                        {[1, 2, 3, 4].map((docNum, dIdx) => (
-                          <div key={dIdx} style={styles.docBox}>
-                            <div style={{ fontSize: '13px', fontWeight: '700', color: '#1e293b', marginBottom: '4px' }}>
-                              Document {docNum}
-                            </div>
-                            <div style={{ fontSize: '11px', color: '#94a3b8', marginBottom: '12px' }}>
-                              PDF, JPG, PNG (Max 10MB)
-                            </div>
-                            <label style={styles.uploadBtnLabel}>
-                              <Upload size={14} /> Choose File
-                              <input 
-                                type="file" 
-                                style={{ display: 'none' }} 
-                                accept=".pdf,.jpg,.jpeg,.png"
-                                onChange={(e) => handleEduFileUpload(qIdx, dIdx, e.target.files[0])}
-                              />
-                            </label>
-                            {qual.documents[dIdx] && (
-                              <div style={{ fontSize: '11px', color: '#059669', marginTop: '6px', textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap' }}>
-                                {qual.documents[dIdx].name}
-                              </div>
-                            )}
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-
-                  </div>
-                ))}
-
-                <button onClick={addQualification} style={styles.btnDashedAdd}>+ Add Qualification</button>
-              </div>
-            )}
-
-            {/* TAB 2: EMPLOYMENT DETAILS */}
-            {activeTab === 'employment' && (
-              <div>
-                {employers.map((emp, idx) => (
-                  <div key={idx} style={{ border: '1px solid #e2e8f0', borderRadius: '8px', padding: '16px', marginBottom: '16px', backgroundColor: '#fff' }}>
-                    <div style={{ marginBottom: '16px' }}>
-                      <label style={styles.label}>Date of Exit (DOE) *</label>
-                      <input 
-                        type="date" 
-                        style={styles.input}
-                        value={emp.doe}
-                        onChange={(e) => handleEmployerChange(idx, 'doe', e.target.value)}
-                      />
-                    </div>
-
-                    <div>
-                      <label style={styles.label}>Documents * (Upload up to 4 documents)</label>
-                      <div style={styles.docGrid}>
-                        {[1, 2, 3, 4].map((docNum, dIdx) => (
-                          <div key={dIdx} style={styles.docBox}>
-                            <div style={{ fontSize: '13px', fontWeight: '700', color: '#1e293b', marginBottom: '4px' }}>
-                              Document {docNum}
-                            </div>
-                            <div style={{ fontSize: '11px', color: '#94a3b8', marginBottom: '12px' }}>
-                              PDF, JPG, PNG (Max 10MB)
-                            </div>
-                            <label style={styles.uploadBtnLabel}>
-                              <Upload size={14} /> Choose File
-                              <input 
-                                type="file" 
-                                style={{ display: 'none' }}
-                                accept=".pdf,.jpg,.jpeg,.png"
-                                onChange={(e) => handleFileUpload(idx, dIdx, e.target.files[0])}
-                              />
-                            </label>
-                            {emp.documents[dIdx] && (
-                              <div style={{ fontSize: '11px', color: '#059669', marginTop: '6px', textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap' }}>
-                                {emp.documents[dIdx].name}
-                              </div>
-                            )}
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                ))}
-                <button onClick={addEmployer} style={styles.btnDashedAdd}>+ Add Employer</button>
-              </div>
-            )}
-
-            <div style={styles.footer}>
-              <button onClick={prevStep} style={styles.btnSecondary}><ChevronLeft size={16} /> Back</button>
-              <button onClick={nextStep} style={styles.btnPrimary}>
-                <span>Continue</span>
-                <ChevronRight size={16} />
-              </button>
-            </div>
-          </div>
-        )}
-
-        {/* STEP 5: DOCUMENT UPLOAD */}
-        {currentStep === 5 && (
-          <div>
-            <span style={styles.stepBadge}>Step 5 of 7</span>
-            <h2 style={styles.stepHeaderTitle}>Document Upload</h2>
-            <p style={styles.subtitle}>Upload a supporting certificate. Our AI will extract and verify content automatically.</p>
-
-            {uploadedFile && (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                <div style={{ ...styles.sectionBox, ...styles.flexRowBetween, padding: '12px 16px', margin: 0 }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                    <FileText color="#2563eb" size={24} />
-                    <div>
-                      <h4 style={{ fontSize: '13px', fontWeight: '700', margin: 0 }}>{uploadedFile.name}</h4>
-                      <span style={{ fontSize: '11px', color: '#94a3b8' }}>{uploadedFile.status}</span>
-                    </div>
-                  </div>
-                  <X size={16} color="#94a3b8" style={{ cursor: 'pointer' }} onClick={() => setUploadedFile(null)} />
-                </div>
-
-                <div style={styles.sectionBox}>
-                  <div style={{ ...styles.flexRowBetween, marginBottom: '8px' }}>
-                    <span style={styles.label}>AI Confidence Score</span>
-                    <span style={{ fontSize: '18px', fontWeight: '700', color: '#0f172a' }}>96%</span>
-                  </div>
-                  <div style={styles.progressBarBg}>
-                    <div style={styles.progressBarFill} />
-                  </div>
-                </div>
-
-                <div style={{ border: '1px solid #e2e8f0', borderRadius: '12px', overflow: 'hidden' }}>
-                  <div style={{ backgroundColor: '#f8fafc', padding: '10px 16px', borderBottom: '1px solid #e2e8f0' }}>
-                    <span style={styles.label}>OCR Extracted Fields</span>
-                  </div>
-                  {uploadedFile.ocrData.map((row, i) => (
-                    <div key={i} style={{ ...styles.ocrRow, borderBottom: i < uploadedFile.ocrData.length - 1 ? '1px solid #f1f5f9' : 'none' }}>
-                      <span style={{ color: '#64748b' }}>{row.label}</span>
-                      <span style={{ fontFamily: 'monospace', fontWeight: '700' }}>{row.value}</span>
-                      <span style={styles.badgeGreen}>✓ Match</span>
-                    </div>
+                      <span>{service.label}</span>
+                    </label>
                   ))}
                 </div>
+              </div>
 
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
-                  <button style={styles.btnAccept}>
-                    <Check size={16} /> Auto Accept
-                  </button>
-                  <button style={styles.btnFlag}>
-                    <Eye size={16} /> Flag for Review
-                  </button>
+              <div style={styles.footer}>
+                <button style={{ ...styles.btnSecondary, visibility: 'hidden' }}>Back</button>
+                <button onClick={nextStep} style={styles.btnPrimary}>
+                  <span>Continue</span>
+                  <ChevronRight size={16} />
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* STEP 2: IDENTIFICATION DETAILS */}
+          {currentStep === 2 && (
+            <div>
+              <span style={styles.stepBadge}>Step 2 of 7</span>
+              <h2 style={styles.stepHeaderTitle}>Identification Details</h2>
+              <p style={styles.subtitle}>Provide government identification information for identity check.</p>
+
+              <div style={styles.sectionBox}>
+                <div style={styles.formGroup}>
+                  <label style={styles.label}>Select Identification Document Type *</label>
+                  <select
+                    style={styles.select}
+                    value={idDetails.idType}
+                    onChange={(e) => setIdDetails({ ...idDetails, idType: e.target.value })}
+                  >
+                    <option value="PAN">PAN Card</option>
+                    <option value="VoterID">Voter ID Card</option>
+                    <option value="Passport">Passport</option>
+                    <option value="DrivingLicense">Driving License</option>
+                  </select>
+                </div>
+
+                <div style={styles.formGroup}>
+                  <label style={styles.label}>{idDetails.idType} Number *</label>
+                  <input
+                    type="text"
+                    style={styles.input}
+                    placeholder={`Enter your ${idDetails.idType} number`}
+                    value={idDetails.idNumber}
+                    onChange={(e) => setIdDetails({ ...idDetails, idNumber: e.target.value })}
+                  />
+                </div>
+
+                <div style={styles.formGroup}>
+                  <label style={styles.label}>Upload ID Document (Front & Back) *</label>
+                  <div style={styles.docBox}>
+                    <label style={styles.uploadBtnLabel}>
+                      <Upload size={16} />
+                      <span>{idDetails.idDocument ? idDetails.idDocument.name : 'Choose file to upload'}</span>
+                      <input
+                        type="file"
+                        style={{ display: 'none' }}
+                        accept=".pdf,.jpg,.jpeg,.png"
+                        onChange={(e) => setIdDetails({ ...idDetails, idDocument: e.target.files[0] })}
+                      />
+                    </label>
+                  </div>
                 </div>
               </div>
-            )}
 
-            <div style={styles.footer}>
-              <button onClick={prevStep} style={styles.btnSecondary}><ChevronLeft size={16} /> Back</button>
-              <button onClick={nextStep} style={styles.btnPrimary}>
-                <span>Continue</span>
-                <ChevronRight size={16} />
+              <div style={styles.footer}>
+                <button onClick={prevStep} style={styles.btnSecondary}>
+                  <ChevronLeft size={16} /> Back
+                </button>
+                <button onClick={nextStep} style={styles.btnPrimary}>
+                  <span>Continue</span>
+                  <ChevronRight size={16} />
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* STEP 3: PERSONAL & ADDRESS DETAILS */}
+          {currentStep === 3 && (
+            <div>
+              <span style={styles.stepBadge}>Step 3 of 7</span>
+              <h2 style={styles.stepHeaderTitle}>Personal & Address Info</h2>
+              <p style={styles.subtitle}>Enter candidate's personal data and residential addresses.</p>
+
+              <div style={styles.sectionBox}>
+                <h3 style={styles.sectionTitle}>Personal Details</h3>
+                <div style={styles.formGroup}>
+                  <label style={styles.label}>Full Name *</label>
+                  <input
+                    type="text"
+                    style={styles.input}
+                    placeholder="John Doe"
+                    value={personalDetails.fullName}
+                    onChange={(e) => setPersonalDetails({ ...personalDetails, fullName: e.target.value })}
+                  />
+                </div>
+
+                <div style={styles.gridTwo}>
+                  <div style={styles.formGroup}>
+                    <label style={styles.label}>Email Address *</label>
+                    <input
+                      type="email"
+                      style={styles.input}
+                      placeholder="john@example.com"
+                      value={personalDetails.email}
+                      onChange={(e) => setPersonalDetails({ ...personalDetails, email: e.target.value })}
+                    />
+                  </div>
+                  <div style={styles.formGroup}>
+                    <label style={styles.label}>Mobile Number *</label>
+                    <input
+                      type="tel"
+                      style={styles.input}
+                      placeholder="+91 98765 43210"
+                      value={personalDetails.mobile}
+                      onChange={(e) => setPersonalDetails({ ...personalDetails, mobile: e.target.value })}
+                    />
+                  </div>
+                </div>
+
+                <div style={styles.gridTwo}>
+                  <div style={styles.formGroup}>
+                    <label style={styles.label}>Date of Birth *</label>
+                    <input
+                      type="date"
+                      style={styles.input}
+                      value={personalDetails.dob}
+                      onChange={(e) => setPersonalDetails({ ...personalDetails, dob: e.target.value })}
+                    />
+                  </div>
+                  <div style={styles.formGroup}>
+                    <label style={styles.label}>Gender *</label>
+                    <select
+                      style={styles.select}
+                      value={personalDetails.gender}
+                      onChange={(e) => setPersonalDetails({ ...personalDetails, gender: e.target.value })}
+                    >
+                      <option value="Male">Male</option>
+                      <option value="Female">Female</option>
+                      <option value="Other">Other</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              <div style={styles.sectionBox}>
+                <h3 style={styles.sectionTitle}>Address Details</h3>
+                <div style={styles.formGroup}>
+                  <label style={styles.label}>Current Address *</label>
+                  <textarea
+                    style={styles.textarea}
+                    placeholder="Enter full current residential address"
+                    value={personalDetails.currentAddress}
+                    onChange={(e) => setPersonalDetails({ ...personalDetails, currentAddress: e.target.value })}
+                  />
+                </div>
+
+                <label style={styles.checkboxRow}>
+                  <input
+                    type="checkbox"
+                    checked={personalDetails.sameAsCurrent}
+                    onChange={(e) =>
+                      setPersonalDetails({
+                        ...personalDetails,
+                        sameAsCurrent: e.target.checked,
+                        permanentAddress: e.target.checked ? personalDetails.currentAddress : '',
+                      })
+                    }
+                  />
+                  <span>Permanent address same as current address</span>
+                </label>
+
+                {!personalDetails.sameAsCurrent && (
+                  <div style={{ ...styles.formGroup, marginTop: '10px' }}>
+                    <label style={styles.label}>Permanent Address *</label>
+                    <textarea
+                      style={styles.textarea}
+                      placeholder="Enter full permanent address"
+                      value={personalDetails.permanentAddress}
+                      onChange={(e) => setPersonalDetails({ ...personalDetails, permanentAddress: e.target.value })}
+                    />
+                  </div>
+                )}
+              </div>
+
+              <div style={styles.footer}>
+                <button onClick={prevStep} style={styles.btnSecondary}>
+                  <ChevronLeft size={16} /> Back
+                </button>
+                <button onClick={nextStep} style={styles.btnPrimary}>
+                  <span>Continue</span>
+                  <ChevronRight size={16} />
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* STEP 4: EMPLOYMENT DETAILS */}
+          {currentStep === 4 && (
+            <div>
+              <span style={styles.stepBadge}>Step 4 of 7</span>
+              <h2 style={styles.stepHeaderTitle}>Employment History</h2>
+              <p style={styles.subtitle}>Add previous employment records and supporting documents.</p>
+
+              {employers.map((emp, idx) => (
+                <div key={idx} style={styles.sectionBox}>
+                  <div style={{ ...styles.flexRowBetween, marginBottom: '12px' }}>
+                    <h3 style={styles.sectionTitle}>Employer #{idx + 1}</h3>
+                    {employers.length > 1 && (
+                      <Trash2
+                        size={16}
+                        color="#dc2626"
+                        style={{ cursor: 'pointer' }}
+                        onClick={() => removeEmployer(idx)}
+                      />
+                    )}
+                  </div>
+
+                  <div style={styles.gridTwo}>
+                    <div style={styles.formGroup}>
+                      <label style={styles.label}>Company Name *</label>
+                      <input
+                        type="text"
+                        style={styles.input}
+                        placeholder="Organization Name"
+                        value={emp.companyName}
+                        onChange={(e) => handleEmployerChange(idx, 'companyName', e.target.value)}
+                      />
+                    </div>
+                    <div style={styles.formGroup}>
+                      <label style={styles.label}>Designation *</label>
+                      <input
+                        type="text"
+                        style={styles.input}
+                        placeholder="Software Engineer"
+                        value={emp.designation}
+                        onChange={(e) => handleEmployerChange(idx, 'designation', e.target.value)}
+                      />
+                    </div>
+                  </div>
+
+                  <div style={styles.gridTwo}>
+                    <div style={styles.formGroup}>
+                      <label style={styles.label}>Employee Code / ID</label>
+                      <input
+                        type="text"
+                        style={styles.input}
+                        placeholder="EMP-1234"
+                        value={emp.employeeId}
+                        onChange={(e) => handleEmployerChange(idx, 'employeeId', e.target.value)}
+                      />
+                    </div>
+                    <div style={styles.formGroup}>
+                      <label style={styles.label}>Date of Joining *</label>
+                      <input
+                        type="date"
+                        style={styles.input}
+                        value={emp.doj}
+                        onChange={(e) => handleEmployerChange(idx, 'doj', e.target.value)}
+                      />
+                    </div>
+                  </div>
+
+                  <div style={styles.formGroup}>
+                    <label style={styles.label}>Date of Exit *</label>
+                    <input
+                      type="date"
+                      style={styles.input}
+                      value={emp.doe}
+                      onChange={(e) => handleEmployerChange(idx, 'doe', e.target.value)}
+                    />
+                  </div>
+
+                  {/* Document Upload Section */}
+                  <div>
+                    <label style={styles.label}>Documents * (Upload up to 4 documents)</label>
+                    <div style={styles.docGrid}>
+                      {[1, 2, 3, 4].map((docNum, dIdx) => (
+                        <div key={dIdx} style={styles.docBox}>
+                          <div style={{ fontSize: '13px', fontWeight: '700', color: '#1e293b', marginBottom: '4px' }}>
+                            Document {docNum}
+                          </div>
+                          <div style={{ fontSize: '11px', color: '#94a3b8', marginBottom: '12px' }}>
+                            PDF, JPG, PNG (Max 10MB)
+                          </div>
+                          <label style={styles.uploadBtnLabel}>
+                            <Upload size={14} /> Choose File
+                            <input
+                              type="file"
+                              style={{ display: 'none' }}
+                              accept=".pdf,.jpg,.jpeg,.png"
+                              onChange={(e) => handleFileUpload(idx, dIdx, e.target.files[0])}
+                            />
+                          </label>
+                          {emp.documents[dIdx] && (
+                            <div
+                              style={{
+                                fontSize: '11px',
+                                color: '#059669',
+                                marginTop: '6px',
+                                textOverflow: 'ellipsis',
+                                overflow: 'hidden',
+                                whiteSpace: 'nowrap',
+                              }}
+                            >
+                              {emp.documents[dIdx].name}
+                            </div>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              ))}
+
+              <button onClick={addEmployer} style={styles.btnDashedAdd}>
+                + Add Employer
+              </button>
+
+              <div style={styles.footer}>
+                <button onClick={prevStep} style={styles.btnSecondary}>
+                  <ChevronLeft size={16} /> Back
+                </button>
+                <button onClick={nextStep} style={styles.btnPrimary}>
+                  <span>Continue</span>
+                  <ChevronRight size={16} />
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* STEP 5: DOCUMENT UPLOAD & OCR VERIFICATION */}
+          {currentStep === 5 && (
+            <div>
+              <span style={styles.stepBadge}>Step 5 of 7</span>
+              <h2 style={styles.stepHeaderTitle}>Document Upload</h2>
+              <p style={styles.subtitle}>
+                Upload a supporting certificate. Our AI will extract and verify content automatically.
+              </p>
+
+              {uploadedFile && (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                  <div style={{ ...styles.sectionBox, ...styles.flexRowBetween, padding: '12px 16px', margin: 0 }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                      <FileText color="#2563eb" size={24} />
+                      <div>
+                        <h4 style={{ fontSize: '13px', fontWeight: '700', margin: 0 }}>{uploadedFile.name}</h4>
+                        <span style={{ fontSize: '11px', color: '#94a3b8' }}>{uploadedFile.status}</span>
+                      </div>
+                    </div>
+                    <X size={16} color="#94a3b8" style={{ cursor: 'pointer' }} onClick={() => setUploadedFile(null)} />
+                  </div>
+
+                  <div style={styles.sectionBox}>
+                    <div style={{ ...styles.flexRowBetween, marginBottom: '8px' }}>
+                      <span style={styles.label}>AI Confidence Score</span>
+                      <span style={{ fontSize: '18px', fontWeight: '700', color: '#0f172a' }}>96%</span>
+                    </div>
+                    <div style={styles.progressBarBg}>
+                      <div style={styles.progressBarFill} />
+                    </div>
+                  </div>
+
+                  <div style={{ border: '1px solid #e2e8f0', borderRadius: '12px', overflow: 'hidden' }}>
+                    <div style={{ backgroundColor: '#f8fafc', padding: '10px 16px', borderBottom: '1px solid #e2e8f0' }}>
+                      <span style={styles.label}>OCR Extracted Fields</span>
+                    </div>
+                    {uploadedFile.ocrData.map((row, i) => (
+                      <div
+                        key={i}
+                        style={{
+                          ...styles.ocrRow,
+                          borderBottom: i < uploadedFile.ocrData.length - 1 ? '1px solid #f1f5f9' : 'none',
+                        }}
+                      >
+                        <span style={{ color: '#64748b' }}>{row.label}</span>
+                        <span style={{ fontFamily: 'monospace', fontWeight: '700' }}>{row.value}</span>
+                        <span style={styles.badgeGreen}>✓ Match</span>
+                      </div>
+                    ))}
+                  </div>
+
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+                    <button onClick={nextStep} style={styles.btnAccept}>
+                      <Check size={16} /> Auto Accept
+                    </button>
+                    <button onClick={nextStep} style={styles.btnFlag}>
+                      <Eye size={16} /> Flag for Review
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              <div style={styles.footer}>
+                <button onClick={prevStep} style={styles.btnSecondary}>
+                  <ChevronLeft size={16} /> Back
+                </button>
+                <button onClick={nextStep} style={styles.btnPrimary}>
+                  <span>Continue</span>
+                  <ChevronRight size={16} />
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* STEP 6: REVIEW & SUBMIT */}
+          {currentStep === 6 && (
+            <div>
+              <span style={styles.stepBadge}>Step 6 of 7</span>
+              <h2 style={styles.stepHeaderTitle}>Review & Submit</h2>
+              <p style={styles.subtitle}>Verify all information before submitting your verification request.</p>
+
+              <div style={styles.sectionBox}>
+                <div style={{ ...styles.flexRowBetween, marginBottom: '12px' }}>
+                  <h3 style={styles.sectionTitle}>Personal Information</h3>
+                  <span
+                    onClick={() => setCurrentStep(3)}
+                    style={{ color: '#2563eb', fontSize: '12px', fontWeight: '600', cursor: 'pointer' }}
+                  >
+                    Edit
+                  </span>
+                </div>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', fontSize: '13px' }}>
+                  <div>
+                    <span style={{ color: '#94a3b8' }}>Full Name</span>
+                    <p style={{ fontWeight: '700', margin: '2px 0' }}>{personalDetails.fullName || 'Not provided'}</p>
+                  </div>
+                  <div>
+                    <span style={{ color: '#94a3b8' }}>Mobile</span>
+                    <p style={{ fontWeight: '700', margin: '2px 0' }}>{personalDetails.mobile || 'Not provided'}</p>
+                  </div>
+                  <div>
+                    <span style={{ color: '#94a3b8' }}>Email</span>
+                    <p style={{ fontWeight: '700', margin: '2px 0' }}>{personalDetails.email || 'Not provided'}</p>
+                  </div>
+                </div>
+              </div>
+
+              <div style={styles.sectionBoxAmber}>
+                <label style={{ display: 'flex', gap: '10px', cursor: 'pointer' }}>
+                  <input
+                    type="checkbox"
+                    checked={declarationAccepted}
+                    onChange={(e) => setDeclarationAccepted(e.target.checked)}
+                    style={{ marginTop: '2px' }}
+                  />
+                  <span style={{ fontSize: '12px', color: '#475569', lineHeight: '1.4' }}>
+                    I hereby declare that all information provided is true and accurate to the best of my knowledge.
+                  </span>
+                </label>
+              </div>
+
+              <div style={styles.footer}>
+                <button onClick={prevStep} style={styles.btnSecondary}>
+                  <ChevronLeft size={16} /> Back
+                </button>
+                <button
+                  onClick={nextStep}
+                  disabled={!declarationAccepted}
+                  style={{
+                    ...styles.btnPrimary,
+                    opacity: declarationAccepted ? 1 : 0.5,
+                    cursor: declarationAccepted ? 'pointer' : 'not-allowed',
+                  }}
+                >
+                  <span>Submit for Verification</span>
+                  <ChevronRight size={16} />
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* STEP 7: VERIFICATION SUBMITTED */}
+          {currentStep === 7 && (
+            <div style={{ textAlign: 'center' }}>
+              <div style={styles.successIconCircle}>
+                <Check size={36} />
+              </div>
+              <h2 style={styles.stepHeaderTitle}>Verification Submitted</h2>
+              <p style={{ ...styles.subtitle, fontSize: '13px' }}>
+                Your background verification request has been submitted. We will notify you at{' '}
+                <b>{personalDetails.email || 'your email'}</b>.
+              </p>
+
+              <div style={{ ...styles.sectionBox, textAlign: 'left' }}>
+                <h3 style={styles.sectionTitle}>Reference Details</h3>
+                <div style={{ ...styles.flexColumnGap, gap: '8px', fontSize: '13px' }}>
+                  <div style={styles.flexRowBetween}>
+                    <span style={{ color: '#94a3b8' }}>Case ID</span>
+                    <span style={{ fontFamily: 'monospace', fontWeight: '700' }}>BGV-2026-08734</span>
+                  </div>
+                  <div style={styles.flexRowBetween}>
+                    <span style={{ color: '#94a3b8' }}>Submitted</span>
+                    <span style={{ fontWeight: '700' }}>06 September 2026</span>
+                  </div>
+                  <div style={styles.flexRowBetween}>
+                    <span style={{ color: '#94a3b8' }}>Company</span>
+                    <span style={{ fontWeight: '700' }}>Accenture Solutions Pvt. Ltd.</span>
+                  </div>
+                </div>
+              </div>
+
+              <button style={styles.btnOutlineFull}>
+                <Download size={16} /> Download Acknowledgment PDF
               </button>
             </div>
-          </div>
-        )}
+          )}
 
-        {/* STEP 6: REVIEW & SUBMIT */}
-        {currentStep === 6 && (
-          <div>
-            <span style={styles.stepBadge}>Step 6 of 7</span>
-            <h2 style={styles.stepHeaderTitle}>Review & Submit</h2>
-            <p style={styles.subtitle}>Verify all information before submitting your verification request.</p>
-
-            <div style={styles.sectionBox}>
-              <div style={{ ...styles.flexRowBetween, marginBottom: '12px' }}>
-                <h3 style={styles.sectionTitle}>Personal Information</h3>
-                <span onClick={() => setCurrentStep(3)} style={{ color: '#2563eb', fontSize: '12px', fontWeight: '600', cursor: 'pointer' }}>Edit</span>
-              </div>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', fontSize: '13px' }}>
-                <div><span style={{ color: '#94a3b8' }}>Full Name</span><p style={{ fontWeight: '700', margin: '2px 0' }}>{personalDetails.fullName}</p></div>
-                <div><span style={{ color: '#94a3b8' }}>Mobile</span><p style={{ fontWeight: '700', margin: '2px 0' }}>{personalDetails.mobile}</p></div>
-                <div><span style={{ color: '#94a3b8' }}>Email</span><p style={{ fontWeight: '700', margin: '2px 0' }}>{personalDetails.email}</p></div>
-              </div>
-            </div>
-
-            <div style={styles.sectionBoxAmber}>
-              <label style={{ display: 'flex', gap: '10px', cursor: 'pointer' }}>
-                <input type="checkbox" checked={declarationAccepted} onChange={(e) => setDeclarationAccepted(e.target.checked)} style={{ marginTop: '2px' }} />
-                <span style={{ fontSize: '12px', color: '#475569', lineHeight: '1.4' }}>
-                  I hereby declare that all information provided is true and accurate to the best of my knowledge.
-                </span>
-              </label>
-            </div>
-
-            <div style={styles.footer}>
-              <button onClick={prevStep} style={styles.btnSecondary}><ChevronLeft size={16} /> Back</button>
-              <button onClick={nextStep} disabled={!declarationAccepted} style={{ ...styles.btnPrimary, opacity: declarationAccepted ? 1 : 0.5, cursor: declarationAccepted ? 'pointer' : 'not-allowed' }}>
-                <span>Submit for Verification</span>
-                <ChevronRight size={16} />
-              </button>
-            </div>
-          </div>
-        )}
-
-        {/* STEP 7: VERIFICATION SUBMITTED */}
-        {currentStep === 7 && (
-          <div style={{ textAlign: 'center' }}>
-            <div style={styles.successIconCircle}>
-              <Check size={36} />
-            </div>
-            <h2 style={styles.stepHeaderTitle}>Verification Submitted</h2>
-            <p style={{ ...styles.subtitle, fontSize: '13px' }}>
-              Your background verification request has been submitted. We will notify you at <b>{personalDetails.email}</b>.
-            </p>
-
-            <div style={{ ...styles.sectionBox, textAlign: 'left' }}>
-              <h3 style={styles.sectionTitle}>Reference Details</h3>
-              <div style={{ ...styles.flexColumnGap, gap: '8px', fontSize: '13px' }}>
-                <div style={styles.flexRowBetween}><span style={{ color: '#94a3b8' }}>Case ID</span><span style={{ fontFamily: 'monospace', fontWeight: '700' }}>BGV-2024-08734</span></div>
-                <div style={styles.flexRowBetween}><span style={{ color: '#94a3b8' }}>Submitted</span><span style={{ fontWeight: '700' }}>25 August 2026</span></div>
-                <div style={styles.flexRowBetween}><span style={{ color: '#94a3b8' }}>Company</span><span style={{ fontWeight: '700' }}>Accenture Solutions Pvt. Ltd.</span></div>
-              </div>
-            </div>
-
-            <button style={styles.btnOutlineFull}>
-              <Download size={16} /> Download Acknowledgment PDF
-            </button>
-          </div>
-        )}
-
+        </div>
       </div>
     </div>
   );
