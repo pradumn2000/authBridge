@@ -9,11 +9,8 @@ import {
   X, 
   GraduationCap, 
   Briefcase, 
-  Phone, 
-  Mail, 
-  Clock, 
-  Download,
-  Eye
+  Eye,
+  Download
 } from 'lucide-react';
 
 export default function CandidateVerificationWizard() {
@@ -39,8 +36,20 @@ export default function CandidateVerificationWizard() {
   const [qualifications, setQualifications] = useState([
     { university: '', degree: '', passingYear: '' }
   ]);
+  
+  // Employment state matching required fields
   const [employers, setEmployers] = useState([
-    { company: '', designation: '', employeeId: '', joiningDate: '', leavingDate: '', hrContact: '' }
+    { 
+      companyName: '', 
+      designation: '', 
+      employeeId: '', 
+      hrEmail: '', 
+      hrPhoneCode: '+91',
+      hrPhone: '', 
+      doj: '', 
+      doe: '',
+      documents: [null, null, null, null]
+    }
   ]);
 
   // Step 5 Document Upload State
@@ -70,10 +79,35 @@ export default function CandidateVerificationWizard() {
   };
 
   const addEmployer = () => {
-    setEmployers([...employers, { company: '', designation: '', employeeId: '', joiningDate: '', leavingDate: '', hrContact: '' }]);
+    setEmployers([
+      ...employers, 
+      { 
+        companyName: '', 
+        designation: '', 
+        employeeId: '', 
+        hrEmail: '', 
+        hrPhoneCode: '+91',
+        hrPhone: '', 
+        doj: '', 
+        doe: '',
+        documents: [null, null, null, null]
+      }
+    ]);
   };
 
-  // Stepper Header (Steps 2 to 7)
+  const handleEmployerChange = (index, field, value) => {
+    const updated = [...employers];
+    updated[index][field] = value;
+    setEmployers(updated);
+  };
+
+  const handleFileUpload = (empIndex, docIndex, file) => {
+    const updated = [...employers];
+    updated[empIndex].documents[docIndex] = file;
+    setEmployers(updated);
+  };
+
+  // Stepper Header
   const renderStepper = () => (
     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', padding: '16px 0', marginBottom: '16px' }}>
       {[1, 2, 3, 4, 5, 6, 7].map((step) => {
@@ -129,7 +163,7 @@ export default function CandidateVerificationWizard() {
     },
     card: {
       width: '100%',
-      maxWidth: '640px',
+      maxWidth: '850px',
       backgroundColor: '#ffffff',
       borderRadius: '16px',
       boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1)',
@@ -157,9 +191,10 @@ export default function CandidateVerificationWizard() {
       display: 'block',
       fontSize: '11px',
       fontWeight: '700',
-      color: '#64748b',
+      color: '#475569',
       textTransform: 'uppercase',
-      marginBottom: '4px'
+      marginBottom: '6px',
+      letterSpacing: '0.02em'
     },
     input: {
       width: '100%',
@@ -168,13 +203,33 @@ export default function CandidateVerificationWizard() {
       borderRadius: '8px',
       fontSize: '14px',
       outline: 'none',
-      boxSizing: 'border-box'
+      boxSizing: 'border-box',
+      color: '#1e293b'
+    },
+    grid3: {
+      display: 'grid',
+      gridTemplateColumns: '1fr 1fr 1fr',
+      gap: '16px',
+      marginBottom: '16px'
     },
     grid2: {
       display: 'grid',
       gridTemplateColumns: '1fr 1fr',
       gap: '16px',
+      marginBottom: '16px'
+    },
+    docGrid: {
+      display: 'grid',
+      gridTemplateColumns: 'repeat(4, 1fr)',
+      gap: '12px',
       marginTop: '12px'
+    },
+    docBox: {
+      border: '1px dashed #cbd5e1',
+      borderRadius: '8px',
+      padding: '16px 8px',
+      textAlign: 'center',
+      backgroundColor: '#ffffff'
     },
     btnPrimary: {
       backgroundColor: '#0f172a',
@@ -202,7 +257,7 @@ export default function CandidateVerificationWizard() {
     },
     footer: {
       display: 'flex',
-      justifyContent: 'space-between',
+      justify: 'space-between',
       alignItems: 'center',
       paddingTop: '16px',
       borderTop: '1px solid #f1f5f9',
@@ -215,7 +270,7 @@ export default function CandidateVerificationWizard() {
       
       {/* INITIAL LAUNCH BUTTON */}
       {!isOpen ? (
-        <div style={{ ...styles.card, padding: '32px', textCenter: 'center', textAlign: 'center', maxWidth: '400px' }}>
+        <div style={{ ...styles.card, padding: '32px', textAlign: 'center', maxWidth: '400px' }}>
           <div style={{ width: '64px', height: '64px', backgroundColor: '#eff6ff', color: '#2563eb', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px auto' }}>
             <ShieldCheck size={32} />
           </div>
@@ -287,7 +342,6 @@ export default function CandidateVerificationWizard() {
                 <h2 style={{ fontSize: '24px', fontWeight: '700', color: '#0f172a', margin: '4px 0' }}>Consent & Verification</h2>
                 <p style={{ color: '#64748b', fontSize: '14px', marginBottom: '24px' }}>Verify your mobile number and provide consent under DPDP Act.</p>
 
-                {/* Mobile OTP Box */}
                 <div style={styles.sectionBox}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
                     <label style={styles.label}>Mobile Number Verification</label>
@@ -304,7 +358,6 @@ export default function CandidateVerificationWizard() {
                   </div>
                 </div>
 
-                {/* DPDP Consent */}
                 <div style={{ ...styles.sectionBox, backgroundColor: '#f8fafc' }}>
                   <label style={styles.label}>Data Protection Consent (DPDP Act 2023)</label>
                   <div style={{ height: '120px', overflowY: 'auto', border: '1px solid #e2e8f0', borderRadius: '8px', padding: '12px', backgroundColor: '#ffffff', fontSize: '12px', color: '#475569', lineHeight: '1.5' }}>
@@ -420,7 +473,6 @@ export default function CandidateVerificationWizard() {
                 <h2 style={{ fontSize: '24px', fontWeight: '700', color: '#0f172a', margin: '4px 0' }}>Education & Employment</h2>
                 <p style={{ color: '#64748b', fontSize: '14px', marginBottom: '24px' }}>Add your qualifications and professional history.</p>
 
-                {/* Sub Tab Navigation */}
                 <div style={{ display: 'flex', border: '1px solid #e2e8f0', borderRadius: '8px', padding: '4px', backgroundColor: '#f8fafc', marginBottom: '20px' }}>
                   <button
                     onClick={() => setStep4Tab('education')}
@@ -492,23 +544,135 @@ export default function CandidateVerificationWizard() {
                   </div>
                 ) : (
                   <div>
-                    {employers.map((_, idx) => (
+                    {employers.map((emp, idx) => (
                       <div key={idx} style={styles.sectionBox}>
-                        <h3 style={styles.sectionTitle}>Employer {idx + 1}</h3>
-                        <div style={{ marginBottom: '12px' }}>
-                          <label style={styles.label}>Company Name</label>
-                          <input type="text" placeholder="e.g. Tata Consultancy Services" style={styles.input} />
-                        </div>
-                        <div style={styles.grid2}>
+                        <div style={styles.grid3}>
                           <div>
-                            <label style={styles.label}>Designation</label>
-                            <input type="text" placeholder="e.g. Software Engineer" style={styles.input} />
+                            <label style={styles.label}>Company Name *</label>
+                            <input 
+                              type="text" 
+                              placeholder="Enter company name" 
+                              style={styles.input}
+                              value={emp.companyName}
+                              onChange={(e) => handleEmployerChange(idx, 'companyName', e.target.value)}
+                            />
+                          </div>
+                          <div>
+                            <label style={styles.label}>Designation *</label>
+                            <input 
+                              type="text" 
+                              placeholder="Enter designation" 
+                              style={styles.input}
+                              value={emp.designation}
+                              onChange={(e) => handleEmployerChange(idx, 'designation', e.target.value)}
+                            />
                           </div>
                           <div>
                             <label style={styles.label}>Employee ID</label>
-                            <input type="text" placeholder="TCS20XXXX" style={styles.input} />
+                            <input 
+                              type="text" 
+                              placeholder="Enter employee ID" 
+                              style={styles.input}
+                              value={emp.employeeId}
+                              onChange={(e) => handleEmployerChange(idx, 'employeeId', e.target.value)}
+                            />
                           </div>
                         </div>
+
+                        <div style={styles.grid2}>
+                          <div>
+                            <label style={styles.label}>HR Email ID *</label>
+                            <input 
+                              type="email" 
+                              placeholder="Enter HR email ID" 
+                              style={styles.input}
+                              value={emp.hrEmail}
+                              onChange={(e) => handleEmployerChange(idx, 'hrEmail', e.target.value)}
+                            />
+                          </div>
+                          <div>
+                            <label style={styles.label}>HR Phone Number *</label>
+                            <div style={{ display: 'flex', gap: '8px' }}>
+                              <select 
+                                style={{ ...styles.input, width: '80px' }}
+                                value={emp.hrPhoneCode}
+                                onChange={(e) => handleEmployerChange(idx, 'hrPhoneCode', e.target.value)}
+                              >
+                                <option value="+91">+91</option>
+                              </select>
+                              <input 
+                                type="text" 
+                                placeholder="Enter phone number" 
+                                style={{ ...styles.input, flex: 1 }}
+                                value={emp.hrPhone}
+                                onChange={(e) => handleEmployerChange(idx, 'hrPhone', e.target.value)}
+                              />
+                            </div>
+                          </div>
+                        </div>
+
+                        <div style={styles.grid2}>
+                          <div>
+                            <label style={styles.label}>Date of Joining (DOJ) *</label>
+                            <input 
+                              type="date" 
+                              style={styles.input}
+                              value={emp.doj}
+                              onChange={(e) => handleEmployerChange(idx, 'doj', e.target.value)}
+                            />
+                          </div>
+                          <div>
+                            <label style={styles.label}>Date of Exit (DOE) *</label>
+                            <input 
+                              type="date" 
+                              style={styles.input}
+                              value={emp.doe}
+                              onChange={(e) => handleEmployerChange(idx, 'doe', e.target.value)}
+                            />
+                          </div>
+                        </div>
+
+                        <div>
+                          <label style={styles.label}>Documents * (Upload up to 4 documents)</label>
+                          <div style={styles.docGrid}>
+                            {[1, 2, 3, 4].map((docNum, dIdx) => (
+                              <div key={dIdx} style={styles.docBox}>
+                                <div style={{ fontSize: '13px', fontWeight: '700', color: '#1e293b', marginBottom: '4px' }}>
+                                  Document {docNum}
+                                </div>
+                                <div style={{ fontSize: '11px', color: '#94a3b8', marginBottom: '12px' }}>
+                                  PDF, JPG, PNG (Max 10MB)
+                                </div>
+                                <label style={{
+                                  display: 'inline-flex',
+                                  alignItems: 'center',
+                                  gap: '6px',
+                                  backgroundColor: '#eff6ff',
+                                  color: '#2563eb',
+                                  padding: '6px 12px',
+                                  borderRadius: '6px',
+                                  fontSize: '12px',
+                                  fontWeight: '600',
+                                  cursor: 'pointer'
+                                }}>
+                                  <Upload size={14} /> Choose File
+                                  <input 
+                                    type="file" 
+                                    style={{ display: 'none' }}
+                                    accept=".pdf,.jpg,.jpeg,.png"
+                                    onChange={(e) => handleFileUpload(idx, dIdx, e.target.files[0])}
+                                  />
+                                </label>
+                                {emp.documents[dIdx] && (
+                                  <div style={{ fontSize: '11px', color: '#059669', marginTop: '6px', textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap' }}>
+                                    {emp.documents[dIdx].name}
+                                  </div>
+                                )}
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+
                       </div>
                     ))}
                     <button onClick={addEmployer} style={{ width: '100%', border: '2px dashed #cbd5e1', backgroundColor: 'transparent', color: '#2563eb', padding: '12px', borderRadius: '8px', fontWeight: '600', cursor: 'pointer' }}>+ Add Employer</button>
@@ -545,7 +709,6 @@ export default function CandidateVerificationWizard() {
                       <X size={16} color="#94a3b8" style={{ cursor: 'pointer' }} onClick={() => setUploadedFile(null)} />
                     </div>
 
-                    {/* AI Confidence */}
                     <div style={styles.sectionBox}>
                       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
                         <span style={styles.label}>AI Confidence Score</span>
@@ -556,7 +719,6 @@ export default function CandidateVerificationWizard() {
                       </div>
                     </div>
 
-                    {/* OCR Data */}
                     <div style={{ border: '1px solid #e2e8f0', borderRadius: '12px', overflow: 'hidden' }}>
                       <div style={{ backgroundColor: '#f8fafc', padding: '10px 16px', borderBottom: '1px solid #e2e8f0' }}>
                         <span style={styles.label}>OCR Extracted Fields</span>
@@ -570,7 +732,6 @@ export default function CandidateVerificationWizard() {
                       ))}
                     </div>
 
-                    {/* Actions */}
                     <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
                       <button style={{ backgroundColor: '#059669', color: '#ffffff', border: 'none', padding: '10px', borderRadius: '8px', fontWeight: '600', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
                         <Check size={16} /> Auto Accept
@@ -622,7 +783,7 @@ export default function CandidateVerificationWizard() {
 
                 <div style={styles.footer}>
                   <button onClick={prevStep} style={styles.btnSecondary}><ChevronLeft size={16} /> Back</button>
-                  <button onClick={nextStep} disabled={!declarationAccepted} style={{ ...styles.btnPrimary, opacity: declarationAccepted ? 1 : 0.5 }}>
+                  <button onClick={nextStep} disabled={!declarationAccepted} style={{ ...styles.btnPrimary, opacity: declarationAccepted ? 1 : 0.5, cursor: declarationAccepted ? 'pointer' : 'not-allowed' }}>
                     <span>Submit for Verification</span>
                     <ChevronRight size={16} />
                   </button>
