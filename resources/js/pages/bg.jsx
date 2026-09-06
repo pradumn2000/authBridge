@@ -1152,13 +1152,14 @@ export default function CandidateVerificationWizard() {
     currentAddress: '',
     permanentAddress: '',
     panNumber: '',
-    aadhaarNumber: ''
+    aadhaarNumber: '',
+    candidateDate: ''
   });
 
   // Step 4 Tabs: 'education' | 'employment'
   const [step4Tab, setStep4Tab] = useState('education');
 
-  // Education state updated as per screenshot design
+  // Education state
   const [qualifications, setQualifications] = useState([
     { 
       qualificationType: '', 
@@ -1264,6 +1265,12 @@ export default function CandidateVerificationWizard() {
         documents: [null, null, null, null]
       }
     ]);
+  };
+
+  const removeEmployer = (index) => {
+    if (employers.length > 1) {
+      setEmployers(employers.filter((_, i) => i !== index));
+    }
   };
 
   const handleEmployerChange = (index, field, value) => {
@@ -1422,6 +1429,13 @@ export default function CandidateVerificationWizard() {
       display: 'flex',
       alignItems: 'center',
       gap: '8px'
+    },
+    sectionTitleCentered: {
+      fontSize: '14px',
+      fontWeight: '700',
+      color: '#2563eb',
+      textAlign: 'center',
+      marginBottom: '16px'
     },
     label: {
       display: 'block',
@@ -2271,8 +2285,44 @@ export default function CandidateVerificationWizard() {
                   </div>
                 ) : (
                   <div>
+                    {/* CANDIDATE DETAILS SECTION (IMAGE SEED DESIGN) */}
+                    <div style={styles.sectionBox}>
+                      <h3 style={styles.sectionTitleCentered}>Candidate Details</h3>
+                      <div style={styles.grid2}>
+                        <div>
+                          <label style={styles.label}>CANDIDATE NAME *</label>
+                          <input 
+                            type="text" 
+                            placeholder="Enter candidate name" 
+                            style={styles.input}
+                            value={personalDetails.fullName}
+                            onChange={(e) => setPersonalDetails({ ...personalDetails, fullName: e.target.value })}
+                          />
+                        </div>
+                        <div>
+                          <label style={styles.label}>DATE *</label>
+                          <input 
+                            type="date" 
+                            style={styles.input}
+                            value={personalDetails.candidateDate}
+                            onChange={(e) => setPersonalDetails({ ...personalDetails, candidateDate: e.target.value })}
+                          />
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* EMPLOYERS LIST */}
                     {employers.map((emp, idx) => (
                       <div key={idx} style={styles.sectionBox}>
+                        <div style={{ ...styles.flexRowBetween, marginBottom: '16px' }}>
+                          <h3 style={styles.sectionTitle}>Employer {idx + 1}</h3>
+                          {employers.length > 1 && (
+                            <button onClick={() => removeEmployer(idx)} style={styles.btnRemove}>
+                              Remove
+                            </button>
+                          )}
+                        </div>
+
                         <div style={styles.grid3}>
                           <div>
                             <label style={styles.label}>Company Name *</label>
