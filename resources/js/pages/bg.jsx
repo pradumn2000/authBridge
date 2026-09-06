@@ -800,188 +800,272 @@ export default function CandidateVerificationWizard() {
             )}
 
             {/* STEP 4: EDUCATION & EMPLOYMENT */}
-            {currentStep === 4 && (
-              <div>
-                <span style={styles.stepBadge}>Step 4 of 7</span>
-                <h2 style={styles.stepHeaderTitle}>Education & Employment</h2>
-                <p style={styles.subtitle}>Add your qualifications and professional history.</p>
+           {/* EDUCATION TAB / STEP */}
+{currentStep === 4 && (
+  <div>
+    <span style={styles.stepBadge}>Step 4 of 7</span>
+    
+    {/* SECTION 1: CANDIDATE INFORMATION */}
+    <div style={{ ...styles.sectionBox, marginBottom: '24px' }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', marginBottom: '16px', color: '#1e1b4b', fontWeight: '700' }}>
+        <User size={18} />
+        <span>Candidate Information</span>
+      </div>
+      
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: '12px' }}>
+        <div>
+          <label style={styles.label}>CANDIDATE NAME *</label>
+          <input 
+            type="text" 
+            placeholder="Enter Candidate Name" 
+            style={styles.input} 
+            value={candidateDetails.name || ''} 
+            onChange={(e) => handleCandidateChange('name', e.target.value)}
+          />
+        </div>
+        <div>
+          <label style={styles.label}>CANDIDATE ID *</label>
+          <input 
+            type="text" 
+            placeholder="Enter Candidate ID" 
+            style={styles.input} 
+            value={candidateDetails.id || ''} 
+            onChange={(e) => handleCandidateChange('id', e.target.value)}
+          />
+        </div>
+        <div>
+          <label style={styles.label}>CLIENT NAME *</label>
+          <input 
+            type="text" 
+            placeholder="Enter Client Name" 
+            style={styles.input} 
+            value={candidateDetails.clientName || ''} 
+            onChange={(e) => handleCandidateChange('clientName', e.target.value)}
+          />
+        </div>
+        <div>
+          <label style={styles.label}>MOBILE NUMBER *</label>
+          <input 
+            type="text" 
+            placeholder="Enter Mobile Number" 
+            style={styles.input} 
+            value={candidateDetails.mobile || ''} 
+            onChange={(e) => handleCandidateChange('mobile', e.target.value)}
+          />
+        </div>
+        <div>
+          <label style={styles.label}>EMAIL ADDRESS *</label>
+          <input 
+            type="email" 
+            placeholder="Enter Email Address" 
+            style={styles.input} 
+            value={candidateDetails.email || ''} 
+            onChange={(e) => handleCandidateChange('email', e.target.value)}
+          />
+        </div>
+      </div>
+    </div>
 
-                <div style={styles.tabContainer}>
-                  <button
-                    onClick={() => setStep4Tab('education')}
-                    style={step4Tab === 'education' ? styles.tabBtnActive : styles.tabBtnInactive}
-                  >
-                    <GraduationCap size={16} /> Education
-                  </button>
-                  <button
-                    onClick={() => setStep4Tab('employment')}
-                    style={step4Tab === 'employment' ? styles.tabBtnActive : styles.tabBtnInactive}
-                  >
-                    <Briefcase size={16} /> Employment
-                  </button>
+    {/* SECTION 2: QUALIFICATIONS LIST */}
+    {qualifications.map((qual, qIdx) => (
+      <div key={qIdx} style={{ ...styles.sectionBox, marginBottom: '20px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontWeight: '700', fontSize: '15px' }}>
+            <GripVertical size={16} color="#64748b" />
+            <span>Qualification {qIdx + 1}</span>
+          </div>
+          {qualifications.length > 1 && (
+            <button 
+              onClick={() => removeQualification(qIdx)} 
+              style={{ background: 'none', border: 'none', color: '#ef4444', cursor: 'pointer', fontSize: '12px', fontWeight: '600' }}
+            >
+              Remove
+            </button>
+          )}
+        </div>
+
+        {/* ROW 1: Qualification Type, Course/Stream, Specialization, Institute, Board */}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: '12px', marginBottom: '16px' }}>
+          <div>
+            <label style={styles.label}>Qualification Type *</label>
+            <select 
+              style={styles.input} 
+              value={qual.type || ''} 
+              onChange={(e) => handleQualChange(qIdx, 'type', e.target.value)}
+            >
+              <option value="">Select Qualification Type</option>
+              <option value="10th">10th</option>
+              <option value="12th">12th</option>
+              <option value="Graduation">Graduation</option>
+              <option value="Post Graduation">Post Graduation</option>
+            </select>
+          </div>
+
+          <div>
+            <label style={styles.label}>Course / Stream *</label>
+            <select 
+              style={styles.input} 
+              value={qual.stream || ''} 
+              onChange={(e) => handleQualChange(qIdx, 'stream', e.target.value)}
+            >
+              <option value="">Select Course / Stream</option>
+              <option value="B.Tech">B.Tech</option>
+              <option value="B.Sc">B.Sc</option>
+              <option value="B.Com">B.Com</option>
+              <option value="B.A">B.A</option>
+            </select>
+          </div>
+
+          <div>
+            <label style={styles.label}>Specialization (Optional)</label>
+            <input 
+              type="text" 
+              placeholder="Enter Specialization" 
+              style={styles.input} 
+              value={qual.specialization || ''} 
+              onChange={(e) => handleQualChange(qIdx, 'specialization', e.target.value)}
+            />
+          </div>
+
+          <div>
+            <label style={styles.label}>Institute / University *</label>
+            <select 
+              style={styles.input} 
+              value={qual.institute || ''} 
+              onChange={(e) => handleQualChange(qIdx, 'institute', e.target.value)}
+            >
+              <option value="">Enter Institute / School / Univer</option>
+              <option value="University A">University A</option>
+              <option value="University B">University B</option>
+            </select>
+          </div>
+
+          <div>
+            <label style={styles.label}>Board / University *</label>
+            <select 
+              style={styles.input} 
+              value={qual.board || ''} 
+              onChange={(e) => handleQualChange(qIdx, 'board', e.target.value)}
+            >
+              <option value="">Select Board / University</option>
+              <option value="CBSE">CBSE</option>
+              <option value="ICSE">ICSE</option>
+              <option value="State Board">State Board</option>
+            </select>
+          </div>
+        </div>
+
+        {/* ROW 2: National/International, Mode of Study, Year of Passing, Education Charges */}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: '12px', marginBottom: '20px', alignItems: 'center' }}>
+          <div>
+            <label style={styles.label}>National / International *</label>
+            <div style={{ display: 'flex', gap: '12px', marginTop: '8px', fontSize: '13px' }}>
+              <label style={{ display: 'flex', alignItems: 'center', gap: '4px', cursor: 'pointer' }}>
+                <input 
+                  type="radio" 
+                  name={`region-${qIdx}`} 
+                  value="National" 
+                  checked={qual.region === 'National'} 
+                  onChange={(e) => handleQualChange(qIdx, 'region', e.target.value)} 
+                /> National
+              </label>
+              <label style={{ display: 'flex', alignItems: 'center', gap: '4px', cursor: 'pointer' }}>
+                <input 
+                  type="radio" 
+                  name={`region-${qIdx}`} 
+                  value="International" 
+                  checked={qual.region === 'International'} 
+                  onChange={(e) => handleQualChange(qIdx, 'region', e.target.value)} 
+                /> International
+              </label>
+            </div>
+          </div>
+
+          <div>
+            <label style={styles.label}>Mode of Study *</label>
+            <select 
+              style={styles.input} 
+              value={qual.mode || ''} 
+              onChange={(e) => handleQualChange(qIdx, 'mode', e.target.value)}
+            >
+              <option value="">Select Mode</option>
+              <option value="Full Time">Full Time</option>
+              <option value="Part Time">Part Time</option>
+              <option value="Distance">Distance</option>
+            </select>
+          </div>
+
+          <div>
+            <label style={styles.label}>Year of Passing *</label>
+            <input 
+              type="text" 
+              placeholder="YYYY" 
+              style={styles.input} 
+              value={qual.yearOfPassing || ''} 
+              onChange={(e) => handleQualChange(qIdx, 'yearOfPassing', e.target.value)}
+            />
+          </div>
+
+          <div>
+            <label style={styles.label}>Education Charges (₹)</label>
+            <input 
+              type="number" 
+              placeholder="Enter Charges" 
+              style={styles.input} 
+              value={qual.charges || ''} 
+              onChange={(e) => handleQualChange(qIdx, 'charges', e.target.value)}
+            />
+          </div>
+          <div></div>
+        </div>
+
+        {/* DOCUMENTS ATTACHMENT GRID */}
+        <div>
+          <label style={styles.label}>DOCUMENTS * (Upload up to 4 documents)</label>
+          <div style={styles.docGrid}>
+            {[1, 2, 3, 4].map((docNum, dIdx) => (
+              <div key={dIdx} style={styles.docBox}>
+                <div style={{ fontSize: '13px', fontWeight: '700', color: '#1e293b', marginBottom: '4px' }}>
+                  Document {docNum}
                 </div>
-
-                {step4Tab === 'education' ? (
-                  <div>
-                    {qualifications.map((_, idx) => (
-                      <div key={idx} style={styles.sectionBox}>
-                        <h3 style={styles.sectionTitle}>Qualification {idx + 1}</h3>
-                        <div style={{ marginBottom: '12px' }}>
-                          <label style={styles.label}>University / Institution</label>
-                          <input type="text" placeholder="e.g. University of Mumbai" style={styles.input} />
-                        </div>
-                        <div style={styles.grid2}>
-                          <div>
-                            <label style={styles.label}>Qualification</label>
-                            <select style={styles.input}>
-                              <option value="">Select degree</option>
-                              <option value="btech">Bachelor of Engineering</option>
-                            </select>
-                          </div>
-                          <div>
-                            <label style={styles.label}>Passing Year</label>
-                            <input type="text" placeholder="2019" style={styles.input} />
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                    <button onClick={addQualification} style={styles.btnDashedAdd}>+ Add Qualification</button>
-                  </div>
-                ) : (
-                  <div>
-                    {employers.map((emp, idx) => (
-                      <div key={idx} style={styles.sectionBox}>
-                        <div style={styles.grid3}>
-                          <div>
-                            <label style={styles.label}>Company Name *</label>
-                            <input 
-                              type="text" 
-                              placeholder="Enter company name" 
-                              style={styles.input}
-                              value={emp.companyName}
-                              onChange={(e) => handleEmployerChange(idx, 'companyName', e.target.value)}
-                            />
-                          </div>
-                          <div>
-                            <label style={styles.label}>Designation *</label>
-                            <input 
-                              type="text" 
-                              placeholder="Enter designation" 
-                              style={styles.input}
-                              value={emp.designation}
-                              onChange={(e) => handleEmployerChange(idx, 'designation', e.target.value)}
-                            />
-                          </div>
-                          <div>
-                            <label style={styles.label}>Employee ID</label>
-                            <input 
-                              type="text" 
-                              placeholder="Enter employee ID" 
-                              style={styles.input}
-                              value={emp.employeeId}
-                              onChange={(e) => handleEmployerChange(idx, 'employeeId', e.target.value)}
-                            />
-                          </div>
-                        </div>
-
-                        <div style={styles.grid2}>
-                          <div>
-                            <label style={styles.label}>HR Email ID *</label>
-                            <input 
-                              type="email" 
-                              placeholder="Enter HR email ID" 
-                              style={styles.input}
-                              value={emp.hrEmail}
-                              onChange={(e) => handleEmployerChange(idx, 'hrEmail', e.target.value)}
-                            />
-                          </div>
-                          <div>
-                            <label style={styles.label}>HR Phone Number *</label>
-                            <div style={{ display: 'flex', gap: '8px' }}>
-                              <select 
-                                style={{ ...styles.input, width: '80px' }}
-                                value={emp.hrPhoneCode}
-                                onChange={(e) => handleEmployerChange(idx, 'hrPhoneCode', e.target.value)}
-                              >
-                                <option value="+91">+91</option>
-                              </select>
-                              <input 
-                                type="text" 
-                                placeholder="Enter phone number" 
-                                style={{ ...styles.input, flex: 1 }}
-                                value={emp.hrPhone}
-                                onChange={(e) => handleEmployerChange(idx, 'hrPhone', e.target.value)}
-                              />
-                            </div>
-                          </div>
-                        </div>
-
-                        <div style={styles.grid2}>
-                          <div>
-                            <label style={styles.label}>Date of Joining (DOJ) *</label>
-                            <input 
-                              type="date" 
-                              style={styles.input}
-                              value={emp.doj}
-                              onChange={(e) => handleEmployerChange(idx, 'doj', e.target.value)}
-                            />
-                          </div>
-                          <div>
-                            <label style={styles.label}>Date of Exit (DOE) *</label>
-                            <input 
-                              type="date" 
-                              style={styles.input}
-                              value={emp.doe}
-                              onChange={(e) => handleEmployerChange(idx, 'doe', e.target.value)}
-                            />
-                          </div>
-                        </div>
-
-                        <div>
-                          <label style={styles.label}>Documents * (Upload up to 4 documents)</label>
-                          <div style={styles.docGrid}>
-                            {[1, 2, 3, 4].map((docNum, dIdx) => (
-                              <div key={dIdx} style={styles.docBox}>
-                                <div style={{ fontSize: '13px', fontWeight: '700', color: '#1e293b', marginBottom: '4px' }}>
-                                  Document {docNum}
-                                </div>
-                                <div style={{ fontSize: '11px', color: '#94a3b8', marginBottom: '12px' }}>
-                                  PDF, JPG, PNG (Max 10MB)
-                                </div>
-                                <label style={styles.uploadBtnLabel}>
-                                  <Upload size={14} /> Choose File
-                                  <input 
-                                    type="file" 
-                                    style={{ display: 'none' }}
-                                    accept=".pdf,.jpg,.jpeg,.png"
-                                    onChange={(e) => handleFileUpload(idx, dIdx, e.target.files[0])}
-                                  />
-                                </label>
-                                {emp.documents[dIdx] && (
-                                  <div style={{ fontSize: '11px', color: '#059669', marginTop: '6px', textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap' }}>
-                                    {emp.documents[dIdx].name}
-                                  </div>
-                                )}
-                              </div>
-                            ))}
-                          </div>
-                        </div>
-
-                      </div>
-                    ))}
-                    <button onClick={addEmployer} style={styles.btnDashedAdd}>+ Add Employer</button>
+                <div style={{ fontSize: '11px', color: '#94a3b8', marginBottom: '12px' }}>
+                  PDF, JPG, PNG (Max 10MB)
+                </div>
+                <label style={styles.uploadBtnLabel}>
+                  <Upload size={14} /> Choose File
+                  <input 
+                    type="file" 
+                    style={{ display: 'none' }}
+                    accept=".pdf,.jpg,.jpeg,.png"
+                    onChange={(e) => handleQualDocUpload(qIdx, dIdx, e.target.files[0])}
+                  />
+                </label>
+                {qual.documents && qual.documents[dIdx] && (
+                  <div style={{ fontSize: '11px', color: '#059669', marginTop: '6px', textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap' }}>
+                    {qual.documents[dIdx].name}
                   </div>
                 )}
-
-                <div style={styles.footer}>
-                  <button onClick={prevStep} style={styles.btnSecondary}><ChevronLeft size={16} /> Back</button>
-                  <button onClick={nextStep} style={styles.btnPrimary}>
-                    <span>Continue</span>
-                    <ChevronRight size={16} />
-                  </button>
-                </div>
               </div>
-            )}
+            ))}
+          </div>
+        </div>
+      </div>
+    ))}
+
+    <button onClick={addQualification} style={styles.btnDashedAdd}>+ Add Qualification</button>
+
+    {/* NAVIGATION FOOTER */}
+    <div style={styles.footer}>
+      <button onClick={prevStep} style={styles.btnSecondary}>
+        <ChevronLeft size={16} /> Back
+      </button>
+      <button onClick={nextStep} style={styles.btnPrimary}>
+        <span>Continue</span>
+        <ChevronRight size={16} />
+      </button>
+    </div>
+  </div>
+)}
 
             {/* STEP 5: DOCUMENT UPLOAD */}
             {currentStep === 5 && (
