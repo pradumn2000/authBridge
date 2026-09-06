@@ -406,7 +406,7 @@ export default function CandidateVerificationWizard() {
     },
     footer: {
       display: 'flex',
-      justify: 'space-between',
+      justifyContent: 'space-between',
       alignItems: 'center',
       paddingTop: '16px',
       borderTop: '1px solid #f1f5f9',
