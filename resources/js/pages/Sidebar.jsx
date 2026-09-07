@@ -241,108 +241,6 @@ const ROLE_NAV = {
      ======================================================= */
 
   admin: [
-<<<<<<< Updated upstream
-
-    {
-      path: "/dashboard",
-      label: "Dashboard",
-      img: "images/sidebar/home-icon.svg",
-    },
-
-    {
-      path: "/AllCases",
-      label: "All Cases",
-      img: "images/sidebar/cases-icon.svg",
-    },
-
-    {
-      path: "/AddCase",
-      label: "Add Case",
-      img: "images/sidebar/wip-icon.svg",
-    },
-
-
-    /* VERIFICATIONS */
-
-    {
-      label: "Verifications",
-      img: "images/sidebar/setting-icon.svg",
-      submenu: CHECK_TYPE_SUBMENU,
-      id: "checkType",
-    },
-
-
-    /* CLIENT MANAGEMENT */
-
-    {
-      label: "Client Management",
-      img: "images/sidebar/clients-icon.svg",
-      submenu: CLIENT_MANAGEMENT_SUBMENU,
-      id: "clientManagement",
-    },
-
-
-    {
-      path: "/Allocator",
-      label: "Case Allocation",
-      img: "images/sidebar/cases-icon.svg",
-    },
-
-    {
-      path: "/Verifyer",
-      label: "Verifier Cases",
-      img: "images/sidebar/setting-icon.svg",
-    },
-
-    {
-      path: "/Specialist",
-      label: "Report Writing",
-      img: "images/sidebar/report-icon.svg",
-    },
-
-    {
-      path: "/Intake",
-      label: "QC Intake",
-      img: "images/sidebar/cases-icon.svg",
-    },
-
-    {
-      path: "/UserManagement",
-      label: "User Management",
-      img: "images/sidebar/clients-icon.svg",
-    },
-
-    {
-      path: "/PendingRegistrations",
-      label: "Pending Registrations",
-      img: "images/sidebar/setting-icon.svg",
-    },
-
-    {
-      path: "/AddInstitution",
-      label: "Add Institution",
-      img: "images/sidebar/setting-icon.svg",
-    },
-
-    {
-      path: "/AddCompany",
-      label: "Add Company",
-      img: "images/sidebar/setting-icon.svg",
-    },
-
-    {
-      path: "/Apiintegretion",
-      label: "API Integration",
-      img: "images/sidebar/setting-icon.svg",
-    },
-
-    {
-      path: "/Settings",
-      label: "Settings",
-      img: "images/sidebar/setting-icon.svg",
-    },
-
-=======
     { path: "/dashboard",      label: "Dashboard",           img: "images/sidebar/home-icon.svg" },
     { path: "/AllCases",       label: "All Cases",           img: "images/sidebar/cases-icon.svg" },
     { path: "/AddCase",        label: "Add Client",          img: "images/sidebar/wip-icon.svg" },
@@ -357,7 +255,6 @@ const ROLE_NAV = {
     { path: "/AddCompany",     label: "Add Company",         img: "images/sidebar/setting-icon.svg" },
     { path: "/Apiintegretion", label: "API Integration",     img: "images/sidebar/setting-icon.svg" },
     { path: "/Settings",       label: "Settings",            img: "images/sidebar/setting-icon.svg" },
->>>>>>> Stashed changes
   ],
 
 
