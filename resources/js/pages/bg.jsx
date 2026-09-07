@@ -1117,8 +1117,6 @@
 //     </div>
 //   );
 // }
-
-
 import React, { useState } from 'react';
 import { 
   Check, 
@@ -1150,7 +1148,12 @@ export default function CandidateVerificationWizard() {
     mobile: '+91 98765 43210',
     email: 'priya.sharma@email.com',
     currentAddress: '',
+    currentAddressDocType: '',
+    currentAddressDocFile: null,
+    isPermanentSame: false,
     permanentAddress: '',
+    permanentAddressDocType: '',
+    permanentAddressDocFile: null,
     panNumber: '',
     aadhaarNumber: '',
     candidateDate: ''
@@ -1971,19 +1974,130 @@ export default function CandidateVerificationWizard() {
                 </div>
 
                 <div style={styles.sectionBox}>
-                  <h3 style={styles.sectionTitle}>Address</h3>
-                  <div style={{ marginBottom: '12px' }}>
-                    <label style={styles.label}>Current Address</label>
-                    <textarea placeholder="Flat/House No., Street, Area, City, State — PIN" style={styles.textarea} />
+                  <h3 style={styles.sectionTitle}>Address Details</h3>
+                  
+                  {/* CURRENT ADDRESS BLOCK */}
+                  <div style={{ marginBottom: '16px' }}>
+                    <label style={styles.label}>Current Address *</label>
+                    <textarea 
+                      placeholder="Flat/House No., Street, Area, City, State — PIN" 
+                      style={styles.textarea} 
+                      value={personalDetails.currentAddress}
+                      onChange={(e) => setPersonalDetails({ ...personalDetails, currentAddress: e.target.value })}
+                    />
+                    
+                    {/* CURRENT ADDRESS DOCUMENT DROPDOWN & UPLOAD */}
+                    <div style={{ ...styles.grid2, marginTop: '12px' }}>
+                      <div>
+                        <label style={styles.label}>Current Address Proof Type *</label>
+                        <select 
+                          style={styles.input}
+                          value={personalDetails.currentAddressDocType}
+                          onChange={(e) => setPersonalDetails({ ...personalDetails, currentAddressDocType: e.target.value })}
+                        >
+                          <option value="">Select Document Type</option>
+                          <option value="Aadhaar Card">Aadhaar Card</option>
+                          <option value="Driving License">Driving License (DL)</option>
+                          <option value="Electricity Bill">Electricity Bill</option>
+                          <option value="Passport">Passport</option>
+                          <option value="Rent Agreement">Rent Agreement</option>
+                          <option value="Voter ID">Voter ID</option>
+                        </select>
+                      </div>
+                      <div>
+                        <label style={styles.label}>Upload Address Proof Document *</label>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                          <label style={{ ...styles.uploadBtnLabel, padding: '10px 14px', width: '100%', justifyContent: 'center' }}>
+                            <Upload size={14} /> Choose File
+                            <input 
+                              type="file" 
+                              style={{ display: 'none' }}
+                              accept=".pdf,.jpg,.jpeg,.png"
+                              onChange={(e) => setPersonalDetails({ ...personalDetails, currentAddressDocFile: e.target.files[0] })}
+                            />
+                          </label>
+                        </div>
+                        {personalDetails.currentAddressDocFile && (
+                          <div style={{ fontSize: '11px', color: '#059669', marginTop: '4px', textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap' }}>
+                            ✓ {personalDetails.currentAddressDocFile.name}
+                          </div>
+                        )}
+                      </div>
+                    </div>
                   </div>
-                  <label style={{ display: 'flex', alignItems: 'center', gap: '8px', margin: '8px 0', cursor: 'pointer' }}>
-                    <input type="checkbox" />
-                    <span style={{ fontSize: '12px', color: '#475569' }}>Permanent address same as current</span>
+
+                  <hr style={{ border: 'none', borderTop: '1px solid #e2e8f0', margin: '16px 0' }} />
+
+                  {/* PERMANENT SAME AS CURRENT CHECKBOX */}
+                  <label style={{ display: 'flex', alignItems: 'center', gap: '8px', margin: '12px 0', cursor: 'pointer' }}>
+                    <input 
+                      type="checkbox" 
+                      checked={personalDetails.isPermanentSame}
+                      onChange={(e) => {
+                        const checked = e.target.checked;
+                        setPersonalDetails({ 
+                          ...personalDetails, 
+                          isPermanentSame: checked,
+                          permanentAddress: checked ? personalDetails.currentAddress : '',
+                          permanentAddressDocType: checked ? personalDetails.currentAddressDocType : '',
+                          permanentAddressDocFile: checked ? personalDetails.currentAddressDocFile : null
+                        });
+                      }}
+                    />
+                    <span style={{ fontSize: '12px', color: '#475569', fontWeight: '600' }}>Permanent address same as current</span>
                   </label>
-                  <div>
-                    <label style={styles.label}>Permanent Address</label>
-                    <textarea placeholder="Flat/House No., Street, Area, City, State — PIN" style={styles.textarea} />
-                  </div>
+
+                  {/* PERMANENT ADDRESS BLOCK */}
+                  {!personalDetails.isPermanentSame && (
+                    <div style={{ marginTop: '12px' }}>
+                      <label style={styles.label}>Permanent Address *</label>
+                      <textarea 
+                        placeholder="Flat/House No., Street, Area, City, State — PIN" 
+                        style={styles.textarea} 
+                        value={personalDetails.permanentAddress}
+                        onChange={(e) => setPersonalDetails({ ...personalDetails, permanentAddress: e.target.value })}
+                      />
+
+                      {/* PERMANENT ADDRESS DOCUMENT DROPDOWN & UPLOAD */}
+                      <div style={{ ...styles.grid2, marginTop: '12px' }}>
+                        <div>
+                          <label style={styles.label}>Permanent Address Proof Type *</label>
+                          <select 
+                            style={styles.input}
+                            value={personalDetails.permanentAddressDocType}
+                            onChange={(e) => setPersonalDetails({ ...personalDetails, permanentAddressDocType: e.target.value })}
+                          >
+                            <option value="">Select Document Type</option>
+                            <option value="Aadhaar Card">Aadhaar Card</option>
+                            <option value="Driving License">Driving License (DL)</option>
+                            <option value="Electricity Bill">Electricity Bill</option>
+                            <option value="Passport">Passport</option>
+                            <option value="Rent Agreement">Rent Agreement</option>
+                            <option value="Voter ID">Voter ID</option>
+                          </select>
+                        </div>
+                        <div>
+                          <label style={styles.label}>Upload Address Proof Document *</label>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                            <label style={{ ...styles.uploadBtnLabel, padding: '10px 14px', width: '100%', justifyContent: 'center' }}>
+                              <Upload size={14} /> Choose File
+                              <input 
+                                type="file" 
+                                style={{ display: 'none' }}
+                                accept=".pdf,.jpg,.jpeg,.png"
+                                onChange={(e) => setPersonalDetails({ ...personalDetails, permanentAddressDocFile: e.target.files[0] })}
+                              />
+                            </label>
+                          </div>
+                          {personalDetails.permanentAddressDocFile && (
+                            <div style={{ fontSize: '11px', color: '#059669', marginTop: '4px', textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap' }}>
+                              ✓ {personalDetails.permanentAddressDocFile.name}
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  )}
                 </div>
 
                 <div style={styles.sectionBox}>
@@ -2285,7 +2399,7 @@ export default function CandidateVerificationWizard() {
                   </div>
                 ) : (
                   <div>
-                    {/* CANDIDATE DETAILS SECTION (IMAGE SEED DESIGN) */}
+                    {/* CANDIDATE DETAILS SECTION */}
                     <div style={styles.sectionBox}>
                       <h3 style={styles.sectionTitleCentered}>Candidate Details</h3>
                       <div style={styles.grid2}>
