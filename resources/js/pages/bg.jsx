@@ -1623,14 +1623,13 @@ export default function CandidateVerificationWizard() {
     permanentAddressDocType: '',
     permanentAddressDocFile: null,
     panNumber: '',
-    aadhaarNumber: '',
     candidateDate: ''
   });
 
   // Step 4 Tabs: 'education' | 'employment'
   const [step4Tab, setStep4Tab] = useState('education');
 
-  // Education state
+  // Education state with new dynamic fields
   const [qualifications, setQualifications] = useState([
     { 
       qualificationType: '', 
@@ -1639,9 +1638,13 @@ export default function CandidateVerificationWizard() {
       institute: '', 
       boardUniversity: '', 
       nationalInternational: 'National', 
+      verificationFeesBy: 'Normal',
+      fromYop: '',
+      toYop: '',
+      universityFees: '',
+      commission: '',
+      serviceCharge: '',
       modeOfStudy: '', 
-      yearOfPassing: '', 
-      educationCharges: '',
       documents: [null, null, null, null] 
     }
   ]);
@@ -1694,9 +1697,13 @@ export default function CandidateVerificationWizard() {
         institute: '', 
         boardUniversity: '', 
         nationalInternational: 'National', 
+        verificationFeesBy: 'Normal',
+        fromYop: '',
+        toYop: '',
+        universityFees: '',
+        commission: '',
+        serviceCharge: '',
         modeOfStudy: '', 
-        yearOfPassing: '', 
-        educationCharges: '',
         documents: [null, null, null, null] 
       }
     ]);
@@ -2330,7 +2337,7 @@ export default function CandidateVerificationWizard() {
                   <div style={styles.flexColumnGap}>
                     <div style={styles.flexAlignGap}>
                       <div style={styles.badgeCheck}>✓</div>
-                      <span style={{ fontSize: '13px', color: '#475569', fontWeight: '500' }}>Government ID (Aadhaar / PAN card)</span>
+                      <span style={{ fontSize: '13px', color: '#475569', fontWeight: '500' }}>Government ID (PAN card)</span>
                     </div>
                     <div style={styles.flexAlignGap}>
                       <div style={styles.badgeCheck}>✓</div>
@@ -2407,7 +2414,7 @@ export default function CandidateVerificationWizard() {
                 <div style={styles.sectionBox}>
                   <h3 style={styles.sectionTitle}>Personal Details</h3>
                   <div style={{ marginBottom: '12px' }}>
-                    <label style={styles.label}>Full Name (As per Aadhaar)</label>
+                    <label style={styles.label}>Full Name</label>
                     <input type="text" value={personalDetails.fullName} onChange={(e) => setPersonalDetails({ ...personalDetails, fullName: e.target.value })} style={styles.input} />
                   </div>
                   <div style={styles.grid2}>
@@ -2458,7 +2465,6 @@ export default function CandidateVerificationWizard() {
                           onChange={(e) => setPersonalDetails({ ...personalDetails, currentAddressDocType: e.target.value })}
                         >
                           <option value="">Select Document Type</option>
-                          <option value="Aadhaar Card">Aadhaar Card</option>
                           <option value="Driving License">Driving License (DL)</option>
                           <option value="Electricity Bill">Electricity Bill</option>
                           <option value="Passport">Passport</option>
@@ -2528,7 +2534,6 @@ export default function CandidateVerificationWizard() {
                             onChange={(e) => setPersonalDetails({ ...personalDetails, permanentAddressDocType: e.target.value })}
                           >
                             <option value="">Select Document Type</option>
-                            <option value="Aadhaar Card">Aadhaar Card</option>
                             <option value="Driving License">Driving License (DL)</option>
                             <option value="Electricity Bill">Electricity Bill</option>
                             <option value="Passport">Passport</option>
@@ -2562,23 +2567,9 @@ export default function CandidateVerificationWizard() {
 
                 <div style={styles.sectionBox}>
                   <h3 style={styles.sectionTitle}>Identity Documents</h3>
-                  <div style={styles.grid2}>
-                    <div>
-                      <label style={styles.label}>PAN Number</label>
-                      <input type="text" placeholder="ABCDE1234F" style={{ ...styles.input, textTransform: 'uppercase' }} />
-                    </div>
-                    <div>
-                      <label style={styles.label}>Aadhaar Number</label>
-                      <input type="text" placeholder="XXXX XXXX XXXX" style={styles.input} />
-                    </div>
-                  </div>
-
-                  <div style={styles.digilockerBox}>
-                    <div>
-                      <h4 style={{ fontSize: '13px', fontWeight: '700', color: '#1e293b', margin: 0 }}>DigiLocker</h4>
-                      <p style={{ fontSize: '12px', color: '#64748b', margin: 0 }}>Fetch Aadhaar & other govt. documents</p>
-                    </div>
-                    <button style={styles.digilockerBtn}>Connect</button>
+                  <div>
+                    <label style={styles.label}>PAN Number</label>
+                    <input type="text" placeholder="ABCDE1234F" style={{ ...styles.input, textTransform: 'uppercase' }} />
                   </div>
                 </div>
 
@@ -2756,7 +2747,8 @@ export default function CandidateVerificationWizard() {
                           </div>
                         </div>
 
-                        <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 1fr 1fr 1fr', gap: '12px', marginBottom: '16px' }}>
+                        {/* NATIONAL / INTERNATIONAL RADIO & DYNAMIC DROPDOWN SECTION */}
+                        <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 1.2fr 1fr 1fr', gap: '12px', marginBottom: '16px' }}>
                           <div>
                             <label style={styles.label}>National / International *</label>
                             <div style={styles.radioGroup}>
@@ -2782,6 +2774,78 @@ export default function CandidateVerificationWizard() {
                               </label>
                             </div>
                           </div>
+
+                          <div>
+                            <label style={styles.label}>Verification Fees By *</label>
+                            <select 
+                              style={styles.input}
+                              value={qual.verificationFeesBy}
+                              onChange={(e) => handleQualificationChange(idx, 'verificationFeesBy', e.target.value)}
+                            >
+                              <option value="Normal">Normal</option>
+                              <option value="Year of Passing">Year of Passing</option>
+                              <option value="UG/PG">UG/PG</option>
+                            </select>
+                          </div>
+
+                          <div>
+                            <label style={styles.label}>From YOP *</label>
+                            <input 
+                              type="text" 
+                              placeholder="YYYY" 
+                              style={styles.input}
+                              value={qual.fromYop}
+                              onChange={(e) => handleQualificationChange(idx, 'fromYop', e.target.value)}
+                            />
+                          </div>
+
+                          <div>
+                            <label style={styles.label}>To YOP *</label>
+                            <input 
+                              type="text" 
+                              placeholder="YYYY" 
+                              style={styles.input}
+                              value={qual.toYop}
+                              onChange={(e) => handleQualificationChange(idx, 'toYop', e.target.value)}
+                            />
+                          </div>
+                        </div>
+
+                        {/* FEES DETAILS SECTION */}
+                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 1fr', gap: '12px', marginBottom: '16px' }}>
+                          <div>
+                            <label style={styles.label}>University Fees (₹)</label>
+                            <input 
+                              type="text" 
+                              placeholder="Enter University Fees" 
+                              style={styles.input}
+                              value={qual.universityFees}
+                              onChange={(e) => handleQualificationChange(idx, 'universityFees', e.target.value)}
+                            />
+                          </div>
+
+                          <div>
+                            <label style={styles.label}>Commission (₹)</label>
+                            <input 
+                              type="text" 
+                              placeholder="Enter Commission" 
+                              style={styles.input}
+                              value={qual.commission}
+                              onChange={(e) => handleQualificationChange(idx, 'commission', e.target.value)}
+                            />
+                          </div>
+
+                          <div>
+                            <label style={styles.label}>Service Charge (₹)</label>
+                            <input 
+                              type="text" 
+                              placeholder="Enter Service Charge" 
+                              style={styles.input}
+                              value={qual.serviceCharge}
+                              onChange={(e) => handleQualificationChange(idx, 'serviceCharge', e.target.value)}
+                            />
+                          </div>
+
                           <div>
                             <label style={styles.label}>Mode of Study *</label>
                             <select 
@@ -2794,26 +2858,6 @@ export default function CandidateVerificationWizard() {
                               <option value="Part Time">Part Time</option>
                               <option value="Distance">Distance / Correspondence</option>
                             </select>
-                          </div>
-                          <div>
-                            <label style={styles.label}>Year of Passing *</label>
-                            <input 
-                              type="text" 
-                              placeholder="YYYY" 
-                              style={styles.input}
-                              value={qual.yearOfPassing}
-                              onChange={(e) => handleQualificationChange(idx, 'yearOfPassing', e.target.value)}
-                            />
-                          </div>
-                          <div>
-                            <label style={styles.label}>Education Charges (₹)</label>
-                            <input 
-                              type="text" 
-                              placeholder="Enter Charges" 
-                              style={styles.input}
-                              value={qual.educationCharges}
-                              onChange={(e) => handleQualificationChange(idx, 'educationCharges', e.target.value)}
-                            />
                           </div>
                         </div>
 
