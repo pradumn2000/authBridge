@@ -492,7 +492,9 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // ── CASES ROUTES (New CaseCheck Architecture) ─────────────
     
-    // CREATE CASE
+    // -------------------------------------------------------------
+    // CREATE CASE - This maps the selected checks from AddCase!
+    // -------------------------------------------------------------
     Route::post('/cases', function (Request $request) {
         $request->validate([
             'candidate_name'  => 'required|string|max:255',
@@ -507,6 +509,7 @@ Route::middleware('auth:sanctum')->group(function () {
             'overall_tat'     => 'nullable|numeric|min:0',
         ]);
 
+        // 1. Create the Master Case record
         $case = BGVCase::create([
             'case_id'          => BGVCase::generateCaseId(),
             'candidate_name'   => $request->candidate_name,
@@ -530,12 +533,12 @@ Route::middleware('auth:sanctum')->group(function () {
             'created_by'       => $request->user()->id,
         ]);
 
-        // Create Individual Check Rows
+        // 2. Map and Register Individual Checks in `case_checks` table
         $caseChecksData = [];
         foreach ($request->checks as $checkKey) {
             $caseChecksData[] = [
                 'case_id'    => $case->case_id,
-                'check_type' => $checkKey,
+                'check_type' => $checkKey, // e.g. 'employment', 'education'
                 'rate'       => $request->check_rates[$checkKey] ?? 0,
                 'tat_days'   => $request->check_tat[$checkKey] ?? 0,
                 'status'     => 'pending',
@@ -761,7 +764,6 @@ Route::middleware('auth:sanctum')->group(function () {
 
         $check = CaseCheck::where('case_id', $caseId)->where('check_type', $checkKey)->firstOrFail();
         
-        // Use array_merge to preserve existing properties (like documents) if storing them together, but since documents is a separate column, just update fields directly
         $check->fields = $request->fields;
         
         if ($user->role === 'admin' && $request->filled('amount')) {
