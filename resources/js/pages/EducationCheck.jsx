@@ -1059,7 +1059,7 @@ export default function EducationVerification() {
                       onClick={() => toggleAccordion(q.id)}
                       style={{
                         display: "flex",
-                        justify: "space-between",
+                        justifyContent: "space-between",
                         alignItems: "center",
                         padding: "14px 16px",
                         background: "#ffffff",
