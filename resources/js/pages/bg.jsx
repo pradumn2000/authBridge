@@ -37,14 +37,13 @@
 //     permanentAddressDocType: '',
 //     permanentAddressDocFile: null,
 //     panNumber: '',
-//     aadhaarNumber: '',
 //     candidateDate: ''
 //   });
 
 //   // Step 4 Tabs: 'education' | 'employment'
 //   const [step4Tab, setStep4Tab] = useState('education');
 
-//   // Education state
+//   // Education state with new dynamic fields
 //   const [qualifications, setQualifications] = useState([
 //     { 
 //       qualificationType: '', 
@@ -53,9 +52,13 @@
 //       institute: '', 
 //       boardUniversity: '', 
 //       nationalInternational: 'National', 
+//       verificationFeesBy: 'Normal',
+//       fromYop: '',
+//       toYop: '',
+//       universityFees: '',
+//       commission: '',
+//       serviceCharge: '',
 //       modeOfStudy: '', 
-//       yearOfPassing: '', 
-//       educationCharges: '',
 //       documents: [null, null, null, null] 
 //     }
 //   ]);
@@ -108,9 +111,13 @@
 //         institute: '', 
 //         boardUniversity: '', 
 //         nationalInternational: 'National', 
+//         verificationFeesBy: 'Normal',
+//         fromYop: '',
+//         toYop: '',
+//         universityFees: '',
+//         commission: '',
+//         serviceCharge: '',
 //         modeOfStudy: '', 
-//         yearOfPassing: '', 
-//         educationCharges: '',
 //         documents: [null, null, null, null] 
 //       }
 //     ]);
@@ -170,7 +177,7 @@
 //     setEmployers(updated);
 //   };
 
-//   // Internal CSS Styles Object
+//   // Styles
 //   const styles = {
 //     container: {
 //       minHeight: '100vh',
@@ -661,7 +668,6 @@
 //     }
 //   };
 
-//   // Helper for Stepper Item style
 //   const getStepCircleStyle = (step) => {
 //     const isCompleted = step < currentStep;
 //     const isCurrent = step === currentStep;
@@ -681,7 +687,6 @@
 //     };
 //   };
 
-//   // Stepper Header
 //   const renderStepper = () => (
 //     <div style={styles.stepperContainer}>
 //       {[1, 2, 3, 4, 5, 6, 7].map((step) => {
@@ -708,7 +713,6 @@
 //   return (
 //     <div style={styles.container}>
       
-//       {/* INITIAL LAUNCH BUTTON */}
 //       {!isOpen ? (
 //         <div style={styles.initialCard}>
 //           <div style={styles.iconHeaderCircle}>
@@ -724,10 +728,8 @@
 //           </button>
 //         </div>
 //       ) : (
-//         /* WIZARD CONTAINER */
 //         <div style={styles.card}>
           
-//           {/* STEPPER HEADER */}
 //           {currentStep > 1 && currentStep < 7 && renderStepper()}
 
 //           <div style={styles.innerPadding}>
@@ -749,7 +751,7 @@
 //                   <div style={styles.flexColumnGap}>
 //                     <div style={styles.flexAlignGap}>
 //                       <div style={styles.badgeCheck}>✓</div>
-//                       <span style={{ fontSize: '13px', color: '#475569', fontWeight: '500' }}>Government ID (Aadhaar / PAN card)</span>
+//                       <span style={{ fontSize: '13px', color: '#475569', fontWeight: '500' }}>Government ID (PAN card)</span>
 //                     </div>
 //                     <div style={styles.flexAlignGap}>
 //                       <div style={styles.badgeCheck}>✓</div>
@@ -777,12 +779,12 @@
 //               <div>
 //                 <span style={styles.stepBadge}>Step 2 of 7</span>
 //                 <h2 style={styles.stepHeaderTitle}>Consent & Verification</h2>
-//                 <p style={styles.subtitle}>Verify your mobile number and provide consent under DPDP Act.</p>
+//                 <p style={styles.subtitle}>Verify your email address and provide consent under DPDP Act.</p>
 
 //                 <div style={styles.sectionBox}>
 //                   <div style={{ ...styles.flexRowBetween, marginBottom: '12px' }}>
-//                     <label style={styles.label}>Mobile Number Verification</label>
-//                     <span style={styles.badgeGreen}>✓ Mobile Verified</span>
+//                     <label style={styles.label}>E-mail Verification</label>
+//                     <span style={styles.badgeGreen}>✓ E-mail Verified</span>
 //                   </div>
 //                   <div style={{ display: 'flex', gap: '8px' }}>
 //                     {[1, 2, 3, 4, 5, 6].map((i) => (
@@ -790,7 +792,7 @@
 //                     ))}
 //                   </div>
 //                   <div style={{ ...styles.flexRowBetween, fontSize: '12px', color: '#94a3b8', marginTop: '8px' }}>
-//                     <span>Enter 6-digit OTP sent to +91 98765 43210</span>
+//                     <span>Enter 6-digit OTP sent to priya.sharma@email.com</span>
 //                     <span style={{ color: '#2563eb', cursor: 'pointer' }}>Resend OTP</span>
 //                   </div>
 //                 </div>
@@ -826,7 +828,7 @@
 //                 <div style={styles.sectionBox}>
 //                   <h3 style={styles.sectionTitle}>Personal Details</h3>
 //                   <div style={{ marginBottom: '12px' }}>
-//                     <label style={styles.label}>Full Name (As per Aadhaar)</label>
+//                     <label style={styles.label}>Full Name</label>
 //                     <input type="text" value={personalDetails.fullName} onChange={(e) => setPersonalDetails({ ...personalDetails, fullName: e.target.value })} style={styles.input} />
 //                   </div>
 //                   <div style={styles.grid2}>
@@ -868,7 +870,6 @@
 //                       onChange={(e) => setPersonalDetails({ ...personalDetails, currentAddress: e.target.value })}
 //                     />
                     
-//                     {/* CURRENT ADDRESS DOCUMENT DROPDOWN & UPLOAD */}
 //                     <div style={{ ...styles.grid2, marginTop: '12px' }}>
 //                       <div>
 //                         <label style={styles.label}>Current Address Proof Type *</label>
@@ -878,7 +879,6 @@
 //                           onChange={(e) => setPersonalDetails({ ...personalDetails, currentAddressDocType: e.target.value })}
 //                         >
 //                           <option value="">Select Document Type</option>
-//                           <option value="Aadhaar Card">Aadhaar Card</option>
 //                           <option value="Driving License">Driving License (DL)</option>
 //                           <option value="Electricity Bill">Electricity Bill</option>
 //                           <option value="Passport">Passport</option>
@@ -910,7 +910,6 @@
 
 //                   <hr style={{ border: 'none', borderTop: '1px solid #e2e8f0', margin: '16px 0' }} />
 
-//                   {/* PERMANENT SAME AS CURRENT CHECKBOX */}
 //                   <label style={{ display: 'flex', alignItems: 'center', gap: '8px', margin: '12px 0', cursor: 'pointer' }}>
 //                     <input 
 //                       type="checkbox" 
@@ -940,7 +939,6 @@
 //                         onChange={(e) => setPersonalDetails({ ...personalDetails, permanentAddress: e.target.value })}
 //                       />
 
-//                       {/* PERMANENT ADDRESS DOCUMENT DROPDOWN & UPLOAD */}
 //                       <div style={{ ...styles.grid2, marginTop: '12px' }}>
 //                         <div>
 //                           <label style={styles.label}>Permanent Address Proof Type *</label>
@@ -950,7 +948,6 @@
 //                             onChange={(e) => setPersonalDetails({ ...personalDetails, permanentAddressDocType: e.target.value })}
 //                           >
 //                             <option value="">Select Document Type</option>
-//                             <option value="Aadhaar Card">Aadhaar Card</option>
 //                             <option value="Driving License">Driving License (DL)</option>
 //                             <option value="Electricity Bill">Electricity Bill</option>
 //                             <option value="Passport">Passport</option>
@@ -984,23 +981,9 @@
 
 //                 <div style={styles.sectionBox}>
 //                   <h3 style={styles.sectionTitle}>Identity Documents</h3>
-//                   <div style={styles.grid2}>
-//                     <div>
-//                       <label style={styles.label}>PAN Number</label>
-//                       <input type="text" placeholder="ABCDE1234F" style={{ ...styles.input, textTransform: 'uppercase' }} />
-//                     </div>
-//                     <div>
-//                       <label style={styles.label}>Aadhaar Number</label>
-//                       <input type="text" placeholder="XXXX XXXX XXXX" style={styles.input} />
-//                     </div>
-//                   </div>
-
-//                   <div style={styles.digilockerBox}>
-//                     <div>
-//                       <h4 style={{ fontSize: '13px', fontWeight: '700', color: '#1e293b', margin: 0 }}>DigiLocker</h4>
-//                       <p style={{ fontSize: '12px', color: '#64748b', margin: 0 }}>Fetch Aadhaar & other govt. documents</p>
-//                     </div>
-//                     <button style={styles.digilockerBtn}>Connect</button>
+//                   <div>
+//                     <label style={styles.label}>PAN Number</label>
+//                     <input type="text" placeholder="ABCDE1234F" style={{ ...styles.input, textTransform: 'uppercase' }} />
 //                   </div>
 //                 </div>
 
@@ -1038,7 +1021,6 @@
 
 //                 {step4Tab === 'education' ? (
 //                   <div>
-//                     {/* CANDIDATE INFORMATION SECTION */}
 //                     <div style={styles.sectionBox}>
 //                       <h3 style={styles.sectionTitle}>
 //                         <User size={16} color="#4f46e5" /> Candidate Information
@@ -1097,7 +1079,6 @@
 //                       </div>
 //                     </div>
 
-//                     {/* QUALIFICATIONS LIST */}
 //                     {qualifications.map((qual, idx) => (
 //                       <div key={idx} style={styles.sectionBox}>
 //                         <div style={{ ...styles.flexRowBetween, marginBottom: '16px' }}>
@@ -1109,7 +1090,6 @@
 //                           )}
 //                         </div>
 
-//                         {/* FIRST ROW */}
 //                         <div style={styles.grid5}>
 //                           <div>
 //                             <label style={styles.label}>Qualification Type *</label>
@@ -1181,8 +1161,8 @@
 //                           </div>
 //                         </div>
 
-//                         {/* SECOND ROW */}
-//                         <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 1fr 1fr 1fr', gap: '12px', marginBottom: '16px' }}>
+//                         {/* NATIONAL / INTERNATIONAL RADIO & DYNAMIC DROPDOWN SECTION */}
+//                         <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 1.2fr 1fr 1fr', gap: '12px', marginBottom: '16px' }}>
 //                           <div>
 //                             <label style={styles.label}>National / International *</label>
 //                             <div style={styles.radioGroup}>
@@ -1208,6 +1188,78 @@
 //                               </label>
 //                             </div>
 //                           </div>
+
+//                           <div>
+//                             <label style={styles.label}>Verification Fees By *</label>
+//                             <select 
+//                               style={styles.input}
+//                               value={qual.verificationFeesBy}
+//                               onChange={(e) => handleQualificationChange(idx, 'verificationFeesBy', e.target.value)}
+//                             >
+//                               <option value="Normal">Normal</option>
+//                               <option value="Year of Passing">Year of Passing</option>
+//                               <option value="UG/PG">UG/PG</option>
+//                             </select>
+//                           </div>
+
+//                           <div>
+//                             <label style={styles.label}>From YOP *</label>
+//                             <input 
+//                               type="text" 
+//                               placeholder="YYYY" 
+//                               style={styles.input}
+//                               value={qual.fromYop}
+//                               onChange={(e) => handleQualificationChange(idx, 'fromYop', e.target.value)}
+//                             />
+//                           </div>
+
+//                           <div>
+//                             <label style={styles.label}>To YOP *</label>
+//                             <input 
+//                               type="text" 
+//                               placeholder="YYYY" 
+//                               style={styles.input}
+//                               value={qual.toYop}
+//                               onChange={(e) => handleQualificationChange(idx, 'toYop', e.target.value)}
+//                             />
+//                           </div>
+//                         </div>
+
+//                         {/* FEES DETAILS SECTION */}
+//                         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 1fr', gap: '12px', marginBottom: '16px' }}>
+//                           <div>
+//                             <label style={styles.label}>University Fees (₹)</label>
+//                             <input 
+//                               type="text" 
+//                               placeholder="Enter University Fees" 
+//                               style={styles.input}
+//                               value={qual.universityFees}
+//                               onChange={(e) => handleQualificationChange(idx, 'universityFees', e.target.value)}
+//                             />
+//                           </div>
+
+//                           <div>
+//                             <label style={styles.label}>Commission (₹)</label>
+//                             <input 
+//                               type="text" 
+//                               placeholder="Enter Commission" 
+//                               style={styles.input}
+//                               value={qual.commission}
+//                               onChange={(e) => handleQualificationChange(idx, 'commission', e.target.value)}
+//                             />
+//                           </div>
+
+//                           <div>
+//                             <label style={styles.label}>Service Charge (₹)</label>
+//                             <input 
+//                               type="text" 
+//                               placeholder="Enter Service Charge" 
+//                               style={styles.input}
+//                               value={qual.serviceCharge}
+//                               onChange={(e) => handleQualificationChange(idx, 'serviceCharge', e.target.value)}
+//                             />
+//                           </div>
+
 //                           <div>
 //                             <label style={styles.label}>Mode of Study *</label>
 //                             <select 
@@ -1221,29 +1273,8 @@
 //                               <option value="Distance">Distance / Correspondence</option>
 //                             </select>
 //                           </div>
-//                           <div>
-//                             <label style={styles.label}>Year of Passing *</label>
-//                             <input 
-//                               type="text" 
-//                               placeholder="YYYY" 
-//                               style={styles.input}
-//                               value={qual.yearOfPassing}
-//                               onChange={(e) => handleQualificationChange(idx, 'yearOfPassing', e.target.value)}
-//                             />
-//                           </div>
-//                           <div>
-//                             <label style={styles.label}>Education Charges (₹)</label>
-//                             <input 
-//                               type="text" 
-//                               placeholder="Enter Charges" 
-//                               style={styles.input}
-//                               value={qual.educationCharges}
-//                               onChange={(e) => handleQualificationChange(idx, 'educationCharges', e.target.value)}
-//                             />
-//                           </div>
 //                         </div>
 
-//                         {/* DOCUMENTS UPLOAD */}
 //                         <div>
 //                           <label style={styles.label}>DOCUMENTS * (Upload up to 4 documents)</label>
 //                           <div style={styles.docGrid}>
@@ -1281,7 +1312,6 @@
 //                   </div>
 //                 ) : (
 //                   <div>
-//                     {/* CANDIDATE DETAILS SECTION */}
 //                     <div style={styles.sectionBox}>
 //                       <h3 style={styles.sectionTitleCentered}>Candidate Details</h3>
 //                       <div style={styles.grid2}>
@@ -1307,7 +1337,6 @@
 //                       </div>
 //                     </div>
 
-//                     {/* EMPLOYERS LIST */}
 //                     {employers.map((emp, idx) => (
 //                       <div key={idx} style={styles.sectionBox}>
 //                         <div style={{ ...styles.flexRowBetween, marginBottom: '16px' }}>
@@ -1585,6 +1614,7 @@
 //     </div>
 //   );
 // }
+
 import React, { useState } from 'react';
 import { 
   Check, 
@@ -1598,7 +1628,9 @@ import {
   Briefcase, 
   Eye,
   Download,
-  User
+  User,
+  CreditCard,
+  Lock
 } from 'lucide-react';
 
 export default function CandidateVerificationWizard() {
@@ -1622,6 +1654,7 @@ export default function CandidateVerificationWizard() {
     permanentAddress: '',
     permanentAddressDocType: '',
     permanentAddressDocFile: null,
+    aadhaarNumber: '',
     panNumber: '',
     candidateDate: ''
   });
@@ -1629,7 +1662,7 @@ export default function CandidateVerificationWizard() {
   // Step 4 Tabs: 'education' | 'employment'
   const [step4Tab, setStep4Tab] = useState('education');
 
-  // Education state with new dynamic fields
+  // Education state with dynamic fields
   const [qualifications, setQualifications] = useState([
     { 
       qualificationType: '', 
@@ -2089,7 +2122,7 @@ export default function CandidateVerificationWizard() {
     },
     footer: {
       display: 'flex',
-      justifyContent: 'space-between',
+      justify: 'space-between',
       alignItems: 'center',
       paddingTop: '16px',
       borderTop: '1px solid #f1f5f9',
@@ -2337,7 +2370,7 @@ export default function CandidateVerificationWizard() {
                   <div style={styles.flexColumnGap}>
                     <div style={styles.flexAlignGap}>
                       <div style={styles.badgeCheck}>✓</div>
-                      <span style={{ fontSize: '13px', color: '#475569', fontWeight: '500' }}>Government ID (PAN card)</span>
+                      <span style={{ fontSize: '13px', color: '#475569', fontWeight: '500' }}>Government ID (Aadhaar / PAN card)</span>
                     </div>
                     <div style={styles.flexAlignGap}>
                       <div style={styles.badgeCheck}>✓</div>
@@ -2465,6 +2498,7 @@ export default function CandidateVerificationWizard() {
                           onChange={(e) => setPersonalDetails({ ...personalDetails, currentAddressDocType: e.target.value })}
                         >
                           <option value="">Select Document Type</option>
+                          <option value="Aadhaar Card">Aadhaar Card</option>
                           <option value="Driving License">Driving License (DL)</option>
                           <option value="Electricity Bill">Electricity Bill</option>
                           <option value="Passport">Passport</option>
@@ -2534,6 +2568,7 @@ export default function CandidateVerificationWizard() {
                             onChange={(e) => setPersonalDetails({ ...personalDetails, permanentAddressDocType: e.target.value })}
                           >
                             <option value="">Select Document Type</option>
+                            <option value="Aadhaar Card">Aadhaar Card</option>
                             <option value="Driving License">Driving License (DL)</option>
                             <option value="Electricity Bill">Electricity Bill</option>
                             <option value="Passport">Passport</option>
@@ -2565,11 +2600,46 @@ export default function CandidateVerificationWizard() {
                   )}
                 </div>
 
+                {/* IDENTITY DOCUMENTS (AADHAAR & PAN) */}
                 <div style={styles.sectionBox}>
-                  <h3 style={styles.sectionTitle}>Identity Documents</h3>
-                  <div>
-                    <label style={styles.label}>PAN Number</label>
-                    <input type="text" placeholder="ABCDE1234F" style={{ ...styles.input, textTransform: 'uppercase' }} />
+                  <h3 style={styles.sectionTitle}>
+                    <CreditCard size={16} color="#2563eb" /> Identity Documents
+                  </h3>
+                  <div style={styles.grid2}>
+                    <div>
+                      <label style={styles.label}>Aadhaar Number *</label>
+                      <input 
+                        type="text" 
+                        placeholder="Enter 12-digit Aadhaar Number" 
+                        style={styles.input}
+                        maxLength={12}
+                        value={personalDetails.aadhaarNumber}
+                        onChange={(e) => setPersonalDetails({ ...personalDetails, aadhaarNumber: e.target.value })}
+                      />
+                    </div>
+                    <div>
+                      <label style={styles.label}>PAN Number *</label>
+                      <input 
+                        type="text" 
+                        placeholder="ABCDE1234F" 
+                        style={{ ...styles.input, textTransform: 'uppercase' }} 
+                        maxLength={10}
+                        value={personalDetails.panNumber}
+                        onChange={(e) => setPersonalDetails({ ...personalDetails, panNumber: e.target.value.toUpperCase() })}
+                      />
+                    </div>
+                  </div>
+
+                  {/* DIGILOCKER INTEGRATION BOX */}
+                  <div style={styles.digilockerBox}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                      <Lock size={20} color="#ea580c" />
+                      <div>
+                        <h4 style={{ fontSize: '13px', fontWeight: '700', margin: 0, color: '#9a3412' }}>Fast-track with DigiLocker</h4>
+                        <p style={{ fontSize: '11px', color: '#c2410c', margin: '2px 0 0 0' }}>Fetch verified Aadhaar & PAN instantly via DigiLocker.</p>
+                      </div>
+                    </div>
+                    <button style={styles.digilockerBtn}>Connect DigiLocker</button>
                   </div>
                 </div>
 
