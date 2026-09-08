@@ -662,7 +662,7 @@ export default function EducationVerification() {
     emailAddress: "",
   });
 
-  // Qualification Dynamic Accordions State with new fields
+  // Qualification Dynamic Accordions State
   const [qualifications, setQualifications] = useState([
     {
       id: 1,
@@ -672,6 +672,7 @@ export default function EducationVerification() {
       specialization: "",
       instituteUniversity: "",
       boardUniversity: "",
+      studyType: "National",
       verificationFeesBy: "",
       fromYOP: "",
       toYOP: "",
@@ -710,6 +711,7 @@ export default function EducationVerification() {
         specialization: "",
         instituteUniversity: "",
         boardUniversity: "",
+        studyType: "National",
         verificationFeesBy: "",
         fromYOP: "",
         toYOP: "",
@@ -1170,8 +1172,34 @@ export default function EducationVerification() {
                           </div>
                         </div>
 
-                        {/* Row 2: NEW FIELDS (Verification Fees By, From YOP, To YOP, Fees details) */}
+                        {/* Row 2: National/International + Verification Fees By + From YOP + To YOP */}
                         <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "16px", marginBottom: "16px" }}>
+                          <div>
+                            <label style={{ display: "block", fontSize: "11px", fontWeight: 700, marginBottom: "6px", color: "#374151" }}>National / International *</label>
+                            <div style={{ display: "flex", gap: "16px", alignItems: "center", height: "36px" }}>
+                              <label style={{ fontSize: "12px", fontWeight: 600, display: "flex", alignItems: "center", gap: "6px", cursor: "pointer" }}>
+                                <input
+                                  type="radio"
+                                  name={`studyType-${q.id}`}
+                                  value="National"
+                                  checked={q.studyType === "National"}
+                                  onChange={(e) => handleQualificationChange(q.id, "studyType", e.target.value)}
+                                />
+                                National
+                              </label>
+                              <label style={{ fontSize: "12px", fontWeight: 600, display: "flex", alignItems: "center", gap: "6px", cursor: "pointer" }}>
+                                <input
+                                  type="radio"
+                                  name={`studyType-${q.id}`}
+                                  value="International"
+                                  checked={q.studyType === "International"}
+                                  onChange={(e) => handleQualificationChange(q.id, "studyType", e.target.value)}
+                                />
+                                International
+                              </label>
+                            </div>
+                          </div>
+
                           <div>
                             <label style={{ display: "block", fontSize: "11px", fontWeight: 700, marginBottom: "6px", color: "#374151" }}>Verification Fees By *</label>
                             <select
@@ -1207,7 +1235,10 @@ export default function EducationVerification() {
                               style={{ width: "100%", padding: "8px 12px", borderRadius: "6px", border: "1px solid #cbd5e1", fontSize: "12px", outline: "none" }}
                             />
                           </div>
+                        </div>
 
+                        {/* Row 3: University Fees, Service Charge, GST, Total Amount */}
+                        <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "16px", marginBottom: "20px" }}>
                           <div>
                             <label style={{ display: "block", fontSize: "11px", fontWeight: 700, marginBottom: "6px", color: "#374151" }}>University Fees (₹)</label>
                             <input
@@ -1218,10 +1249,7 @@ export default function EducationVerification() {
                               style={{ width: "100%", padding: "8px 12px", borderRadius: "6px", border: "1px solid #cbd5e1", fontSize: "12px", outline: "none" }}
                             />
                           </div>
-                        </div>
 
-                        {/* Row 3: Service Charge, GST, Total Amount */}
-                        <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "16px", marginBottom: "20px" }}>
                           <div>
                             <label style={{ display: "block", fontSize: "11px", fontWeight: 700, marginBottom: "6px", color: "#374151" }}>Service Charge (₹)</label>
                             <input
