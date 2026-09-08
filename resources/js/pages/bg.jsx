@@ -2122,7 +2122,7 @@ export default function CandidateVerificationWizard() {
     },
     footer: {
       display: 'flex',
-      justify: 'space-between',
+      justifyContent: 'space-between',
       alignItems: 'center',
       paddingTop: '16px',
       borderTop: '1px solid #f1f5f9',
@@ -2895,10 +2895,10 @@ export default function CandidateVerificationWizard() {
                           </div>
 
                           <div>
-                            <label style={styles.label}>Commission (₹)</label>
+                            <label style={styles.label}>Service Charge (₹)</label>
                             <input 
                               type="text" 
-                              placeholder="Enter Commission" 
+                              placeholder="Enter Service Charge" 
                               style={styles.input}
                               value={qual.commission}
                               onChange={(e) => handleQualificationChange(idx, 'commission', e.target.value)}
@@ -2906,10 +2906,10 @@ export default function CandidateVerificationWizard() {
                           </div>
 
                           <div>
-                            <label style={styles.label}>Service Charge (₹)</label>
+                            <label style={styles.label}>GST</label>
                             <input 
                               type="text" 
-                              placeholder="Enter Service Charge" 
+                              placeholder="GST" 
                               style={styles.input}
                               value={qual.serviceCharge}
                               onChange={(e) => handleQualificationChange(idx, 'serviceCharge', e.target.value)}
@@ -2917,17 +2917,14 @@ export default function CandidateVerificationWizard() {
                           </div>
 
                           <div>
-                            <label style={styles.label}>Mode of Study *</label>
-                            <select 
+                            <label style={styles.label}>Total Amount</label>
+                            <input 
+                              type="text" 
+                              placeholder="Enter Total Amount" 
                               style={styles.input}
-                              value={qual.modeOfStudy}
-                              onChange={(e) => handleQualificationChange(idx, 'modeOfStudy', e.target.value)}
-                            >
-                              <option value="">Select Mode</option>
-                              <option value="Full Time">Full Time</option>
-                              <option value="Part Time">Part Time</option>
-                              <option value="Distance">Distance / Correspondence</option>
-                            </select>
+                              value={qual.serviceCharge}
+                              onChange={(e) => handleQualificationChange(idx, 'serviceCharge', e.target.value)}
+                            />
                           </div>
                         </div>
 
