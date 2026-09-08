@@ -886,41 +886,89 @@ export default function EducationVerification() {
                           </div>
 
                           <div>
-                            <label style={{ display: "block", fontSize: "11px", fontWeight: 700, marginBottom: "6px", color: "#374151" }}>Mode of Study *</label>
-                            <select
-                              value={q.modeOfStudy}
-                              onChange={(e) => handleQualificationChange(q.id, "modeOfStudy", e.target.value)}
-                              style={{ width: "100%", padding: "9px 12px", borderRadius: "6px", border: "1px solid #cbd5e1", fontSize: "12px", color: q.modeOfStudy ? "#0f172a" : "#94a3b8" }}
+                            <label style={styles.label}>Verification Fees By *</label>
+                            <select 
+                              style={styles.input}
+                              value={qual.verificationFeesBy}
+                              onChange={(e) => handleQualificationChange(idx, 'verificationFeesBy', e.target.value)}
                             >
-                              <option value="">Select Mode</option>
-                              <option value="Full Time">Full Time</option>
-                              <option value="Part Time">Part Time</option>
-                              <option value="Distance">Distance</option>
+                              <option value="Normal">Normal</option>
+                              <option value="Year of Passing">Year of Passing</option>
+                              <option value="UG/PG">UG/PG</option>
                             </select>
                           </div>
 
                           <div>
-                            <label style={{ display: "block", fontSize: "11px", fontWeight: 700, marginBottom: "6px", color: "#374151" }}>Year of Passing *</label>
-                            <input
-                              type="text"
-                              placeholder="YYYY"
-                              value={q.yearOfPassing}
-                              onChange={(e) => handleQualificationChange(q.id, "yearOfPassing", e.target.value)}
-                              style={{ width: "100%", padding: "8px 12px", borderRadius: "6px", border: "1px solid #cbd5e1", fontSize: "12px", outline: "none" }}
+                            <label style={styles.label}>From YOP *</label>
+                            <input 
+                              type="text" 
+                              placeholder="YYYY" 
+                              style={styles.input}
+                              value={qual.fromYop}
+                              onChange={(e) => handleQualificationChange(idx, 'fromYop', e.target.value)}
                             />
                           </div>
 
                           <div>
-                            <label style={{ display: "block", fontSize: "11px", fontWeight: 700, marginBottom: "6px", color: "#374151" }}>Education Charges (₹)</label>
-                            <input
-                              type="number"
-                              placeholder="Enter Charges"
-                              value={q.educationCharges}
-                              onChange={(e) => handleQualificationChange(q.id, "educationCharges", e.target.value)}
-                              style={{ width: "100%", padding: "8px 12px", borderRadius: "6px", border: "1px solid #cbd5e1", fontSize: "12px", outline: "none" }}
+                            <label style={styles.label}>To YOP *</label>
+                            <input 
+                              type="text" 
+                              placeholder="YYYY" 
+                              style={styles.input}
+                              value={qual.toYop}
+                              onChange={(e) => handleQualificationChange(idx, 'toYop', e.target.value)}
                             />
                           </div>
                         </div>
+
+                         {/* FEES DETAILS SECTION */}
+                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 1fr', gap: '12px', marginBottom: '16px' }}>
+                          <div>
+                            <label style={styles.label}>University Fees (₹)</label>
+                            <input 
+                              type="text" 
+                              placeholder="Enter University Fees" 
+                              style={styles.input}
+                              value={qual.universityFees}
+                              onChange={(e) => handleQualificationChange(idx, 'universityFees', e.target.value)}
+                            />
+                          </div>
+
+                          <div>
+                            <label style={styles.label}>Service Charge (₹)</label>
+                            <input 
+                              type="text" 
+                              placeholder="Enter Service Charge" 
+                              style={styles.input}
+                              value={qual.commission}
+                              onChange={(e) => handleQualificationChange(idx, 'commission', e.target.value)}
+                            />
+                          </div>
+
+                          <div>
+                            <label style={styles.label}>GST</label>
+                            <input 
+                              type="text" 
+                              placeholder="GST" 
+                              style={styles.input}
+                              value={qual.serviceCharge}
+                              onChange={(e) => handleQualificationChange(idx, 'serviceCharge', e.target.value)}
+                            />
+                          </div>
+
+                          <div>
+                            <label style={styles.label}>Total Amount</label>
+                            <input 
+                              type="text" 
+                              placeholder="Enter Total Amount" 
+                              style={styles.input}
+                              value={qual.serviceCharge}
+                              onChange={(e) => handleQualificationChange(idx, 'serviceCharge', e.target.value)}
+                            />
+                          </div>
+                        </div>
+
+                        <div>
                       {/* Documents Upload Section */}
       <div>
         <label style={{ display: "block", fontSize: "12px", fontWeight: 700, marginBottom: "10px", color: "#374151" }}>DOCUMENTS * (Upload up to 4 documents)</label>
