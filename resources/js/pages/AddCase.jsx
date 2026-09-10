@@ -1,6 +1,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
+import "../../css/style.css";
 import Header from "./Header";
 import Sidebar from "./Sidebar";
 import { API_URL } from "../src/config";
