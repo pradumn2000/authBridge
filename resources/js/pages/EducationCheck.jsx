@@ -1,4 +1,334 @@
+// // import React, { useState } from "react";
+// // import Sidebar from "./Sidebar";
+// // import Header from "./Header";
 
+// // export default function EducationCheck() {
+// //   const [formData, setFormData] = useState({
+// //     institutionName: "",
+// //     degreeCertificate: "",
+// //     courseSpecialization: "",
+// //     rollRegNumber: "",
+// //     yearOfPassing: "",
+// //     percentageCgpa: "",
+// //     verificationMode: "",
+// //     resultLinkUrl: "",
+// //     remarks: "",
+// //   });
+
+// //   const handleChange = (e) => {
+// //     const { name, value } = e.target;
+// //     setFormData((prev) => ({
+// //       ...prev,
+// //       [name]: value,
+// //     }));
+// //   };
+
+// //   const handleSaveDraft = (e) => {
+// //     e.preventDefault();
+// //     console.log("Draft Saved:", formData);
+// //     alert("Draft saved successfully!");
+// //   };
+
+// //   const handleSaveAndMarkDone = (e) => {
+// //     e.preventDefault();
+// //     console.log("Submitted Data:", formData);
+// //     alert("Saved and Marked Done!");
+
+// //     // State reset after completion
+// //     setFormData({
+// //       institutionName: "",
+// //       degreeCertificate: "",
+// //       courseSpecialization: "",
+// //       rollRegNumber: "",
+// //       yearOfPassing: "",
+// //       percentageCgpa: "",
+// //       verificationMode: "",
+// //       resultLinkUrl: "",
+// //       remarks: "",
+// //     });
+// //   };
+
+// //   return (
+// //     <>
+// //       {/* 1. Sidebar (Fixed 270px) */}
+// //       <Sidebar />
+
+// //       {/* 2. Main Layout Section */}
+// //       <section id="content">
+// //         <Header />
+
+// //         <main>
+// //           <div style={styles.container}>
+// //             <form style={styles.card}>
+// //               <h2 style={styles.title}>Education Verification Check</h2>
+
+// //               {/* Row 1: Institution Name & Degree/Certificate */}
+// //               <div style={styles.row}>
+// //                 <div style={styles.formGroup}>
+// //                   <label style={styles.label}>INSTITUTION NAME</label>
+// //                   <input
+// //                     type="text"
+// //                     name="institutionName"
+// //                     value={formData.institutionName}
+// //                     onChange={handleChange}
+// //                     placeholder="Enter institution name..."
+// //                     style={styles.input}
+// //                   />
+// //                 </div>
+
+// //                 <div style={styles.formGroup}>
+// //                   <label style={styles.label}>DEGREE / CERTIFICATE</label>
+// //                   <input
+// //                     type="text"
+// //                     name="degreeCertificate"
+// //                     value={formData.degreeCertificate}
+// //                     onChange={handleChange}
+// //                     placeholder="Enter degree / certificate..."
+// //                     style={styles.input}
+// //                   />
+// //                 </div>
+// //               </div>
+
+// //               {/* Row 2: Course / Specialization & Roll / Reg. Number */}
+// //               <div style={styles.row}>
+// //                 <div style={styles.formGroup}>
+// //                   <label style={styles.label}>COURSE / SPECIALIZATION</label>
+// //                   <input
+// //                     type="text"
+// //                     name="courseSpecialization"
+// //                     value={formData.courseSpecialization}
+// //                     onChange={handleChange}
+// //                     placeholder="Enter course / specialization..."
+// //                     style={styles.input}
+// //                   />
+// //                 </div>
+
+// //                 <div style={styles.formGroup}>
+// //                   <label style={styles.label}>ROLL / REG. NUMBER</label>
+// //                   <input
+// //                     type="text"
+// //                     name="rollRegNumber"
+// //                     value={formData.rollRegNumber}
+// //                     onChange={handleChange}
+// //                     placeholder="Enter roll / reg. number..."
+// //                     style={styles.input}
+// //                   />
+// //                 </div>
+// //               </div>
+
+// //               {/* Row 3: Year of Passing & Percentage / CGPA */}
+// //               <div style={styles.row}>
+// //                 <div style={styles.formGroup}>
+// //                   <label style={styles.label}>YEAR OF PASSING</label>
+// //                   <input
+// //                     type="text"
+// //                     name="yearOfPassing"
+// //                     value={formData.yearOfPassing}
+// //                     onChange={handleChange}
+// //                     placeholder="Enter year of passing..."
+// //                     style={styles.input}
+// //                   />
+// //                 </div>
+
+// //                 <div style={styles.formGroup}>
+// //                   <label style={styles.label}>PERCENTAGE / CGPA</label>
+// //                   <input
+// //                     type="text"
+// //                     name="percentageCgpa"
+// //                     value={formData.percentageCgpa}
+// //                     onChange={handleChange}
+// //                     placeholder="Enter percentage / cgpa..."
+// //                     style={styles.input}
+// //                   />
+// //                 </div>
+// //               </div>
+
+// //               {/* Row 4: Verification Mode & Result Link (URL) */}
+// //               <div style={styles.row}>
+// //                 <div style={styles.formGroup}>
+// //                   <label style={styles.label}>VERIFICATION MODE</label>
+// //                   <select
+// //                     name="verificationMode"
+// //                     value={formData.verificationMode}
+// //                     onChange={handleChange}
+// //                     style={styles.select}
+// //                   >
+// //                     <option value="">— Select —</option>
+// //                     <option value="Online">Online</option>
+// //                     <option value="Email">Email</option>
+// //                     <option value="Physical">Physical</option>
+// //                     <option value="VeriFact">VeriFact / Portal</option>
+// //                   </select>
+// //                 </div>
+
+// //                 <div style={styles.formGroup}>
+// //                   <label style={styles.label}>RESULT LINK (URL)</label>
+// //                   <input
+// //                     type="url"
+// //                     name="resultLinkUrl"
+// //                     value={formData.resultLinkUrl}
+// //                     onChange={handleChange}
+// //                     placeholder="Enter result link (url)..."
+// //                     style={styles.input}
+// //                   />
+// //                 </div>
+// //               </div>
+
+// //               {/* Row 5: Remarks */}
+// //               <div style={styles.formGroupFull}>
+// //                 <label style={styles.label}>REMARKS</label>
+// //                 <textarea
+// //                   name="remarks"
+// //                   value={formData.remarks}
+// //                   onChange={handleChange}
+// //                   placeholder="Enter remarks..."
+// //                   rows={4}
+// //                   style={styles.textarea}
+// //                 />
+// //               </div>
+
+// //               {/* Action Buttons */}
+// //               <div style={styles.buttonContainer}>
+// //                 <button
+// //                   type="button"
+// //                   onClick={handleSaveDraft}
+// //                   style={styles.btnSaveDraft}
+// //                 >
+// //                   💾 Save Draft
+// //                 </button>
+// //                 <button
+// //                   type="button"
+// //                   onClick={handleSaveAndMarkDone}
+// //                   style={styles.btnSaveDone}
+// //                 >
+// //                   ✓ Save & Mark Done
+// //                 </button>
+// //               </div>
+// //             </form>
+// //           </div>
+// //         </main>
+// //       </section>
+// //     </>
+// //   );
+// // }
+
+// // // Inline Styles strictly aligned with the design
+// // const styles = {
+// //   container: {
+// //     display: "flex",
+// //     justifyContent: "center",
+// //     alignItems: "flex-start",
+// //     width: "100%",
+// //   },
+// //   card: {
+// //     backgroundColor: "#ffffff",
+// //     borderRadius: "8px",
+// //     padding: "24px 28px",
+// //     maxWidth: "850px",
+// //     width: "100%",
+// //     boxShadow: "0px 2px 8px rgba(0, 0, 0, 0.04)",
+// //     borderTop: "4px solid #1a237e",
+// //     boxSizing: "border-box",
+// //   },
+// //   title: {
+// //     fontSize: "20px",
+// //     fontWeight: "700",
+// //     color: "#1a237e",
+// //     marginBottom: "24px",
+// //     textTransform: "uppercase",
+// //     letterSpacing: "0.5px",
+// //   },
+// //   row: {
+// //     display: "flex",
+// //     gap: "20px",
+// //     marginBottom: "16px",
+// //     flexWrap: "wrap",
+// //   },
+// //   formGroup: {
+// //     flex: "1 1 calc(50% - 10px)",
+// //     display: "flex",
+// //     flexDirection: "column",
+// //     minWidth: "260px",
+// //   },
+// //   formGroupFull: {
+// //     display: "flex",
+// //     flexDirection: "column",
+// //     marginBottom: "20px",
+// //     width: "100%",
+// //   },
+// //   label: {
+// //     fontSize: "12px",
+// //     fontWeight: "700",
+// //     color: "#374151",
+// //     marginBottom: "8px",
+// //     letterSpacing: "0.4px",
+// //   },
+// //   input: {
+// //     padding: "10px 14px",
+// //     borderRadius: "6px",
+// //     border: "1px solid #e5e7eb",
+// //     backgroundColor: "#f9fafb",
+// //     fontSize: "14px",
+// //     color: "#1f2937",
+// //     outline: "none",
+// //   },
+// //   select: {
+// //     padding: "10px 14px",
+// //     borderRadius: "6px",
+// //     border: "1px solid #e5e7eb",
+// //     backgroundColor: "#f9fafb",
+// //     fontSize: "14px",
+// //     color: "#1f2937",
+// //     outline: "none",
+// //     cursor: "pointer",
+// //   },
+// //   textarea: {
+// //     padding: "10px 14px",
+// //     borderRadius: "6px",
+// //     border: "1px solid #e5e7eb",
+// //     backgroundColor: "#f9fafb",
+// //     fontSize: "14px",
+// //     color: "#1f2937",
+// //     outline: "none",
+// //     resize: "vertical",
+// //     minHeight: "90px",
+// //   },
+// //   buttonContainer: {
+// //     display: "flex",
+// //     gap: "16px",
+// //     marginTop: "20px",
+// //   },
+// //   btnSaveDraft: {
+// //     flex: 1,
+// //     padding: "12px 20px",
+// //     backgroundColor: "#23318c",
+// //     color: "#ffffff",
+// //     border: "none",
+// //     borderRadius: "6px",
+// //     fontWeight: "700",
+// //     fontSize: "14px",
+// //     cursor: "pointer",
+// //     display: "flex",
+// //     alignItems: "center",
+// //     justifyContent: "center",
+// //     gap: "8px",
+// //   },
+// //   btnSaveDone: {
+// //     flex: 1,
+// //     padding: "12px 20px",
+// //     backgroundColor: "#475569",
+// //     color: "#ffffff",
+// //     border: "none",
+// //     borderRadius: "6px",
+// //     fontWeight: "700",
+// //     fontSize: "14px",
+// //     cursor: "pointer",
+// //     display: "flex",
+// //     alignItems: "center",
+// //     justifyContent: "center",
+// //     gap: "8px",
+// //   },
+// // };
 // import React, { useState } from "react";
 // import Sidebar from "./Sidebar";
 // import "../../css/style.css";
@@ -636,7 +966,552 @@
 //     </div>
 //   );
 // }
+// // import React, { useState, useEffect } from "react";
+// // import Sidebar from "./Sidebar";
+// // import Header from "./Header";
+// // import { API_URL } from "../src/config"; 
 
+// // export default function EmploymentCheck() {
+// //   const [activeTab, setActiveTab] = useState("allocation");
+// //   const [loading, setLoading] = useState(true);
+
+// //   // --- API Data States ---
+// //   const [cases, setCases] = useState([]);
+// //   const [verifiers, setVerifiers] = useState([]);
+  
+// //   // --- Allocation States ---
+// //   const [selectedCaseIds, setSelectedCaseIds] = useState([]);
+// //   const [selectedVerifierId, setSelectedVerifierId] = useState("");
+
+// //   // --- Form States (Tab 2) ---
+// //   const [currentCase, setCurrentCase] = useState(null);
+// //   const [candidateInfo, setCandidateInfo] = useState({ candidateName: "", date: "" });
+// //   const [employers, setEmployers] = useState([
+// //     { id: 1, isOpen: true, companyName: "", designation: "", employeeId: "", hrEmailId: "", hrPhonePrefix: "+91", hrPhoneNumber: "", doj: "", doe: "", uploadedDocs: {} }
+// //   ]);
+
+// //   // Pagination
+// //   const [tablePage, setTablePage] = useState(1);
+// //   const [rowsPerPage, setRowsPerPage] = useState(10);
+
+// //   // ──────────────────────────────────────────────────────────────
+// //   // 1. DATA FETCHING (Dynamic Backend Connection)
+// //   // ──────────────────────────────────────────────────────────────
+// //   const fetchData = async () => {
+// //     setLoading(true);
+// //     try {
+// //       const token = localStorage.getItem("token");
+// //       const headers = { Authorization: `Bearer ${token}`, Accept: "application/json" };
+
+// //       const [casesRes, usersRes] = await Promise.all([
+// //         fetch(`${API_URL}/api/cases`, { headers }),
+// //         fetch(`${API_URL}/api/users`, { headers })
+// //       ]);
+
+// //       const casesData = await casesRes.json();
+// //       const usersData = await usersRes.json();
+
+// //       // Filter cases that specifically require employment verification
+// //       if (casesRes.ok) {
+// //         const empCases = (casesData.cases || []).filter(c => c.checks?.includes("employment"));
+// //         setCases(empCases);
+// //       }
+
+// //       // Get users who can act as verifiers
+// //       if (usersRes.ok) {
+// //         const verifierList = (usersData.users || []).filter(u => 
+// //           ['admin', 'allocator', 'employment_verifier', 'verifier', 'check_manager'].includes(u.role)
+// //         );
+// //         setVerifiers(verifierList);
+// //       }
+// //     } catch (error) {
+// //       console.error("Failed to load data", error);
+// //     } finally {
+// //       setLoading(false);
+// //     }
+// //   };
+
+// //   useEffect(() => {
+// //     fetchData();
+// //   }, []);
+
+// //   // ──────────────────────────────────────────────────────────────
+// //   // 2. ASSIGN VERIFIER LOGIC
+// //   // ──────────────────────────────────────────────────────────────
+// //   const toggleCaseSelection = (caseId) => {
+// //     setSelectedCaseIds(prev => 
+// //       prev.includes(caseId) ? prev.filter(id => id !== caseId) : [...prev, caseId]
+// //     );
+// //   };
+
+// //   const handleAllocate = async () => {
+// //     if (selectedCaseIds.length === 0) return alert("Please select at least one case from the table.");
+// //     if (!selectedVerifierId) return alert("Please select a verifier from the panel.");
+
+// //     const token = localStorage.getItem("token");
+// //     try {
+// //       // Assign the verifier to all selected cases concurrently
+// //       await Promise.all(selectedCaseIds.map(caseId => 
+// //         fetch(`${API_URL}/api/cases/${caseId}/assign`, {
+// //           method: 'PATCH',
+// //           headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+// //           body: JSON.stringify({ check_type: 'employment', user_id: selectedVerifierId })
+// //         })
+// //       ));
+
+// //       alert("Verifier(s) successfully assigned!");
+// //       setSelectedCaseIds([]);
+// //       setSelectedVerifierId("");
+// //       fetchData(); // Refresh table data to show new assignments
+// //     } catch (error) {
+// //       console.error(error);
+// //       alert("Failed to allocate verifier.");
+// //     }
+// //   };
+
+// //   // ──────────────────────────────────────────────────────────────
+// //   // 3. EDIT / FORM LOGIC
+// //   // ──────────────────────────────────────────────────────────────
+// //   const handleViewCase = (caseObj) => {
+// //     setCurrentCase(caseObj);
+// //     setCandidateInfo({ 
+// //       candidateName: caseObj.candidate || "", 
+// //       date: caseObj.created_at || new Date().toISOString().split('T')[0] 
+// //     });
+
+// //     // Populate existing employer fields if they exist in the DB JSON
+// //     const existingEmployers = caseObj.check_details?.employment?.fields?.employers;
+// //     if (existingEmployers && existingEmployers.length > 0) {
+// //       setEmployers(existingEmployers.map((emp, index) => ({ 
+// //         ...emp, 
+// //         isOpen: index === 0, // Only open the first one by default for clean UX
+// //         uploadedDocs: {} 
+// //       })));
+// //     } else {
+// //       // Default empty state
+// //       setEmployers([{ id: 1, isOpen: true, companyName: "", designation: "", employeeId: "", hrEmailId: "", hrPhonePrefix: "+91", hrPhoneNumber: "", doj: "", doe: "", uploadedDocs: {} }]);
+// //     }
+// //     setActiveTab("employment");
+// //   };
+
+// //   const handleEmployerChange = (id, field, value) => {
+// //     setEmployers(prev => prev.map(emp => emp.id === id ? { ...emp, [field]: value } : emp));
+// //   };
+
+// //   const handleFileChange = (empId, docNum, file) => {
+// //     if (file && file.size > 10 * 1024 * 1024) return alert("File exceeds 10MB limit.");
+// //     setEmployers(prev => prev.map(emp => {
+// //       if (emp.id === empId) {
+// //         return { ...emp, uploadedDocs: { ...emp.uploadedDocs, [`doc${docNum}`]: file } };
+// //       }
+// //       return emp;
+// //     }));
+// //   };
+
+// //   const toggleAccordion = (id) => {
+// //     setEmployers(prev => prev.map(emp => emp.id === id ? { ...emp, isOpen: !emp.isOpen } : emp));
+// //   };
+
+// //   const addEmployer = () => {
+// //     if (employers.length >= 4) return alert("Maximum 4 employers allowed.");
+// //     setEmployers(prev => [
+// //       ...prev.map(e => ({ ...e, isOpen: false })),
+// //       { id: Date.now(), isOpen: true, companyName: "", designation: "", employeeId: "", hrEmailId: "", hrPhonePrefix: "+91", hrPhoneNumber: "", doj: "", doe: "", uploadedDocs: {} }
+// //     ]);
+// //   };
+
+// //   const removeEmployer = (id, e) => {
+// //     e.stopPropagation();
+// //     if (employers.length === 1) return;
+// //     setEmployers(prev => prev.filter(emp => emp.id !== id));
+// //   };
+
+// //   const handleSaveCase = async (e) => {
+// //     e.preventDefault();
+// //     if (!currentCase) return alert("No case selected. Please select a case from the Allocation tab first.");
+    
+// //     const token = localStorage.getItem("token");
+// //     const headers = { Authorization: `Bearer ${token}` };
+
+// //     try {
+// //       // 1. Save text fields (Strip out UI-only properties like isOpen and uploadedDocs)
+// //       const cleanEmployers = employers.map(({ isOpen, uploadedDocs, ...rest }) => rest);
+      
+// //       const patchRes = await fetch(`${API_URL}/api/cases/${currentCase.case_id}/checks/employment`, {
+// //         method: "PATCH",
+// //         headers: { ...headers, "Content-Type": "application/json" },
+// //         body: JSON.stringify({ fields: { employers: cleanEmployers } })
+// //       });
+
+// //       if (!patchRes.ok) throw new Error("Failed to save employer data.");
+
+// //       // 2. Upload documents individually
+// //       for (const emp of employers) {
+// //         for (const [docKey, file] of Object.entries(emp.uploadedDocs)) {
+// //           if (file) {
+// //             const formData = new FormData();
+// //             formData.append("file", file);
+// //             formData.append("document_key", `employer_${emp.id}_${docKey}`); 
+            
+// //             await fetch(`${API_URL}/api/cases/${currentCase.case_id}/checks/employment/documents`, {
+// //               method: "POST",
+// //               headers, // Do NOT set Content-Type for FormData
+// //               body: formData
+// //             });
+// //           }
+// //         }
+// //       }
+
+// //       alert("Employment Case Saved Successfully!");
+// //       setActiveTab("allocation");
+// //       fetchData(); // Refresh to pull down any new DB statuses
+// //     } catch (error) {
+// //       console.error(error);
+// //       alert("An error occurred while saving the case.");
+// //     }
+// //   };
+
+// //   // ──────────────────────────────────────────────────────────────
+// //   // 4. UI RENDER HELPERS
+// //   // ──────────────────────────────────────────────────────────────
+// //   const renderPagination = (totalItems) => {
+// //     const totalPages = Math.ceil(totalItems / rowsPerPage) || 1;
+// //     const startItem = (tablePage - 1) * rowsPerPage + 1;
+// //     const endItem = Math.min(tablePage * rowsPerPage, totalItems);
+
+// //     return (
+// //       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: "16px", paddingTop: "12px", borderTop: "1px solid #f1f5f9", fontSize: "12px", color: "#64748b" }}>
+// //         <div>
+// //           Showing <span style={{ fontWeight: 600, color: "#1e293b" }}>{totalItems > 0 ? startItem : 0}</span> to{" "}
+// //           <span style={{ fontWeight: 600, color: "#1e293b" }}>{endItem}</span> of{" "}
+// //           <span style={{ fontWeight: 600, color: "#1e293b" }}>{totalItems}</span> entries
+// //         </div>
+
+// //         <div style={{ display: "flex", alignItems: "center", gap: "4px" }}>
+// //           <button onClick={() => setTablePage(Math.max(1, tablePage - 1))} disabled={tablePage === 1} style={{ padding: "4px 8px", borderRadius: "4px", border: "1px solid #cbd5e1", background: "#fff", cursor: tablePage === 1 ? "not-allowed" : "pointer", opacity: tablePage === 1 ? 0.5 : 1 }}>‹</button>
+// //           <span style={{ padding: "4px 10px", borderRadius: "4px", border: "none", background: "#1e2761", color: "#fff", fontWeight: 700 }}>{tablePage}</span>
+// //           <button onClick={() => setTablePage(Math.min(totalPages, tablePage + 1))} disabled={tablePage === totalPages} style={{ padding: "4px 8px", borderRadius: "4px", border: "1px solid #cbd5e1", background: "#fff", cursor: tablePage === totalPages ? "not-allowed" : "pointer", opacity: tablePage === totalPages ? 0.5 : 1 }}>›</button>
+// //         </div>
+
+// //         <select value={rowsPerPage} onChange={(e) => { setRowsPerPage(Number(e.target.value)); setTablePage(1); }} style={{ padding: "4px 8px", borderRadius: "4px", border: "1px solid #cbd5e1", background: "#fff", fontSize: "12px", cursor: "pointer" }}>
+// //           <option value={10}>10 / page</option>
+// //           <option value={20}>20 / page</option>
+// //           <option value={50}>50 / page</option>
+// //         </select>
+// //       </div>
+// //     );
+// //   };
+
+// //   const renderEmployerFields = (emp) => (
+// //     <div style={{ background: "#fff", padding: "16px", borderTop: "1px solid #e2e8f0" }}>
+// //       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "16px", marginBottom: "16px" }}>
+// //         <div>
+// //           <label style={{ display: "block", fontSize: "12px", fontWeight: 700, marginBottom: "6px", color: "#374151" }}>COMPANY NAME *</label>
+// //           <input type="text" value={emp.companyName} onChange={e => handleEmployerChange(emp.id, 'companyName', e.target.value)} placeholder="Enter company name" style={{ width: "100%", padding: "8px 12px", borderRadius: "6px", border: "1px solid #cbd5e1", outline: "none" }} />
+// //         </div>
+// //         <div>
+// //           <label style={{ display: "block", fontSize: "12px", fontWeight: 700, marginBottom: "6px", color: "#374151" }}>DESIGNATION *</label>
+// //           <input type="text" value={emp.designation} onChange={e => handleEmployerChange(emp.id, 'designation', e.target.value)} placeholder="Enter designation" style={{ width: "100%", padding: "8px 12px", borderRadius: "6px", border: "1px solid #cbd5e1", outline: "none" }} />
+// //         </div>
+// //         <div>
+// //           <label style={{ display: "block", fontSize: "12px", fontWeight: 700, marginBottom: "6px", color: "#374151" }}>EMPLOYEE ID</label>
+// //           <input type="text" value={emp.employeeId} onChange={e => handleEmployerChange(emp.id, 'employeeId', e.target.value)} placeholder="Enter employee ID" style={{ width: "100%", padding: "8px 12px", borderRadius: "6px", border: "1px solid #cbd5e1", outline: "none" }} />
+// //         </div>
+// //       </div>
+
+// //       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px", marginBottom: "16px" }}>
+// //         <div>
+// //           <label style={{ display: "block", fontSize: "12px", fontWeight: 700, marginBottom: "6px", color: "#374151" }}>HR EMAIL ID *</label>
+// //           <input type="email" value={emp.hrEmailId} onChange={e => handleEmployerChange(emp.id, 'hrEmailId', e.target.value)} placeholder="Enter HR email ID" style={{ width: "100%", padding: "8px 12px", borderRadius: "6px", border: "1px solid #cbd5e1", outline: "none" }} />
+// //         </div>
+// //         <div>
+// //           <label style={{ display: "block", fontSize: "12px", fontWeight: 700, marginBottom: "6px", color: "#374151" }}>HR PHONE NUMBER *</label>
+// //           <div style={{ display: "flex", gap: "8px" }}>
+// //             <select value={emp.hrPhonePrefix} onChange={e => handleEmployerChange(emp.id, 'hrPhonePrefix', e.target.value)} style={{ padding: "8px", borderRadius: "6px", border: "1px solid #cbd5e1", background: "#fff" }}>
+// //               <option value="+91">+91</option>
+// //               <option value="+1">+1</option>
+// //               <option value="+44">+44</option>
+// //             </select>
+// //             <input type="text" value={emp.hrPhoneNumber} onChange={e => handleEmployerChange(emp.id, 'hrPhoneNumber', e.target.value)} placeholder="Enter phone number" style={{ width: "100%", padding: "8px 12px", borderRadius: "6px", border: "1px solid #cbd5e1", outline: "none" }} />
+// //           </div>
+// //         </div>
+// //       </div>
+
+// //       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px", marginBottom: "20px" }}>
+// //         <div>
+// //           <label style={{ display: "block", fontSize: "12px", fontWeight: 700, marginBottom: "6px", color: "#374151" }}>DATE OF JOINING (DOJ) *</label>
+// //           <input type="date" value={emp.doj} onChange={e => handleEmployerChange(emp.id, 'doj', e.target.value)} style={{ width: "100%", padding: "8px 12px", borderRadius: "6px", border: "1px solid #cbd5e1", outline: "none" }} />
+// //         </div>
+// //         <div>
+// //           <label style={{ display: "block", fontSize: "12px", fontWeight: 700, marginBottom: "6px", color: "#374151" }}>DATE OF EXIT (DOE) *</label>
+// //           <input type="date" value={emp.doe} onChange={e => handleEmployerChange(emp.id, 'doe', e.target.value)} style={{ width: "100%", padding: "8px 12px", borderRadius: "6px", border: "1px solid #cbd5e1", outline: "none" }} />
+// //         </div>
+// //       </div>
+
+// //       {/* Documents Upload Section */}
+// //       <div>
+// //         <label style={{ display: "block", fontSize: "12px", fontWeight: 700, marginBottom: "10px", color: "#374151" }}>DOCUMENTS * (Upload up to 4 documents)</label>
+// //         <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "12px" }}>
+// //           {[1, 2, 3, 4].map((docNum) => {
+// //             const selectedFile = emp.uploadedDocs[`doc${docNum}`];
+// //             return (
+// //               <div key={docNum} style={{ border: "2px dashed #cbd5e1", borderRadius: "8px", padding: "16px", textAlign: "center", background: "#f8fafc" }}>
+// //                 <p style={{ fontSize: "12px", fontWeight: 700, margin: "0 0 4px 0", color: "#334155" }}>Document {docNum}</p>
+// //                 <span style={{ fontSize: "10px", color: "#94a3b8", display: "block", marginBottom: "10px" }}>PDF, JPG, PNG (Max 10MB)</span>
+                
+// //                 <label style={{ background: "#eff6ff", color: "#2563eb", padding: "6px 12px", borderRadius: "4px", fontSize: "11px", fontWeight: 700, cursor: "pointer", display: "inline-block" }}>
+// //                   {selectedFile ? '🔄 Replace File' : '☁ Choose File'}
+// //                   <input type="file" accept=".pdf,.jpg,.jpeg,.png" style={{ display: "none" }} onChange={(e) => handleFileChange(emp.id, docNum, e.target.files[0])} />
+// //                 </label>
+
+// //                 {selectedFile && (
+// //                   <div style={{ marginTop: "8px", fontSize: "11px", color: "#16a34a", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+// //                     ✓ {selectedFile.name}
+// //                   </div>
+// //                 )}
+// //               </div>
+// //             );
+// //           })}
+// //         </div>
+// //       </div>
+// //     </div>
+// //   );
+
+// //   // Pagination Slice
+// //   const paginatedCases = cases.slice((tablePage - 1) * rowsPerPage, tablePage * rowsPerPage);
+
+// //   return (
+// //     <>
+// //       <Sidebar />
+// //       <section id="content">
+// //         <Header />
+
+// //         <main style={{ padding: "20px", backgroundColor: "#f8fafc", minHeight: "100vh" }}>
+// //           <div style={{ maxWidth: "1280px", margin: "0 auto" }}>
+            
+// //             {/* Top Navigation Bar */}
+// //             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px", borderBottom: "2px solid #e2e8f0", paddingBottom: "10px" }}>
+// //               <ul className="nav nav-pills" style={{ gap: "10px", marginBottom: "0", listStyle: "none", display: "flex", padding: 0 }}>
+// //                 <li>
+// //                   <button
+// //                     onClick={() => setActiveTab("allocation")}
+// //                     style={{
+// //                       fontWeight: 600, borderRadius: "6px", cursor: "pointer", padding: "8px 20px",
+// //                       backgroundColor: activeTab === "allocation" ? "#1e2761" : "transparent",
+// //                       color: activeTab === "allocation" ? "#ffffff" : "#64748b", border: "none"
+// //                     }}
+// //                   >
+// //                     Case Allocation
+// //                   </button>
+// //                 </li>
+// //                 <li>
+// //                   <button
+// //                     onClick={() => { setActiveTab("employment"); setCurrentCase(null); setEmployers([{ id: 1, isOpen: true, companyName: "", designation: "", employeeId: "", hrEmailId: "", hrPhonePrefix: "+91", hrPhoneNumber: "", doj: "", doe: "", uploadedDocs: {} }]); }}
+// //                     style={{
+// //                       fontWeight: 600, borderRadius: "6px", cursor: "pointer", padding: "8px 20px",
+// //                       backgroundColor: activeTab === "employment" ? "#1e2761" : "transparent",
+// //                       color: activeTab === "employment" ? "#ffffff" : "#64748b", border: "none"
+// //                     }}
+// //                   >
+// //                     Employment Form
+// //                   </button>
+// //                 </li>
+// //               </ul>
+// //             </div>
+
+// //             {/* TAB 1: COMPANY ALLOCATION */}
+// //             {activeTab === "allocation" && (
+// //               <div>
+// //                 {/* Dynamic Summary Stat Cards */}
+// //                 <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "16px", marginBottom: "24px" }}>
+// //                   <div style={{ background: "#fff", padding: "16px", borderRadius: "8px", border: "1px solid #e2e8f0" }}>
+// //                     <span style={{ fontSize: "12px", color: "#64748b", fontWeight: 600 }}>Total Employment Cases</span>
+// //                     <h2 style={{ fontSize: "22px", margin: "4px 0", fontWeight: 800 }}>{cases.length}</h2>
+// //                   </div>
+// //                   <div style={{ background: "#fff", padding: "16px", borderRadius: "8px", border: "1px solid #e2e8f0" }}>
+// //                     <span style={{ fontSize: "12px", color: "#64748b", fontWeight: 600 }}>Unassigned</span>
+// //                     <h2 style={{ fontSize: "22px", margin: "4px 0", fontWeight: 800, color: "#d97706" }}>
+// //                       {cases.filter(c => !c.assigned_verifiers?.employment).length}
+// //                     </h2>
+// //                   </div>
+// //                   <div style={{ background: "#fff", padding: "16px", borderRadius: "8px", border: "1px solid #e2e8f0" }}>
+// //                     <span style={{ fontSize: "12px", color: "#64748b", fontWeight: 600 }}>In Progress</span>
+// //                     <h2 style={{ fontSize: "22px", margin: "4px 0", fontWeight: 800, color: "#2563eb" }}>
+// //                       {cases.filter(c => c.status === 'in-progress').length}
+// //                     </h2>
+// //                   </div>
+// //                   <div style={{ background: "#fff", padding: "16px", borderRadius: "8px", border: "1px solid #e2e8f0" }}>
+// //                     <span style={{ fontSize: "12px", color: "#64748b", fontWeight: 600 }}>Completed</span>
+// //                     <h2 style={{ fontSize: "22px", margin: "4px 0", fontWeight: 800, color: "#16a34a" }}>
+// //                       {cases.filter(c => c.status === 'completed' || c.status === 'qc-review').length}
+// //                     </h2>
+// //                   </div>
+// //                 </div>
+
+// //                 {/* Main Table and Allocation Panel */}
+// //                 <div style={{ display: "flex", gap: "20px", marginBottom: "24px", alignItems: "flex-start" }}>
+                  
+// //                   {/* Table Section */}
+// //                   <div style={{ flex: 1, background: "#fff", borderRadius: "8px", border: "1px solid #e2e8f0", padding: "18px" }}>
+// //                     <h3 style={{ fontSize: "16px", fontWeight: 700, marginBottom: "14px", color: "#1e293b" }}>Case Allocation Table</h3>
+                    
+// //                     {loading ? (
+// //                       <div style={{ padding: "40px", textAlign: "center", color: "#64748b" }}>Loading cases...</div>
+// //                     ) : (
+// //                       <div style={{ overflowX: "auto" }}>
+// //                         <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "13px" }}>
+// //                           <thead>
+// //                             <tr style={{ background: "#f8fafc", textAlign: "left", color: "#64748b" }}>
+// //                               <th style={{ padding: "10px" }}><input type="checkbox" onChange={(e) => setSelectedCaseIds(e.target.checked ? paginatedCases.map(c => c.case_id) : [])} checked={selectedCaseIds.length > 0 && selectedCaseIds.length === paginatedCases.length} /></th>
+// //                               <th style={{ padding: "10px" }}>Case ID</th>
+// //                               <th style={{ padding: "10px" }}>Candidate Name</th>
+// //                               <th style={{ padding: "10px" }}>Client</th>
+// //                               <th style={{ padding: "10px" }}>Status</th>
+// //                               <th style={{ padding: "10px" }}>Verifier</th>
+// //                               <th style={{ padding: "10px" }}>Action</th>
+// //                             </tr>
+// //                           </thead>
+// //                           <tbody>
+// //                             {paginatedCases.length === 0 ? (
+// //                               <tr><td colSpan="7" style={{ textAlign: "center", padding: "20px", color: "#94a3b8" }}>No employment cases found.</td></tr>
+// //                             ) : paginatedCases.map((row) => (
+// //                               <tr key={row.case_id} style={{ borderBottom: "1px solid #f1f5f9" }}>
+// //                                 <td style={{ padding: "10px" }}>
+// //                                   <input type="checkbox" checked={selectedCaseIds.includes(row.case_id)} onChange={() => toggleCaseSelection(row.case_id)} />
+// //                                 </td>
+// //                                 <td style={{ padding: "10px", color: "#2563eb", fontWeight: 700 }}>{row.case_id}</td>
+// //                                 <td style={{ padding: "10px", fontWeight: 600 }}>{row.candidate}</td>
+// //                                 <td style={{ padding: "10px" }}>{row.client}</td>
+// //                                 <td style={{ padding: "10px" }}>
+// //                                   <span style={{ 
+// //                                     background: row.status === 'completed' ? '#dcfce7' : row.status === 'in-progress' ? '#dbeafe' : '#f1f5f9',
+// //                                     color: row.status === 'completed' ? '#166534' : row.status === 'in-progress' ? '#1e40af' : '#475569',
+// //                                     padding: '4px 8px', borderRadius: '4px', fontSize: '11px', fontWeight: 600, textTransform: 'capitalize'
+// //                                   }}>
+// //                                     {row.status}
+// //                                   </span>
+// //                                 </td>
+// //                                 <td style={{ padding: "10px", color: "#64748b" }}>
+// //                                   {row.assigned_verifiers?.employment ? verifiers.find(v => v.id === row.assigned_verifiers.employment)?.name || `ID: ${row.assigned_verifiers.employment}` : "Unassigned"}
+// //                                 </td>
+// //                                 <td style={{ padding: "10px" }}>
+// //                                   <button onClick={() => handleViewCase(row)} style={{ background: "#eff6ff", color: "#2563eb", border: "none", padding: "5px 12px", borderRadius: "4px", fontWeight: 600, cursor: "pointer" }}>
+// //                                     View / Edit
+// //                                   </button>
+// //                                 </td>
+// //                               </tr>
+// //                             ))}
+// //                           </tbody>
+// //                         </table>
+// //                       </div>
+// //                     )}
+// //                     {!loading && renderPagination(cases.length)}
+// //                   </div>
+
+// //                   {/* Select Verifier Panel */}
+// //                   <div style={{ width: "320px", background: "#fff", borderRadius: "8px", border: "1px solid #e2e8f0", padding: "18px" }}>
+// //                     <h3 style={{ fontSize: "16px", fontWeight: 700, marginBottom: "14px", color: "#0f172a" }}>Select Verifier</h3>
+                    
+// //                     <div style={{ display: "flex", flexDirection: "column", gap: "12px", marginBottom: "20px", maxHeight: "400px", overflowY: "auto" }}>
+// //                       {verifiers.map((verifier) => (
+// //                         <div key={verifier.id} onClick={() => setSelectedVerifierId(verifier.id)} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "10px 12px", borderRadius: "8px", border: selectedVerifierId === verifier.id ? "2px solid #2563eb" : "1px solid #f1f5f9", background: selectedVerifierId === verifier.id ? "#eff6ff" : "#f8fafc", cursor: "pointer" }}>
+// //                           <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+// //                             <div style={{ width: "32px", height: "32px", borderRadius: "50%", background: "#cbd5e1", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 700, fontSize: "12px", color: "#334155" }}>
+// //                               {verifier.name.charAt(0)}
+// //                             </div>
+// //                             <div>
+// //                               <p style={{ margin: 0, fontWeight: 700, fontSize: "13px", color: "#1e293b" }}>{verifier.name}</p>
+// //                               <span style={{ fontSize: "11px", color: "#64748b", textTransform: 'capitalize' }}>{verifier.role.replace('_', ' ')}</span>
+// //                             </div>
+// //                           </div>
+// //                         </div>
+// //                       ))}
+// //                       {verifiers.length === 0 && <p style={{ fontSize: "12px", color: "#94a3b8" }}>No verifiers found.</p>}
+// //                     </div>
+
+// //                     <div style={{ display: "flex", gap: "10px" }}>
+// //                       <button onClick={handleAllocate} style={{ flex: 1, padding: "10px", borderRadius: "6px", border: "none", background: "#1e2761", color: "#fff", fontWeight: 600, cursor: "pointer", fontSize: "13px" }}>
+// //                         Allocate Selected ({selectedCaseIds.length})
+// //                       </button>
+// //                     </div>
+// //                   </div>
+
+// //                 </div>
+// //               </div>
+// //             )}
+
+// //             {/* TAB 2: EMPLOYMENT CASES (FORM) */}
+// //             {activeTab === "employment" && (
+// //               <div style={{ background: "#fff", borderRadius: "10px", border: "1px solid #e2e8f0", padding: "24px" }}>
+                
+// //                 {/* Header Actions */}
+// //                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px" }}>
+// //                   <div>
+// //                     <h2 style={{ fontSize: "20px", fontWeight: 700, color: "#0f172a", margin: 0 }}>
+// //                       {currentCase ? `Edit Employment Case: ${currentCase.case_id}` : "Add Employment Case"}
+// //                     </h2>
+// //                     <p style={{ fontSize: "13px", color: "#64748b", margin: "4px 0 0 0" }}>
+// //                       Add candidate employment details. You can add up to 4 previous employers.
+// //                     </p>
+// //                   </div>
+// //                   <div style={{ display: "flex", gap: "10px" }}>
+// //                     <button type="button" onClick={() => setActiveTab("allocation")} style={{ padding: "8px 16px", borderRadius: "6px", border: "1px solid #cbd5e1", background: "#fff", fontWeight: 600, cursor: "pointer" }}>
+// //                       ✕ Cancel
+// //                     </button>
+// //                     <button type="button" onClick={handleSaveCase} style={{ padding: "8px 20px", borderRadius: "6px", border: "none", background: "#1e2761", color: "#fff", fontWeight: 600, cursor: "pointer" }}>
+// //                       💾 Save Details
+// //                     </button>
+// //                   </div>
+// //                 </div>
+
+// //                 {/* Candidate Details */}
+// //                 <div style={{ background: "#f8fafc", padding: "18px", borderRadius: "8px", border: "1px solid #e2e8f0", marginBottom: "24px" }}>
+// //                   <h4 style={{ fontSize: "14px", fontWeight: 700, color: "#2563eb", marginBottom: "12px" }}>Candidate Details</h4>
+// //                   <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px" }}>
+// //                     <div>
+// //                       <label style={{ display: "block", fontSize: "12px", fontWeight: 700, marginBottom: "6px", color: "#374151" }}>CANDIDATE NAME *</label>
+// //                       <input type="text" disabled={!!currentCase} value={candidateInfo.candidateName} onChange={(e) => setCandidateInfo(p => ({...p, candidateName: e.target.value}))} style={{ width: "100%", padding: "9px 12px", borderRadius: "6px", border: "1px solid #cbd5e1", outline: "none", background: currentCase ? "#f1f5f9" : "#fff", color: currentCase ? "#94a3b8" : "#0f172a" }} />
+// //                     </div>
+// //                     <div>
+// //                       <label style={{ display: "block", fontSize: "12px", fontWeight: 700, marginBottom: "6px", color: "#374151" }}>DATE *</label>
+// //                       <input type="date" disabled={!!currentCase} value={candidateInfo.date} onChange={(e) => setCandidateInfo(p => ({...p, date: e.target.value}))} style={{ width: "100%", padding: "9px 12px", borderRadius: "6px", border: "1px solid #cbd5e1", outline: "none", background: currentCase ? "#f1f5f9" : "#fff", color: currentCase ? "#94a3b8" : "#0f172a" }} />
+// //                     </div>
+// //                   </div>
+// //                 </div>
+
+// //                 {/* Employers Accordion */}
+// //                 <div style={{ display: "flex", flexDirection: "column", gap: "12px", marginBottom: "20px" }}>
+// //                   {employers.map((emp, index) => (
+// //                     <div key={emp.id} style={{ border: "1px solid #cbd5e1", borderRadius: "8px", overflow: "hidden" }}>
+// //                       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", background: "#ffffff", borderBottom: emp.isOpen ? "1px solid #e2e8f0" : "none" }}>
+// //                         <button type="button" onClick={() => toggleAccordion(emp.id)} style={{ flex: 1, padding: "14px 16px", display: "flex", alignItems: "center", gap: "10px", background: "transparent", border: "none", cursor: "pointer", fontWeight: 700, fontSize: "14px", color: "#1e293b", textAlign: "left" }}>
+// //                           <span style={{ background: emp.isOpen ? "#1e2761" : "#94a3b8", color: "#fff", borderRadius: "50%", width: "24px", height: "24px", display: "inline-flex", alignItems: "center", justifyContent: "center", fontSize: "12px" }}>{index + 1}</span>
+// //                           Employer {index + 1} {emp.companyName && `— ${emp.companyName}`}
+// //                         </button>
+// //                         <div style={{ display: "flex", alignItems: "center", paddingRight: "16px", gap: "12px" }}>
+// //                           <button type="button" onClick={(e) => removeEmployer(emp.id, e)} style={{ border: "1px solid #fecaca", background: "#fff", color: "#dc2626", padding: "4px 10px", borderRadius: "4px", fontSize: "11px", fontWeight: 600, cursor: "pointer" }}>Remove</button>
+// //                           <span style={{ cursor: "pointer" }} onClick={() => toggleAccordion(emp.id)}>{emp.isOpen ? "➖" : "➕"}</span>
+// //                         </div>
+// //                       </div>
+                      
+// //                       {emp.isOpen && renderEmployerFields(emp)}
+// //                     </div>
+// //                   ))}
+// //                 </div>
+
+// //                 <button onClick={addEmployer} type="button" style={{ padding: "10px 16px", borderRadius: "6px", border: "1px dashed #2563eb", background: "#eff6ff", color: "#2563eb", fontWeight: 600, cursor: "pointer", width: "100%", fontSize: "13px" }}>
+// //                   + Add Another Employer
+// //                 </button>
+
+// //               </div>
+// //             )}
+
+// //           </div>
+// //         </main>
+// //       </section>
+// //     </>
+// //   );
+// // }
 import React, { useState } from "react";
 import Sidebar from "./Sidebar";
 import "../../css/style.css";

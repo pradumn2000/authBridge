@@ -61,6 +61,10 @@ class BGVCase extends Model
     {
         return $this->hasMany(CaseEvent::class, 'case_id', 'case_id');
     }
+    public function caseChecks()
+    {
+        return $this->hasMany(CaseCheck::class, 'case_id', 'case_id');
+    }
 
     public static function generateCaseId(): string
     {
