@@ -1,4 +1,5 @@
 
+
 // import React, { useState } from 'react';
 // import { 
 //   Check, 
@@ -12,7 +13,9 @@
 //   Briefcase, 
 //   Eye,
 //   Download,
-//   User
+//   User,
+//   CreditCard,
+//   Lock
 // } from 'lucide-react';
 
 // export default function CandidateVerificationWizard() {
@@ -36,6 +39,7 @@
 //     permanentAddress: '',
 //     permanentAddressDocType: '',
 //     permanentAddressDocFile: null,
+//     aadhaarNumber: '',
 //     panNumber: '',
 //     candidateDate: ''
 //   });
@@ -43,7 +47,7 @@
 //   // Step 4 Tabs: 'education' | 'employment'
 //   const [step4Tab, setStep4Tab] = useState('education');
 
-//   // Education state with new dynamic fields
+//   // Education state with dynamic fields
 //   const [qualifications, setQualifications] = useState([
 //     { 
 //       qualificationType: '', 
@@ -751,7 +755,7 @@
 //                   <div style={styles.flexColumnGap}>
 //                     <div style={styles.flexAlignGap}>
 //                       <div style={styles.badgeCheck}>✓</div>
-//                       <span style={{ fontSize: '13px', color: '#475569', fontWeight: '500' }}>Government ID (PAN card)</span>
+//                       <span style={{ fontSize: '13px', color: '#475569', fontWeight: '500' }}>Government ID (Aadhaar / PAN card)</span>
 //                     </div>
 //                     <div style={styles.flexAlignGap}>
 //                       <div style={styles.badgeCheck}>✓</div>
@@ -879,6 +883,7 @@
 //                           onChange={(e) => setPersonalDetails({ ...personalDetails, currentAddressDocType: e.target.value })}
 //                         >
 //                           <option value="">Select Document Type</option>
+//                           <option value="Aadhaar Card">Aadhaar Card</option>
 //                           <option value="Driving License">Driving License (DL)</option>
 //                           <option value="Electricity Bill">Electricity Bill</option>
 //                           <option value="Passport">Passport</option>
@@ -948,6 +953,7 @@
 //                             onChange={(e) => setPersonalDetails({ ...personalDetails, permanentAddressDocType: e.target.value })}
 //                           >
 //                             <option value="">Select Document Type</option>
+//                             <option value="Aadhaar Card">Aadhaar Card</option>
 //                             <option value="Driving License">Driving License (DL)</option>
 //                             <option value="Electricity Bill">Electricity Bill</option>
 //                             <option value="Passport">Passport</option>
@@ -979,11 +985,46 @@
 //                   )}
 //                 </div>
 
+//                 {/* IDENTITY DOCUMENTS (AADHAAR & PAN) */}
 //                 <div style={styles.sectionBox}>
-//                   <h3 style={styles.sectionTitle}>Identity Documents</h3>
-//                   <div>
-//                     <label style={styles.label}>PAN Number</label>
-//                     <input type="text" placeholder="ABCDE1234F" style={{ ...styles.input, textTransform: 'uppercase' }} />
+//                   <h3 style={styles.sectionTitle}>
+//                     <CreditCard size={16} color="#2563eb" /> Identity Documents
+//                   </h3>
+//                   <div style={styles.grid2}>
+//                     <div>
+//                       <label style={styles.label}>Aadhaar Number *</label>
+//                       <input 
+//                         type="text" 
+//                         placeholder="Enter 12-digit Aadhaar Number" 
+//                         style={styles.input}
+//                         maxLength={12}
+//                         value={personalDetails.aadhaarNumber}
+//                         onChange={(e) => setPersonalDetails({ ...personalDetails, aadhaarNumber: e.target.value })}
+//                       />
+//                     </div>
+//                     <div>
+//                       <label style={styles.label}>PAN Number *</label>
+//                       <input 
+//                         type="text" 
+//                         placeholder="ABCDE1234F" 
+//                         style={{ ...styles.input, textTransform: 'uppercase' }} 
+//                         maxLength={10}
+//                         value={personalDetails.panNumber}
+//                         onChange={(e) => setPersonalDetails({ ...personalDetails, panNumber: e.target.value.toUpperCase() })}
+//                       />
+//                     </div>
+//                   </div>
+
+//                   {/* DIGILOCKER INTEGRATION BOX */}
+//                   <div style={styles.digilockerBox}>
+//                     <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+//                       <Lock size={20} color="#ea580c" />
+//                       <div>
+//                         <h4 style={{ fontSize: '13px', fontWeight: '700', margin: 0, color: '#9a3412' }}>Fast-track with DigiLocker</h4>
+//                         <p style={{ fontSize: '11px', color: '#c2410c', margin: '2px 0 0 0' }}>Fetch verified Aadhaar & PAN instantly via DigiLocker.</p>
+//                       </div>
+//                     </div>
+//                     <button style={styles.digilockerBtn}>Connect DigiLocker</button>
 //                   </div>
 //                 </div>
 
@@ -1239,10 +1280,10 @@
 //                           </div>
 
 //                           <div>
-//                             <label style={styles.label}>Commission (₹)</label>
+//                             <label style={styles.label}>Service Charge (₹)</label>
 //                             <input 
 //                               type="text" 
-//                               placeholder="Enter Commission" 
+//                               placeholder="Enter Service Charge" 
 //                               style={styles.input}
 //                               value={qual.commission}
 //                               onChange={(e) => handleQualificationChange(idx, 'commission', e.target.value)}
@@ -1250,10 +1291,10 @@
 //                           </div>
 
 //                           <div>
-//                             <label style={styles.label}>Service Charge (₹)</label>
+//                             <label style={styles.label}>GST</label>
 //                             <input 
 //                               type="text" 
-//                               placeholder="Enter Service Charge" 
+//                               placeholder="GST" 
 //                               style={styles.input}
 //                               value={qual.serviceCharge}
 //                               onChange={(e) => handleQualificationChange(idx, 'serviceCharge', e.target.value)}
@@ -1261,17 +1302,14 @@
 //                           </div>
 
 //                           <div>
-//                             <label style={styles.label}>Mode of Study *</label>
-//                             <select 
+//                             <label style={styles.label}>Total Amount</label>
+//                             <input 
+//                               type="text" 
+//                               placeholder="Enter Total Amount" 
 //                               style={styles.input}
-//                               value={qual.modeOfStudy}
-//                               onChange={(e) => handleQualificationChange(idx, 'modeOfStudy', e.target.value)}
-//                             >
-//                               <option value="">Select Mode</option>
-//                               <option value="Full Time">Full Time</option>
-//                               <option value="Part Time">Part Time</option>
-//                               <option value="Distance">Distance / Correspondence</option>
-//                             </select>
+//                               value={qual.serviceCharge}
+//                               onChange={(e) => handleQualificationChange(idx, 'serviceCharge', e.target.value)}
+//                             />
 //                           </div>
 //                         </div>
 
@@ -1630,7 +1668,8 @@ import {
   Download,
   User,
   CreditCard,
-  Lock
+  Lock,
+  Camera
 } from 'lucide-react';
 
 export default function CandidateVerificationWizard() {
@@ -1641,6 +1680,8 @@ export default function CandidateVerificationWizard() {
   const [dpdpAccepted, setDpdpAccepted] = useState(false);
   const [personalDetails, setPersonalDetails] = useState({
     fullName: 'Priya Sharma',
+    profileImage: null,
+    profileImagePreview: null,
     candidateId: '',
     clientName: '',
     dob: '',
@@ -1718,6 +1759,18 @@ export default function CandidateVerificationWizard() {
 
   const nextStep = () => setCurrentStep((prev) => Math.min(prev + 1, 7));
   const prevStep = () => setCurrentStep((prev) => Math.max(prev - 1, 1));
+
+  // Profile Image Handler
+  const handleProfileImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setPersonalDetails({
+        ...personalDetails,
+        profileImage: file,
+        profileImagePreview: URL.createObjectURL(file)
+      });
+    }
+  };
 
   // Qualification Handlers
   const addQualification = () => {
@@ -2019,6 +2072,27 @@ export default function CandidateVerificationWizard() {
       gap: '16px',
       marginBottom: '16px'
     },
+    avatarUploadContainer: {
+      display: 'flex',
+      alignItems: 'center',
+      gap: '16px',
+      padding: '12px',
+      border: '1px dashed #cbd5e1',
+      borderRadius: '10px',
+      backgroundColor: '#f8fafc'
+    },
+    avatarCircle: {
+      width: '60px',
+      height: '60px',
+      borderRadius: '50%',
+      backgroundColor: '#e2e8f0',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      overflow: 'hidden',
+      border: '2px solid #cbd5e1',
+      flexShrink: 0
+    },
     docGrid: {
       display: 'grid',
       gridTemplateColumns: 'repeat(4, 1fr)',
@@ -2122,7 +2196,7 @@ export default function CandidateVerificationWizard() {
     },
     footer: {
       display: 'flex',
-      justifyContent: 'space-between',
+      justify: 'space-between',
       alignItems: 'center',
       paddingTop: '16px',
       borderTop: '1px solid #f1f5f9',
@@ -2446,10 +2520,49 @@ export default function CandidateVerificationWizard() {
 
                 <div style={styles.sectionBox}>
                   <h3 style={styles.sectionTitle}>Personal Details</h3>
-                  <div style={{ marginBottom: '12px' }}>
-                    <label style={styles.label}>Full Name</label>
-                    <input type="text" value={personalDetails.fullName} onChange={(e) => setPersonalDetails({ ...personalDetails, fullName: e.target.value })} style={styles.input} />
+                  
+                  {/* FULL NAME & PROFILE IMAGE UPLOAD IN GRID */}
+                  <div style={{ ...styles.grid2, alignItems: 'center', marginBottom: '16px' }}>
+                    <div>
+                      <label style={styles.label}>Full Name *</label>
+                      <input 
+                        type="text" 
+                        value={personalDetails.fullName} 
+                        onChange={(e) => setPersonalDetails({ ...personalDetails, fullName: e.target.value })} 
+                        style={styles.input} 
+                      />
+                    </div>
+
+                    <div>
+                      <label style={styles.label}>Candidate Photo *</label>
+                      <div style={styles.avatarUploadContainer}>
+                        <div style={styles.avatarCircle}>
+                          {personalDetails.profileImagePreview ? (
+                            <img 
+                              src={personalDetails.profileImagePreview} 
+                              alt="Candidate Profile" 
+                              style={{ width: '100%', height: '100%', objectFit: 'cover' }} 
+                            />
+                          ) : (
+                            <User size={36} color="#94a3b8" />
+                          )}
+                        </div>
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                          <label style={{ ...styles.uploadBtnLabel, width: 'fit-content' }}>
+                            <Camera size={14} /> Upload Image
+                            <input 
+                              type="file" 
+                              accept="image/*" 
+                              style={{ display: 'none' }} 
+                              onChange={handleProfileImageChange}
+                            />
+                          </label>
+                          <span style={{ fontSize: '10px', color: '#94a3b8' }}>JPG, PNG (Max 5MB)</span>
+                        </div>
+                      </div>
+                    </div>
                   </div>
+
                   <div style={styles.grid2}>
                     <div>
                       <label style={styles.label}>Date of Birth</label>
@@ -2464,6 +2577,7 @@ export default function CandidateVerificationWizard() {
                       </select>
                     </div>
                   </div>
+
                   <div style={styles.grid2}>
                     <div>
                       <label style={styles.label}>Mobile</label>
@@ -2895,10 +3009,10 @@ export default function CandidateVerificationWizard() {
                           </div>
 
                           <div>
-                            <label style={styles.label}>Service Charge (₹)</label>
+                            <label style={styles.label}>Commission (₹)</label>
                             <input 
                               type="text" 
-                              placeholder="Enter Service Charge" 
+                              placeholder="Enter Commission" 
                               style={styles.input}
                               value={qual.commission}
                               onChange={(e) => handleQualificationChange(idx, 'commission', e.target.value)}
@@ -2906,10 +3020,10 @@ export default function CandidateVerificationWizard() {
                           </div>
 
                           <div>
-                            <label style={styles.label}>GST</label>
+                            <label style={styles.label}>Service Charge (₹)</label>
                             <input 
                               type="text" 
-                              placeholder="GST" 
+                              placeholder="Enter Service Charge" 
                               style={styles.input}
                               value={qual.serviceCharge}
                               onChange={(e) => handleQualificationChange(idx, 'serviceCharge', e.target.value)}
@@ -2917,14 +3031,17 @@ export default function CandidateVerificationWizard() {
                           </div>
 
                           <div>
-                            <label style={styles.label}>Total Amount</label>
-                            <input 
-                              type="text" 
-                              placeholder="Enter Total Amount" 
+                            <label style={styles.label}>Mode of Study *</label>
+                            <select 
                               style={styles.input}
-                              value={qual.serviceCharge}
-                              onChange={(e) => handleQualificationChange(idx, 'serviceCharge', e.target.value)}
-                            />
+                              value={qual.modeOfStudy}
+                              onChange={(e) => handleQualificationChange(idx, 'modeOfStudy', e.target.value)}
+                            >
+                              <option value="">Select Mode</option>
+                              <option value="Full Time">Full Time</option>
+                              <option value="Part Time">Part Time</option>
+                              <option value="Distance">Distance / Correspondence</option>
+                            </select>
                           </div>
                         </div>
 
