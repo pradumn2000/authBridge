@@ -513,7 +513,6 @@
 
 import React, { useState } from "react";
 import Sidebar from "./Sidebar";
-import "../../css/style.css";
 import Header from "./Header";
 
 export default function DrugTestVerification() {
@@ -567,84 +566,59 @@ export default function DrugTestVerification() {
   return (
     <>
       <style>{`
-        .dtv-wrapper {
+        /* Container & Layout */
+        .ndv-wrapper {
           display: flex;
           min-height: 100vh;
           background-color: #f8fafc;
           font-family: 'Inter', sans-serif;
         }
 
-        .dtv-main-content {
+        .ndv-main-content {
           display: flex;
           flex-direction: column;
           min-width: 0;
           width: calc(100% - 270px);
-          transition: all .3s;
+          transition: all 0.3s;
           position: relative;
           left: 270px;
         }
 
-        .dtv-container {
+        .ndv-container {
           padding: 20px;
         }
 
-        /* Tabs Styling */
-        .dtv-tabs-container {
-          display: flex;
-          gap: 20px;
-          border-bottom: 2px solid #e2e8f0;
-          margin-bottom: 20px;
-        }
-
-        .dtv-tab-btn {
-          background: none;
-          border: none;
-          padding: 10px 4px;
-          font-size: 14px;
-          font-weight: 700;
-          color: #64748b;
-          cursor: pointer;
-          position: relative;
-          transition: color 0.2s;
-        }
-
-        .dtv-tab-btn.active {
-          color: #1d4ed8;
-        }
-
-        .dtv-tab-btn.active::after {
-          content: '';
-          position: absolute;
-          bottom: -2px;
-          left: 0;
-          width: 100%;
-          height: 3px;
-          background-color: #1d4ed8;
-          border-radius: 2px 2px 0 0;
-        }
-
-        /* Top Bar */
-        .dtv-top-bar {
+        /* Top Action Header */
+        .ndv-top-bar {
           display: flex;
           justify-content: space-between;
           align-items: center;
           margin-bottom: 16px;
         }
 
-        .dtv-heading {
+        .ndv-heading {
           font-size: 18px;
           font-weight: 800;
           color: #0f172a;
           margin: 0;
         }
 
-        .dtv-subheading {
+        .ndv-subheading {
           font-size: 12px;
           color: #64748b;
           margin: 2px 0 0 0;
         }
 
-        .dtv-btn-export {
+        .ndv-actions-group {
+          display: flex;
+          gap: 10px;
+        }
+
+        .ndv-actions-hidden {
+          display: none !important;
+        }
+
+        .ndv-btn-export {
           border: 1px solid #cbd5e1;
           background: #ffffff;
           padding: 8px 14px;
@@ -657,7 +631,7 @@ export default function DrugTestVerification() {
           gap: 6px;
         }
 
-        .dtv-btn-primary {
+        .ndv-btn-primary {
           border: none;
           background: #1d4ed8;
           color: #ffffff;
@@ -668,15 +642,50 @@ export default function DrugTestVerification() {
           cursor: pointer;
         }
 
-        /* Metric Cards */
-        .dtv-metrics-grid {
+        /* Tabs Header */
+        .ndv-tabs-container {
+          display: flex;
+          gap: 20px;
+          border-bottom: 2px solid #e2e8f0;
+          margin-bottom: 20px;
+        }
+
+        .ndv-tab-btn {
+          background: none;
+          border: none;
+          padding: 10px 4px;
+          font-size: 14px;
+          font-weight: 700;
+          color: #64748b;
+          cursor: pointer;
+          position: relative;
+          transition: color 0.2s;
+        }
+
+        .ndv-tab-btn-active {
+          color: #1d4ed8;
+        }
+
+        .ndv-tab-btn-active::after {
+          content: '';
+          position: absolute;
+          bottom: -2px;
+          left: 0;
+          width: 100%;
+          height: 3px;
+          background-color: #1d4ed8;
+          border-radius: 2px 2px 0 0;
+        }
+
+        /* Metrics Summary Cards */
+        .ndv-metrics-grid {
           display: grid;
           grid-template-columns: repeat(5, 1fr);
           gap: 14px;
           margin-bottom: 20px;
         }
 
-        .dtv-metric-card {
+        .ndv-metric-card {
           background: #ffffff;
           border: 1px solid #e2e8f0;
           border-radius: 8px;
@@ -686,7 +695,7 @@ export default function DrugTestVerification() {
           gap: 12px;
         }
 
-        .dtv-metric-icon {
+        .ndv-metric-icon {
           width: 38px;
           height: 38px;
           border-radius: 50%;
@@ -697,8 +706,27 @@ export default function DrugTestVerification() {
           font-size: 16px;
         }
 
-        /* Filters Bar */
-        .dtv-filters-card {
+        .ndv-metric-blue { background: #eff6ff; color: #2563eb; }
+        .ndv-metric-orange { background: #fff7ed; color: #ea580c; }
+        .ndv-metric-green { background: #f0fdf4; color: #16a34a; }
+        .ndv-metric-red { background: #fef2f2; color: #dc2626; }
+        .ndv-metric-purple { background: #f3e8ff; color: #9333ea; }
+
+        .ndv-metric-title {
+          font-size: 18px;
+          font-weight: 800;
+          color: #0f172a;
+          margin: 0;
+        }
+
+        .ndv-metric-subtitle {
+          font-size: 11px;
+          color: #64748b;
+          display: block;
+        }
+
+        /* Filter Section */
+        .ndv-filters-card {
           background: #ffffff;
           border: 1px solid #e2e8f0;
           border-radius: 8px;
@@ -706,14 +734,14 @@ export default function DrugTestVerification() {
           margin-bottom: 16px;
         }
 
-        .dtv-filters-grid {
+        .ndv-filters-grid {
           display: grid;
           grid-template-columns: 1.5fr 1fr 1fr 1fr 1fr 1.2fr auto auto;
           gap: 10px;
           align-items: center;
         }
 
-        .dtv-field-group label {
+        .ndv-filter-group label {
           display: block;
           font-size: 10px;
           font-weight: 700;
@@ -721,8 +749,8 @@ export default function DrugTestVerification() {
           margin-bottom: 4px;
         }
 
-        .dtv-field-group input,
-        .dtv-field-group select {
+        .ndv-filter-group input,
+        .ndv-filter-group select {
           width: 100%;
           padding: 6px 10px;
           border-radius: 6px;
@@ -732,7 +760,11 @@ export default function DrugTestVerification() {
           box-sizing: border-box;
         }
 
-        .dtv-btn-clear {
+        .ndv-filter-date-input {
+          font-size: 11px !important;
+        }
+
+        .ndv-btn-clear {
           border: 1px solid #cbd5e1;
           background: #ffffff;
           padding: 7px 12px;
@@ -743,7 +775,7 @@ export default function DrugTestVerification() {
           cursor: pointer;
         }
 
-        .dtv-btn-apply {
+        .ndv-btn-apply {
           border: none;
           background: #1d4ed8;
           color: #ffffff;
@@ -755,41 +787,55 @@ export default function DrugTestVerification() {
           cursor: pointer;
         }
 
-        /* Content Grid */
-        .dtv-content-grid {
+        /* Content Layout */
+        .ndv-content-grid {
           display: grid;
           gap: 16px;
           align-items: start;
         }
 
-        /* Data Table */
-        .dtv-table-card {
+        .ndv-grid-with-panel {
+          grid-template-columns: 1fr 290px;
+        }
+
+        .ndv-grid-full {
+          grid-template-columns: 1fr;
+        }
+
+        /* Table Components */
+        .ndv-table-card {
           background: #ffffff;
           border: 1px solid #e2e8f0;
           border-radius: 8px;
           overflow: hidden;
         }
 
-        .dtv-table {
+        .ndv-table {
           width: 100%;
           border-collapse: collapse;
           text-align: left;
           font-size: 11px;
         }
 
-        .dtv-table th {
+        .ndv-table th {
           background: #f8fafc;
           color: #64748b;
           border-bottom: 1px solid #e2e8f0;
           padding: 10px 12px;
         }
 
-        .dtv-table td {
+        .ndv-table td {
           padding: 10px 12px;
           border-bottom: 1px solid #f1f5f9;
         }
 
-        .dtv-badge-positive {
+        .ndv-cell-id { color: #2563eb; font-weight: 600; }
+        .ndv-cell-name { color: #0f172a; font-weight: 600; }
+        .ndv-cell-text { color: #334155; }
+        .ndv-cell-muted { color: #64748b; }
+        .ndv-cell-action { color: #94a3b8; cursor: pointer; font-size: 14px; }
+
+        .ndv-badge-positive {
           background: #fee2e2;
           color: #991b1b;
           padding: 3px 8px;
@@ -798,7 +844,7 @@ export default function DrugTestVerification() {
           font-weight: 700;
         }
 
-        .dtv-badge-negative {
+        .ndv-badge-negative {
           background: #dcfce7;
           color: #166534;
           padding: 3px 8px;
@@ -807,8 +853,8 @@ export default function DrugTestVerification() {
           font-weight: 700;
         }
 
-        /* Pagination */
-        .dtv-pagination {
+        /* Pagination Controls */
+        .ndv-pagination {
           display: flex;
           justify-content: space-between;
           align-items: center;
@@ -818,7 +864,24 @@ export default function DrugTestVerification() {
           color: #64748b;
         }
 
-        .dtv-page-btn {
+        .ndv-pagination-select-group {
+          display: flex;
+          align-items: center;
+          gap: 6px;
+        }
+
+        .ndv-pagination-select {
+          padding: 3px 6px;
+          border-radius: 4px;
+          border: 1px solid #cbd5e1;
+        }
+
+        .ndv-pagination-pages {
+          display: flex;
+          gap: 4px;
+        }
+
+        .ndv-page-btn {
           border: 1px solid #cbd5e1;
           background: #ffffff;
           padding: 4px 8px;
@@ -826,15 +889,15 @@ export default function DrugTestVerification() {
           cursor: pointer;
         }
 
-        .dtv-page-btn.active {
+        .ndv-page-btn-active {
           border: none;
           background: #1d4ed8;
           color: #ffffff;
           font-weight: 700;
         }
 
-        /* Right Panel */
-        .dtv-panel {
+        /* Side Panel */
+        .ndv-panel {
           background: #ffffff;
           border: 1px solid #e2e8f0;
           border-radius: 8px;
@@ -844,7 +907,7 @@ export default function DrugTestVerification() {
           gap: 16px;
         }
 
-        .dtv-panel-header {
+        .ndv-panel-header {
           display: flex;
           justify-content: space-between;
           align-items: center;
@@ -852,7 +915,38 @@ export default function DrugTestVerification() {
           padding-bottom: 10px;
         }
 
-        .dtv-verifier-item {
+        .ndv-panel-title {
+          margin: 0;
+          font-size: 12px;
+          font-weight: 800;
+          color: #0f172a;
+          text-transform: uppercase;
+        }
+
+        .ndv-panel-close-btn {
+          border: none;
+          background: none;
+          font-size: 14px;
+          cursor: pointer;
+          color: #64748b;
+        }
+
+        .ndv-panel-search {
+          width: 100%;
+          padding: 6px 10px;
+          border-radius: 6px;
+          border: 1px solid #cbd5e1;
+          font-size: 11px;
+          box-sizing: border-box;
+        }
+
+        .ndv-verifier-list {
+          display: flex;
+          flex-direction: column;
+          gap: 10px;
+        }
+
+        .ndv-verifier-item {
           border: 1px solid #e2e8f0;
           border-radius: 6px;
           padding: 8px 10px;
@@ -862,7 +956,57 @@ export default function DrugTestVerification() {
           cursor: pointer;
         }
 
-        .dtv-stepper {
+        .ndv-verifier-left {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+        }
+
+        .ndv-avatar {
+          width: 26px;
+          height: 26px;
+          border-radius: 50%;
+          background: #cbd5e1;
+        }
+
+        .ndv-verifier-name {
+          margin: 0;
+          font-size: 11px;
+          font-weight: 700;
+          color: #1e293b;
+        }
+
+        .ndv-verifier-role {
+          font-size: 9px;
+          color: #64748b;
+        }
+
+        .ndv-verifier-right {
+          text-align: right;
+        }
+
+        .ndv-verifier-count {
+          font-size: 11px;
+          font-weight: 800;
+          color: #2563eb;
+          display: block;
+        }
+
+        .ndv-verifier-count-label {
+          font-size: 8px;
+          color: #2563eb;
+        }
+
+        .ndv-stepper-label {
+          display: block;
+          font-size: 10px;
+          font-weight: 700;
+          color: #475569;
+          margin-bottom: 6px;
+          text-transform: uppercase;
+        }
+
+        .ndv-stepper {
           display: flex;
           align-items: center;
           background: #f8fafc;
@@ -872,7 +1016,7 @@ export default function DrugTestVerification() {
           padding: 2px;
         }
 
-        .dtv-stepper-btn {
+        .ndv-stepper-btn {
           border: none;
           background: none;
           width: 26px;
@@ -881,54 +1025,67 @@ export default function DrugTestVerification() {
           cursor: pointer;
         }
 
-        /* New Form Styling */
-        .dtv-form-card {
+        .ndv-stepper-value {
+          width: 30px;
+          text-align: center;
+          font-size: 12px;
+          font-weight: 700;
+        }
+
+        .ndv-btn-assign {
+          width: 100%;
+          padding: 10px;
+          margin-top: 4px;
+        }
+
+        /* Form Layout & Field Details */
+        .ndv-form-card {
           background: #ffffff;
           border: 1px solid #e2e8f0;
           border-radius: 8px;
           padding: 24px;
         }
 
-        .dtv-form-title {
+        .ndv-form-title {
           font-size: 18px;
           font-weight: 800;
           color: #0f172a;
           margin: 0 0 4px 0;
         }
 
-        .dtv-form-subtitle {
+        .ndv-form-subtitle {
           font-size: 13px;
           color: #64748b;
           margin: 0 0 24px 0;
         }
 
-        .dtv-form-grid {
+        .ndv-form-grid {
           display: grid;
           grid-template-columns: repeat(3, 1fr);
           gap: 20px;
           margin-bottom: 20px;
         }
 
-        .dtv-input-group {
+        .ndv-input-group {
           display: flex;
           flex-direction: column;
         }
 
-        .dtv-input-group label {
+        .ndv-input-group label {
           font-size: 12px;
           font-weight: 700;
           color: #1e293b;
           margin-bottom: 6px;
         }
 
-        .dtv-input-group label span {
+        .ndv-asterisk {
           color: #ef4444;
           margin-left: 2px;
         }
 
-        .dtv-input-group input,
-        .dtv-input-group select,
-        .dtv-input-group textarea {
+        .ndv-input-group input,
+        .ndv-input-group select,
+        .ndv-input-group textarea {
           width: 100%;
           padding: 10px 12px;
           border-radius: 6px;
@@ -940,34 +1097,44 @@ export default function DrugTestVerification() {
           background-color: #ffffff;
         }
 
-        .dtv-input-group input:focus,
-        .dtv-input-group select:focus,
-        .dtv-input-group textarea:focus {
+        .ndv-input-group input:focus,
+        .ndv-input-group select:focus,
+        .ndv-input-group textarea:focus {
           border-color: #2563eb;
         }
 
-        .dtv-phone-container {
+        .ndv-phone-container {
           display: flex;
           border: 1px solid #cbd5e1;
           border-radius: 6px;
           overflow: hidden;
         }
 
-        .dtv-phone-container select {
+        .ndv-phone-select {
           width: 80px;
-          border: none;
-          border-right: 1px solid #cbd5e1;
-          border-radius: 0;
-          background-color: #f8fafc;
-          padding: 10px 6px;
+          border: none !important;
+          border-right: 1px solid #cbd5e1 !important;
+          border-radius: 0 !important;
+          background-color: #f8fafc !important;
+          padding: 10px 6px !important;
         }
 
-        .dtv-phone-container input {
-          border: none;
-          border-radius: 0;
+        .ndv-phone-input {
+          border: none !important;
+          border-radius: 0 !important;
         }
 
-        .dtv-upload-zone {
+        .ndv-upload-wrapper {
+          margin-top: 10px;
+        }
+
+        .ndv-upload-label {
+          font-size: 12px;
+          font-weight: 700;
+          color: #1e293b;
+        }
+
+        .ndv-upload-zone {
           border: 2px dashed #cbd5e1;
           border-radius: 8px;
           padding: 30px;
@@ -976,33 +1143,45 @@ export default function DrugTestVerification() {
           cursor: pointer;
           margin-top: 10px;
           margin-bottom: 24px;
+          display: block;
         }
 
-        .dtv-upload-icon {
+        .ndv-file-input {
+          display: none;
+        }
+
+        .ndv-upload-icon {
           font-size: 24px;
           color: #2563eb;
           margin-bottom: 8px;
         }
 
-        .dtv-upload-text {
+        .ndv-upload-text {
           font-size: 13px;
           font-weight: 700;
           color: #2563eb;
           margin-bottom: 4px;
         }
 
-        .dtv-upload-subtext {
+        .ndv-upload-subtext {
           font-size: 11px;
           color: #94a3b8;
         }
 
-        .dtv-form-actions {
+        .ndv-file-selected {
+          margin-top: 8px;
+          font-size: 12px;
+          color: #16a34a;
+          font-weight: 600;
+        }
+
+        .ndv-form-actions {
           display: flex;
           justify-content: flex-end;
           gap: 12px;
         }
 
-        .dtv-btn-cancel {
+        .ndv-btn-cancel {
           border: 1px solid #cbd5e1;
           background: #ffffff;
           color: #2563eb;
@@ -1013,7 +1192,7 @@ export default function DrugTestVerification() {
           cursor: pointer;
         }
 
-        .dtv-btn-submit {
+        .ndv-btn-submit {
           border: none;
           background: #1d4ed8;
           color: #ffffff;
@@ -1025,108 +1204,106 @@ export default function DrugTestVerification() {
         }
       `}</style>
 
-      <div className="dtv-wrapper">
+      <div className="ndv-wrapper">
         <div id="sidebar">
           <Sidebar />
         </div>
 
-        <div className="dtv-main-content" id="content">
+        <div className="ndv-main-content" id="content">
           <Header />
 
-          <main className="dtv-container">
-            {/* Header Action Bar */}
-            <div className="dtv-top-bar">
+          <main className="ndv-container">
+            {/* Top Bar Header */}
+            <div className="ndv-top-bar">
               <div>
-                <h1 className="dtv-heading">DRUG TEST VERIFICATION</h1>
-                <p className="dtv-subheading">View and manage all drug test verification requests</p>
+                <h1 className="ndv-heading">DRUG TEST VERIFICATION</h1>
+                <p className="ndv-subheading">View and manage all drug test verification requests</p>
               </div>
-              <div style={{ display: "flex", gap: "10px" }}>
-                <button className="dtv-btn-export">
+              <div className={`ndv-actions-group ${activeTab === "new" ? "ndv-actions-hidden" : ""}`}>
+                <button className="ndv-btn-export">
                   <span>📥</span> Export
                 </button>
-                <button className="dtv-btn-primary" onClick={() => setActiveTab("new")}>
+                <button className="ndv-btn-primary" onClick={() => setActiveTab("new")}>
                   + New Drug Verification
                 </button>
               </div>
             </div>
 
             {/* Navigation Tabs */}
-            <div className="dtv-tabs-container">
+            <div className="ndv-tabs-container">
               <button
-                className={`dtv-tab-btn ${activeTab === "verification" ? "active" : ""}`}
+                className={`ndv-tab-btn ${activeTab === "verification" ? "ndv-tab-btn-active" : ""}`}
                 onClick={() => setActiveTab("verification")}
               >
                 Drug Test Verification
               </button>
               <button
-                className={`dtv-tab-btn ${activeTab === "new" ? "active" : ""}`}
+                className={`ndv-tab-btn ${activeTab === "new" ? "ndv-tab-btn-active" : ""}`}
                 onClick={() => setActiveTab("new")}
               >
                 New Drug Verification
               </button>
             </div>
 
-            {/* Tab 1: Drug Test Verification */}
+            {/* Tab 1: Verification List Dashboard */}
             {activeTab === "verification" && (
               <>
-                {/* Top Metric Cards */}
-                <div className="dtv-metrics-grid">
+                <div className="ndv-metrics-grid">
                   {[
-                    { val: "248", sub: "All Drug Test Requests", icon: "🧪", bg: "#eff6ff", color: "#2563eb" },
-                    { val: "74", sub: "Reports in Progress", icon: "📋", bg: "#fff7ed", color: "#ea580c" },
-                    { val: "142", sub: "Successfully Completed", icon: "✓", bg: "#f0fdf4", color: "#16a34a" },
-                    { val: "18", sub: "Positive Results", icon: "⚠️", bg: "#fef2f2", color: "#dc2626" },
-                    { val: "24 hrs", sub: "Turnaround Time", icon: "🕒", bg: "#f3e8ff", color: "#9333ea" },
+                    { val: "248", sub: "All Drug Test Requests", icon: "🧪", classColor: "ndv-metric-blue" },
+                    { val: "74", sub: "Reports in Progress", icon: "📋", classColor: "ndv-metric-orange" },
+                    { val: "142", sub: "Successfully Completed", icon: "✓", classColor: "ndv-metric-green" },
+                    { val: "18", sub: "Positive Results", icon: "⚠️", classColor: "ndv-metric-red" },
+                    { val: "24 hrs", sub: "Turnaround Time", icon: "🕒", classColor: "ndv-metric-purple" },
                   ].map((card, i) => (
-                    <div key={i} className="dtv-metric-card">
-                      <div className="dtv-metric-icon" style={{ background: card.bg, color: card.color }}>
+                    <div key={i} className="ndv-metric-card">
+                      <div className={`ndv-metric-icon ${card.classColor}`}>
                         {card.icon}
                       </div>
                       <div>
-                        <h3 style={{ fontSize: "18px", fontWeight: "800", color: "#0f172a", margin: 0 }}>{card.val}</h3>
-                        <span style={{ fontSize: "11px", color: "#64748b", display: "block" }}>{card.sub}</span>
+                        <h3 className="ndv-metric-title">{card.val}</h3>
+                        <span className="ndv-metric-subtitle">{card.sub}</span>
                       </div>
                     </div>
                   ))}
                 </div>
 
-                {/* Filter Options */}
-                <div className="dtv-filters-card">
-                  <div className="dtv-filters-grid">
-                    <div className="dtv-field-group">
+                {/* Filters Row */}
+                <div className="ndv-filters-card">
+                  <div className="ndv-filters-grid">
+                    <div className="ndv-filter-group">
                       <label>Search by Case ID / Candidate Name</label>
                       <input type="text" placeholder="Search..." />
                     </div>
-                    <div className="dtv-field-group">
+                    <div className="ndv-filter-group">
                       <label>Client</label>
                       <select><option>All</option></select>
                     </div>
-                    <div className="dtv-field-group">
+                    <div className="ndv-filter-group">
                       <label>Lab Name</label>
                       <select><option>All</option></select>
                     </div>
-                    <div className="dtv-field-group">
+                    <div className="ndv-filter-group">
                       <label>Overall Result</label>
                       <select><option>All</option></select>
                     </div>
-                    <div className="dtv-field-group">
+                    <div className="ndv-filter-group">
                       <label>Sample Type</label>
                       <select><option>All</option></select>
                     </div>
-                    <div className="dtv-field-group">
+                    <div className="ndv-filter-group">
                       <label>Date Range</label>
-                      <input type="text" defaultValue="26-May-2026 - 26-Aug-2026" style={{ fontSize: "11px" }} />
+                      <input type="text" defaultValue="26-May-2026 - 26-Aug-2026" className="ndv-filter-date-input" />
                     </div>
-                    <button className="dtv-btn-clear">Clear</button>
-                    <button className="dtv-btn-apply">Apply Filters</button>
+                    <button className="ndv-btn-clear">Clear</button>
+                    <button className="ndv-btn-apply">Apply Filters</button>
                   </div>
                 </div>
 
-                {/* Main Content Area */}
-                <div className="dtv-content-grid" style={{ gridTemplateColumns: showAssignPanel ? "1fr 290px" : "1fr" }}>
-                  {/* Table */}
-                  <div className="dtv-table-card">
-                    <table className="dtv-table">
+                {/* Table & Assign Verifier Panel Section */}
+                <div className={`ndv-content-grid ${showAssignPanel ? "ndv-grid-with-panel" : "ndv-grid-full"}`}>
+                  <div className="ndv-table-card">
+                    <table className="ndv-table">
                       <thead>
                         <tr>
                           <th><input type="checkbox" /></th>
@@ -1145,88 +1322,83 @@ export default function DrugTestVerification() {
                         {tableData.map((row, i) => (
                           <tr key={i}>
                             <td><input type="checkbox" /></td>
-                            <td style={{ color: "#2563eb", fontWeight: 600 }}>{row.id}</td>
-                            <td style={{ color: "#0f172a", fontWeight: 600 }}>{row.name}</td>
-                            <td style={{ color: "#334155" }}>{row.client}</td>
-                            <td style={{ color: "#334155" }}>{row.lab}</td>
-                            <td style={{ color: "#64748b" }}>{row.date}</td>
-                            <td style={{ color: "#334155" }}>{row.sample}</td>
+                            <td className="ndv-cell-id">{row.id}</td>
+                            <td className="ndv-cell-name">{row.name}</td>
+                            <td className="ndv-cell-text">{row.client}</td>
+                            <td className="ndv-cell-text">{row.lab}</td>
+                            <td className="ndv-cell-muted">{row.date}</td>
+                            <td className="ndv-cell-text">{row.sample}</td>
                             <td>
-                              <span className={row.result === "Negative" ? "dtv-badge-negative" : "dtv-badge-positive"}>
+                              <span className={row.result === "Negative" ? "ndv-badge-negative" : "ndv-badge-positive"}>
                                 {row.result}
                               </span>
                             </td>
-                            <td style={{ color: "#64748b" }}>{row.reportDate}</td>
-                            <td style={{ color: "#94a3b8", cursor: "pointer", fontSize: "14px" }}>⋮</td>
+                            <td className="ndv-cell-muted">{row.reportDate}</td>
+                            <td className="ndv-cell-action">⋮</td>
                           </tr>
                         ))}
                       </tbody>
                     </table>
 
-                    {/* Pagination */}
-                    <div className="dtv-pagination">
-                      <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
-                        <select style={{ padding: "3px 6px", borderRadius: "4px", border: "1px solid #cbd5e1" }}><option>10</option></select>
+                    <div className="ndv-pagination">
+                      <div className="ndv-pagination-select-group">
+                        <select className="ndv-pagination-select"><option>10</option></select>
                         <span>entries per page</span>
                       </div>
-                      <div style={{ display: "flex", gap: "4px" }}>
-                        <button className="dtv-page-btn">‹</button>
-                        <button className="dtv-page-btn active">1</button>
-                        <button className="dtv-page-btn">2</button>
-                        <button className="dtv-page-btn">3</button>
-                        <button className="dtv-page-btn">...</button>
-                        <button className="dtv-page-btn">25</button>
-                        <button className="dtv-page-btn">›</button>
+                      <div className="ndv-pagination-pages">
+                        <button className="ndv-page-btn">‹</button>
+                        <button className="ndv-page-btn ndv-page-btn-active">1</button>
+                        <button className="ndv-page-btn">2</button>
+                        <button className="ndv-page-btn">3</button>
+                        <button className="ndv-page-btn">...</button>
+                        <button className="ndv-page-btn">25</button>
+                        <button className="ndv-page-btn">›</button>
                       </div>
                     </div>
                   </div>
 
-                  {/* Select Verifier Panel */}
                   {showAssignPanel && (
-                    <div className="dtv-panel">
-                      <div className="dtv-panel-header">
-                        <h3 style={{ margin: 0, fontSize: "12px", fontWeight: "800", color: "#0f172a", textTransform: "uppercase" }}>Select Verifier</h3>
-                        <button onClick={() => setShowAssignPanel(false)} style={{ border: "none", background: "none", fontSize: "14px", cursor: "pointer", color: "#64748b" }}>^</button>
+                    <div className="ndv-panel">
+                      <div className="ndv-panel-header">
+                        <h3 className="ndv-panel-title">Select Verifier</h3>
+                        <button onClick={() => setShowAssignPanel(false)} className="ndv-panel-close-btn">^</button>
                       </div>
 
-                      <input type="text" placeholder="Search verifier..." style={{ width: "100%", padding: "6px 10px", borderRadius: "6px", border: "1px solid #cbd5e1", fontSize: "11px", boxSizing: "border-box" }} />
+                      <input type="text" placeholder="Search verifier..." className="ndv-panel-search" />
 
-                      {/* List of Verifiers */}
-                      <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+                      <div className="ndv-verifier-list">
                         {[
                           { name: "Amit Kumar (VER-1001)", role: "Education Verifier", cases: 12 },
                           { name: "Neha Patel (VER-1002)", role: "Education Verifier", cases: 8 },
                           { name: "Rahul Verma (VER-1003)", role: "Education Verifier", cases: 15 },
                         ].map((item, idx) => (
-                          <div key={idx} onClick={() => setSelectedVerifier(item.name)} className="dtv-verifier-item">
-                            <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                          <div key={idx} onClick={() => setSelectedVerifier(item.name)} className="ndv-verifier-item">
+                            <div className="ndv-verifier-left">
                               <input type="radio" name="verifier" checked={selectedVerifier.includes(item.name.split(" ")[0])} onChange={() => {}} />
-                              <div style={{ width: "26px", height: "26px", borderRadius: "50%", background: "#cbd5e1" }} />
+                              <div className="ndv-avatar" />
                               <div>
-                                <p style={{ margin: 0, fontSize: "11px", fontWeight: 700, color: "#1e293b" }}>{item.name}</p>
-                                <span style={{ fontSize: "9px", color: "#64748b" }}>{item.role}</span>
+                                <p className="ndv-verifier-name">{item.name}</p>
+                                <span className="ndv-verifier-role">{item.role}</span>
                               </div>
                             </div>
-                            <div style={{ textAlign: "right" }}>
-                              <span style={{ fontSize: "11px", fontWeight: "800", color: "#2563eb", display: "block" }}>{item.cases}</span>
-                              <span style={{ fontSize: "8px", color: "#2563eb" }}>Active Cases</span>
+                            <div className="ndv-verifier-right">
+                              <span className="ndv-verifier-count">{item.cases}</span>
+                              <span className="ndv-verifier-count-label">Active Cases</span>
                             </div>
                           </div>
                         ))}
                       </div>
 
-                      {/* Cases to Allocate Stepper */}
                       <div>
-                        <label style={{ display: "block", fontSize: "10px", fontWeight: "700", color: "#475569", marginBottom: "6px", textTransform: "uppercase" }}>Cases to Allocate</label>
-                        <div className="dtv-stepper">
-                          <button onClick={() => setCasesToAllocate(Math.max(1, casesToAllocate - 1))} className="dtv-stepper-btn">-</button>
-                          <span style={{ width: "30px", textAlign: "center", fontSize: "12px", fontWeight: 700 }}>{casesToAllocate}</span>
-                          <button onClick={() => setCasesToAllocate(casesToAllocate + 1)} className="dtv-stepper-btn">+</button>
+                        <label className="ndv-stepper-label">Cases to Allocate</label>
+                        <div className="ndv-stepper">
+                          <button onClick={() => setCasesToAllocate(Math.max(1, casesToAllocate - 1))} className="ndv-stepper-btn">-</button>
+                          <span className="ndv-stepper-value">{casesToAllocate}</span>
+                          <button onClick={() => setCasesToAllocate(casesToAllocate + 1)} className="ndv-stepper-btn">+</button>
                         </div>
                       </div>
 
-                      {/* Action Button */}
-                      <button className="dtv-btn-primary" style={{ width: "100%", padding: "10px", marginTop: "4px" }}>
+                      <button className="ndv-btn-primary ndv-btn-assign">
                         Assign Verifier
                       </button>
                     </div>
@@ -1235,27 +1407,27 @@ export default function DrugTestVerification() {
               </>
             )}
 
-            {/* Tab 2: New Drug Verification Form (Based on Provided Image) */}
+            {/* Tab 2: New Drug Verification Form */}
             {activeTab === "new" && (
-              <div className="dtv-form-card">
-                <h2 className="dtv-form-title">New Drug Test Verification</h2>
-                <p className="dtv-form-subtitle">Enter drug test request details</p>
+              <div className="ndv-form-card">
+                <h2 className="ndv-form-title">New Drug Test Verification</h2>
+                <p className="ndv-form-subtitle">Enter drug test request details</p>
 
                 <form onSubmit={(e) => e.preventDefault()}>
                   {/* Row 1 */}
-                  <div className="dtv-form-grid">
-                    <div className="dtv-input-group">
-                      <label>Candidate Name <span>*</span></label>
+                  <div className="ndv-form-grid">
+                    <div className="ndv-input-group">
+                      <label>Candidate Name <span className="ndv-asterisk">*</span></label>
                       <select name="candidateName" value={formData.candidateName} onChange={handleInputChange}>
                         <option value="">Select Candidate</option>
                       </select>
                     </div>
-                    <div className="dtv-input-group">
-                      <label>Request Date <span>*</span></label>
+                    <div className="ndv-input-group">
+                      <label>Request Date <span className="ndv-asterisk">*</span></label>
                       <input type="date" name="requestDate" value={formData.requestDate} onChange={handleInputChange} />
                     </div>
-                    <div className="dtv-input-group">
-                      <label>Test Type <span>*</span></label>
+                    <div className="ndv-input-group">
+                      <label>Test Type <span className="ndv-asterisk">*</span></label>
                       <select name="testType" value={formData.testType} onChange={handleInputChange}>
                         <option value="">Select Test Type</option>
                       </select>
@@ -1263,86 +1435,86 @@ export default function DrugTestVerification() {
                   </div>
 
                   {/* Row 2 */}
-                  <div className="dtv-form-grid">
-                    <div className="dtv-input-group">
-                      <label>Sample Type <span>*</span></label>
+                  <div className="ndv-form-grid">
+                    <div className="ndv-input-group">
+                      <label>Sample Type <span className="ndv-asterisk">*</span></label>
                       <select name="sampleType" value={formData.sampleType} onChange={handleInputChange}>
                         <option value="">Select Sample Type</option>
                       </select>
                     </div>
-                    <div className="dtv-input-group">
-                      <label>Collection Date <span>*</span></label>
+                    <div className="ndv-input-group">
+                      <label>Collection Date <span className="ndv-asterisk">*</span></label>
                       <input type="date" name="collectionDate" value={formData.collectionDate} onChange={handleInputChange} />
                     </div>
-                    <div className="dtv-input-group">
-                      <label>Collection Time <span>*</span></label>
+                    <div className="ndv-input-group">
+                      <label>Collection Time <span className="ndv-asterisk">*</span></label>
                       <input type="time" name="collectionTime" value={formData.collectionTime} onChange={handleInputChange} />
                     </div>
                   </div>
 
                   {/* Row 3 */}
-                  <div className="dtv-form-grid">
-                    <div className="dtv-input-group">
-                      <label>Lab Name <span>*</span></label>
+                  <div className="ndv-form-grid">
+                    <div className="ndv-input-group">
+                      <label>Lab Name <span className="ndv-asterisk">*</span></label>
                       <select name="labName" value={formData.labName} onChange={handleInputChange}>
                         <option value="">Select Lab Name</option>
                       </select>
                     </div>
-                    <div className="dtv-input-group">
-                      <label>Lab Code <span>*</span></label>
+                    <div className="ndv-input-group">
+                      <label>Lab Code <span className="ndv-asterisk">*</span></label>
                       <input type="text" name="labCode" placeholder="Enter Lab Code" value={formData.labCode} onChange={handleInputChange} />
                     </div>
-                    <div className="dtv-input-group">
-                      <label>Collection Person Name <span>*</span></label>
+                    <div className="ndv-input-group">
+                      <label>Collection Person Name <span className="ndv-asterisk">*</span></label>
                       <input type="text" name="collectionPersonName" placeholder="Enter Collection Person Name" value={formData.collectionPersonName} onChange={handleInputChange} />
                     </div>
                   </div>
 
                   {/* Row 4 */}
-                  <div className="dtv-form-grid">
-                    <div className="dtv-input-group">
-                      <label>Phone Number <span>*</span></label>
-                      <div className="dtv-phone-container">
-                        <select name="countryCode" value={formData.countryCode} onChange={handleInputChange}>
+                  <div className="ndv-form-grid">
+                    <div className="ndv-input-group">
+                      <label>Phone Number <span className="ndv-asterisk">*</span></label>
+                      <div className="ndv-phone-container">
+                        <select className="ndv-phone-select" name="countryCode" value={formData.countryCode} onChange={handleInputChange}>
                           <option value="+91">🇮🇳 +91</option>
                         </select>
-                        <input type="text" name="phoneNumber" placeholder="Enter Phone Number" value={formData.phoneNumber} onChange={handleInputChange} />
+                        <input className="ndv-phone-input" type="text" name="phoneNumber" placeholder="Enter Phone Number" value={formData.phoneNumber} onChange={handleInputChange} />
                       </div>
                     </div>
-                    <div className="dtv-input-group">
-                      <label>Lab Address <span>*</span></label>
+                    <div className="ndv-input-group">
+                      <label>Lab Address <span className="ndv-asterisk">*</span></label>
                       <textarea name="labAddress" rows="1" placeholder="Enter Lab Address" value={formData.labAddress} onChange={handleInputChange} />
                     </div>
-                    <div className="dtv-input-group">
-                      <label>TAT (Turnaround Time) <span>*</span></label>
+                    <div className="ndv-input-group">
+                      <label>TAT (Turnaround Time) <span className="ndv-asterisk">*</span></label>
                       <select name="tat" value={formData.tat} onChange={handleInputChange}>
                         <option value="">Select TAT</option>
                       </select>
                     </div>
                   </div>
 
-                  {/* Report Upload Section */}
-                  <div style={{ marginTop: "10px" }}>
-                    <label style={{ fontSize: "12px", fontWeight: "700", color: "#1e293b" }}>Report Download</label>
-                    <label className="dtv-upload-zone">
-                      <input type="file" style={{ display: "none" }} onChange={handleFileChange} />
-                      <div className="dtv-upload-icon">📤</div>
-                      <div className="dtv-upload-text">Upload Report</div>
-                      <div className="dtv-upload-subtext">PDF, JPG, PNG (Max 10MB)</div>
+                  {/* Upload Drop Zone */}
+                  <div className="ndv-upload-wrapper">
+                    <label className="ndv-upload-label">Report Download</label>
+                    <label className="ndv-upload-zone">
+                      <input type="file" className="ndv-file-input" onChange={handleFileChange} />
+                      <div className="ndv-upload-icon">📤</div>
+                      <div className="ndv-upload-text">Upload Report</div>
+                      <div className="ndv-upload-subtext">PDF, JPG, PNG (Max 10MB)</div>
                       {formData.reportFile && (
-                        <div style={{ marginTop: "8px", fontSize: "12px", color: "#16a34a", fontWeight: "600" }}>
+                        <div className="ndv-file-selected">
                           Selected: {formData.reportFile.name}
                         </div>
                       )}
                     </label>
                   </div>
 
-                  {/* Form Actions */}
-                  <div className="dtv-form-actions">
-                    <button type="button" className="dtv-btn-cancel" onClick={() => setActiveTab("verification")}>
+                  {/* Bottom Action Controls */}
+                  <div className="ndv-form-actions">
+                    <button type="button" className="ndv-btn-cancel" onClick={() => setActiveTab("verification")}>
                       Cancel
                     </button>
-                    <button type="submit" className="dtv-btn-submit">
+                    <button type="submit" className="ndv-btn-submit">
                       Save & Submit
                     </button>
                   </div>
