@@ -757,7 +757,7 @@ export default function AddNewTl() {
                       <line x1="20" y1="8" x2="20" y2="14" />
                       <line x1="17" y1="11" x2="23" y2="11" />
                     </svg>
-                    Save TL
+                    Create TL
                   </button>
                 </div>
               </form>
