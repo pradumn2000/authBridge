@@ -227,7 +227,24 @@ const CLIENT_MANAGEMENT_SUBMENU = [
 
 ];
 
+/* =========================================================
+   TL MANAGEMENT SUBMENU
+   ========================================================= */
 
+const TL_MANAGEMENT_SUBMENU = [
+  {
+    path: "/AddNewTL",
+    label: "Add New TL",
+  },
+  {
+    path: "/Permissions",
+    label: "Permissions",
+  },
+  {
+    path: "/ViewPermission",
+    label: "View Permission",
+  },
+];
 /* =========================================================
    ROLE NAVIGATION
    ========================================================= */
@@ -308,6 +325,14 @@ const ROLE_NAV = {
       path: "/UserManagement",
       label: "User Management",
       img: "images/sidebar/clients-icon.svg",
+    },
+
+    /* TL MANAGEMENT */
+    {
+      label: "TL Management",
+      img: "images/sidebar/clients-icon.svg",
+      submenu: TL_MANAGEMENT_SUBMENU,
+      id: "tlManagement",
     },
 
     {
