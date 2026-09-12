@@ -1882,6 +1882,11 @@ import ClientCases from "./pages/ClientCases";
 import ClientBilling from "./pages/ClientBilling";
 
 /* =========================================================
+    TL MANAGEMENT
+   ========================================================= */
+import AddNewTl from "./pages/AddNewTl";
+
+/* =========================================================
    ADMIN MANAGEMENT
    ========================================================= */
 
@@ -2238,6 +2243,17 @@ function App() {
           }
         />
 
+{/* ==================================================
+        Tl Management
+    ================================================     */}
+          <Route
+          path="/AddNewTl"
+          element={
+            <PrivateRoute role="admin">
+              <AddNewTl />
+            </PrivateRoute>
+          }
+        />
 
         {/* =================================================
             ADMIN - ADD CLIENT
