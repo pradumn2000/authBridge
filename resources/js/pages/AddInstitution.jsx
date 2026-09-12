@@ -1841,6 +1841,7 @@ export default function AddInstitution() {
                     <th>#</th>
                     <th>Institute Name</th>
                     <th>Type</th>
+                    <th>Country</th>
                     <th>Code</th>
                     <th>State</th>
                     <th>Regulatory Body</th>
