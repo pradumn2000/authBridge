@@ -2056,6 +2056,40 @@ export default function AddInstitution() {
                       </label>
                     </div>
                   </div>
+                  <div>
+                            <label style={styles.label}>Verification Fees By *</label>
+                            <select 
+                              style={styles.input}
+                              value={qual.verificationFeesBy}
+                              onChange={(e) => handleQualificationChange(idx, 'verificationFeesBy', e.target.value)}
+                            >
+                              <option value="Normal">Normal</option>
+                              <option value="Year of Passing">Year of Passing</option>
+                              <option value="UG/PG">UG/PG</option>
+                            </select>
+                          </div>
+
+                          <div>
+                            <label style={styles.label}>From YOP *</label>
+                            <input 
+                              type="text" 
+                              placeholder="YYYY" 
+                              style={styles.input}
+                              value={qual.fromYop}
+                              onChange={(e) => handleQualificationChange(idx, 'fromYop', e.target.value)}
+                            />
+                          </div>
+
+                          <div>
+                            <label style={styles.label}>To YOP *</label>
+                            <input 
+                              type="text" 
+                              placeholder="YYYY" 
+                              style={styles.input}
+                              value={qual.toYop}
+                              onChange={(e) => handleQualificationChange(idx, 'toYop', e.target.value)}
+                            />
+                          </div>
                   <div className="uni-form-group">
                     <label>Website</label>
                     <input
