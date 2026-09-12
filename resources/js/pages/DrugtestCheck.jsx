@@ -1057,6 +1057,7 @@ export default function DrugTestVerification() {
           font-size: 13px;
           color: #64748b;
           margin: 0 0 24px 0;
+          text-align:left;
         }
 
         .ndv-form-grid {
