@@ -138,6 +138,7 @@ export default function AddNewTl() {
           color: #64748b;
           margin-top: 4px;
           margin-bottom: 20px;
+          text-align: left;
         }
 
         /* Card General */
