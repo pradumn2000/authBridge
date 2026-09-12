@@ -1885,7 +1885,7 @@ import ClientBilling from "./pages/ClientBilling";
     TL MANAGEMENT
    ========================================================= */
 import AddNewTl from "./pages/AddNewTl";
-
+import TlPermission from "./pages/TlPermission";
 /* =========================================================
    ADMIN MANAGEMENT
    ========================================================= */
@@ -2251,6 +2251,14 @@ function App() {
           element={
             <PrivateRoute role="admin">
               <AddNewTl />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/TlPermission"
+          element={
+            <PrivateRoute role="admin">
+              <TlPermission />
             </PrivateRoute>
           }
         />
