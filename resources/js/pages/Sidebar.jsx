@@ -237,7 +237,7 @@ const TL_MANAGEMENT_SUBMENU = [
     label: "Add New TL",
   },
   {
-    path: "/Permissions",
+    path: "/TlPermissions",
     label: "Permissions",
   },
   {
