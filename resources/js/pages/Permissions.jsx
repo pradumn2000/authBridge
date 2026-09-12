@@ -3,7 +3,7 @@ import "../../css/style.css";
 import Header from "./Header";
 import Sidebar from "./Sidebar";
 
-export default function TlPermission() {
+export default function Permissions() {
   // Password hide/show state
   const [showPassword, setShowPassword] = useState(false);
 
