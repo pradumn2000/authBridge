@@ -305,11 +305,11 @@
 // };
 
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Sidebar from "./Sidebar";
 import Header from "./Header";
 
-// Component-Scoped CSS Stylesheet (Injected dynamically into <head> to prevent conflict)
+// Component-Scoped CSS Stylesheet
 const scopedCss = `
   /* Scope Prefix: pvc- (Police Verification Component) */
   .pvc-main-wrapper {
@@ -648,6 +648,7 @@ const scopedCss = `
     margin-bottom: 24px;
   }
 
+  /* File Upload Elements */
   .pvc-upload-box {
     border: 1px dashed #bfdbfe;
     border-radius: 6px;
@@ -658,6 +659,12 @@ const scopedCss = `
     flex-direction: column;
     align-items: center;
     justify-content: center;
+    cursor: pointer;
+    position: relative;
+  }
+
+  .pvc-file-input-hidden {
+    display: none;
   }
 
   .pvc-upload-icon {
@@ -687,6 +694,7 @@ const scopedCss = `
     font-size: 13px;
     font-weight: 600;
     cursor: pointer;
+    display: inline-block;
   }
 
   .pvc-upload-type-row {
@@ -768,6 +776,11 @@ export default function PoliceVerificationModule() {
   const [currentPage, setCurrentPage] = useState(1);
   const rowsPerPage = 5;
 
+  // Input File Refs
+  const dragDocInputRef = useRef(null);
+  const chooseDocInputRef = useRef(null);
+  const candidatePhotoInputRef = useRef(null);
+
   // Auto Inject Scoped CSS into DOM head
   useEffect(() => {
     const styleTag = document.createElement("style");
@@ -812,9 +825,22 @@ export default function PoliceVerificationModule() {
     documentType: "",
   });
 
+  const [uploadedFiles, setUploadedFiles] = useState({
+    supportingDoc: null,
+    typeDoc: null,
+    candidatePhoto: null,
+  });
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleFileChange = (e, fileKey) => {
+    const file = e.target.files[0];
+    if (file) {
+      setUploadedFiles((prev) => ({ ...prev, [fileKey]: file }));
+    }
   };
 
   // Pagination Logic
@@ -1128,20 +1154,51 @@ export default function PoliceVerificationModule() {
                 {/* Documents Upload Box */}
                 <div className="pvc-form-section">
                   <h3 className="pvc-section-title">Documents Upload</h3>
-                  <div className="pvc-upload-box">
+
+                  {/* Upload Box 1: Drag and Drop Supporting Documents */}
+                  <div 
+                    className="pvc-upload-box" 
+                    onClick={() => dragDocInputRef.current.click()}
+                  >
+                    <input 
+                      type="file" 
+                      ref={dragDocInputRef} 
+                      className="pvc-file-input-hidden" 
+                      accept=".pdf,.jpg,.png"
+                      onChange={(e) => handleFileChange(e, "supportingDoc")}
+                    />
                     <span className="pvc-upload-icon">☁️</span>
-                    <p className="pvc-upload-title">Upload Supporting Documents</p>
+                    <p className="pvc-upload-title">
+                      {uploadedFiles.supportingDoc ? uploadedFiles.supportingDoc.name : "Upload Supporting Documents"}
+                    </p>
                     <span className="pvc-upload-subtext">Click to upload or drag and drop (PDF, JPG, PNG - Max 5MB)</span>
                   </div>
 
+                  {/* Upload Box 2: Select Document Type & Choose File Input */}
                   <div className="pvc-upload-type-row">
                     <div style={{ flex: 1 }} className="pvc-form-group">
                       <label className="pvc-form-label">Select Document Type</label>
                       <select name="documentType" value={formData.documentType} onChange={handleInputChange} className="pvc-form-select">
                         <option value="">Select Document Type</option>
+                        <option value="Aadhar Card">Aadhar Card</option>
+                        <option value="PAN Card">PAN Card</option>
+                        <option value="Voter ID">Voter ID</option>
                       </select>
                     </div>
-                    <button className="pvc-btn-outline">Choose File</button>
+
+                    <div>
+                      <input 
+                        type="file" 
+                        id="pvc-choose-doc-file" 
+                        ref={chooseDocInputRef} 
+                        className="pvc-file-input-hidden"
+                        accept=".pdf,.jpg,.png"
+                        onChange={(e) => handleFileChange(e, "typeDoc")}
+                      />
+                      <label htmlFor="pvc-choose-doc-file" className="pvc-btn-outline">
+                        {uploadedFiles.typeDoc ? "File Selected" : "Choose File"}
+                      </label>
+                    </div>
                   </div>
 
                   <div>
@@ -1156,9 +1213,18 @@ export default function PoliceVerificationModule() {
                         </tr>
                       </thead>
                       <tbody>
-                        <tr>
-                          <td colSpan="4">No documents uploaded yet.</td>
-                        </tr>
+                        {uploadedFiles.typeDoc || uploadedFiles.supportingDoc ? (
+                          <tr>
+                            <td>{uploadedFiles.typeDoc?.name || uploadedFiles.supportingDoc?.name}</td>
+                            <td>{formData.documentType || "Supporting Doc"}</td>
+                            <td>{new Date().toLocaleDateString()}</td>
+                            <td><button style={{ color: "red", border: "none", background: "none", cursor: "pointer" }}>Delete</button></td>
+                          </tr>
+                        ) : (
+                          <tr>
+                            <td colSpan="4">No documents uploaded yet.</td>
+                          </tr>
+                        )}
                       </tbody>
                     </table>
                   </div>
@@ -1167,15 +1233,32 @@ export default function PoliceVerificationModule() {
                 {/* Candidate Photograph Box */}
                 <div className="pvc-form-section">
                   <h3 className="pvc-section-title">Candidate Photograph</h3>
-                  <div className="pvc-upload-box" style={{ marginBottom: "16px" }}>
+
+                  {/* Upload Box 3: Candidate Photo File Input */}
+                  <div className="pvc-upload-box" style={{ marginBottom: "16px" }} onClick={() => candidatePhotoInputRef.current.click()}>
+                    <input 
+                      type="file" 
+                      ref={candidatePhotoInputRef}
+                      className="pvc-file-input-hidden" 
+                      accept="image/jpeg, image/png"
+                      onChange={(e) => handleFileChange(e, "candidatePhoto")}
+                    />
                     <span className="pvc-upload-icon">👤</span>
-                    <p className="pvc-upload-title">Upload Candidate Photo</p>
+                    <p className="pvc-upload-title">
+                      {uploadedFiles.candidatePhoto ? uploadedFiles.candidatePhoto.name : "Upload Candidate Photo"}
+                    </p>
                     <span className="pvc-upload-subtext">Click to upload or drag and drop (JPG, PNG - Max 2MB)</span>
-                    <button className="pvc-btn-outline">Choose File</button>
+                    <button type="button" className="pvc-btn-outline" style={{ marginTop: "8px" }}>
+                      Choose File
+                    </button>
                   </div>
 
                   <div className="pvc-photo-preview">
-                    <img src="https://via.placeholder.com/80x90" alt="Candidate Sample" className="pvc-photo-img" />
+                    <img 
+                      src={uploadedFiles.candidatePhoto ? URL.createObjectURL(uploadedFiles.candidatePhoto) : "https://via.placeholder.com/80x90"} 
+                      alt="Candidate Sample" 
+                      className="pvc-photo-img" 
+                    />
                   </div>
                 </div>
 
