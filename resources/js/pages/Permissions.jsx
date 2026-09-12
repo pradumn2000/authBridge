@@ -648,7 +648,7 @@ export default function Permissions() {
 
       <div className="add-tl-layout">
         <Sidebar />
-        <div className="add-tl-main-content"  id="content">
+        <div className="add-tl-main-content" id="content">
           <Header />
 
           <div className="add-tl-container">

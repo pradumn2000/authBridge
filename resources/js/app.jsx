@@ -1886,6 +1886,7 @@ import ClientBilling from "./pages/ClientBilling";
    ========================================================= */
 import AddNewTl from "./pages/AddNewTl";
 import Permissions from "./pages/Permissions";
+import ViewPermission from "./pages/ViewPermission"
 /* =========================================================
    ADMIN MANAGEMENT
    ========================================================= */
@@ -2260,6 +2261,15 @@ function App() {
           element={
             <PrivateRoute role="admin">
               <Permissions />
+            </PrivateRoute>
+          }
+        />
+
+           <Route
+          path="/ViewPermission"
+          element={
+            <PrivateRoute role="admin">
+              <ViewPermission />
             </PrivateRoute>
           }
         />
