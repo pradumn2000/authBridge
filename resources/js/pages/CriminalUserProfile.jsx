@@ -229,6 +229,7 @@ const CriminalUserProfile = () => {
             font-size: 13px;
             font-weight: 500;
             color: #0f172a;
+            text-align: left;
           }
 
           .text-green {
@@ -351,6 +352,9 @@ const CriminalUserProfile = () => {
           display: flex;
             justify-content: space-between;
           }
+          .cup-user-meta {
+    width: 100%;
+}
         `}</style>
 
         {/* Page Container */}
@@ -514,7 +518,7 @@ const CriminalUserProfile = () => {
                 </div>
                 <div>
                   <span className="cup-sub-label">Status</span>
-                  <p style={{ margin: "3px 0 0 0" }}>
+                  <p style={{ margin: "3px 0 0 0", textAlign: "left" }}>
                     <span className="cup-status-tag completed">Completed</span>
                   </p>
                 </div>
