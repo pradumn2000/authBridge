@@ -347,6 +347,7 @@ const CriminalUserProfile = () => {
             color: #475569;
             margin: 0;
             line-height: 1.5;
+            text-align: left;
           }
           .cup-name-badge-wrp{
           display: flex;

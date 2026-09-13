@@ -306,6 +306,7 @@
 
 
 import React, { useState, useEffect, useRef } from "react";
+import { useNavigate } from "react-router-dom";
 import Sidebar from "./Sidebar";
 import Header from "./Header";
 
@@ -994,7 +995,12 @@ export default function PoliceVerificationModule() {
                           <button className="pvc-doc-link">📄 {row.docs}</button>
                         </td>
                         <td>
-                          <button className="pvc-btn-view">View Details</button>
+                          <button 
+    className="pvc-btn-view" 
+    onClick={() => navigate("/CriminalUserProfile")}
+  >
+    View Details
+  </button>
                         </td>
                       </tr>
                     ))}
