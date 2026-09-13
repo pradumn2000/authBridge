@@ -438,7 +438,19 @@ export default function EmploymentCheck() {
                           <tr key={row.id} style={{ borderBottom: "1px solid #f1f5f9" }}>
                             <td style={{ padding: "10px" }}><input type="checkbox" defaultChecked={row.id === "EMP-10245" || row.id === "EMP-10246"} /></td>
                             <td style={{ padding: "10px", color: "#2563eb", fontWeight: 700 }}>{row.id}</td>
-                            <td style={{ padding: "10px", fontWeight: 600 }}>{row.candidate}</td>
+                            <td style={{ padding: "10px", fontWeight: 600 }}><a
+    href="https://authbridge-10.onrender.com/EmploymentUserProfile"
+    style={{
+      color: "#2563eb",
+      textDecoration: "none",
+      cursor: "pointer",
+      fontWeight: 600,
+    }}
+    onMouseOver={(e) => (e.target.style.textDecoration = "underline")}
+    onMouseOut={(e) => (e.target.style.textDecoration = "none")}
+  >
+    {row.candidate}
+  </a></td>
                             <td style={{ padding: "10px" }}>{row.client}</td>
                             <td style={{ padding: "10px" }}>{row.company}</td>
                             <td style={{ padding: "10px", color: "#64748b" }}>{row.hr}</td>
