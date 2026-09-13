@@ -294,8 +294,24 @@ export default function AddressCheck() {
                               <span style={{ fontSize: "9px", color: "#64748b" }}>{row.caseId}</span>
                             </td>
                             <td style={{ padding: "8px" }}>
-                              <span style={{ fontWeight: 700, color: "#0f172a", display: "block" }}>{row.name}</span>
-                              <span style={{ fontSize: "9px", color: "#64748b" }}>{row.empId}</span>
+                            
+                              <a
+    href="https://authbridge-10.onrender.com/EducationUserProfile"
+    style={{
+      color: "#2563eb",
+      textDecoration: "none",
+      cursor: "pointer",
+      fontWeight: 700,
+      display: "block",
+    }}
+    onMouseOver={(e) => (e.target.style.textDecoration = "underline")}
+    onMouseOut={(e) => (e.target.style.textDecoration = "none")}
+  >
+    {row.name}
+  </a>
+  <span style={{ fontSize: "9px", color: "#64748b", display: "block" }}>
+    {row.empId}
+  </span>
                             </td>
                             <td style={{ padding: "8px" }}>
                               <span style={{ fontWeight: 700, color: "#0f172a", display: "block" }}>{row.client}</span>

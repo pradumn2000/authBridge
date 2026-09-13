@@ -1909,6 +1909,7 @@ import CriminalUserProfile from "./pages/CriminalUserProfile";
 import DatabaseUserProfile from "./pages/DatabaseUserProfile";
 import EducationUserProfile from "./pages/EducationUserProfile";
 import EmploymentUserProfile from "./pages/EmploymentUserProfile";
+import AddressUserProfile from "./pages/AddressUserProfile";
 /* =========================================================
    AUTH HELPERS
    ========================================================= */
@@ -2313,6 +2314,15 @@ function App() {
           element={
             <PrivateRoute role="admin">
               <EmploymentUserProfile />
+            </PrivateRoute>
+          }
+        />
+
+        <Route
+          path="/AddressUserProfile"
+          element={
+            <PrivateRoute role="admin">
+              <AddressUserProfile />
             </PrivateRoute>
           }
         />
