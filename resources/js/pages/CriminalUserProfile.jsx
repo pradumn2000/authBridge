@@ -27,7 +27,7 @@ const CriminalUserProfile = () => {
           }
 
           .cup-main-content {
-            {/* flex: 1; */}
+            flex: 1;
             display: flex;
             flex-direction: column;
             overflow-x: hidden;
@@ -79,6 +79,7 @@ const CriminalUserProfile = () => {
             display: flex;
             gap: 20px;
             flex-wrap: wrap;
+            flex: 1;
           }
 
           .cup-avatar {
@@ -136,8 +137,10 @@ const CriminalUserProfile = () => {
 
           .cup-actions {
             display: flex;
+            align-items: center;
             gap: 10px;
             flex-wrap: wrap;
+            margin-left: auto;
           }
 
           .cup-btn {
@@ -147,6 +150,9 @@ const CriminalUserProfile = () => {
             font-weight: 500;
             cursor: pointer;
             transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
           }
 
           .cup-btn-outline {
@@ -274,20 +280,35 @@ const CriminalUserProfile = () => {
             font-weight: 500;
           }
 
+          /* Timeline with vertical connector line */
           .cup-timeline {
             display: flex;
             flex-direction: column;
-            gap: 18px;
+            gap: 24px;
+            position: relative;
           }
 
           .cup-timeline-item {
             display: flex;
-            gap: 14px;
+            gap: 16px;
+            position: relative;
+          }
+
+          /* Vertical connecting line behind the dots */
+          .cup-timeline-item:not(:last-child)::before {
+            content: "";
+            position: absolute;
+            left: 11px;
+            top: 24px;
+            bottom: -24px;
+            width: 2px;
+            background-color: #3b82f6;
+            z-index: 1;
           }
 
           .cup-timeline-dot {
-            width: 22px;
-            height: 22px;
+            width: 24px;
+            height: 24px;
             border-radius: 50%;
             background: #2563eb;
             color: #fff;
@@ -296,6 +317,7 @@ const CriminalUserProfile = () => {
             justify-content: center;
             font-size: 11px;
             flex-shrink: 0;
+            z-index: 2;
           }
 
           .cup-timeline-dot.success {
