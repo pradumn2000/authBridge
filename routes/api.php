@@ -491,17 +491,28 @@ Route::middleware('auth:sanctum')->group(function () {
     });
 
     // ── CASES ROUTES (New CaseCheck Architecture) ─────────────
-    
+
     // -------------------------------------------------------------
     // CREATE CASE - This maps the selected checks from AddCase!
+    //
+    // `case_source` drives whether client_name / client_id / billing_mode
+    // are mandatory:
+    //   - "client"    (default) → client fields required, same as before.
+    //   - "candidate" → candidate is self-onboarding; client_name/client_id
+    //                   and billing_mode become optional. We fall back to
+    //                   a placeholder client name and prepaid_candidate
+    //                   billing if the frontend didn't send one.
     // -------------------------------------------------------------
     Route::post('/cases', function (Request $request) {
         $request->validate([
+            'case_source'     => 'nullable|in:client,candidate',
             'candidate_name'  => 'required|string|max:255',
             'candidate_email' => 'required|email',
             'candidate_dob'   => 'required|date',
-            'client_name'     => 'required|string|max:255',
-            'billing_mode'    => 'required|in:prepaid_client,prepaid_candidate,postpaid_client',
+            // Required only when the case is onboarded via a client.
+            'client_name'     => 'required_if:case_source,client|nullable|string|max:255',
+            'client_id'       => 'required_if:case_source,client|nullable|integer|exists:users,id',
+            'billing_mode'    => 'required_if:case_source,client|nullable|in:prepaid_client,prepaid_candidate,postpaid_client,postpaid_prepaid_client',
             'checks'          => 'required|array|min:1',
             'checks.*'        => 'in:employment,education,address,database,criminal,drug,court',
             'check_tat'       => 'nullable|array',
@@ -509,20 +520,27 @@ Route::middleware('auth:sanctum')->group(function () {
             'overall_tat'     => 'nullable|numeric|min:0',
         ]);
 
+        $caseSource = $request->case_source ?? 'client';
+
         // 1. Create the Master Case record
         $case = BGVCase::create([
             'case_id'          => BGVCase::generateCaseId(),
+            'case_source'      => $caseSource,
             'candidate_name'   => $request->candidate_name,
             'candidate_email'  => $request->candidate_email,
             'candidate_mobile' => $request->candidate_mobile,
             'candidate_dob'    => $request->candidate_dob,
             'position'         => $request->position,
-            'client_name'      => $request->client_name,
+            // Candidate-sourced cases with no client picked get a
+            // placeholder name so reporting/UI never shows a blank client.
+            'client_name'      => $request->client_name ?: ($caseSource === 'candidate' ? 'Self (Candidate)' : null),
             'client_id'        => $request->client_id,
             'checks'           => $request->checks,
             'overall_tat'      => $request->overall_tat ?? 0,
             'priority'         => $request->priority ?? 'normal',
-            'billing_mode'     => $request->billing_mode,
+            // Candidate-sourced cases with no billing mode picked default
+            // to candidate-pays billing.
+            'billing_mode'     => $request->billing_mode ?: ($caseSource === 'candidate' ? 'prepaid_candidate' : null),
             'payment_timing'   => $request->payment_timing,
             'invoice_cycle'    => $request->invoice_cycle,
             'po_number'        => $request->po_number,
@@ -548,7 +566,14 @@ Route::middleware('auth:sanctum')->group(function () {
         }
         CaseCheck::insert($caseChecksData);
 
-        \App\Models\CaseEvent::log($case->case_id, 'created', 'Case created', "Case opened for {$case->candidate_name}", ['checks' => $case->checks], $request->user());
+        \App\Models\CaseEvent::log(
+            $case->case_id,
+            'created',
+            'Case created',
+            "Case opened for {$case->candidate_name} via " . ucfirst($caseSource) . " onboarding",
+            ['checks' => $case->checks, 'case_source' => $caseSource],
+            $request->user()
+        );
 
         return response()->json(['case' => $case], 201);
     });
@@ -575,6 +600,12 @@ Route::middleware('auth:sanctum')->group(function () {
 
         if ($request->status && $request->status !== 'all') {
             $query->where('status', $request->status);
+        }
+
+        // Optional filter so the UI can show "Client-sourced" vs
+        // "Candidate-sourced" case lists.
+        if ($request->case_source && in_array($request->case_source, ['client', 'candidate'])) {
+            $query->where('case_source', $request->case_source);
         }
 
         $verifierNames = User::pluck('name', 'id');
@@ -612,6 +643,7 @@ Route::middleware('auth:sanctum')->group(function () {
             return [
                 'id'                 => $c->id,
                 'case_id'            => $c->case_id,
+                'case_source'        => $c->case_source,
                 'candidate'          => $c->candidate_name,
                 'client'             => $c->client_name,
                 'client_id'          => $c->client_id,
@@ -659,6 +691,10 @@ Route::middleware('auth:sanctum')->group(function () {
     });
 
     // UPDATE CASE
+    //
+    // Same case_source-driven relaxation as creation: if the case (or the
+    // incoming request) is candidate-sourced, client_name/client_id and
+    // billing_mode are not required to save the update.
     Route::put('/cases/{caseId}', function (Request $request, $caseId) {
         $case = BGVCase::where('case_id', $caseId)->firstOrFail();
 
@@ -670,7 +706,44 @@ Route::middleware('auth:sanctum')->group(function () {
             return response()->json(['message' => 'Case is already in progress.'], 422);
         }
 
-        $case->update($request->only(['candidate_name', 'candidate_email', 'candidate_mobile', 'candidate_dob', 'position', 'client_name', 'client_id', 'checks', 'priority', 'billing_mode', 'payment_timing', 'invoice_cycle', 'po_number', 'total_amount', 'payment_link', 'notes', 'overall_tat']));
+        // Resolve effective case_source: incoming value wins, otherwise
+        // whatever is already stored on the case, otherwise default to
+        // 'client' for pre-existing cases created before this field existed.
+        $caseSource = $request->case_source ?? $case->case_source ?? 'client';
+
+        $request->validate([
+            'case_source'     => 'nullable|in:client,candidate',
+            'candidate_name'  => 'sometimes|required|string|max:255',
+            'candidate_email' => 'sometimes|required|email',
+            'candidate_dob'   => 'sometimes|required|date',
+            'client_name'     => 'required_if:case_source,client|nullable|string|max:255',
+            'client_id'       => 'required_if:case_source,client|nullable|integer|exists:users,id',
+            'billing_mode'    => 'required_if:case_source,client|nullable|in:prepaid_client,prepaid_candidate,postpaid_client,postpaid_prepaid_client',
+            'checks'          => 'required|array|min:1',
+            'checks.*'        => 'in:employment,education,address,database,criminal,drug,court',
+        ]);
+
+        $updateData = $request->only([
+            'candidate_name', 'candidate_email', 'candidate_mobile', 'candidate_dob',
+            'position', 'client_name', 'client_id', 'checks', 'priority',
+            'billing_mode', 'payment_timing', 'invoice_cycle', 'po_number',
+            'total_amount', 'payment_link', 'notes', 'overall_tat',
+        ]);
+        $updateData['case_source'] = $caseSource;
+
+        // Keep the same placeholder fallback behaviour as creation, in case
+        // the frontend sends blank client/billing fields for a
+        // candidate-sourced update.
+        if ($caseSource === 'candidate') {
+            if (empty($updateData['client_name'])) {
+                $updateData['client_name'] = 'Self (Candidate)';
+            }
+            if (empty($updateData['billing_mode'])) {
+                $updateData['billing_mode'] = 'prepaid_candidate';
+            }
+        }
+
+        $case->update($updateData);
 
         // Synchronize checks: Add new checks if they were added to the case array
         foreach ($request->checks as $checkKey) {
@@ -719,19 +792,26 @@ Route::middleware('auth:sanctum')->group(function () {
         $clients    = BGVCase::distinct('client_name')->count('client_name');
         $clearRate  = $total > 0 ? round(($completed / $total) * 100) : 0;
 
+        // Onboarding-source breakdown — how many cases came in via a
+        // client vs. self-onboarded by the candidate.
+        $viaClient    = (clone $query)->where('case_source', 'client')->count();
+        $viaCandidate = (clone $query)->where('case_source', 'candidate')->count();
+
         $avgTat = BGVCase::where('status', 'completed')
             ->selectRaw('AVG(JULIANDAY(updated_at) - JULIANDAY(created_at)) as avg_days')
             ->value('avg_days');
 
         return response()->json([
-            'total'       => $total,
-            'in_progress' => $inProgress,
-            'completed'   => $completed,
-            'pending'     => $pending,
-            'qc_review'   => $qcReview,
-            'clients'     => $clients,
-            'clear_rate'  => $clearRate . '%',
-            'avg_tat'     => round($avgTat ?? 0, 1) . ' days',
+            'total'          => $total,
+            'in_progress'    => $inProgress,
+            'completed'      => $completed,
+            'pending'        => $pending,
+            'qc_review'      => $qcReview,
+            'clients'        => $clients,
+            'clear_rate'     => $clearRate . '%',
+            'avg_tat'        => round($avgTat ?? 0, 1) . ' days',
+            'via_client'     => $viaClient,
+            'via_candidate'  => $viaCandidate,
         ]);
     });
 
