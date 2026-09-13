@@ -1907,7 +1907,7 @@ import CandidateVerificationWizard from "./pages/bg";
 
 import CriminalUserProfile from "./pages/CriminalUserProfile";
 import DatabaseUserProfile from "./pages/DatabaseUserProfile";
-import EducationUserProfile from ".pages/EducationUserProfile";
+import EducationUserProfile from "./pages/EducationUserProfile";
 /* =========================================================
    AUTH HELPERS
    ========================================================= */
