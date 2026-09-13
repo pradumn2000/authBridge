@@ -13,7 +13,7 @@ export default function DatabaseUserProfile() {
       {/* Sidebar Component */}
       <Sidebar />
 
-      <div className="dup-main-wrapper">
+      <div className="dup-main-wrapper" id="content">
         {/* Header Component */}
         <Header />
 
@@ -28,7 +28,7 @@ export default function DatabaseUserProfile() {
             }
 
             .dup-main-wrapper {
-              flex: 1;
+              {/* flex: 1; */}
               display: flex;
               flex-direction: column;
               overflow-x: hidden;
