@@ -12,7 +12,7 @@ const CriminalUserProfile = () => {
       {/* Sidebar Component */}
       <Sidebar />
 
-      <div className="cup-main-content">
+      <div className="cup-main-content" id="content">
         {/* Header Component */}
         <Header />
 
@@ -27,7 +27,7 @@ const CriminalUserProfile = () => {
           }
 
           .cup-main-content {
-            flex: 1;
+            {/* flex: 1; */}
             display: flex;
             flex-direction: column;
             overflow-x: hidden;
