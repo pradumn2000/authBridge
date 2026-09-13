@@ -1908,6 +1908,7 @@ import CandidateVerificationWizard from "./pages/bg";
 import CriminalUserProfile from "./pages/CriminalUserProfile";
 import DatabaseUserProfile from "./pages/DatabaseUserProfile";
 import EducationUserProfile from "./pages/EducationUserProfile";
+import EmploymentUserProfile from "./pages/EmploymentUserProfile";
 /* =========================================================
    AUTH HELPERS
    ========================================================= */
@@ -2303,6 +2304,15 @@ function App() {
           element={
             <PrivateRoute role="admin">
               <EducationUserProfile />
+            </PrivateRoute>
+          }
+        />
+
+        <Route
+          path="/EmploymentUserProfile"
+          element={
+            <PrivateRoute role="admin">
+              <EmploymentUserProfile />
             </PrivateRoute>
           }
         />
