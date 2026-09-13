@@ -1,6 +1,7 @@
+
 // import React, { useState } from "react";
-// import "../../css/style.css";
 // import Sidebar from "./Sidebar";
+// import "../../css/style.css";
 // import Header from "./Header";
 
 
@@ -148,11 +149,12 @@
 //   return (
 //     <div style={{ display: "flex", minHeight: "100vh", backgroundColor: "#f8fafc", fontFamily: "Inter, sans-serif" }}>
 //       {/* 1. Sidebar */}
-      
-//       <Sidebar />
+//       <div id="sidebar">
+//         <Sidebar />
+//       </div>
 
 //       {/* 2. Main Content Container */}
-//       <div style={{ display: "flex", flexDirection: "column", minWidth: 0,width: "calc(100% - 270px)",   position: "relative",     left: "270px",}}>
+//       <div id="content" style={{ display: "flex", flexDirection: "column", minWidth: 0, width: "calc(100% - 270px)" }}>
 //         {/* Fixed Top Header (Standard Component) */}
 //         <Header />
 
@@ -164,22 +166,6 @@
 //               <h1 style={{ fontSize: "18px", fontWeight: "800", color: "#0f172a", margin: "0 0 2px 0" }}>Address Verification</h1>
 //               <p style={{ fontSize: "12px", color: "#64748b", margin: 0 }}>Manage and track address verification for all candidates</p>
 //             </div>
-            
-//             {/* <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-//               <button style={{ border: "none", background: "none", fontSize: "16px", cursor: "pointer" }}>🔍</button>
-//               <div style={{ position: "relative", cursor: "pointer" }}>
-//                 <span style={{ fontSize: "16px" }}>🔔</span>
-//                 <span style={{ position: "absolute", top: "-4px", right: "-6px", background: "#dc2626", color: "#fff", fontSize: "8px", borderRadius: "10px", padding: "1px 4px", fontWeight: 700 }}>12</span>
-//               </div>
-//               <button style={{ border: "none", background: "none", fontSize: "16px", cursor: "pointer" }}>📅</button>
-//               <div style={{ display: "flex", alignItems: "center", gap: "6px", borderLeft: "1px solid #e2e8f0", paddingLeft: "10px" }}>
-//                 <div style={{ textAlign: "right" }}>
-//                   <span style={{ fontSize: "10px", color: "#64748b", display: "block" }}>Welcome,</span>
-//                   <span style={{ fontSize: "11px", fontWeight: "700", color: "#0f172a" }}>QC Manager</span>
-//                 </div>
-//                 <span style={{ fontSize: "10px", color: "#64748b" }}>▼</span>
-//               </div>
-//             </div> */}
 //           </div>
 
 //           {/* Metric Summary Cards Grid */}
@@ -206,22 +192,21 @@
 //           </div>
 
 //           {/* Action Box */}
-//           <div style={{ background: "#fff", border: "1px dashed #cbd5e1", borderRadius: "6px", padding: "10px 16px", display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "16px" }}>
-//             <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-//               <div style={{ width: "28px", height: "28px", borderRadius: "50%", background: "#eff6ff", color: "#2563eb", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: "700", fontSize: "12px" }}>+</div>
-//               <div>
-//                 <h4 style={{ margin: 0, fontSize: "12px", fontWeight: "700", color: "#2563eb" }}>New Address Verification</h4>
-//                 <p style={{ margin: 0, fontSize: "10px", color: "#64748b" }}>Create a new verification request</p>
-//               </div>
-//             </div>
+          
             
-//             <div style={{ display: "flex", borderRadius: "4px", overflow: "hidden" }}>
+//             <div style={{ 
+//   display: "flex", 
+//   borderRadius: "4px", 
+//   overflow: "hidden", 
+//   justifyContent: "flex-end", 
+//   marginBottom: "15px" 
+// }}>
 //               <button style={{ background: "#2563eb", color: "#fff", border: "none", padding: "6px 14px", fontWeight: "600", fontSize: "12px", cursor: "pointer" }}>
 //                 New Address Verification
 //               </button>
-//               <button style={{ background: "#1d4ed8", color: "#fff", border: "none", padding: "6px 8px", borderLeft: "1px solid #3b82f6", cursor: "pointer" }}>▼</button>
+             
 //             </div>
-//           </div>
+          
 
 //           {/* Multi-column Search/Filter Bar */}
 //           <div style={{ background: "#fff", border: "1px solid #e2e8f0", borderRadius: "6px", padding: "10px", marginBottom: "16px", display: "flex", flexDirection: "column", gap: "8px" }}>
@@ -257,39 +242,6 @@
             
 //             {/* Left Column: Table Container */}
 //             <div style={{ width: "100%", overflowX: "auto" }}>
-              
-//               {/* Category Navigation Tabs */}
-//               {/* <div style={{ display: "flex", borderBottom: "1px solid #e2e8f0", marginBottom: "12px", gap: "12px", overflowX: "auto" }}>
-//                 {[
-//                   { id: "all", label: "All (250)" },
-//                   { id: "perm", label: "Permanent Address (125)" },
-//                   { id: "corres", label: "Correspondence Address (125)" },
-//                   { id: "pending", label: "Pending Assignment (42)" },
-//                   { id: "video", label: "Video Verification (98)" },
-//                   { id: "physical", label: "Physical Verification (75)" },
-//                   { id: "qc", label: "QC Review (15)" },
-//                   { id: "verified", label: "Verified (156)" },
-//                   { id: "failed", label: "Failed (18)" },
-//                 ].map((tab) => (
-//                   <button
-//                     key={tab.id}
-//                     onClick={() => setActiveTab(tab.id)}
-//                     style={{
-//                       padding: "6px 2px 10px 2px",
-//                       border: "none",
-//                       background: "transparent",
-//                       fontSize: "11px",
-//                       fontWeight: activeTab === tab.id ? 700 : 500,
-//                       color: activeTab === tab.id ? "#2563eb" : "#64748b",
-//                       borderBottom: activeTab === tab.id ? "2px solid #2563eb" : "none",
-//                       cursor: "pointer",
-//                       whiteSpace: "nowrap",
-//                     }}
-//                   >
-//                     {tab.label}
-//                   </button>
-//                 ))}
-//               </div> */}
 
 //               {/* Table Data */}
 //               <div style={{ background: "#fff", border: "1px solid #e2e8f0", borderRadius: "6px", overflow: "hidden" }}>
@@ -415,22 +367,6 @@
 //                   ))}
 //                 </div>
 
-//                 {/* Allocation Method Options */}
-//                 {/* <div>
-//                   <label style={{ display: "block", fontSize: "10px", fontWeight: "700", color: "#374151", marginBottom: "4px" }}>Allocation Method</label>
-//                   <div style={{ display: "flex", flexDirection: "column", gap: "6px", fontSize: "11px", color: "#334155" }}>
-//                     <label style={{ display: "flex", alignItems: "center", gap: "6px", cursor: "pointer" }}>
-//                       <input type="radio" name="alloc" checked={allocationMethod === "manual"} onChange={() => setAllocationMethod("manual")} /> Manual Allocation
-//                     </label>
-//                     <label style={{ display: "flex", alignItems: "center", gap: "6px", cursor: "pointer" }}>
-//                       <input type="radio" name="alloc" checked={allocationMethod === "workload"} onChange={() => setAllocationMethod("workload")} /> Auto Allocate by Workload
-//                     </label>
-//                     <label style={{ display: "flex", alignItems: "center", gap: "6px", cursor: "pointer" }}>
-//                       <input type="radio" name="alloc" checked={allocationMethod === "expertise"} onChange={() => setAllocationMethod("expertise")} /> Auto Allocate by Company Expertise
-//                     </label>
-//                   </div>
-//                 </div> */}
-
 //                 {/* Stepper Count */}
 //                 <div>
 //                   <label style={{ display: "block", fontSize: "10px", fontWeight: "700", color: "#374151", marginBottom: "4px" }}>Cases to Allocate</label>
@@ -457,19 +393,41 @@
 //     </div>
 //   );
 // }
-import React, { useState } from "react";
+
+import React, { useState, useMemo } from "react";
 import Sidebar from "./Sidebar";
 import "../../css/style.css";
 import Header from "./Header";
 
-
 export default function AddressCheck() {
-  const [activeTab, setActiveTab] = useState("all");
+  // --- States ---
   const [showAssignModal, setShowAssignModal] = useState(true);
-  const [allocationMethod, setAllocationMethod] = useState("manual");
   const [casesToAllocate, setCasesToAllocate] = useState(2);
+  const [selectedRows, setSelectedRows] = useState([]);
+  
+  // Verifiers State
+  const [verifiersList, setVerifiersList] = useState([
+    { id: "VER-1001", name: "Amit Kumar", title: "Employment Verifier", cases: 12, checked: true },
+    { id: "VER-1002", name: "Neha Patel", title: "Employment Verifier", cases: 8, checked: true },
+    { id: "VER-1003", name: "Rahul Verma", title: "Employment Verifier", cases: 15, checked: false },
+  ]);
+  const [verifierSearch, setVerifierSearch] = useState("");
 
-  const tableData = [
+  // Filters State
+  const [filters, setFilters] = useState({
+    search: "",
+    client: "",
+    addressType: "",
+    verificationMode: "",
+    verifier: "",
+    status: "",
+    dueDate: "",
+    city: "",
+    state: "",
+  });
+
+  // Sample Table Data
+  const [tableData, setTableData] = useState([
     {
       id: "CAN-10245",
       caseId: "CASE-5001",
@@ -479,6 +437,8 @@ export default function AddressCheck() {
       phone: "9876543210",
       type: "Permanent",
       address: "Pune, Maharashtra 411001",
+      city: "Pune",
+      state: "Maharashtra",
       mode: "Video Verification",
       docs: "Documents",
       verifier: "Amit Kumar",
@@ -501,6 +461,8 @@ export default function AddressCheck() {
       phone: "9876543210",
       type: "Correspondence",
       address: "Nashik, Maharashtra 422001",
+      city: "Nashik",
+      state: "Maharashtra",
       mode: "Physical Verification",
       docs: "2 Docs 📄",
       verifier: "—",
@@ -523,6 +485,8 @@ export default function AddressCheck() {
       phone: "9123456780",
       type: "Permanent",
       address: "Delhi, India 110001",
+      city: "Delhi",
+      state: "Delhi",
       mode: "Document Verification",
       docs: "3 Docs 📄",
       verifier: "Neha Singh",
@@ -545,6 +509,8 @@ export default function AddressCheck() {
       phone: "9123456780",
       type: "Correspondence",
       address: "Noida, UP 201301",
+      city: "Noida",
+      state: "Uttar Pradesh",
       mode: "Video Verification",
       docs: "2 Docs 📄",
       verifier: "Amit Kumar",
@@ -567,6 +533,8 @@ export default function AddressCheck() {
       phone: "9876543210",
       type: "Permanent",
       address: "Mumbai, Maharashtra 400001",
+      city: "Mumbai",
+      state: "Maharashtra",
       mode: "Physical + Video",
       docs: "4 Docs 📄",
       verifier: "Rajesh Kumar",
@@ -589,6 +557,8 @@ export default function AddressCheck() {
       phone: "9876543210",
       type: "Correspondence",
       address: "Mumbai, Maharashtra 400001",
+      city: "Mumbai",
+      state: "Maharashtra",
       mode: "Document Verification",
       docs: "2 Docs 📄",
       verifier: "Neha Singh",
@@ -602,7 +572,116 @@ export default function AddressCheck() {
       slaColor: "#16a34a",
       action: "View Details",
     },
-  ];
+  ]);
+
+  // --- Handlers ---
+  const handleFilterChange = (key, value) => {
+    setFilters((prev) => ({ ...prev, [key]: value }));
+  };
+
+  const handleClearFilters = () => {
+    setFilters({
+      search: "",
+      client: "",
+      addressType: "",
+      verificationMode: "",
+      verifier: "",
+      status: "",
+      dueDate: "",
+      city: "",
+      state: "",
+    });
+  };
+
+  const handleSelectAll = (e) => {
+    if (e.target.checked) {
+      setSelectedRows(filteredData.map((_, index) => index));
+    } else {
+      setSelectedRows([]);
+    }
+  };
+
+  const handleSelectRow = (index) => {
+    setSelectedRows((prev) =>
+      prev.includes(index) ? prev.filter((i) => i !== index) : [...prev, index]
+    );
+  };
+
+  const handleVerifierToggle = (id) => {
+    setVerifiersList((prev) =>
+      prev.map((v) => (v.id === id ? { ...v, checked: !v.checked } : v))
+    );
+  };
+
+  const handleAllocate = () => {
+    const selectedVerifier = verifiersList.find((v) => v.checked);
+    if (!selectedVerifier) {
+      alert("Please select at least one verifier.");
+      return;
+    }
+
+    if (selectedRows.length === 0) {
+      alert("Please select at least one case from the table to allocate.");
+      return;
+    }
+
+    setTableData((prevData) =>
+      prevData.map((row, index) => {
+        if (selectedRows.includes(index)) {
+          return {
+            ...row,
+            verifier: selectedVerifier.name,
+            verifierId: selectedVerifier.id,
+            status: "Link Sent",
+            subStatus: "Assigned",
+            statusBg: "#eff6ff",
+            statusColor: "#2563eb",
+            action: "View Details",
+          };
+        }
+        return row;
+      })
+    );
+
+    alert(`Successfully allocated ${selectedRows.length} case(s) to ${selectedVerifier.name}`);
+    setSelectedRows([]);
+  };
+
+  // --- Filtered Data ---
+  const filteredData = useMemo(() => {
+    return tableData.filter((row) => {
+      const matchSearch =
+        !filters.search ||
+        row.name.toLowerCase().includes(filters.search.toLowerCase()) ||
+        row.id.toLowerCase().includes(filters.search.toLowerCase()) ||
+        row.caseId.toLowerCase().includes(filters.search.toLowerCase());
+
+      const matchClient = !filters.client || row.client === filters.client;
+      const matchAddressType = !filters.addressType || row.type === filters.addressType;
+      const matchMode = !filters.verificationMode || row.mode === filters.verificationMode;
+      const matchVerifier = !filters.verifier || row.verifier === filters.verifier;
+      const matchStatus = !filters.status || row.status === filters.status;
+      const matchCity = !filters.city || row.city === filters.city;
+      const matchState = !filters.state || row.state === filters.state;
+
+      return (
+        matchSearch &&
+        matchClient &&
+        matchAddressType &&
+        matchMode &&
+        matchVerifier &&
+        matchStatus &&
+        matchCity &&
+        matchState
+      );
+    });
+  }, [tableData, filters]);
+
+  const filteredVerifiers = useMemo(() => {
+    return verifiersList.filter((v) =>
+      v.name.toLowerCase().includes(verifierSearch.toLowerCase())
+    );
+  }, [verifiersList, verifierSearch]);
 
   return (
     <div style={{ display: "flex", minHeight: "100vh", backgroundColor: "#f8fafc", fontFamily: "Inter, sans-serif" }}>
@@ -613,7 +692,7 @@ export default function AddressCheck() {
 
       {/* 2. Main Content Container */}
       <div id="content" style={{ display: "flex", flexDirection: "column", minWidth: 0, width: "calc(100% - 270px)" }}>
-        {/* Fixed Top Header (Standard Component) */}
+        {/* Fixed Top Header */}
         <Header />
 
         <main style={{ padding: "20px" }}>
@@ -650,63 +729,117 @@ export default function AddressCheck() {
           </div>
 
           {/* Action Box */}
-          
-            
-            <div style={{ 
-  display: "flex", 
-  borderRadius: "4px", 
-  overflow: "hidden", 
-  justifyContent: "flex-end", 
-  marginBottom: "15px" 
-}}>
-              <button style={{ background: "#2563eb", color: "#fff", border: "none", padding: "6px 14px", fontWeight: "600", fontSize: "12px", cursor: "pointer" }}>
-                New Address Verification
-              </button>
-             
-            </div>
-          
+          <div style={{ display: "flex", borderRadius: "4px", overflow: "hidden", justifyContent: "flex-end", marginBottom: "15px" }}>
+            <button style={{ background: "#2563eb", color: "#fff", border: "none", padding: "6px 14px", fontWeight: "600", fontSize: "12px", cursor: "pointer", borderRadius: "4px" }}>
+              + New Address Verification
+            </button>
+          </div>
 
           {/* Multi-column Search/Filter Bar */}
           <div style={{ background: "#fff", border: "1px solid #e2e8f0", borderRadius: "6px", padding: "10px", marginBottom: "16px", display: "flex", flexDirection: "column", gap: "8px" }}>
             <div style={{ display: "grid", gridTemplateColumns: "1.5fr 1fr 1fr 1fr 1fr", gap: "8px" }}>
               <div style={{ position: "relative" }}>
-                <input type="text" placeholder="Search Candidate / Case ID" style={{ width: "100%", padding: "6px 8px 6px 26px", borderRadius: "4px", border: "1px solid #cbd5e1", fontSize: "11px", outline: "none", boxSizing: "border-box" }} />
+                <input
+                  type="text"
+                  placeholder="Search Candidate / Case ID"
+                  value={filters.search}
+                  onChange={(e) => handleFilterChange("search", e.target.value)}
+                  style={{ width: "100%", padding: "6px 8px 6px 26px", borderRadius: "4px", border: "1px solid #cbd5e1", fontSize: "11px", outline: "none", boxSizing: "border-box" }}
+                />
                 <span style={{ position: "absolute", left: "6px", top: "6px", color: "#94a3b8", fontSize: "11px" }}>🔍</span>
               </div>
-              <select style={{ padding: "6px 8px", borderRadius: "4px", border: "1px solid #cbd5e1", fontSize: "11px", color: "#64748b" }}><option>Client</option></select>
-              <select style={{ padding: "6px 8px", borderRadius: "4px", border: "1px solid #cbd5e1", fontSize: "11px", color: "#64748b" }}><option>Address Type</option></select>
-              <select style={{ padding: "6px 8px", borderRadius: "4px", border: "1px solid #cbd5e1", fontSize: "11px", color: "#64748b" }}><option>Verification Mode</option></select>
-              <select style={{ padding: "6px 8px", borderRadius: "4px", border: "1px solid #cbd5e1", fontSize: "11px", color: "#64748b" }}><option>Verifier</option></select>
+              
+              <select value={filters.client} onChange={(e) => handleFilterChange("client", e.target.value)} style={{ padding: "6px 8px", borderRadius: "4px", border: "1px solid #cbd5e1", fontSize: "11px", color: "#64748b" }}>
+                <option value="">Client (All)</option>
+                <option value="ABC Technologies">ABC Technologies</option>
+                <option value="XYZ Ltd.">XYZ Ltd.</option>
+              </select>
+
+              <select value={filters.addressType} onChange={(e) => handleFilterChange("addressType", e.target.value)} style={{ padding: "6px 8px", borderRadius: "4px", border: "1px solid #cbd5e1", fontSize: "11px", color: "#64748b" }}>
+                <option value="">Address Type (All)</option>
+                <option value="Permanent">Permanent</option>
+                <option value="Correspondence">Correspondence</option>
+              </select>
+
+              <select value={filters.verificationMode} onChange={(e) => handleFilterChange("verificationMode", e.target.value)} style={{ padding: "6px 8px", borderRadius: "4px", border: "1px solid #cbd5e1", fontSize: "11px", color: "#64748b" }}>
+                <option value="">Verification Mode (All)</option>
+                <option value="Video Verification">Video Verification</option>
+                <option value="Physical Verification">Physical Verification</option>
+                <option value="Document Verification">Document Verification</option>
+              </select>
+
+              <select value={filters.verifier} onChange={(e) => handleFilterChange("verifier", e.target.value)} style={{ padding: "6px 8px", borderRadius: "4px", border: "1px solid #cbd5e1", fontSize: "11px", color: "#64748b" }}>
+                <option value="">Verifier (All)</option>
+                <option value="Amit Kumar">Amit Kumar</option>
+                <option value="Neha Singh">Neha Singh</option>
+                <option value="Rajesh Kumar">Rajesh Kumar</option>
+              </select>
             </div>
 
             <div style={{ display: "grid", gridTemplateColumns: "1.5fr 1fr 1fr 1fr 1fr", gap: "8px" }}>
-              <select style={{ padding: "6px 8px", borderRadius: "4px", border: "1px solid #cbd5e1", fontSize: "11px", color: "#64748b" }}><option>Status</option></select>
+              <select value={filters.status} onChange={(e) => handleFilterChange("status", e.target.value)} style={{ padding: "6px 8px", borderRadius: "4px", border: "1px solid #cbd5e1", fontSize: "11px", color: "#64748b" }}>
+                <option value="">Status (All)</option>
+                <option value="Pending Assignment">Pending Assignment</option>
+                <option value="Link Sent">Link Sent</option>
+                <option value="In Progress">In Progress</option>
+                <option value="QC Review">QC Review</option>
+                <option value="Verified">Verified</option>
+              </select>
+
               <div style={{ position: "relative" }}>
-                <input type="text" placeholder="Due Date" style={{ width: "100%", padding: "6px 8px", borderRadius: "4px", border: "1px solid #cbd5e1", fontSize: "11px", outline: "none", boxSizing: "border-box" }} />
+                <input
+                  type="text"
+                  placeholder="Due Date"
+                  value={filters.dueDate}
+                  onChange={(e) => handleFilterChange("dueDate", e.target.value)}
+                  style={{ width: "100%", padding: "6px 8px", borderRadius: "4px", border: "1px solid #cbd5e1", fontSize: "11px", outline: "none", boxSizing: "border-box" }}
+                />
                 <span style={{ position: "absolute", right: "6px", top: "6px", color: "#94a3b8", fontSize: "11px" }}>📅</span>
               </div>
-              <select style={{ padding: "6px 8px", borderRadius: "4px", border: "1px solid #cbd5e1", fontSize: "11px", color: "#64748b" }}><option>City</option></select>
-              <select style={{ padding: "6px 8px", borderRadius: "4px", border: "1px solid #cbd5e1", fontSize: "11px", color: "#64748b" }}><option>State</option></select>
+
+              <select value={filters.city} onChange={(e) => handleFilterChange("city", e.target.value)} style={{ padding: "6px 8px", borderRadius: "4px", border: "1px solid #cbd5e1", fontSize: "11px", color: "#64748b" }}>
+                <option value="">City (All)</option>
+                <option value="Pune">Pune</option>
+                <option value="Nashik">Nashik</option>
+                <option value="Delhi">Delhi</option>
+                <option value="Noida">Noida</option>
+                <option value="Mumbai">Mumbai</option>
+              </select>
+
+              <select value={filters.state} onChange={(e) => handleFilterChange("state", e.target.value)} style={{ padding: "6px 8px", borderRadius: "4px", border: "1px solid #cbd5e1", fontSize: "11px", color: "#64748b" }}>
+                <option value="">State (All)</option>
+                <option value="Maharashtra">Maharashtra</option>
+                <option value="Delhi">Delhi</option>
+                <option value="Uttar Pradesh">Uttar Pradesh</option>
+              </select>
 
               <div style={{ display: "flex", gap: "6px" }}>
-                <button style={{ flex: 1, border: "1px solid #cbd5e1", background: "#fff", color: "#2563eb", borderRadius: "4px", fontSize: "11px", fontWeight: "600", cursor: "pointer" }}>Clear</button>
-                <button style={{ flex: 1, border: "none", background: "#2563eb", color: "#fff", borderRadius: "4px", fontSize: "11px", fontWeight: "600", cursor: "pointer" }}>Apply Filters</button>
+                <button onClick={handleClearFilters} style={{ flex: 1, border: "1px solid #cbd5e1", background: "#fff", color: "#2563eb", borderRadius: "4px", fontSize: "11px", fontWeight: "600", cursor: "pointer" }}>
+                  Clear
+                </button>
+                <button style={{ flex: 1, border: "none", background: "#2563eb", color: "#fff", borderRadius: "4px", fontSize: "11px", fontWeight: "600", cursor: "pointer" }}>
+                  Apply Filters
+                </button>
               </div>
             </div>
           </div>
 
-          {/* 3. MAIN DUAL-PANEL GRID LAYOUT (Left Table + Right Assign Panel) */}
+          {/* 3. MAIN DUAL-PANEL GRID LAYOUT */}
           <div style={{ display: "grid", gridTemplateColumns: showAssignModal ? "1fr 280px" : "1fr", gap: "16px", alignItems: "start" }}>
             
             {/* Left Column: Table Container */}
             <div style={{ width: "100%", overflowX: "auto" }}>
-
-              {/* Table Data */}
               <div style={{ background: "#fff", border: "1px solid #e2e8f0", borderRadius: "6px", overflow: "hidden" }}>
                 <table style={{ width: "100%", borderCollapse: "collapse", textAlign: "left", fontSize: "11px" }}>
                   <thead>
                     <tr style={{ background: "#f8fafc", color: "#64748b", borderBottom: "1px solid #e2e8f0" }}>
-                      <th style={{ padding: "8px" }}><input type="checkbox" /></th>
+                      <th style={{ padding: "8px" }}>
+                        <input
+                          type="checkbox"
+                          onChange={handleSelectAll}
+                          checked={filteredData.length > 0 && selectedRows.length === filteredData.length}
+                        />
+                      </th>
                       <th style={{ padding: "8px" }}>Candidate ID<br/><span style={{ fontSize: "9px", fontWeight: 400 }}>Case ID</span></th>
                       <th style={{ padding: "8px" }}>Candidate Name<br/><span style={{ fontSize: "9px", fontWeight: 400 }}>Employee ID</span></th>
                       <th style={{ padding: "8px" }}>Client Name<br/><span style={{ fontSize: "9px", fontWeight: 400 }}>Mobile Number</span></th>
@@ -719,55 +852,76 @@ export default function AddressCheck() {
                     </tr>
                   </thead>
                   <tbody>
-                    {tableData.map((row, idx) => (
-                      <tr key={idx} style={{ borderBottom: "1px solid #f1f5f9" }}>
-                        <td style={{ padding: "8px" }}><input type="checkbox" /></td>
-                        <td style={{ padding: "8px" }}>
-                          <span style={{ fontWeight: 700, color: "#0f172a", display: "block" }}>{row.id}</span>
-                          <span style={{ fontSize: "9px", color: "#64748b" }}>{row.caseId}</span>
-                        </td>
-                        <td style={{ padding: "8px" }}>
-                          <span style={{ fontWeight: 700, color: "#0f172a", display: "block" }}>{row.name}</span>
-                          <span style={{ fontSize: "9px", color: "#64748b" }}>{row.empId}</span>
-                        </td>
-                        <td style={{ padding: "8px" }}>
-                          <span style={{ fontWeight: 700, color: "#0f172a", display: "block" }}>{row.client}</span>
-                          <span style={{ fontSize: "9px", color: "#64748b" }}>{row.phone}</span>
-                        </td>
-                        <td style={{ padding: "8px" }}>
-                          <span style={{ background: row.type === "Permanent" ? "#dbeafe" : "#ffedd5", color: row.type === "Permanent" ? "#1e40af" : "#9a3412", fontSize: "9px", padding: "1px 4px", borderRadius: "3px", fontWeight: 600 }}>{row.type}</span>
-                          <span style={{ fontSize: "10px", color: "#334155", display: "block", marginTop: "2px" }}>{row.address}</span>
-                        </td>
-                        <td style={{ padding: "8px" }}>
-                          <span style={{ fontWeight: 600, color: "#1e293b", display: "block" }}>{row.mode}</span>
-                          <span style={{ fontSize: "9px", color: "#64748b" }}>{row.docs}</span>
-                        </td>
-                        <td style={{ padding: "8px" }}>
-                          <span style={{ fontWeight: 600, color: "#1e293b", display: "block" }}>{row.verifier}</span>
-                          <span style={{ fontSize: "9px", color: "#64748b" }}>{row.verifierId}</span>
-                        </td>
-                        <td style={{ padding: "8px" }}>
-                          <span style={{ background: row.statusBg, color: row.statusColor, fontSize: "10px", fontWeight: 700, padding: "2px 6px", borderRadius: "3px", display: "inline-block" }}>{row.status}</span>
-                          <span style={{ fontSize: "9px", color: "#64748b", display: "block", marginTop: "1px" }}>{row.subStatus}</span>
-                        </td>
-                        <td style={{ padding: "8px" }}>
-                          <span style={{ fontWeight: 600, color: "#1e293b", display: "block" }}>{row.dueDate}</span>
-                          <span style={{ fontSize: "9px", color: row.slaColor, fontWeight: 700 }}>{row.sla}</span>
-                        </td>
-                        <td style={{ padding: "8px" }}>
-                          <div style={{ display: "flex", alignItems: "center", gap: "4px" }}>
-                            <button style={{ border: "1px solid #cbd5e1", background: "#fff", padding: "3px 6px", borderRadius: "4px", fontSize: "10px", fontWeight: 600, color: "#2563eb", cursor: "pointer" }}>{row.action}</button>
-                            <button style={{ border: "none", background: "none", color: "#94a3b8", cursor: "pointer" }}>⋮</button>
-                          </div>
+                    {filteredData.length > 0 ? (
+                      filteredData.map((row, idx) => (
+                        <tr key={idx} style={{ borderBottom: "1px solid #f1f5f9", background: selectedRows.includes(idx) ? "#f1f5f9" : "transparent" }}>
+                          <td style={{ padding: "8px" }}>
+                            <input
+                              type="checkbox"
+                              checked={selectedRows.includes(idx)}
+                              onChange={() => handleSelectRow(idx)}
+                            />
+                          </td>
+                          <td style={{ padding: "8px" }}>
+                            <span style={{ fontWeight: 700, color: "#0f172a", display: "block" }}>{row.id}</span>
+                            <span style={{ fontSize: "9px", color: "#64748b" }}>{row.caseId}</span>
+                          </td>
+                          <td style={{ padding: "8px" }}>
+                            <span style={{ fontWeight: 700, color: "#0f172a", display: "block" }}>{row.name}</span>
+                            <span style={{ fontSize: "9px", color: "#64748b" }}>{row.empId}</span>
+                          </td>
+                          <td style={{ padding: "8px" }}>
+                            <span style={{ fontWeight: 700, color: "#0f172a", display: "block" }}>{row.client}</span>
+                            <span style={{ fontSize: "9px", color: "#64748b" }}>{row.phone}</span>
+                          </td>
+                          <td style={{ padding: "8px" }}>
+                            <span style={{ background: row.type === "Permanent" ? "#dbeafe" : "#ffedd5", color: row.type === "Permanent" ? "#1e40af" : "#9a3412", fontSize: "9px", padding: "1px 4px", borderRadius: "3px", fontWeight: 600 }}>{row.type}</span>
+                            <span style={{ fontSize: "10px", color: "#334155", display: "block", marginTop: "2px" }}>{row.address}</span>
+                          </td>
+                          <td style={{ padding: "8px" }}>
+                            <span style={{ fontWeight: 600, color: "#1e293b", display: "block" }}>{row.mode}</span>
+                            <span style={{ fontSize: "9px", color: "#64748b" }}>{row.docs}</span>
+                          </td>
+                          <td style={{ padding: "8px" }}>
+                            <span style={{ fontWeight: 600, color: "#1e293b", display: "block" }}>{row.verifier}</span>
+                            <span style={{ fontSize: "9px", color: "#64748b" }}>{row.verifierId}</span>
+                          </td>
+                          <td style={{ padding: "8px" }}>
+                            <span style={{ background: row.statusBg, color: row.statusColor, fontSize: "10px", fontWeight: 700, padding: "2px 6px", borderRadius: "3px", display: "inline-block" }}>{row.status}</span>
+                            <span style={{ fontSize: "9px", color: "#64748b", display: "block", marginTop: "1px" }}>{row.subStatus}</span>
+                          </td>
+                          <td style={{ padding: "8px" }}>
+                            <span style={{ fontWeight: 600, color: "#1e293b", display: "block" }}>{row.dueDate}</span>
+                            <span style={{ fontSize: "9px", color: row.slaColor, fontWeight: 700 }}>{row.sla}</span>
+                          </td>
+                          <td style={{ padding: "8px" }}>
+                            <div style={{ display: "flex", alignItems: "center", gap: "4px" }}>
+                              <button
+                                onClick={() => {
+                                  if (row.action === "Assign") setShowAssignModal(true);
+                                }}
+                                style={{ border: "1px solid #cbd5e1", background: "#fff", padding: "3px 6px", borderRadius: "4px", fontSize: "10px", fontWeight: 600, color: "#2563eb", cursor: "pointer" }}
+                              >
+                                {row.action}
+                              </button>
+                              <button style={{ border: "none", background: "none", color: "#94a3b8", cursor: "pointer" }}>⋮</button>
+                            </div>
+                          </td>
+                        </tr>
+                      ))
+                    ) : (
+                      <tr>
+                        <td colSpan="10" style={{ padding: "16px", textAlign: "center", color: "#94a3b8" }}>
+                          No records found matching the filters.
                         </td>
                       </tr>
-                    ))}
+                    )}
                   </tbody>
                 </table>
 
                 {/* Table Footer / Pagination */}
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "10px 14px", background: "#fff", fontSize: "11px", color: "#64748b" }}>
-                  <span>Showing 1 to 8 of 250 entries</span>
+                  <span>Showing {filteredData.length} of {tableData.length} entries</span>
                   <div style={{ display: "flex", gap: "4px", alignItems: "center" }}>
                     <button style={{ border: "1px solid #cbd5e1", background: "#fff", padding: "3px 6px", borderRadius: "4px", cursor: "pointer" }}>‹</button>
                     <button style={{ border: "none", background: "#2563eb", color: "#fff", padding: "3px 6px", borderRadius: "4px", fontWeight: 700 }}>1</button>
@@ -777,7 +931,9 @@ export default function AddressCheck() {
                     <button style={{ border: "1px solid #cbd5e1", background: "#fff", padding: "3px 6px", borderRadius: "4px" }}>32</button>
                     <button style={{ border: "1px solid #cbd5e1", background: "#fff", padding: "3px 6px", borderRadius: "4px", cursor: "pointer" }}>›</button>
                   </div>
-                  <select style={{ border: "1px solid #cbd5e1", borderRadius: "4px", padding: "2px 4px" }}><option>10 / page</option></select>
+                  <select style={{ border: "1px solid #cbd5e1", borderRadius: "4px", padding: "2px 4px" }}>
+                    <option>10 / page</option>
+                  </select>
                 </div>
               </div>
             </div>
@@ -796,22 +952,30 @@ export default function AddressCheck() {
                 <div>
                   <label style={{ display: "block", fontSize: "10px", fontWeight: "700", color: "#374151", marginBottom: "4px" }}>Select Verifier</label>
                   <div style={{ position: "relative" }}>
-                    <input type="text" placeholder="Search verifier..." style={{ width: "100%", padding: "5px 8px 5px 24px", borderRadius: "4px", border: "1px solid #cbd5e1", fontSize: "11px", outline: "none", boxSizing: "border-box" }} />
+                    <input
+                      type="text"
+                      placeholder="Search verifier..."
+                      value={verifierSearch}
+                      onChange={(e) => setVerifierSearch(e.target.value)}
+                      style={{ width: "100%", padding: "5px 8px 5px 24px", borderRadius: "4px", border: "1px solid #cbd5e1", fontSize: "11px", outline: "none", boxSizing: "border-box" }}
+                    />
                     <span style={{ position: "absolute", left: "6px", top: "5px", color: "#94a3b8", fontSize: "10px" }}>🔍</span>
                   </div>
                 </div>
 
                 {/* List of Verifiers */}
                 <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-                  {[
-                    { name: "Amit Kumar", title: "Employment Verifier", cases: 12, checked: true },
-                    { name: "Neha Patel", title: "Employment Verifier", cases: 8, checked: true },
-                    { name: "Rahul Verma", title: "Employment Verifier", cases: 15, checked: false },
-                  ].map((v, i) => (
-                    <div key={i} style={{ border: "1px solid #e2e8f0", borderRadius: "4px", padding: "8px", display: "flex", alignItems: "center", justifyContent: "space-between", background: v.checked ? "#f8fafc" : "#fff" }}>
+                  {filteredVerifiers.map((v) => (
+                    <div key={v.id} style={{ border: "1px solid #e2e8f0", borderRadius: "4px", padding: "8px", display: "flex", alignItems: "center", justifyContent: "space-between", background: v.checked ? "#f8fafc" : "#fff" }}>
                       <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
-                        <input type="checkbox" defaultChecked={v.checked} />
-                        <div style={{ width: "24px", height: "24px", borderRadius: "50%", background: "#cbd5e1", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "9px", fontWeight: 700 }}>{v.name.charAt(0)}</div>
+                        <input
+                          type="checkbox"
+                          checked={v.checked}
+                          onChange={() => handleVerifierToggle(v.id)}
+                        />
+                        <div style={{ width: "24px", height: "24px", borderRadius: "50%", background: "#cbd5e1", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "9px", fontWeight: 700 }}>
+                          {v.name.charAt(0)}
+                        </div>
                         <div>
                           <p style={{ margin: 0, fontSize: "11px", fontWeight: 700, color: "#1e293b" }}>{v.name}</p>
                           <span style={{ fontSize: "9px", color: "#64748b" }}>{v.title}</span>
@@ -837,8 +1001,12 @@ export default function AddressCheck() {
 
                 {/* Action Buttons */}
                 <div style={{ display: "flex", gap: "8px", marginTop: "4px" }}>
-                  <button onClick={() => setShowAssignModal(false)} style={{ flex: 1, border: "1px solid #cbd5e1", background: "#fff", padding: "7px", borderRadius: "4px", fontSize: "11px", fontWeight: "600", cursor: "pointer" }}>Cancel</button>
-                  <button style={{ flex: 1, border: "none", background: "#2563eb", color: "#fff", padding: "7px", borderRadius: "4px", fontSize: "11px", fontWeight: "600", cursor: "pointer" }}>Allocate Cases</button>
+                  <button onClick={() => setShowAssignModal(false)} style={{ flex: 1, border: "1px solid #cbd5e1", background: "#fff", padding: "7px", borderRadius: "4px", fontSize: "11px", fontWeight: "600", cursor: "pointer" }}>
+                    Cancel
+                  </button>
+                  <button onClick={handleAllocate} style={{ flex: 1, border: "none", background: "#2563eb", color: "#fff", padding: "7px", borderRadius: "4px", fontSize: "11px", fontWeight: "600", cursor: "pointer" }}>
+                    Allocate Cases
+                  </button>
                 </div>
 
               </div>
