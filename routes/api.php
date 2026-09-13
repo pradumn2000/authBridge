@@ -86,9 +86,12 @@ Route::post('/client-registrations', function (Request $request) {
         'primaryContact' => 'required|string|max:255',
         'contactPhone'   => 'nullable|string|max:20',
         'contactEmail'   => 'required|email|unique:client_registrations,contact_email',
-        'billingMode'    => 'nullable|in:prepaid_client,prepaid_candidate,postpaid_client',
+        'billingMode'    => 'nullable|in:prepaid_client,prepaid_candidate,postpaid_client,postpaid_prepaid_client',
         'agreedChecks'   => 'required|array|min:1',
-        'agreedChecks.*' => 'in:employment,education,address,database,criminal,drug,court',
+        // Dynamic: was 'in:employment,education,address,database,criminal,drug,court'.
+        // Now checks against the check_types catalogue (admin-managed via
+        // AddCheckType.jsx) instead of a hardcoded list.
+        'agreedChecks.*' => 'exists:check_types,key',
         'notes'          => 'nullable|string',
     ]);
 
@@ -444,8 +447,11 @@ Route::middleware('auth:sanctum')->group(function () {
             'contactPhone'       => 'nullable|string|max:20',
             'contactEmail'       => 'required|email|unique:users,email',
             'password'           => 'required|digits:8',
-            'billingMode'        => 'required|in:prepaid_client,prepaid_candidate,postpaid_client',
+            'billingMode'        => 'required|in:prepaid_client,prepaid_candidate,postpaid_client,postpaid_prepaid_client',
             'agreedChecks'       => 'required|array|min:1',
+            // Dynamic: checks against the check_types catalogue instead of
+            // a hardcoded enum, so newly admin-created checks are valid here.
+            'agreedChecks.*'     => 'exists:check_types,key',
             'checkRates'         => 'nullable|array',
             'checkTat'           => 'nullable|array',
             'registrationId'     => 'nullable|integer|exists:client_registrations,id',
@@ -490,6 +496,114 @@ Route::middleware('auth:sanctum')->group(function () {
         return response()->json(['message' => 'Client registered successfully', 'user' => $user], 201);
     });
 
+    // ── CHECK TYPES (Dynamic check catalogue — admin managed) ─────────
+    // GET returns only active types — this is what AddCase/AddClient/
+    // Sidebar consume to build their check selectors, so every role that
+    // can reach those pages needs read access here.
+    Route::get('/check-types', function (Request $request) {
+        return response()->json([
+            'checkTypes' => \App\Models\CheckType::where('is_active', true)
+                ->orderBy('id')
+                ->get(['id', 'key', 'label', 'icon', 'default_rate', 'default_working_days', 'default_calendar_days', 'fields', 'is_system']),
+        ]);
+    });
+
+    // Admin-only: full list including inactive, for the management table.
+    Route::get('/check-types/all', function (Request $request) {
+        if ($request->user()->role !== 'admin') return response()->json(['message' => 'Unauthorized'], 403);
+        return response()->json(['checkTypes' => \App\Models\CheckType::orderBy('id')->get()]);
+    });
+
+    Route::post('/check-types', function (Request $request) {
+        if ($request->user()->role !== 'admin') return response()->json(['message' => 'Unauthorized'], 403);
+
+        $request->validate([
+            'label'                  => 'required|string|max:255',
+            'key'                    => 'required|string|max:50|alpha_dash|unique:check_types,key',
+            'icon'                   => 'nullable|string|max:255',
+            'default_rate'           => 'nullable|numeric|min:0',
+            'default_working_days'   => 'nullable|integer|min:0',
+            'default_calendar_days'  => 'nullable|integer|min:0',
+            'fields'                 => 'nullable|array',
+            'fields.*.label'         => 'required_with:fields|string|max:255',
+            'fields.*.type'          => 'required_with:fields|in:text,number,date,dropdown,checkbox,file',
+            'fields.*.required'      => 'nullable|boolean',
+            'fields.*.options'       => 'nullable|array',
+        ]);
+
+        $checkType = \App\Models\CheckType::create([
+            'key'                    => strtolower($request->key),
+            'label'                  => $request->label,
+            'icon'                   => $request->icon,
+            'default_rate'           => $request->default_rate ?? 0,
+            'default_working_days'   => $request->default_working_days ?? 0,
+            'default_calendar_days'  => $request->default_calendar_days ?? 0,
+            'fields'                 => $request->fields ?? [],
+            'is_system'              => false,
+            'is_active'              => true,
+            'created_by'             => $request->user()->id,
+        ]);
+
+        return response()->json(['checkType' => $checkType], 201);
+    });
+
+    Route::get('/check-types/{id}', function (Request $request, $id) {
+        if ($request->user()->role !== 'admin') return response()->json(['message' => 'Unauthorized'], 403);
+        return response()->json(['checkType' => \App\Models\CheckType::findOrFail($id)]);
+    });
+
+    Route::put('/check-types/{id}', function (Request $request, $id) {
+        if ($request->user()->role !== 'admin') return response()->json(['message' => 'Unauthorized'], 403);
+        $checkType = \App\Models\CheckType::findOrFail($id);
+
+        $request->validate([
+            'label'                  => 'required|string|max:255',
+            // System (legacy) keys are locked — case_checks rows already
+            // reference them directly, so renaming would orphan history.
+            'key'                    => $checkType->is_system
+                ? 'nullable'
+                : 'required|string|max:50|alpha_dash|unique:check_types,key,' . $checkType->id,
+            'icon'                   => 'nullable|string|max:255',
+            'default_rate'           => 'nullable|numeric|min:0',
+            'default_working_days'   => 'nullable|integer|min:0',
+            'default_calendar_days'  => 'nullable|integer|min:0',
+            'fields'                 => 'nullable|array',
+            'fields.*.label'         => 'required_with:fields|string|max:255',
+            'fields.*.type'          => 'required_with:fields|in:text,number,date,dropdown,checkbox,file',
+            'fields.*.required'      => 'nullable|boolean',
+            'fields.*.options'       => 'nullable|array',
+            'is_active'              => 'nullable|boolean',
+        ]);
+
+        $checkType->update([
+            'key'                    => $checkType->is_system ? $checkType->key : strtolower($request->key),
+            'label'                  => $request->label,
+            'icon'                   => $request->icon,
+            'default_rate'           => $request->default_rate ?? 0,
+            'default_working_days'   => $request->default_working_days ?? 0,
+            'default_calendar_days'  => $request->default_calendar_days ?? 0,
+            'fields'                 => $request->fields ?? [],
+            'is_active'              => $request->has('is_active') ? $request->boolean('is_active') : $checkType->is_active,
+        ]);
+
+        return response()->json(['checkType' => $checkType]);
+    });
+
+    Route::delete('/check-types/{id}', function (Request $request, $id) {
+        if ($request->user()->role !== 'admin') return response()->json(['message' => 'Unauthorized'], 403);
+        $checkType = \App\Models\CheckType::findOrFail($id);
+
+        if ($checkType->is_system) {
+            return response()->json(['message' => "Built-in check types can't be deleted — deactivate instead."], 422);
+        }
+
+        // Deactivate rather than hard-delete: case_checks rows already
+        // using this key keep their history intact.
+        $checkType->update(['is_active' => false]);
+
+        return response()->json(['message' => 'Check type deactivated']);
+    });
+
     // ── CASES ROUTES (New CaseCheck Architecture) ─────────────
 
     // -------------------------------------------------------------
@@ -514,7 +628,10 @@ Route::middleware('auth:sanctum')->group(function () {
             'client_id'       => 'required_if:case_source,client|nullable|integer|exists:users,id',
             'billing_mode'    => 'required_if:case_source,client|nullable|in:prepaid_client,prepaid_candidate,postpaid_client,postpaid_prepaid_client',
             'checks'          => 'required|array|min:1',
-            'checks.*'        => 'in:employment,education,address,database,criminal,drug,court',
+            // Dynamic: was 'in:employment,education,address,database,criminal,drug,court'.
+            // Now checks against the check_types catalogue (admin-managed via
+            // AddCheckType.jsx) instead of a hardcoded list.
+            'checks.*'        => 'exists:check_types,key',
             'check_tat'       => 'nullable|array',
             'check_rates'     => 'nullable|array',
             'overall_tat'     => 'nullable|numeric|min:0',
@@ -735,7 +852,10 @@ $dueDate = ($maxTat > 0 && $c->created_at) ? $c->created_at->copy()->addDays((in
             'client_id'       => 'required_if:case_source,client|nullable|integer|exists:users,id',
             'billing_mode'    => 'required_if:case_source,client|nullable|in:prepaid_client,prepaid_candidate,postpaid_client,postpaid_prepaid_client',
             'checks'          => 'required|array|min:1',
-            'checks.*'        => 'in:employment,education,address,database,criminal,drug,court',
+            // Dynamic: was 'in:employment,education,address,database,criminal,drug,court'.
+            // Now checks against the check_types catalogue (admin-managed via
+            // AddCheckType.jsx) instead of a hardcoded list.
+            'checks.*'        => 'exists:check_types,key',
         ]);
 
         $updateData = $request->only([
@@ -1240,11 +1360,12 @@ foreach ($request->checks as $checkKey) {
             }
         }
 
-        $request->validate([
-            'companyName'  => 'required|string|max:255',
-            'contactEmail' => 'required|email|unique:users,email,' . $client->id,
-            'agreement'    => 'nullable|file|max:10240|mimes:pdf,doc,docx,jpg,jpeg,png',
-        ]);
+    $request->validate([
+    'companyName'  => 'required|string|max:255',
+    'contactEmail' => 'required|email|unique:users,email,' . $client->id,
+    'billingMode'  => 'nullable|in:prepaid_client,prepaid_candidate,postpaid_client,postpaid_prepaid_client',
+    'agreement'    => 'nullable|file|max:10240|mimes:pdf,doc,docx,jpg,jpeg,png',
+]);
 
         $agreementPath = $client->agreement_path;
         if ($request->hasFile('agreement')) {
