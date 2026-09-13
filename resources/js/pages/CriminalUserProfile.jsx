@@ -27,7 +27,7 @@ const CriminalUserProfile = () => {
           }
 
           .cup-main-content {
-            flex: 1;
+            {/* flex: 1; */}
             display: flex;
             flex-direction: column;
             overflow-x: hidden;
@@ -78,7 +78,7 @@ const CriminalUserProfile = () => {
           .cup-profile-left {
             display: flex;
             gap: 20px;
-            flex-wrap: wrap;
+            {/* flex-wrap: wrap; */}
             flex: 1;
           }
 
@@ -347,6 +347,10 @@ const CriminalUserProfile = () => {
             margin: 0;
             line-height: 1.5;
           }
+          .cup-name-badge-wrp{
+          display: flex;
+            justify-content: space-between;
+          }
         `}</style>
 
         {/* Page Container */}
@@ -367,9 +371,16 @@ const CriminalUserProfile = () => {
                 className="cup-avatar"
               />
               <div className="cup-user-meta">
+                <div className="cup-name-badge-wrp">
                 <div className="cup-name-badge">
                   <h2>Amit Sharma</h2>
                   <span className="cup-status-tag completed">Completed</span>
+                </div>
+                <div className="cup-actions">
+              <button className="cup-btn cup-btn-outline">📥 Download Report</button>
+              <button className="cup-btn cup-btn-outline">👁 View Documents</button>
+              <button className="cup-btn cup-btn-primary">✈ Send Verification Link</button>
+            </div>
                 </div>
                 <div className="cup-info-grid">
                   <div>
@@ -396,11 +407,11 @@ const CriminalUserProfile = () => {
               </div>
             </div>
 
-            <div className="cup-actions">
+            {/* <div className="cup-actions">
               <button className="cup-btn cup-btn-outline">📥 Download Report</button>
               <button className="cup-btn cup-btn-outline">👁 View Documents</button>
               <button className="cup-btn cup-btn-primary">✈ Send Verification Link</button>
-            </div>
+            </div> */}
           </div>
 
           {/* Navigation Tabs */}
