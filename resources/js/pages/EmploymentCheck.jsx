@@ -521,6 +521,7 @@ export default function EmploymentCheck() {
                   fontSize: "14px",
                   color: activeTab === "allocation" ? "#1e2761" : "#64748b",
                   borderBottom: activeTab === "allocation" ? "2.5px solid #1e2761" : "none",
+                  borderRadius:"0",
                   cursor: "pointer",
                     }}
                   >
@@ -532,13 +533,15 @@ export default function EmploymentCheck() {
                     className={`nav-link ${activeTab === "employment" ? "active" : ""}`}
                     onClick={() => setActiveTab("employment")}
                     style={{
-                      fontWeight: 600,
-                      borderRadius: "6px",
-                      cursor: "pointer",
-                      padding: "8px 20px",
-                      backgroundColor: activeTab === "employment" ? "#1e2761" : "transparent",
-                      color: activeTab === "employment" ? "#ffffff" : "#64748b",
-                      border: "none"
+                      padding: "8px 4px 12px 4px",
+                  border: "none",
+                  background: "transparent",
+                  fontWeight: activeTab === "education" ? 700 : 500,
+                  fontSize: "14px",
+                  color: activeTab === "education" ? "#1e2761" : "#64748b",
+                  borderBottom: activeTab === "education" ? "2.5px solid #1e2761" : "none",
+                  borderRadius:"0",
+                  cursor: "pointer",
                     }}
                   >
                     Employment Cases
