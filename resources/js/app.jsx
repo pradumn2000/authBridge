@@ -1905,6 +1905,7 @@ import Apiintegretion from "./pages/Apiintegretion";
 
 import CandidateVerificationWizard from "./pages/bg";
 
+import CriminalUserProfile from "./pages/CriminalUserProfile";
 /* =========================================================
    AUTH HELPERS
    ========================================================= */
@@ -2273,6 +2274,19 @@ function App() {
             </PrivateRoute>
           }
         />
+
+           {/* =================================================
+                 ADMIN - Inner user Profile
+            ================================================= */}
+            <Route
+          path="/CriminalUserProfile"
+          element={
+            <PrivateRoute role="admin">
+              <CriminalUserProfile />
+            </PrivateRoute>
+          }
+        />
+
 
         {/* =================================================
             ADMIN - ADD CLIENT
