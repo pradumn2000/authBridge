@@ -1906,7 +1906,7 @@ import Apiintegretion from "./pages/Apiintegretion";
 import CandidateVerificationWizard from "./pages/bg";
 
 import CriminalUserProfile from "./pages/CriminalUserProfile";
-import DatabaseUserProfile from "./pages/DatabaseUseProfile";
+import DatabaseUserProfile from "./pages/DatabaseUserProfile";
 /* =========================================================
    AUTH HELPERS
    ========================================================= */
