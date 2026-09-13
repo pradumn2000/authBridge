@@ -30,6 +30,7 @@ import Verifyer from "./pages/verifyer";
 import Specialist from "./pages/Specialist";
 import Intake from "./pages/Intake";
 import AllCases from "./pages/AllCases";
+import VerificationCheck from "./pages/VerificationCheck";
 
 /* =========================================================
    CASE / EMPLOYMENT PAGES
@@ -761,6 +762,15 @@ function App() {
             </PrivateRoute>
           }
         />
+
+        <Route
+  path="/VerificationCheck/:key"
+  element={
+    <PrivateRoute role="admin">
+      <VerificationCheck />
+    </PrivateRoute>
+  }
+/>
 
 
         {/* =================================================

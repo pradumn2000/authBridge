@@ -1272,7 +1272,8 @@
 //   );
 
 // }
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { API_URL } from "../src/config";
 import {
   useNavigate,
   useLocation,
@@ -1432,7 +1433,29 @@ const VERIFIER_TABS = (basePath) => [
   },
 
 ];
+const BUILT_IN_CHECK_ROUTES = {
+  employment: "/EmploymentCheck",
+  education: "/EducationCheck",
+  address: "/AddressCheck",
+  database: "/DatabaseCheck",
+  criminal: "/CriminalCheck",
+  drug: "/DrugtestCheck",
+  drug_test: "/DrugtestCheck",
+  court: "/CourtroomCheck",
+  courtroom: "/CourtroomCheck",
+};
 
+function buildDynamicCheckSubmenu(checkTypes) {
+  const items = checkTypes
+    .filter((ct) => ct.is_active !== false)
+    .map((ct) => ({
+      path: BUILT_IN_CHECK_ROUTES[ct.key] || `/VerificationCheck/${ct.key}`,
+      label: ct.label,
+    }));
+
+  items.push({ path: "/AddCheckType/New", label: "Add New Product" });
+  return items;
+}
 
 /* =========================================================
    VERIFICATION SUBMENU
@@ -2084,17 +2107,29 @@ export default function Sidebar() {
   const rawRole = user.role || "admin";
 
   const role = normalizeRole(rawRole);
+  const [dynamicCheckTypes, setDynamicCheckTypes] = useState([]);
+
+useEffect(() => {
+  if (role !== "admin") return;
+  const token = localStorage.getItem("token");
+  fetch(`${API_URL}/api/check-types/all`, {
+    headers: { Authorization: `Bearer ${token}`, Accept: "application/json" },
+  })
+    .then((r) => r.json())
+    .then((data) => setDynamicCheckTypes(data.checkTypes || []))
+    .catch(() => {});
+}, [role]);
 
 
   /* -------------------------------------------------------
      NAV ITEMS
      ------------------------------------------------------- */
 
-  const navItems =
-    ROLE_NAV[role] ||
-    ROLE_NAV.admin;
-
-
+const navItems = (ROLE_NAV[role] || ROLE_NAV.admin).map((item) =>
+  item.id === "checkType" && dynamicCheckTypes.length > 0
+    ? { ...item, submenu: buildDynamicCheckSubmenu(dynamicCheckTypes) }
+    : item
+);
   /* -------------------------------------------------------
      SUBMENU STATE
      ------------------------------------------------------- */
