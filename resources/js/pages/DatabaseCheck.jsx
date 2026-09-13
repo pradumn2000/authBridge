@@ -682,8 +682,18 @@ export default function DatabaseCheck() {
                   {tableData.map((row, i) => (
                     <tr key={i} style={{ borderBottom: "1px solid #f1f5f9" }}>
                       <td style={{ padding: "10px" }}><input type="checkbox" /></td>
-                      <td style={{ padding: "10px", color: "#2563eb", fontWeight: 600 }}>{row.id}</td>
-                      <td style={{ padding: "10px", color: "#0f172a", fontWeight: 600 }}>{row.name}</td>
+                      <td style={{ padding: "10px", fontWeight: 600 }}>
+  <a
+    href="https://authbridge-10.onrender.com/DatabaseUserProfile"
+    style={{
+      color: "#2563eb",
+      textDecoration: "none",
+      cursor: "pointer",
+    }}
+  >
+    {row.name}
+  </a>
+</td>
                       <td style={{ padding: "10px", color: "#334155" }}>{row.client}</td>
                       <td style={{ padding: "10px", color: "#334155" }}>{row.sources}</td>
                       <td style={{ padding: "10px", color: "#334155" }}>{row.verifier}</td>

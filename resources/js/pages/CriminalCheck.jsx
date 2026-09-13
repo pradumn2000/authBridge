@@ -975,7 +975,21 @@ export default function PoliceVerificationModule() {
                         <td>
                           <img src={row.photo} alt={row.name} className="pvc-avatar-img" />
                         </td>
-                        <td><strong>{row.name}</strong></td>
+                        <td>
+  <a
+    href="https://authbridge-10.onrender.com/CriminalUserProfile"
+    style={{
+      color: "#2563eb",
+      textDecoration: "none",
+      cursor: "pointer",
+      fontWeight: 600,
+    }}
+    onMouseOver={(e) => (e.target.style.textDecoration = "underline")}
+    onMouseOut={(e) => (e.target.style.textDecoration = "none")}
+  >
+    {row.name}
+  </a>
+</td>
                         <td>{row.client}</td>
                         <td>{row.refNo}</td>
                         <td>

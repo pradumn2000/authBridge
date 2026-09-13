@@ -1835,25 +1835,21 @@ export default function EducationVerification() {
                       <tr key={r.id} style={{ borderBottom: "1px solid #f1f5f9" }}>
                         <td style={{ padding: "10px" }}><input type="checkbox" defaultChecked /></td>
                         <td style={{ padding: "10px", color: "#2563eb", fontWeight: 700 }}>{r.id}</td>
-                        <td style={{ padding: "10px", fontWeight: 600 }}>
-                          <a
-                            href={`/candidate/${r.id}`}
-                            onClick={(e) => {
-                              e.preventDefault();
-                              console.log("Navigating to candidate:", r.candidate);
-                            }}
-                            style={{
-                              color: "#2563eb",
-                              textDecoration: "none",
-                              cursor: "pointer",
-                              fontWeight: 600,
-                            }}
-                            onMouseOver={(e) => (e.target.style.textDecoration = "underline")}
-                            onMouseOut={(e) => (e.target.style.textDecoration = "none")}
-                          >
-                            {r.candidate}
-                          </a>
-                        </td>
+<td style={{ padding: "10px", fontWeight: 600 }}>
+  <a
+    href="https://authbridge-10.onrender.com/EducationUserProfile"
+    style={{
+      color: "#2563eb",
+      textDecoration: "none",
+      cursor: "pointer",
+      fontWeight: 600,
+    }}
+    onMouseOver={(e) => (e.target.style.textDecoration = "underline")}
+    onMouseOut={(e) => (e.target.style.textDecoration = "none")}
+  >
+    {r.candidate}
+  </a>
+</td>
                         <td style={{ padding: "10px" }}>{r.uni}</td>
                         <td style={{ padding: "10px" }}><span style={{ background: "#fee2e2", color: "#dc2626", padding: "4px 8px", borderRadius: "4px", fontWeight: 700, fontSize: "11px" }}>Unassigned</span></td>
                         <td style={{ padding: "10px" }}><button style={{ background: "#eff6ff", color: "#2563eb", border: "none", padding: "4px 12px", borderRadius: "4px", fontWeight: 600, cursor: "pointer", fontSize: "12px" }}>Assign</button></td>
