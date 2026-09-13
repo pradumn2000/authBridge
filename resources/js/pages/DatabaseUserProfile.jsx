@@ -210,6 +210,9 @@ export default function DatabaseUserProfile() {
               grid-template-columns: 1.2fr 2fr 1.5fr;
               gap: 16px;
             }
+            .dup-doc-section-grid.sec-wrp{
+                grid-template-columns: 1fr 1fr;
+            }
 
             .dup-selector-col label {
               font-size: 12px;
@@ -583,7 +586,7 @@ export default function DatabaseUserProfile() {
               {/* Section: Address Proof Details */}
               <div className="dup-card">
                 <h4>ADDRESS PROOF DETAILS</h4>
-                <div className="dup-doc-section-grid">
+                <div className="dup-doc-section-grid sec-wrp">
                   <div className="dup-details-col flex-2">
                     <div className="dup-detail-row">
                       <span>Document Type</span>
