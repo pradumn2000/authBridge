@@ -1438,8 +1438,8 @@ const BILLING_MODES = [
 //    are mandatory. "client" = client is submitting/sponsoring the case.
 //    "candidate" = candidate is self-onboarding; client is optional.
 const CASE_SOURCES = [
-  { key: "client",    label: "Via Client",    desc: "Client is submitting/sponsoring this case.",          color: "#2b3b8c" },
-  { key: "candidate", label: "Via Candidate", desc: "Candidate is self-onboarding — client is optional.",  color: "#0d9488" },
+  { key: "client",    label: "Client",    desc: "Client is submitting/sponsoring this case.",          color: "#2b3b8c" },
+  { key: "candidate", label: "Candidate", desc: "Candidate is self-onboarding — client is optional.",  color: "#0d9488" },
 ];
 
 // ── SINGLE declaration — remove the duplicate below getEmptyForm ──
@@ -2801,7 +2801,7 @@ const sharedStyles = `
   .ac-billing-tile-top { display: flex; align-items: center; gap: 7px; margin-bottom: 5px; }
   .ac-billing-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
   .ac-billing-label { font-size: 0.78rem; font-weight: 700; color: #334155; }
-  .ac-billing-desc { font-size: 0.7rem; color: #94a3b8; margin: 0; line-height: 1.4; }
+  .ac-billing-desc { font-size: 0.7rem; color: #94a3b8; margin: 0; line-height: 1.4; text-align:left; }
   .ac-billing-section { border-top: 1px dashed #e2e8f0; padding-top: 16px; display: flex; flex-direction: column; gap: 14px; }
   .ac-billing-info-row { display: flex; align-items: flex-start; gap: 8px; background: #f0f9ff; border: 1px solid #bae6fd; border-radius: 8px; padding: 10px 12px; font-size: 0.8rem; color: #0369a1; }
   .ac-billing-info-icon { font-style: normal; font-weight: 700; flex-shrink: 0; }
