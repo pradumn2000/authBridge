@@ -26,7 +26,7 @@ export default function EducationUserProfile() {
       {/* Sidebar Component */}
       <Sidebar />
 
-      <div className="eup-main-wrapper">
+      <div className="eup-main-wrapper" id="content">
         {/* Header Component */}
         <Header />
 
@@ -40,7 +40,7 @@ export default function EducationUserProfile() {
             }
 
             .eup-main-wrapper {
-              flex: 1;
+              {/* flex: 1; */}
               display: flex;
               flex-direction: column;
               overflow-x: hidden;
