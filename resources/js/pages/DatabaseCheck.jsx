@@ -682,6 +682,7 @@ export default function DatabaseCheck() {
                   {tableData.map((row, i) => (
                     <tr key={i} style={{ borderBottom: "1px solid #f1f5f9" }}>
                       <td style={{ padding: "10px" }}><input type="checkbox" /></td>
+                      <td style={{ padding: "10px" }}></td>
                       <td style={{ padding: "10px", fontWeight: 600 }}>
   <a
     href="https://authbridge-10.onrender.com/DatabaseUserProfile"
