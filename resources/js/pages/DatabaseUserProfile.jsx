@@ -126,6 +126,7 @@ export default function DatabaseUserProfile() {
               font-weight: 700;
               color: #1e293b;
               text-transform: uppercase;
+              text-align: left;
             }
 
             .dup-card p.subtext {
