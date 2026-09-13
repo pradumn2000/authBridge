@@ -3,41 +3,53 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\DB;
 
 return new class extends Migration {
     public function up()
     {
-        Schema::create('case_checks', function (Blueprint $table) {
-            $table->id(); // The unique ID for this specific check instance
-            $table->string('case_id'); // Maps to bgv_cases.case_id
-            $table->string('check_type'); // 'employment', 'education', 'address', etc.
-            
-            // Check Data
-            $table->json('fields')->nullable(); // Replaces check_details[type]['fields']
-            $table->json('documents')->nullable(); // Replaces check_details[type]['documents']
-            $table->json('result')->nullable(); // Replaces check_results[type]
+        // SQLite doesn't support ALTER TABLE ... DROP FOREIGN KEY directly.
+        // Laravel's Schema builder handles this for SQLite by rebuilding the
+        // table under the hood when you call dropForeign() + foreign()
+        // inside a single Schema::table() call, as long as foreign key
+        // checks are temporarily disabled around it.
+        Schema::disableForeignKeyConstraints();
 
-            // Workflow & Assignment
-            $table->string('status')->default('pending'); // pending, in-progress, completed
-            $table->unsignedBigInteger('verifier_id')->nullable(); // Replaces assigned_verifiers JSON
-            
-            // Billing & SLA
-            $table->decimal('rate', 10, 2)->default(0); // Replaces check_rates JSON
-            $table->integer('tat_days')->default(0); // Replaces check_tat JSON
-
-            $table->timestamps();
-
-            // Relationships
-            $table->foreign('case_id')->references('case_id')->on('bgv_cases')->onDelete('cascade');
-            $table->foreign('verifier_id')->references('id')->on('users')->onDelete('set null');
-            
-            // Ensure we don't duplicate the same check type on a single case
-            $table->unique(['case_id', 'check_type']); 
+        Schema::table('case_checks', function (Blueprint $table) {
+            // Laravel's default FK constraint name is
+            // "<table>_<column>_foreign" — i.e. case_checks_case_id_foreign.
+            // This matches what the original migration would have created.
+            $table->dropForeign('case_checks_case_id_foreign');
         });
+
+        Schema::table('case_checks', function (Blueprint $table) {
+            // Correct target: the real table is "cases" (see BGVCase model's
+            // protected $table = 'cases';), not "bgv_cases".
+            $table->foreign('case_id')
+                  ->references('case_id')
+                  ->on('cases')
+                  ->onDelete('cascade');
+        });
+
+        Schema::enableForeignKeyConstraints();
     }
 
     public function down()
     {
-        Schema::dropIfExists('case_checks');
+        Schema::disableForeignKeyConstraints();
+
+        Schema::table('case_checks', function (Blueprint $table) {
+            $table->dropForeign(['case_id']);
+        });
+
+        Schema::table('case_checks', function (Blueprint $table) {
+            // Restore original (broken) reference for symmetry with up().
+            $table->foreign('case_id')
+                  ->references('case_id')
+                  ->on('bgv_cases')
+                  ->onDelete('cascade');
+        });
+
+        Schema::enableForeignKeyConstraints();
     }
 };
