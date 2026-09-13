@@ -536,10 +536,10 @@ export default function EmploymentCheck() {
                       padding: "8px 4px 12px 4px",
                   border: "none",
                   background: "transparent",
-                  fontWeight: activeTab === "education" ? 700 : 500,
+                  fontWeight: activeTab === "employment" ? 700 : 500,
                   fontSize: "14px",
-                  color: activeTab === "education" ? "#1e2761" : "#64748b",
-                  borderBottom: activeTab === "education" ? "2.5px solid #1e2761" : "none",
+                  color: activeTab === "employment" ? "#1e2761" : "#64748b",
+                  borderBottom: activeTab === "employment" ? "2.5px solid #1e2761" : "none",
                   borderRadius:"0",
                   cursor: "pointer",
                     }}
