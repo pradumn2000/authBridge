@@ -514,13 +514,14 @@ export default function EmploymentCheck() {
                     className={`nav-link ${activeTab === "allocation" ? "active" : ""}`}
                     onClick={() => setActiveTab("allocation")}
                     style={{
-                      fontWeight: 600,
-                      borderRadius: "6px",
-                      cursor: "pointer",
-                      padding: "8px 20px",
-                      backgroundColor: activeTab === "allocation" ? "#1e2761" : "transparent",
-                      color: activeTab === "allocation" ? "#ffffff" : "#64748b",
-                      border: "none"
+                      padding: "8px 4px 12px 4px",
+                  border: "none",
+                  background: "transparent",
+                  fontWeight: activeTab === "allocation" ? 700 : 500,
+                  fontSize: "14px",
+                  color: activeTab === "allocation" ? "#1e2761" : "#64748b",
+                  borderBottom: activeTab === "allocation" ? "2.5px solid #1e2761" : "none",
+                  cursor: "pointer",
                     }}
                   >
                     Company Allocation
