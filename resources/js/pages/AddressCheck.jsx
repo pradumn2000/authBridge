@@ -820,7 +820,7 @@ export default function AddressCheck() {
                     <p style={{ fontSize: "12px", color: "#64748b", margin: "2px 0 0 0" }}>Enter candidate and address details to add a new address record.</p>
                   </div>
                 </div>
-                {/* <button onClick={() => setActiveTab("verification")} style={{ border: "none", background: "none", fontSize: "18px", color: "#64748b", cursor: "pointer" }}>✕</button> */}
+                <button onClick={() => setActiveTab("verification")} style={{ border: "none", background: "none", fontSize: "18px", color: "#64748b", cursor: "pointer" }}>✕</button>
               </div>
 
               {/* Basic Details Section */}
@@ -919,39 +919,13 @@ export default function AddressCheck() {
 
                   {/* Upload Container */}
                   <div style={{ border: "1px dashed #cbd5e1", background: "#f8fafc", padding: "12px", borderRadius: "6px", textAlign: "center" }}>
-  <span style={{ fontSize: "11px", fontWeight: "600", color: "#374151", display: "block", marginBottom: "8px" }}>
-    ☁️ Upload Address Proof Document(s)
-  </span>
-  
-  <div style={{ display: "flex", justifyContent: "center", alignItems: "center", gap: "8px" }}>
-    {/* Hidden File Input */}
-    <input 
-      type="file" 
-      ref={permFileInputRef} 
-      onChange={handlePermFileChange} 
-      style={{ display: "none" }} 
-      accept=".pdf,.jpg,.jpeg,.png"
-    />
-
-    {/* Custom Button */}
-    <button 
-      type="button"
-      onClick={() => permFileInputRef.current.click()}
-      style={{ border: "1px solid #cbd5e1", background: "#fff", padding: "4px 12px", borderRadius: "4px", fontSize: "11px", fontWeight: "600", color: "#2563eb", cursor: "pointer" }}
-    >
-      Choose File
-    </button>
-
-    {/* Dynamic File Name Display */}
-    <span style={{ fontSize: "11px", color: permFile ? "#0f172a" : "#94a3b8", fontWeight: permFile ? "600" : "400" }}>
-      {permFile ? permFile : "No file chosen"}
-    </span>
-  </div>
-
-  <span style={{ fontSize: "9px", color: "#94a3b8", marginTop: "4px", display: "block" }}>
-    Supported formats: PDF, JPG, PNG | Max size: 5 MB
-  </span>
-</div>
+                    <span style={{ fontSize: "11px", fontWeight: "600", color: "#374151", display: "block", marginBottom: "8px" }}>☁️ Upload Address Proof Document(s)</span>
+                    <div style={{ display: "flex", justifyContent: "center", alignItems: "center", gap: "8px" }}>
+                      <button style={{ border: "1px solid #cbd5e1", background: "#fff", padding: "4px 12px", borderRadius: "4px", fontSize: "11px", fontWeight: "600", color: "#2563eb", cursor: "pointer" }}>Choose File</button>
+                      <span style={{ fontSize: "11px", color: "#94a3b8" }}>No file chosen</span>
+                    </div>
+                    <span style={{ fontSize: "9px", color: "#94a3b8", marginTop: "4px", display: "block" }}>Supported formats: PDF, JPG, PNG | Max size: 5 MB</span>
+                  </div>
                 </div>
 
                 {/* Correspondence Address */}
