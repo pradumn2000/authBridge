@@ -967,6 +967,7 @@ export default function Sidebar() {
                     style={{
                       display: "flex",
                       alignItems: "center",
+                      gap:"10px",
                     }}
                   >
 
