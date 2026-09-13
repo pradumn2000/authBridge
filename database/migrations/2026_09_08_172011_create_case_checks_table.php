@@ -3,53 +3,32 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
-use Illuminate\Support\Facades\DB;
 
-return new class extends Migration {
-    public function up()
+return new class extends Migration
+{
+    public function up(): void
     {
-        // SQLite doesn't support ALTER TABLE ... DROP FOREIGN KEY directly.
-        // Laravel's Schema builder handles this for SQLite by rebuilding the
-        // table under the hood when you call dropForeign() + foreign()
-        // inside a single Schema::table() call, as long as foreign key
-        // checks are temporarily disabled around it.
-        Schema::disableForeignKeyConstraints();
+        Schema::create('case_checks', function (Blueprint $table) {
+            $table->id();
+            $table->string('case_id');
+            $table->string('check_type');
+            $table->text('fields')->nullable();
+            $table->text('documents')->nullable();
+            $table->text('result')->nullable();
+            $table->string('status')->default('pending');
+            $table->unsignedBigInteger('verifier_id')->nullable();
+            $table->decimal('rate', 10, 2)->default(0);
+            $table->unsignedInteger('tat_days')->default(0);
+            $table->timestamps();
 
-        Schema::table('case_checks', function (Blueprint $table) {
-            // Laravel's default FK constraint name is
-            // "<table>_<column>_foreign" — i.e. case_checks_case_id_foreign.
-            // This matches what the original migration would have created.
-            $table->dropForeign('case_checks_case_id_foreign');
+            $table->unique(['case_id', 'check_type']);
+            $table->foreign('case_id')->references('case_id')->on('cases')->onDelete('cascade');
+            $table->foreign('verifier_id')->references('id')->on('users')->onDelete('set null');
         });
-
-        Schema::table('case_checks', function (Blueprint $table) {
-            // Correct target: the real table is "cases" (see BGVCase model's
-            // protected $table = 'cases';), not "bgv_cases".
-            $table->foreign('case_id')
-                  ->references('case_id')
-                  ->on('cases')
-                  ->onDelete('cascade');
-        });
-
-        Schema::enableForeignKeyConstraints();
     }
 
-    public function down()
+    public function down(): void
     {
-        Schema::disableForeignKeyConstraints();
-
-        Schema::table('case_checks', function (Blueprint $table) {
-            $table->dropForeign(['case_id']);
-        });
-
-        Schema::table('case_checks', function (Blueprint $table) {
-            // Restore original (broken) reference for symmetry with up().
-            $table->foreign('case_id')
-                  ->references('case_id')
-                  ->on('bgv_cases')
-                  ->onDelete('cascade');
-        });
-
-        Schema::enableForeignKeyConstraints();
+        Schema::dropIfExists('case_checks');
     }
 };
