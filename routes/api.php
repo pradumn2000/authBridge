@@ -552,19 +552,24 @@ Route::middleware('auth:sanctum')->group(function () {
         ]);
 
         // 2. Map and Register Individual Checks in `case_checks` table
-        $caseChecksData = [];
-        foreach ($request->checks as $checkKey) {
-            $caseChecksData[] = [
-                'case_id'    => $case->case_id,
-                'check_type' => $checkKey, // e.g. 'employment', 'education'
-                'rate'       => $request->check_rates[$checkKey] ?? 0,
-                'tat_days'   => $request->check_tat[$checkKey] ?? 0,
-                'status'     => 'pending',
-                'created_at' => now(),
-                'updated_at' => now(),
-            ];
-        }
-        CaseCheck::insert($caseChecksData);
+$caseChecksData = [];
+foreach ($request->checks as $checkKey) {
+    $tat = $request->check_tat[$checkKey] ?? 0;
+    $working  = is_array($tat) ? (int) ($tat['working_days']  ?? 0) : (int) $tat;
+    $calendar = is_array($tat) ? (int) ($tat['calendar_days'] ?? 0) : (int) $tat;
+    $caseChecksData[] = [
+        'case_id'       => $case->case_id,
+        'check_type'    => $checkKey,
+        'rate'          => $request->check_rates[$checkKey] ?? 0,
+        'working_days'  => $working,
+        'calendar_days' => $calendar,
+        'tat_days'      => max($working, $calendar), // legacy column, kept for anything still reading it
+        'status'        => 'pending',
+        'created_at'    => now(),
+        'updated_at'    => now(),
+    ];
+}
+CaseCheck::insert($caseChecksData);
 
         \App\Models\CaseEvent::log(
             $case->case_id,
@@ -631,9 +636,14 @@ Route::middleware('auth:sanctum')->group(function () {
                 ->map(fn ($id) => $verifierNames[$id] ?? null)
                 ->filter()->unique()->values();
 
-            $checkTat = $caseChecks->pluck('tat_days', 'check_type')->toArray();
-            $maxTat = collect($checkTat)->max() ?: ($c->overall_tat ?? 0);
-            $dueDate = ($maxTat > 0 && $c->created_at) ? $c->created_at->copy()->addDays((int) round($maxTat))->format('d M Y') : null;
+            $checkTat = $caseChecks->mapWithKeys(fn ($chk) => [
+    $chk->check_type => [
+        'working_days'  => $chk->working_days,
+        'calendar_days' => $chk->calendar_days,
+    ],
+])->toArray();
+$maxTat  = collect($checkTat)->flatMap(fn ($t) => [$t['working_days'], $t['calendar_days']])->max() ?: ($c->overall_tat ?? 0);
+$dueDate = ($maxTat > 0 && $c->created_at) ? $c->created_at->copy()->addDays((int) round($maxTat))->format('d M Y') : null;
 
             // Reconstructing legacy array structures for the frontend
             $checkDetails = $caseChecks->mapWithKeys(function($chk) {
@@ -681,7 +691,12 @@ Route::middleware('auth:sanctum')->group(function () {
         }
 
         $caseArray = $case->toArray();
-        $caseArray['check_tat'] = $case->caseChecks->pluck('tat_days', 'check_type')->toArray();
+        $caseArray['check_tat'] = $case->caseChecks->mapWithKeys(fn ($chk) => [
+    $chk->check_type => [
+        'working_days'  => $chk->working_days,
+        'calendar_days' => $chk->calendar_days,
+    ],
+])->toArray();
         $caseArray['check_rates'] = $case->caseChecks->pluck('rate', 'check_type')->toArray();
         $caseArray['check_details'] = $case->caseChecks->mapWithKeys(function($chk) {
             return [$chk->check_type => ['fields' => $chk->fields, 'documents' => $chk->documents]];
@@ -746,16 +761,21 @@ Route::middleware('auth:sanctum')->group(function () {
         $case->update($updateData);
 
         // Synchronize checks: Add new checks if they were added to the case array
-        foreach ($request->checks as $checkKey) {
-            CaseCheck::firstOrCreate(
-                ['case_id' => $caseId, 'check_type' => $checkKey],
-                [
-                    'rate'     => $request->check_rates[$checkKey] ?? 0,
-                    'tat_days' => $request->check_tat[$checkKey] ?? 0,
-                    'status'   => 'pending'
-                ]
-            );
-        }
+foreach ($request->checks as $checkKey) {
+    $tat = $request->check_tat[$checkKey] ?? 0;
+    $working  = is_array($tat) ? (int) ($tat['working_days']  ?? 0) : (int) $tat;
+    $calendar = is_array($tat) ? (int) ($tat['calendar_days'] ?? 0) : (int) $tat;
+    CaseCheck::firstOrCreate(
+        ['case_id' => $caseId, 'check_type' => $checkKey],
+        [
+            'rate'          => $request->check_rates[$checkKey] ?? 0,
+            'working_days'  => $working,
+            'calendar_days' => $calendar,
+            'tat_days'      => max($working, $calendar),
+            'status'        => 'pending',
+        ]
+    );
+}
 
         \App\Models\CaseEvent::log($case->case_id, 'edited', 'Case details updated', "Case details for {$case->candidate_name} were edited", ['checks' => $case->checks], $user);
 

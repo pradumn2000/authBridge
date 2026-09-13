@@ -6,9 +6,10 @@ use Illuminate\Database\Eloquent\Model;
 class CaseCheck extends Model
 {
     protected $fillable = [
-        'case_id', 'check_type', 'fields', 'documents', 'result', 
-        'status', 'verifier_id', 'rate', 'tat_days'
-    ];
+    'case_id', 'check_type', 'fields', 'documents', 'result',
+    'status', 'verifier_id', 'rate', 'tat_days',
+    'working_days', 'calendar_days',
+];
 
     protected $casts = [
         'fields' => 'array',

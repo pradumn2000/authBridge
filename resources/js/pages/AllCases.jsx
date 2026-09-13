@@ -2440,8 +2440,9 @@ function formatDaysList(list, suffix) {
 // ── The longest-running check's Calendar Days — the real elapsed time for
 //    the whole case (checks run in parallel, so max, not sum).
 function getMaxCalendarDays(c) {
-  const { calendar } = getCheckTatDays(c);
-  if (calendar.length > 0) return Math.max(...calendar);
+  const { working, calendar } = getCheckTatDays(c);
+  const all = [...working, ...calendar];
+  if (all.length > 0) return Math.max(...all);
   const fallback = Number(c.overall_tat ?? c.tat);
   return Number.isFinite(fallback) ? fallback : 0;
 }
