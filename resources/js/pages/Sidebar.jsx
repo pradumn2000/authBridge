@@ -1476,7 +1476,7 @@ const CHECK_TYPE_SUBMENU = [
   },
 
   {
-    path: "/AddCheckType/New",
+    path: "/AddChecktype/New",
     label: "Add New Product",
   },
 
