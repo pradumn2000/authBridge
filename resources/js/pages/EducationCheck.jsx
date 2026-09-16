@@ -2062,7 +2062,7 @@ export default function EducationVerification() {
         </div>
 
         <div>
-          <label style={{ display: "block", fontSize: "11px", fontWeight 700, marginBottom: "6px", color: "#374151" }}>Specialization (Optional)</label>
+          <label style={{ display: "block", fontSize: "11px", fontWeight: 700, marginBottom: "6px", color: "#374151" }}>Specialization (Optional)</label>
           <input
             type="text"
             placeholder="Enter Specialization"
