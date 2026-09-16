@@ -4691,4 +4691,13 @@ const sharedStyles = `
   .ac-success-portal-label { font-size: 0.72rem; color: #2b3b8c; margin: 0 0 8px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; }
   .ac-success-portal-hint { font-size: 0.72rem; color: #64748b; margin: 8px 0 0; }
   .ac-success-actions { display: flex; gap: 12px; justify-content: center; }
+  /* Target Candidate Active Tab context */
+.candidate-active-tab .ac-billing-grid .ac-billing-tile {
+  display: none;
+}
+
+/* Show Prepaid - Candidate option only */
+.candidate-active-tab .ac-billing-grid .ac-billing-tile:nth-child(2) {
+  display: flex;
+}
 `;
