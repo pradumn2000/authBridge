@@ -4692,14 +4692,4 @@ const sharedStyles = `
   .ac-success-portal-hint { font-size: 0.72rem; color: #64748b; margin: 8px 0 0; }
   .ac-success-actions { display: flex; gap: 12px; justify-content: center; }
 
-
-.ac-billing-grid:nth-of-type(2) .ac-billing-tile {
-  display: none !important;
-}
-
-
-.ac-billing-grid:nth-of-type(2) .ac-billing-tile.ac-billing-active,
-.ac-billing-grid:nth-of-type(2) .ac-billing-tile:first-child {
-  display: flex !important;
-}
 `;
