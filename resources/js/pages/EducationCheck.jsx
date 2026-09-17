@@ -1973,7 +1973,7 @@ export default function EducationVerification() {
 
       {/* TOP SEPARATE ROW: QUALIFICATION SCOPE (NAV TAB) */}
       <div style={{ border: "1px solid #cbd5e1", borderRadius: "8px", padding: "12px 16px", marginBottom: "20px", background: "#ffffff" }}>
-        <p style={{ fontSize: "12px", color: "#64748b", margin: "0 0 6px 0", fontWeight: 500 }}>Primary Selection</p>
+        <p style={{ fontSize: "12px", color: "#64748b", margin: "0 0 6px 0",textAlign: "left", fontWeight: 500 }}>Primary Selection</p>
         <div style={{ display: "flex", alignItems: "center", gap: "20px" }}>
           <span style={{ fontSize: "11px", fontWeight: 700, color: "#1e293b", letterSpacing: "0.5px" }}>
             QUALIFICATION SCOPE <span style={{ color: "#ef4444" }}>*</span>

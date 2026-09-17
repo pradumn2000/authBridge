@@ -296,7 +296,7 @@ export default function AddressCheck() {
                             <td style={{ padding: "8px" }}>
                             
                               <a
-    href="https://authbridge-10.onrender.com/EducationUserProfile"
+    href="https://authbridge-10.onrender.com/AddressUserProfile"
     style={{
       color: "#2563eb",
       textDecoration: "none",
@@ -439,7 +439,7 @@ export default function AddressCheck() {
                     <p style={{ fontSize: "12px", color: "#64748b", margin: "2px 0 0 0" }}>Enter candidate and address details to add a new address record.</p>
                   </div>
                 </div>
-                <button onClick={() => setActiveTab("verification")} style={{ border: "none", background: "none", fontSize: "18px", color: "#64748b", cursor: "pointer" }}>✕</button>
+                {/* <button onClick={() => setActiveTab("verification")} style={{ border: "none", background: "none", fontSize: "18px", color: "#64748b", cursor: "pointer" }}>✕</button> */}
               </div>
 
               {/* Basic Details Section */}
