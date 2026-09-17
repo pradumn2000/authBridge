@@ -2150,17 +2150,18 @@ export default function EducationVerification() {
       {/* ROW 3: BILLING & FEES */}
       <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "16px", marginBottom: "20px" }}>
         <div>
-          <label style={{ display: "block", fontSize: "11px", fontWeight: 700, marginBottom: "6px", color: "#374151" }}>University Fees (₹)</label>
+          <label style={{ display: "block", fontSize: "11px", fontWeight: 700, marginBottom: "6px", color: "#374151" }}>
+Verification Fees (₹)</label>
           <input
             type="number"
-            placeholder="Enter University Fees"
+            placeholder="Enter Verification Fees"
             value={q.universityFees || ""}
             onChange={(e) => handleQualificationChange(q.id, "universityFees", e.target.value)}
             style={{ width: "100%", padding: "8px 12px", borderRadius: "6px", border: "1px solid #cbd5e1", fontSize: "12px", outline: "none" }}
           />
         </div>
 
-        <div>
+        {/* <div>
           <label style={{ display: "block", fontSize: "11px", fontWeight: 700, marginBottom: "6px", color: "#374151" }}>Service Charge (₹)</label>
           <input
             type="number"
@@ -2169,7 +2170,7 @@ export default function EducationVerification() {
             onChange={(e) => handleQualificationChange(q.id, "serviceCharge", e.target.value)}
             style={{ width: "100%", padding: "8px 12px", borderRadius: "6px", border: "1px solid #cbd5e1", fontSize: "12px", outline: "none" }}
           />
-        </div>
+        </div> */}
 
         <div>
           <label style={{ display: "block", fontSize: "11px", fontWeight: 700, marginBottom: "6px", color: "#374151" }}>GST</label>
