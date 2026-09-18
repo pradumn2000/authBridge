@@ -998,7 +998,7 @@ export default function AddCase() {
                 </div>
 
                 {/* 02 — Billing Mode */}
-                <div className="ac-card">
+                <div className={`ac-card ${isCandidateSourced ? "source-candidate-active" : ""}`}>
                   <div className="ac-card-header">
                     <span className="ac-num">02</span>
                     <h3>
@@ -1625,5 +1625,13 @@ const sharedStyles = `
   .ac-success-portal-label { font-size: 0.72rem; color: #2b3b8c; margin: 0 0 8px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; }
   .ac-success-portal-hint { font-size: 0.72rem; color: #64748b; margin: 8px 0 0; }
   .ac-success-actions { display: flex; gap: 12px; justify-content: center; }
+/* Jab Candidate active ho, toh sabhi billing tiles hide kar do */
+.source-candidate-active .ac-billing-grid .ac-billing-tile {
+  display: none !important;
+}
 
+/* Sirf 2nd tile (Prepaid — Candidate) ko display karwao */
+.source-candidate-active .ac-billing-grid .ac-billing-tile:nth-child(2) {
+  display: block !important;
+}
 `;
