@@ -1599,7 +1599,7 @@ export default function AddInstitution() {
         .uni-modal-card {
           background: #ffffff;
           border-radius: 12px;
-          width: 650px;
+          width: 950px;
           max-width: 95%;
           max-height: 90vh;
           overflow-y: auto;
