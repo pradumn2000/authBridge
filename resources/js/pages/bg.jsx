@@ -2872,26 +2872,30 @@ export default function CandidateVerificationWizard() {
     <label style={{ ...styles.label, marginBottom: '8px', display: 'block', color: '#1e293b' }}>
       QUALIFICATION SCOPE *
     </label>
-    <div style={{ display: 'flex',
-  background: 'rgb(226, 232, 240)',
-  borderRadius: '8px',
-  padding: '3px',
-  width: '320px',}}>
+    <div style={{
+      display: 'flex',
+      background: 'rgb(226, 232, 240)',
+      borderRadius: '8px',
+      padding: '3px',
+      width: '320px',
+    }}>
+      {/* NATIONAL LABEL */}
       <label style={{
         flex: '1 1 0%',
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  gap: '6px',
-  padding: '8px 12px',
-  borderRadius: '6px',
-  border: 'none',
-  fontSize: '12px',
-  fontWeight: 600,
-  cursor: 'pointer',
-  transition: '0.2s',
-  background: 'rgb(0, 56, 131)',
-  color: 'rgb(255, 255, 255)',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        gap: '6px',
+        padding: '8px 12px',
+        borderRadius: '6px',
+        border: 'none',
+        fontSize: '12px',
+        fontWeight: 600,
+        cursor: 'pointer',
+        transition: '0.2s',
+        /* DYNAMIC ACTIVE STATE HARDCODED BACKGROUND RESTORED */
+        background: qual.nationalInternational === 'National' ? 'rgb(0, 56, 131)' : 'transparent',
+        color: qual.nationalInternational === 'National' ? 'rgb(255, 255, 255)' : 'rgb(71, 85, 105)',
       }}>
         <input 
           type="radio" 
@@ -2904,21 +2908,23 @@ export default function CandidateVerificationWizard() {
         National
       </label>
 
+      {/* INTERNATIONAL LABEL */}
       <label style={{
         flex: '1 1 0%',
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  gap: '6px',
-  padding: '8px 12px',
-  borderRadius: '6px',
-  border: 'none',
-  fontSize: '12px',
-  fontWeight: 600,
-  cursor: 'pointer',
-  transition: '0.2s',
-  background: 'transparent',
-  color: 'rgb(71, 85, 105)',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        gap: '6px',
+        padding: '8px 12px',
+        borderRadius: '6px',
+        border: 'none',
+        fontSize: '12px',
+        fontWeight: 600,
+        cursor: 'pointer',
+        transition: '0.2s',
+        /* DYNAMIC ACTIVE STATE HARDCODED BACKGROUND RESTORED */
+        background: qual.nationalInternational === 'International' ? 'rgb(0, 56, 131)' : 'transparent',
+        color: qual.nationalInternational === 'International' ? 'rgb(255, 255, 255)' : 'rgb(71, 85, 105)',
       }}>
         <input 
           type="radio" 
@@ -3022,7 +3028,6 @@ export default function CandidateVerificationWizard() {
         </select>
       </div>
 
-      {/* Show From YOP & To YOP ONLY when 'Year of Passing' is selected */}
       {qual.verificationFeesBy === 'Year of Passing' && (
         <>
           <div>
@@ -3085,20 +3090,6 @@ export default function CandidateVerificationWizard() {
         onChange={(e) => handleQualificationChange(idx, 'serviceCharge', e.target.value)}
       />
     </div>
-
-    {/* <div>
-      <label style={styles.label}>Mode of Study *</label>
-      <select 
-        style={styles.input}
-        value={qual.modeOfStudy}
-        onChange={(e) => handleQualificationChange(idx, 'modeOfStudy', e.target.value)}
-      >
-        <option value="">Select Mode</option>
-        <option value="Full Time">Full Time</option>
-        <option value="Part Time">Part Time</option>
-        <option value="Distance">Distance / Correspondence</option>
-      </select>
-    </div> */}
   </div>
 
   {/* 5. DOCUMENTS SECTION */}
