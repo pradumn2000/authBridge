@@ -2872,19 +2872,26 @@ export default function CandidateVerificationWizard() {
     <label style={{ ...styles.label, marginBottom: '8px', display: 'block', color: '#1e293b' }}>
       QUALIFICATION SCOPE *
     </label>
-    <div style={{ display: 'flex', gap: '10px', maxWidth: '320px' }}>
+    <div style={{ display: 'flex',
+  background: 'rgb(226, 232, 240)',
+  borderRadius: '8px',
+  padding: '3px',
+  width: '320px',}}>
       <label style={{
-        flex: 1,
-        textAlign: 'center',
-        padding: '8px 16px',
-        borderRadius: '6px',
-        cursor: 'pointer',
-        fontSize: '14px',
-        fontWeight: '600',
-        backgroundColor: qual.nationalInternational === 'National' ? '#2563eb' : '#ffffff',
-        color: qual.nationalInternational === 'National' ? '#ffffff' : '#64748b',
-        border: '1px solid ' + (qual.nationalInternational === 'National' ? '#2563eb' : '#cbd5e1'),
-        transition: 'all 0.2s ease'
+        flex: '1 1 0%',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  gap: '6px',
+  padding: '8px 12px',
+  borderRadius: '6px',
+  border: 'none',
+  fontSize: '12px',
+  fontWeight: 600,
+  cursor: 'pointer',
+  transition: '0.2s',
+  background: 'rgb(0, 56, 131)',
+  color: 'rgb(255, 255, 255)',
       }}>
         <input 
           type="radio" 
@@ -2898,17 +2905,20 @@ export default function CandidateVerificationWizard() {
       </label>
 
       <label style={{
-        flex: 1,
-        textAlign: 'center',
-        padding: '8px 16px',
-        borderRadius: '6px',
-        cursor: 'pointer',
-        fontSize: '14px',
-        fontWeight: '600',
-        backgroundColor: qual.nationalInternational === 'International' ? '#2563eb' : '#ffffff',
-        color: qual.nationalInternational === 'International' ? '#ffffff' : '#64748b',
-        border: '1px solid ' + (qual.nationalInternational === 'International' ? '#2563eb' : '#cbd5e1'),
-        transition: 'all 0.2s ease'
+        flex: '1 1 0%',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  gap: '6px',
+  padding: '8px 12px',
+  borderRadius: '6px',
+  border: 'none',
+  fontSize: '12px',
+  fontWeight: 600,
+  cursor: 'pointer',
+  transition: '0.2s',
+  background: 'transparent',
+  color: 'rgb(71, 85, 105)',
       }}>
         <input 
           type="radio" 
@@ -3044,10 +3054,10 @@ export default function CandidateVerificationWizard() {
   {/* 4. FEES DETAILS SECTION */}
   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 1fr', gap: '12px', marginBottom: '16px' }}>
     <div>
-      <label style={styles.label}>University Fees (₹)</label>
+      <label style={styles.label}>Verification Fees (₹)</label>
       <input 
         type="text" 
-        placeholder="Enter University Fees" 
+        placeholder="Enter Verification Fees" 
         style={styles.input}
         value={qual.universityFees}
         onChange={(e) => handleQualificationChange(idx, 'universityFees', e.target.value)}
@@ -3055,10 +3065,10 @@ export default function CandidateVerificationWizard() {
     </div>
 
     <div>
-      <label style={styles.label}>Commission (₹)</label>
+      <label style={styles.label}>GST (₹)</label>
       <input 
         type="text" 
-        placeholder="Enter Commission" 
+        placeholder="Enter GST" 
         style={styles.input}
         value={qual.commission}
         onChange={(e) => handleQualificationChange(idx, 'commission', e.target.value)}
@@ -3066,17 +3076,17 @@ export default function CandidateVerificationWizard() {
     </div>
 
     <div>
-      <label style={styles.label}>Service Charge (₹)</label>
+      <label style={styles.label}>Total Amount (₹)</label>
       <input 
         type="text" 
-        placeholder="Enter Service Charge" 
+        placeholder="Enter Total Amount" 
         style={styles.input}
         value={qual.serviceCharge}
         onChange={(e) => handleQualificationChange(idx, 'serviceCharge', e.target.value)}
       />
     </div>
 
-    <div>
+    {/* <div>
       <label style={styles.label}>Mode of Study *</label>
       <select 
         style={styles.input}
@@ -3088,7 +3098,7 @@ export default function CandidateVerificationWizard() {
         <option value="Part Time">Part Time</option>
         <option value="Distance">Distance / Correspondence</option>
       </select>
-    </div>
+    </div> */}
   </div>
 
   {/* 5. DOCUMENTS SECTION */}
