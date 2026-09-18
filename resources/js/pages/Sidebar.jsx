@@ -1578,7 +1578,7 @@ const ROLE_NAV = {
 
     {
       label: "Verifications",
-      img: "images/sidebar/setting-icon.svg",
+      img: "images/sidebar/verifi.svg",
       submenu: CHECK_TYPE_SUBMENU,
       id: "checkType",
     },
@@ -1621,13 +1621,13 @@ const ROLE_NAV = {
     {
       path: "/UserManagement",
       label: "User Management",
-      img: "images/sidebar/clients-icon.svg",
+      img: "images/sidebar/user-mana.svg",
     },
 
     /* TL MANAGEMENT */
     {
       label: "TL Management",
-      img: "images/sidebar/clients-icon.svg",
+      img: "images/sidebar/tl-mana.svg",
       submenu: TL_MANAGEMENT_SUBMENU,
       id: "tlManagement",
     },
@@ -1635,25 +1635,25 @@ const ROLE_NAV = {
     {
       path: "/PendingRegistrations",
       label: "Pending Registrations",
-      img: "images/sidebar/setting-icon.svg",
+      img: "images/sidebar/spinner-icon.svg",
     },
 
     {
       path: "/AddInstitution",
       label: "Add Institution",
-      img: "images/sidebar/setting-icon.svg",
+      img: "images/sidebar/ad-ins.svg",
     },
 
     {
       path: "/AddCompany",
       label: "Add Company",
-      img: "images/sidebar/setting-icon.svg",
+      img: "images/sidebar/add-com.svg",
     },
 
     {
       path: "/Apiintegretion",
       label: "API Integration",
-      img: "images/sidebar/setting-icon.svg",
+      img: "images/sidebar/api-int.svg",
     },
 
     {
