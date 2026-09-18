@@ -2851,231 +2851,277 @@ export default function CandidateVerificationWizard() {
 
                     {qualifications.map((qual, idx) => (
                       <div key={idx} style={styles.sectionBox}>
-                        <div style={{ ...styles.flexRowBetween, marginBottom: '16px' }}>
-                          <h3 style={styles.sectionTitle}>Qualification {idx + 1}</h3>
-                          {qualifications.length > 1 && (
-                            <button onClick={() => removeQualification(idx)} style={styles.btnRemove}>
-                              Remove
-                            </button>
-                          )}
-                        </div>
+  {/* TOP HEADER */}
+  <div style={{ ...styles.flexRowBetween, marginBottom: '16px' }}>
+    <h3 style={styles.sectionTitle}>Qualification {idx + 1}</h3>
+    {qualifications.length > 1 && (
+      <button onClick={() => removeQualification(idx)} style={styles.btnRemove}>
+        Remove
+      </button>
+    )}
+  </div>
 
-                        <div style={styles.grid5}>
-                          <div>
-                            <label style={styles.label}>Qualification Type *</label>
-                            <select 
-                              style={styles.input}
-                              value={qual.qualificationType}
-                              onChange={(e) => handleQualificationChange(idx, 'qualificationType', e.target.value)}
-                            >
-                              <option value="">Select Qualification Type</option>
-                              <option value="Post Graduate">Post Graduate</option>
-                              <option value="Graduate">Graduate</option>
-                              <option value="Diploma">Diploma</option>
-                              <option value="12th">12th Standard</option>
-                              <option value="10th">10th Standard</option>
-                            </select>
-                          </div>
-                          <div>
-                            <label style={styles.label}>Course / Stream *</label>
-                            <select 
-                              style={styles.input}
-                              value={qual.courseStream}
-                              onChange={(e) => handleQualificationChange(idx, 'courseStream', e.target.value)}
-                            >
-                              <option value="">Select Course / Stream</option>
-                              <option value="B.Tech">B.Tech / B.E.</option>
-                              <option value="B.Sc">B.Sc</option>
-                              <option value="B.Com">B.Com</option>
-                              <option value="B.A">B.A</option>
-                              <option value="MCA">MCA</option>
-                            </select>
-                          </div>
-                          <div>
-                            <label style={styles.label}>Specialization (Optional)</label>
-                            <input 
-                              type="text" 
-                              placeholder="Enter Specialization" 
-                              style={styles.input}
-                              value={qual.specialization}
-                              onChange={(e) => handleQualificationChange(idx, 'specialization', e.target.value)}
-                            />
-                          </div>
-                          <div>
-                            <label style={styles.label}>Institute / University *</label>
-                            <select 
-                              style={styles.input}
-                              value={qual.institute}
-                              onChange={(e) => handleQualificationChange(idx, 'institute', e.target.value)}
-                            >
-                              <option value="">Enter Institute / School / Univer</option>
-                              <option value="University of Mumbai">University of Mumbai</option>
-                              <option value="Delhi University">Delhi University</option>
-                              <option value="IIT Bombay">IIT Bombay</option>
-                              <option value="Other">Other</option>
-                            </select>
-                          </div>
-                          <div>
-                            <label style={styles.label}>Board / University *</label>
-                            <select 
-                              style={styles.input}
-                              value={qual.boardUniversity}
-                              onChange={(e) => handleQualificationChange(idx, 'boardUniversity', e.target.value)}
-                            >
-                              <option value="">Select Board / University</option>
-                              <option value="State Board">State Board</option>
-                              <option value="CBSE">CBSE</option>
-                              <option value="ICSE">ICSE</option>
-                              <option value="Deemed University">Deemed University</option>
-                            </select>
-                          </div>
-                        </div>
+  {/* 1. PRIMARY SELECTION (NATIONAL / INTERNATIONAL TOP ROW) */}
+  <div style={{ 
+    backgroundColor: '#f8fafc', 
+    padding: '12px 16px', 
+    borderRadius: '8px', 
+    border: '1px solid #e2e8f0', 
+    marginBottom: '20px' 
+  }}>
+    <label style={{ ...styles.label, marginBottom: '8px', display: 'block', color: '#1e293b' }}>
+      QUALIFICATION SCOPE *
+    </label>
+    <div style={{ display: 'flex', gap: '10px', maxWidth: '320px' }}>
+      <label style={{
+        flex: 1,
+        textAlign: 'center',
+        padding: '8px 16px',
+        borderRadius: '6px',
+        cursor: 'pointer',
+        fontSize: '14px',
+        fontWeight: '600',
+        backgroundColor: qual.nationalInternational === 'National' ? '#2563eb' : '#ffffff',
+        color: qual.nationalInternational === 'National' ? '#ffffff' : '#64748b',
+        border: '1px solid ' + (qual.nationalInternational === 'National' ? '#2563eb' : '#cbd5e1'),
+        transition: 'all 0.2s ease'
+      }}>
+        <input 
+          type="radio" 
+          name={`nat-int-${idx}`} 
+          value="National" 
+          checked={qual.nationalInternational === 'National'} 
+          onChange={(e) => handleQualificationChange(idx, 'nationalInternational', e.target.value)}
+          style={{ display: 'none' }}
+        />
+        National
+      </label>
 
-                        {/* NATIONAL / INTERNATIONAL RADIO & DYNAMIC DROPDOWN SECTION */}
-                        <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 1.2fr 1fr 1fr', gap: '12px', marginBottom: '16px' }}>
-                          <div>
-                            <label style={styles.label}>National / International *</label>
-                            <div style={styles.radioGroup}>
-                              <label style={styles.radioLabel}>
-                                <input 
-                                  type="radio" 
-                                  name={`nat-int-${idx}`} 
-                                  value="National" 
-                                  checked={qual.nationalInternational === 'National'} 
-                                  onChange={(e) => handleQualificationChange(idx, 'nationalInternational', e.target.value)}
-                                />
-                                National
-                              </label>
-                              <label style={styles.radioLabel}>
-                                <input 
-                                  type="radio" 
-                                  name={`nat-int-${idx}`} 
-                                  value="International" 
-                                  checked={qual.nationalInternational === 'International'} 
-                                  onChange={(e) => handleQualificationChange(idx, 'nationalInternational', e.target.value)}
-                                />
-                                International
-                              </label>
-                            </div>
-                          </div>
+      <label style={{
+        flex: 1,
+        textAlign: 'center',
+        padding: '8px 16px',
+        borderRadius: '6px',
+        cursor: 'pointer',
+        fontSize: '14px',
+        fontWeight: '600',
+        backgroundColor: qual.nationalInternational === 'International' ? '#2563eb' : '#ffffff',
+        color: qual.nationalInternational === 'International' ? '#ffffff' : '#64748b',
+        border: '1px solid ' + (qual.nationalInternational === 'International' ? '#2563eb' : '#cbd5e1'),
+        transition: 'all 0.2s ease'
+      }}>
+        <input 
+          type="radio" 
+          name={`nat-int-${idx}`} 
+          value="International" 
+          checked={qual.nationalInternational === 'International'} 
+          onChange={(e) => handleQualificationChange(idx, 'nationalInternational', e.target.value)}
+          style={{ display: 'none' }}
+        />
+        International
+      </label>
+    </div>
+  </div>
 
-                          <div>
-                            <label style={styles.label}>Verification Fees By *</label>
-                            <select 
-                              style={styles.input}
-                              value={qual.verificationFeesBy}
-                              onChange={(e) => handleQualificationChange(idx, 'verificationFeesBy', e.target.value)}
-                            >
-                              <option value="Normal">Normal</option>
-                              <option value="Year of Passing">Year of Passing</option>
-                              <option value="UG/PG">UG/PG</option>
-                            </select>
-                          </div>
+  {/* 2. MAIN QUALIFICATION DETAILS */}
+  <div style={{ ...styles.grid5, marginBottom: '16px' }}>
+    <div>
+      <label style={styles.label}>Qualification Type *</label>
+      <select 
+        style={styles.input}
+        value={qual.qualificationType}
+        onChange={(e) => handleQualificationChange(idx, 'qualificationType', e.target.value)}
+      >
+        <option value="">Select Qualification Type</option>
+        <option value="Post Graduate">Post Graduate</option>
+        <option value="Graduate">Graduate</option>
+        <option value="Diploma">Diploma</option>
+        <option value="12th">12th Standard</option>
+        <option value="10th">10th Standard</option>
+      </select>
+    </div>
+    <div>
+      <label style={styles.label}>Course / Stream *</label>
+      <select 
+        style={styles.input}
+        value={qual.courseStream}
+        onChange={(e) => handleQualificationChange(idx, 'courseStream', e.target.value)}
+      >
+        <option value="">Select Course / Stream</option>
+        <option value="B.Tech">B.Tech / B.E.</option>
+        <option value="B.Sc">B.Sc</option>
+        <option value="B.Com">B.Com</option>
+        <option value="B.A">B.A</option>
+        <option value="MCA">MCA</option>
+      </select>
+    </div>
+    <div>
+      <label style={styles.label}>Specialization (Optional)</label>
+      <input 
+        type="text" 
+        placeholder="Enter Specialization" 
+        style={styles.input}
+        value={qual.specialization}
+        onChange={(e) => handleQualificationChange(idx, 'specialization', e.target.value)}
+      />
+    </div>
+    <div>
+      <label style={styles.label}>Institute / University *</label>
+      <select 
+        style={styles.input}
+        value={qual.institute}
+        onChange={(e) => handleQualificationChange(idx, 'institute', e.target.value)}
+      >
+        <option value="">Enter Institute / School / Univer</option>
+        <option value="University of Mumbai">University of Mumbai</option>
+        <option value="Delhi University">Delhi University</option>
+        <option value="IIT Bombay">IIT Bombay</option>
+        <option value="Other">Other</option>
+      </select>
+    </div>
+    <div>
+      <label style={styles.label}>Board / University *</label>
+      <select 
+        style={styles.input}
+        value={qual.boardUniversity}
+        onChange={(e) => handleQualificationChange(idx, 'boardUniversity', e.target.value)}
+      >
+        <option value="">Select Board / University</option>
+        <option value="State Board">State Board</option>
+        <option value="CBSE">CBSE</option>
+        <option value="ICSE">ICSE</option>
+        <option value="Deemed University">Deemed University</option>
+      </select>
+    </div>
+  </div>
 
-                          <div>
-                            <label style={styles.label}>From YOP *</label>
-                            <input 
-                              type="text" 
-                              placeholder="YYYY" 
-                              style={styles.input}
-                              value={qual.fromYop}
-                              onChange={(e) => handleQualificationChange(idx, 'fromYop', e.target.value)}
-                            />
-                          </div>
+  {/* 3. CONDITIONAL VERIFICATION & YOP SECTION */}
+  {qual.nationalInternational === 'National' && (
+    <div style={{ display: 'grid', gridTemplateColumns: 'repeat( auto-fit, minmax(200px, 1fr) )', gap: '12px', marginBottom: '16px' }}>
+      <div>
+        <label style={styles.label}>Verification Fees By *</label>
+        <select 
+          style={styles.input}
+          value={qual.verificationFeesBy}
+          onChange={(e) => handleQualificationChange(idx, 'verificationFeesBy', e.target.value)}
+        >
+          <option value="">Select Verification Type</option>
+          <option value="Normal">Normal</option>
+          <option value="Year of Passing">Year of Passing</option>
+          <option value="UG/PG">UG/PG</option>
+        </select>
+      </div>
 
-                          <div>
-                            <label style={styles.label}>To YOP *</label>
-                            <input 
-                              type="text" 
-                              placeholder="YYYY" 
-                              style={styles.input}
-                              value={qual.toYop}
-                              onChange={(e) => handleQualificationChange(idx, 'toYop', e.target.value)}
-                            />
-                          </div>
-                        </div>
+      {/* Show From YOP & To YOP ONLY when 'Year of Passing' is selected */}
+      {qual.verificationFeesBy === 'Year of Passing' && (
+        <>
+          <div>
+            <label style={styles.label}>From YOP *</label>
+            <input 
+              type="text" 
+              placeholder="YYYY" 
+              style={styles.input}
+              value={qual.fromYop}
+              onChange={(e) => handleQualificationChange(idx, 'fromYop', e.target.value)}
+            />
+          </div>
 
-                        {/* FEES DETAILS SECTION */}
-                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 1fr', gap: '12px', marginBottom: '16px' }}>
-                          <div>
-                            <label style={styles.label}>University Fees (₹)</label>
-                            <input 
-                              type="text" 
-                              placeholder="Enter University Fees" 
-                              style={styles.input}
-                              value={qual.universityFees}
-                              onChange={(e) => handleQualificationChange(idx, 'universityFees', e.target.value)}
-                            />
-                          </div>
+          <div>
+            <label style={styles.label}>To YOP *</label>
+            <input 
+              type="text" 
+              placeholder="YYYY" 
+              style={styles.input}
+              value={qual.toYop}
+              onChange={(e) => handleQualificationChange(idx, 'toYop', e.target.value)}
+            />
+          </div>
+        </>
+      )}
+    </div>
+  )}
 
-                          <div>
-                            <label style={styles.label}>Commission (₹)</label>
-                            <input 
-                              type="text" 
-                              placeholder="Enter Commission" 
-                              style={styles.input}
-                              value={qual.commission}
-                              onChange={(e) => handleQualificationChange(idx, 'commission', e.target.value)}
-                            />
-                          </div>
+  {/* 4. FEES DETAILS SECTION */}
+  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 1fr', gap: '12px', marginBottom: '16px' }}>
+    <div>
+      <label style={styles.label}>University Fees (₹)</label>
+      <input 
+        type="text" 
+        placeholder="Enter University Fees" 
+        style={styles.input}
+        value={qual.universityFees}
+        onChange={(e) => handleQualificationChange(idx, 'universityFees', e.target.value)}
+      />
+    </div>
 
-                          <div>
-                            <label style={styles.label}>Service Charge (₹)</label>
-                            <input 
-                              type="text" 
-                              placeholder="Enter Service Charge" 
-                              style={styles.input}
-                              value={qual.serviceCharge}
-                              onChange={(e) => handleQualificationChange(idx, 'serviceCharge', e.target.value)}
-                            />
-                          </div>
+    <div>
+      <label style={styles.label}>Commission (₹)</label>
+      <input 
+        type="text" 
+        placeholder="Enter Commission" 
+        style={styles.input}
+        value={qual.commission}
+        onChange={(e) => handleQualificationChange(idx, 'commission', e.target.value)}
+      />
+    </div>
 
-                          <div>
-                            <label style={styles.label}>Mode of Study *</label>
-                            <select 
-                              style={styles.input}
-                              value={qual.modeOfStudy}
-                              onChange={(e) => handleQualificationChange(idx, 'modeOfStudy', e.target.value)}
-                            >
-                              <option value="">Select Mode</option>
-                              <option value="Full Time">Full Time</option>
-                              <option value="Part Time">Part Time</option>
-                              <option value="Distance">Distance / Correspondence</option>
-                            </select>
-                          </div>
-                        </div>
+    <div>
+      <label style={styles.label}>Service Charge (₹)</label>
+      <input 
+        type="text" 
+        placeholder="Enter Service Charge" 
+        style={styles.input}
+        value={qual.serviceCharge}
+        onChange={(e) => handleQualificationChange(idx, 'serviceCharge', e.target.value)}
+      />
+    </div>
 
-                        <div>
-                          <label style={styles.label}>DOCUMENTS * (Upload up to 4 documents)</label>
-                          <div style={styles.docGrid}>
-                            {[1, 2, 3, 4].map((docNum, dIdx) => (
-                              <div key={dIdx} style={styles.docBox}>
-                                <div style={{ fontSize: '12px', fontWeight: '700', color: '#1e293b', marginBottom: '4px' }}>
-                                  Document {docNum}
-                                </div>
-                                <div style={{ fontSize: '10px', color: '#94a3b8', marginBottom: '10px' }}>
-                                  PDF, JPG, PNG (Max 10MB)
-                                </div>
-                                <label style={styles.uploadBtnLabel}>
-                                  <Upload size={12} /> Choose File
-                                  <input 
-                                    type="file" 
-                                    style={{ display: 'none' }}
-                                    accept=".pdf,.jpg,.jpeg,.png"
-                                    onChange={(e) => handleQualDocumentUpload(idx, dIdx, e.target.files[0])}
-                                  />
-                                </label>
-                                {qual.documents[dIdx] && (
-                                  <div style={{ fontSize: '11px', color: '#059669', marginTop: '6px', textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap' }}>
-                                    {qual.documents[dIdx].name}
-                                  </div>
-                                )}
-                              </div>
-                            ))}
-                          </div>
-                        </div>
+    <div>
+      <label style={styles.label}>Mode of Study *</label>
+      <select 
+        style={styles.input}
+        value={qual.modeOfStudy}
+        onChange={(e) => handleQualificationChange(idx, 'modeOfStudy', e.target.value)}
+      >
+        <option value="">Select Mode</option>
+        <option value="Full Time">Full Time</option>
+        <option value="Part Time">Part Time</option>
+        <option value="Distance">Distance / Correspondence</option>
+      </select>
+    </div>
+  </div>
 
-                      </div>
+  {/* 5. DOCUMENTS SECTION */}
+  <div>
+    <label style={styles.label}>DOCUMENTS * (Upload up to 4 documents)</label>
+    <div style={styles.docGrid}>
+      {[1, 2, 3, 4].map((docNum, dIdx) => (
+        <div key={dIdx} style={styles.docBox}>
+          <div style={{ fontSize: '12px', fontWeight: '700', color: '#1e293b', marginBottom: '4px' }}>
+            Document {docNum}
+          </div>
+          <div style={{ fontSize: '10px', color: '#94a3b8', marginBottom: '10px' }}>
+            PDF, JPG, PNG (Max 10MB)
+          </div>
+          <label style={styles.uploadBtnLabel}>
+            <Upload size={12} /> Choose File
+            <input 
+              type="file" 
+              style={{ display: 'none' }}
+              accept=".pdf,.jpg,.jpeg,.png"
+              onChange={(e) => handleQualDocumentUpload(idx, dIdx, e.target.files[0])}
+            />
+          </label>
+          {qual.documents[dIdx] && (
+            <div style={{ fontSize: '11px', color: '#059669', marginTop: '6px', textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap' }}>
+              {qual.documents[dIdx].name}
+            </div>
+          )}
+        </div>
+      ))}
+    </div>
+  </div>
+</div>
                     ))}
 
                     <button onClick={addQualification} style={styles.btnDashedAdd}>+ Add Qualification</button>
