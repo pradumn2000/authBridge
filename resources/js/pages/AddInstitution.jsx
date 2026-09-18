@@ -1947,198 +1947,250 @@ export default function AddInstitution() {
       {/* ── MODAL: Add University Form ── */}
 {showForm && (
   <div className="uni-modal-overlay">
-    <div className="uni-modal-card">
-      
-      {/* Modal Header */}
-      <div className="uni-modal-header">
-        <div>
-          <h3 className="uni-modal-title">Add University</h3>
-          <p className="uni-modal-subtitle">Add a new university / institution to the database.</p>
+  <div className="uni-modal-card">
+    
+    {/* Modal Header */}
+    <div className="uni-modal-header">
+      <div>
+        <h3 className="uni-modal-title">Add University</h3>
+        <p className="uni-modal-subtitle">Add a new university / institution to the database.</p>
+      </div>
+      <button type="button" className="uni-modal-close" onClick={() => setShowForm(false)}>✕</button>
+    </div>
+
+    <form onSubmit={handleAdd}>
+      {/* 1. Basic Information */}
+      <div className="uni-section-card-plain">
+        <div className="uni-section-title">Basic Information</div>
+        
+        {/* NATIONAL / INTERNATIONAL TOGGLE TAB */}
+        <div style={{
+          backgroundColor: '#f8fafc',
+          padding: '12px 16px',
+          borderRadius: '8px',
+          border: '1px solid #e2e8f0',
+          marginBottom: '20px'
+        }}>
+          <label style={{ fontSize: '11px', fontWeight: '700', letterSpacing: '0.5px', textTransform: 'uppercase', marginBottom: '8px', display: 'block', color: '#1e293b' }}>
+            SCOPE *
+          </label>
+          <div style={{
+            display: 'flex',
+            background: 'rgb(226, 232, 240)',
+            borderRadius: '8px',
+            padding: '3px',
+            width: '320px',
+          }}>
+            <label style={{
+              flex: '1 1 0%',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '6px',
+              padding: '8px 12px',
+              borderRadius: '6px',
+              border: 'none',
+              fontSize: '12px',
+              fontWeight: 600,
+              cursor: 'pointer',
+              transition: '0.2s',
+              background: form.scope === 'National' ? 'rgb(0, 56, 131)' : 'transparent',
+              color: form.scope === 'National' ? 'rgb(255, 255, 255)' : 'rgb(71, 85, 105)',
+            }}>
+              <input
+                type="radio"
+                name="scope"
+                value="National"
+                checked={form.scope === 'National'}
+                onChange={(e) => set("scope", e.target.value)}
+                style={{ display: 'none' }}
+              />
+              National
+            </label>
+
+            <label style={{
+              flex: '1 1 0%',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '6px',
+              padding: '8px 12px',
+              borderRadius: '6px',
+              border: 'none',
+              fontSize: '12px',
+              fontWeight: 600,
+              cursor: 'pointer',
+              transition: '0.2s',
+              background: form.scope === 'International' ? 'rgb(0, 56, 131)' : 'transparent',
+              color: form.scope === 'International' ? 'rgb(255, 255, 255)' : 'rgb(71, 85, 105)',
+            }}>
+              <input
+                type="radio"
+                name="scope"
+                value="International"
+                checked={form.scope === 'International'}
+                onChange={(e) => set("scope", e.target.value)}
+                style={{ display: 'none' }}
+              />
+              International
+            </label>
+          </div>
         </div>
-        <button className="uni-modal-close" onClick={() => setShowForm(false)}>✕</button>
+
+        <div className="uni-form-grid-2">
+          <div className="uni-form-group">
+            <label>University / Institution Name *</label>
+            <input
+              type="text"
+              placeholder="Enter university / institution name"
+              value={form.name}
+              onChange={(e) => set("name", e.target.value)}
+              required
+            />
+          </div>
+          <div className="uni-form-group">
+            <label>Type *</label>
+            <select value={form.type} onChange={(e) => set("type", e.target.value)} required>
+              <option value="" disabled>Select type</option>
+              <option value="university">University</option>
+              <option value="college">College</option>
+              <option value="institute">Institute</option>
+            </select>
+          </div>
+        </div>
+
+        <div className="uni-form-grid-2">
+          <div className="uni-form-group">
+            <label>Code / Short Name *</label>
+            <input
+              type="text"
+              placeholder="Enter code"
+              value={form.code}
+              onChange={(e) => set("code", e.target.value.toUpperCase())}
+              required
+            />
+          </div>
+          <div className="uni-form-group">
+            <label>State *</label>
+            <select value={form.state} onChange={(e) => set("state", e.target.value)} required>
+              <option value="" disabled>Select state</option>
+              <option value="Maharashtra">Maharashtra</option>
+              <option value="Delhi">Delhi</option>
+              <option value="Karnataka">Karnataka</option>
+              <option value="Uttar Pradesh">Uttar Pradesh</option>
+            </select>
+          </div>
+        </div>
+
+        <div className="uni-form-grid-2">
+          <div className="uni-form-group">
+            <label>City *</label>
+            <input
+              type="text"
+              placeholder="Enter city"
+              value={form.city}
+              onChange={(e) => set("city", e.target.value)}
+              required
+            />
+          </div>
+          <div className="uni-form-group">
+            <label>Pin Code</label>
+            <input
+              type="text"
+              placeholder="Enter pin code"
+              value={form.pinCode}
+              onChange={(e) => set("pinCode", e.target.value)}
+            />
+          </div>
+        </div>
+
+        <div className="uni-form-grid-2">
+          <div className="uni-form-group">
+            <label>Verification Fees By *</label>
+            <select 
+              value={form.verificationFeesBy} 
+              onChange={(e) => set("verificationFeesBy", e.target.value)}
+              required
+            >
+              <option value="" disabled>Select option</option>
+              <option value="Normal">Normal</option>
+              <option value="Year of Passing">Year of Passing</option>
+              <option value="UGPG">UGPG</option>
+            </select>
+          </div>
+
+          {/* SHOW FROM YOP & TO YOP ONLY WHEN "Year of Passing" IS SELECTED */}
+          {form.verificationFeesBy === "Year of Passing" && (
+            <>
+              <div className="uni-form-group">
+                <label>From YOP *</label>
+                <input
+                  type="number"
+                  placeholder="e.g. 2018"
+                  value={form.fromYop}
+                  onChange={(e) => set("fromYop", e.target.value)}
+                  required
+                />
+              </div>
+              <div className="uni-form-group">
+                <label>To YOP *</label>
+                <input
+                  type="number"
+                  placeholder="e.g. 2024"
+                  value={form.toYop}
+                  onChange={(e) => set("toYop", e.target.value)}
+                  required
+                />
+              </div>
+            </>
+          )}
+        </div>
+
+        <div className="uni-form-grid-2">
+          <div className="uni-form-group">
+            <label>Website</label>
+            <input
+              type="url"
+              placeholder="Enter website URL"
+              value={form.website}
+              onChange={(e) => set("website", e.target.value)}
+            />
+          </div>
+          <div className="uni-form-group">
+            <label>Email</label>
+            <input
+              type="email"
+              placeholder="Enter email address"
+              value={form.email}
+              onChange={(e) => set("email", e.target.value)}
+            />
+          </div>
+        </div>
+
+        <div className="uni-form-grid-2">
+          <div className="uni-form-group">
+            <label>Phone Number</label>
+            <input
+              type="text"
+              placeholder="Enter phone number"
+              value={form.phone}
+              onChange={(e) => set("phone", e.target.value)}
+            />
+          </div>
+          <div className="uni-form-group">
+            <label>Alternate Number</label>
+            <input
+              type="text"
+              placeholder="Enter alternate number"
+              value={form.alternatePhone}
+              onChange={(e) => set("alternatePhone", e.target.value)}
+            />
+          </div>
+        </div>
       </div>
 
-      <form onSubmit={handleAdd}>
-        {/* 1. Basic Information */}
-        <div className="uni-section-card-plain">
-          <div className="uni-section-title">Basic Information</div>
-          
-          <div className="uni-form-grid-2">
-            <div className="uni-form-group">
-              <label>University / Institution Name *</label>
-              <input
-                type="text"
-                placeholder="Enter university / institution name"
-                value={form.name}
-                onChange={(e) => set("name", e.target.value)}
-                required
-              />
-            </div>
-            <div className="uni-form-group">
-              <label>Type *</label>
-              <select value={form.type} onChange={(e) => set("type", e.target.value)} required>
-                <option value="" disabled>Select type</option>
-                <option value="university">University</option>
-                <option value="college">College</option>
-                <option value="institute">Institute</option>
-              </select>
-            </div>
-          </div>
-
-          <div className="uni-form-grid-2">
-            <div className="uni-form-group">
-              <label>Code / Short Name *</label>
-              <input
-                type="text"
-                placeholder="Enter code"
-                value={form.code}
-                onChange={(e) => set("code", e.target.value.toUpperCase())}
-                required
-              />
-            </div>
-            <div className="uni-form-group">
-              <label>State *</label>
-              <select value={form.state} onChange={(e) => set("state", e.target.value)} required>
-                <option value="" disabled>Select state</option>
-                <option value="Maharashtra">Maharashtra</option>
-                <option value="Delhi">Delhi</option>
-                <option value="Karnataka">Karnataka</option>
-                <option value="Uttar Pradesh">Uttar Pradesh</option>
-              </select>
-            </div>
-          </div>
-
-          <div className="uni-form-grid-2">
-            <div className="uni-form-group">
-              <label>City *</label>
-              <input
-                type="text"
-                placeholder="Enter city"
-                value={form.city}
-                onChange={(e) => set("city", e.target.value)}
-                required
-              />
-            </div>
-            <div className="uni-form-group">
-              <label>Pin Code</label>
-              <input
-                type="text"
-                placeholder="Enter pin code"
-                value={form.pinCode}
-                onChange={(e) => set("pinCode", e.target.value)}
-              />
-            </div>
-          </div>
-
-          <div className="uni-form-grid-2">
-            <div className="uni-form-group">
-              <label>National / International *</label>
-              <div className="uni-radio-group">
-                <label className="uni-radio-label">
-                  <input
-                    type="radio"
-                    name="scope"
-                    value="National"
-                    checked={form.scope === "National"}
-                    onChange={(e) => set("scope", e.target.value)}
-                  />
-                  National
-                </label>
-                <label className="uni-radio-label">
-                  <input
-                    type="radio"
-                    name="scope"
-                    value="International"
-                    checked={form.scope === "International"}
-                    onChange={(e) => set("scope", e.target.value)}
-                  />
-                  International
-                </label>
-              </div>
-            </div>
-
-            <div className="uni-form-group">
-              <label>Verification Fees By *</label>
-              <select 
-                value={form.verificationFeesBy} 
-                onChange={(e) => set("verificationFeesBy", e.target.value)}
-                required
-              >
-                <option value="" disabled>Select option</option>
-                <option value="Normal">Normal</option>
-                <option value="Year of Passing">Year of Passing</option>
-                <option value="UGPG">UGPG</option>
-              </select>
-            </div>
-          </div>
-
-          <div className="uni-form-grid-2">
-            <div className="uni-form-group">
-              <label>From YOP *</label>
-              <input
-                type="number"
-                placeholder="e.g. 2018"
-                value={form.fromYop}
-                onChange={(e) => set("fromYop", e.target.value)}
-                required
-              />
-            </div>
-            <div className="uni-form-group">
-              <label>To YOP *</label>
-              <input
-                type="number"
-                placeholder="e.g. 2024"
-                value={form.toYop}
-                onChange={(e) => set("toYop", e.target.value)}
-                required
-              />
-            </div>
-          </div>
-
-          <div className="uni-form-grid-2">
-            <div className="uni-form-group">
-              <label>Website</label>
-              <input
-                type="url"
-                placeholder="Enter website URL"
-                value={form.website}
-                onChange={(e) => set("website", e.target.value)}
-              />
-            </div>
-            <div className="uni-form-group">
-              <label>Email</label>
-              <input
-                type="email"
-                placeholder="Enter email address"
-                value={form.email}
-                onChange={(e) => set("email", e.target.value)}
-              />
-            </div>
-          </div>
-
-          <div className="uni-form-grid-2">
-            <div className="uni-form-group">
-              <label>Phone Number</label>
-              <input
-                type="text"
-                placeholder="Enter phone number"
-                value={form.phone}
-                onChange={(e) => set("phone", e.target.value)}
-              />
-            </div>
-            <div className="uni-form-group">
-              <label>Alternate Number</label>
-              <input
-                type="text"
-                placeholder="Enter alternate number"
-                value={form.alternatePhone}
-                onChange={(e) => set("alternatePhone", e.target.value)}
-              />
-            </div>
-          </div>
-        </div>
-
-        {/* 2. Verification Fees (Toggleable Box) */}
+      {/* 2. VERIFICATION FEES SECTION (NATIONAL vs INTERNATIONAL) */}
+      {form.scope === "National" ? (
         <div className="uni-section-card">
           <div 
             className="uni-section-title clickable" 
@@ -2154,15 +2206,6 @@ export default function AddInstitution() {
           {isVerificationOpen && (
             <div className="uni-form-grid-2">
               <div className="uni-form-group">
-                <label>Verification Fees *</label>
-                <select value={form.verificationFeesType} onChange={(e) => set("verificationFeesType", e.target.value)}>
-                  <option value="" disabled>Select option</option>
-                  <option value="Normal">Normal</option>
-                  <option value="Year of Passing">Year of Passing</option>
-                  <option value="UGPG">UGPG</option>
-                </select>
-              </div>
-              <div className="uni-form-group">
                 <label>Fees Amount (INR) *</label>
                 <input
                   type="number"
@@ -2174,143 +2217,22 @@ export default function AddInstitution() {
             </div>
           )}
         </div>
-
-        {/* 3. Regulatory Details */}
-        <div className="uni-section-card-plain">
-          <div className="uni-section-title">Regulatory Details</div>
-          <div className="uni-form-grid-2">
-            <div className="uni-form-group">
-              <label>Regulatory Body *</label>
-              <select value={form.regulatoryBody} onChange={(e) => set("regulatoryBody", e.target.value)}>
-                <option value="" disabled>Select regulatory body</option>
-                <option value="UGC">UGC</option>
-                <option value="AICTE">AICTE</option>
-                <option value="MCI">MCI</option>
-                <option value="BCI">BCI</option>
-              </select>
-            </div>
-            <div className="uni-form-group">
-              <label>UGC Recognized</label>
-              <div className="uni-radio-group">
-                <label className="uni-radio-label">
-                  <input
-                    type="radio"
-                    name="ugcRecognized"
-                    value="Yes"
-                    checked={form.ugcRecognized === "Yes"}
-                    onChange={(e) => set("ugcRecognized", e.target.value)}
-                  />
-                  Yes
-                </label>
-                <label className="uni-radio-label">
-                  <input
-                    type="radio"
-                    name="ugcRecognized"
-                    value="No"
-                    checked={form.ugcRecognized === "No"}
-                    onChange={(e) => set("ugcRecognized", e.target.value)}
-                  />
-                  No
-                </label>
-              </div>
-            </div>
-          </div>
-
-          <div className="uni-form-group">
-            <label>AICTE Approved</label>
-            <div className="uni-radio-group">
-              <label className="uni-radio-label">
-                <input
-                  type="radio"
-                  name="aicteApproved"
-                  value="Yes"
-                  checked={form.aicteApproved === "Yes"}
-                  onChange={(e) => set("aicteApproved", e.target.value)}
-                />
-                Yes
-              </label>
-              <label className="uni-radio-label">
-                <input
-                  type="radio"
-                  name="aicteApproved"
-                  value="No"
-                  checked={form.aicteApproved === "No"}
-                  onChange={(e) => set("aicteApproved", e.target.value)}
-                />
-                No
-              </label>
-            </div>
-          </div>
-        </div>
-
-        {/* 4. Address */}
-        <div className="uni-section-card-plain">
-          <div className="uni-section-title">Address</div>
-          <div className="uni-form-group">
-            <label>Address Line 1 *</label>
-            <input
-              type="text"
-              placeholder="Enter address line 1"
-              value={form.addressLine1}
-              onChange={(e) => set("addressLine1", e.target.value)}
-            />
-          </div>
-          <div className="uni-form-group">
-            <label>Address Line 2 (Optional)</label>
-            <input
-              type="text"
-              placeholder="Enter address line 2 (optional)"
-              value={form.addressLine2}
-              onChange={(e) => set("addressLine2", e.target.value)}
-            />
-          </div>
-          <div className="uni-form-grid-2">
-            <div className="uni-form-group">
-              <label>Landmark</label>
-              <input
-                type="text"
-                placeholder="Enter landmark"
-                value={form.landmark}
-                onChange={(e) => set("landmark", e.target.value)}
-              />
-            </div>
-            <div className="uni-form-group">
-              <label>Country *</label>
-              <select value={form.country} onChange={(e) => set("country", e.target.value)}>
-                <option value="India">India</option>
-                <option value="USA">USA</option>
-                <option value="UK">UK</option>
-              </select>
-            </div>
-          </div>
-        </div>
-
-        {/* 5. Other Information */}
+      ) : (
+        /* INTERNATIONAL FEES DISPLAY CARD */
         <div className="uni-section-card">
-          <div className="uni-section-title">Other Information</div>
-          
+          <div className="uni-section-title">International Fees Structure</div>
           <div className="uni-form-grid-2">
             <div className="uni-form-group">
-              <label>1. Charges (INR) *</label>
+              <label>University Fees *</label>
               <input
                 type="number"
-                placeholder="₹ Enter charges"
-                value={form.charges}
-                onChange={(e) => set("charges", e.target.value)}
+                placeholder="₹ Enter university fees"
+                value={form.universityFees || ''}
+                onChange={(e) => set("universityFees", e.target.value)}
               />
             </div>
             <div className="uni-form-group">
-              <label>Status *</label>
-              <select value={form.status} onChange={(e) => set("status", e.target.value)}>
-                <option value="Active">Active</option>
-                <option value="Inactive">Inactive</option>
-              </select>
-            </div>
-          </div>
-
-          <div className="uni-form-grid-2">
-            <div className="uni-form-group">
-              <label>2. Service Charges (INR) *</label>
+              <label>Service Charges *</label>
               <input
                 type="number"
                 placeholder="₹ Enter service charges"
@@ -2318,36 +2240,10 @@ export default function AddInstitution() {
                 onChange={(e) => set("serviceCharges", e.target.value)}
               />
             </div>
-            <div className="uni-form-group">
-              <label>GST Applicable *</label>
-              <div className="uni-radio-group">
-                <label className="uni-radio-label">
-                  <input
-                    type="radio"
-                    name="gstApplicable"
-                    value="Yes"
-                    checked={form.gstApplicable === "Yes"}
-                    onChange={(e) => set("gstApplicable", e.target.value)}
-                  />
-                  Yes
-                </label>
-                <label className="uni-radio-label">
-                  <input
-                    type="radio"
-                    name="gstApplicable"
-                    value="No"
-                    checked={form.gstApplicable === "No"}
-                    onChange={(e) => set("gstApplicable", e.target.value)}
-                  />
-                  No
-                </label>
-              </div>
-            </div>
           </div>
-
           <div className="uni-form-grid-2">
             <div className="uni-form-group">
-              <label>3. GST % *</label>
+              <label>GST % *</label>
               <select value={form.gstPercent} onChange={(e) => set("gstPercent", e.target.value)}>
                 <option value="" disabled>Select GST %</option>
                 <option value="18">18%</option>
@@ -2357,45 +2253,240 @@ export default function AddInstitution() {
               </select>
             </div>
             <div className="uni-form-group">
-              <label>Service Charges + GST (INR)</label>
+              <label>Total Amount (INR)</label>
               <input
                 type="text"
                 placeholder="₹ Auto calculated"
-                value={form.serviceChargesWithGst}
+                value={form.totalAmount || ''}
                 readOnly
                 style={{ background: "#f8fafc" }}
               />
             </div>
           </div>
+        </div>
+      )}
 
+      {/* 3. Regulatory Details */}
+      <div className="uni-section-card-plain">
+        <div className="uni-section-title">Regulatory Details</div>
+        <div className="uni-form-grid-2">
           <div className="uni-form-group">
-            <label>Notes (Optional)</label>
-            <textarea
-              rows="2"
-              placeholder="Enter any additional notes"
-              value={form.notes}
-              onChange={(e) => set("notes", e.target.value)}
-            ></textarea>
-            <span style={{ fontSize: "10px", color: "#94a3b8", textAlign: "right" }}>0 / 500</span>
+            <label>Regulatory Body *</label>
+            <select value={form.regulatoryBody} onChange={(e) => set("regulatoryBody", e.target.value)}>
+              <option value="" disabled>Select regulatory body</option>
+              <option value="UGC">UGC</option>
+              <option value="AICTE">AICTE</option>
+              <option value="MCI">MCI</option>
+              <option value="BCI">BCI</option>
+            </select>
+          </div>
+          <div className="uni-form-group">
+            <label>UGC Recognized</label>
+            <div className="uni-radio-group">
+              <label className="uni-radio-label">
+                <input
+                  type="radio"
+                  name="ugcRecognized"
+                  value="Yes"
+                  checked={form.ugcRecognized === "Yes"}
+                  onChange={(e) => set("ugcRecognized", e.target.value)}
+                />
+                Yes
+              </label>
+              <label className="uni-radio-label">
+                <input
+                  type="radio"
+                  name="ugcRecognized"
+                  value="No"
+                  checked={form.ugcRecognized === "No"}
+                  onChange={(e) => set("ugcRecognized", e.target.value)}
+                />
+                No
+              </label>
+            </div>
           </div>
         </div>
 
-        {formError   && <p style={{ color: "#dc2626", fontSize: "13px", marginBottom: "8px" }}>{formError}</p>}
-        {formSuccess && <p style={{ color: "#16a34a", fontSize: "13px", marginBottom: "8px" }}>✔ {formSuccess}</p>}
-
-        {/* Modal Footer Actions */}
-        <div className="uni-modal-footer">
-          <button type="button" className="uni-btn-cancel" onClick={() => setShowForm(false)}>
-            Cancel
-          </button>
-          <button type="submit" className="uni-btn-submit" disabled={submitting}>
-            {submitting ? "Saving…" : "Save University"}
-          </button>
+        <div className="uni-form-group">
+          <label>AICTE Approved</label>
+          <div className="uni-radio-group">
+            <label className="uni-radio-label">
+              <input
+                type="radio"
+                name="aicteApproved"
+                value="Yes"
+                checked={form.aicteApproved === "Yes"}
+                onChange={(e) => set("aicteApproved", e.target.value)}
+              />
+              Yes
+            </label>
+            <label className="uni-radio-label">
+              <input
+                type="radio"
+                name="aicteApproved"
+                value="No"
+                checked={form.aicteApproved === "No"}
+                onChange={(e) => set("aicteApproved", e.target.value)}
+              />
+              No
+            </label>
+          </div>
         </div>
-      </form>
+      </div>
 
-    </div>
+      {/* 4. Address */}
+      <div className="uni-section-card-plain">
+        <div className="uni-section-title">Address</div>
+        <div className="uni-form-group">
+          <label>Address Line 1 *</label>
+          <input
+            type="text"
+            placeholder="Enter address line 1"
+            value={form.addressLine1}
+            onChange={(e) => set("addressLine1", e.target.value)}
+          />
+        </div>
+        <div className="uni-form-group">
+          <label>Address Line 2 (Optional)</label>
+          <input
+            type="text"
+            placeholder="Enter address line 2 (optional)"
+            value={form.addressLine2}
+            onChange={(e) => set("addressLine2", e.target.value)}
+          />
+        </div>
+        <div className="uni-form-grid-2">
+          <div className="uni-form-group">
+            <label>Landmark</label>
+            <input
+              type="text"
+              placeholder="Enter landmark"
+              value={form.landmark}
+              onChange={(e) => set("landmark", e.target.value)}
+            />
+          </div>
+          <div className="uni-form-group">
+            <label>Country *</label>
+            <select value={form.country} onChange={(e) => set("country", e.target.value)}>
+              <option value="India">India</option>
+              <option value="USA">USA</option>
+              <option value="UK">UK</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      {/* 5. Other Information */}
+      <div className="uni-section-card">
+        <div className="uni-section-title">Other Information</div>
+        
+        <div className="uni-form-grid-2">
+          <div className="uni-form-group">
+            <label>1. Charges (INR) *</label>
+            <input
+              type="number"
+              placeholder="₹ Enter charges"
+              value={form.charges}
+              onChange={(e) => set("charges", e.target.value)}
+            />
+          </div>
+          <div className="uni-form-group">
+            <label>Status *</label>
+            <select value={form.status} onChange={(e) => set("status", e.target.value)}>
+              <option value="Active">Active</option>
+              <option value="Inactive">Inactive</option>
+            </select>
+          </div>
+        </div>
+
+        <div className="uni-form-grid-2">
+          <div className="uni-form-group">
+            <label>2. Service Charges (INR) *</label>
+            <input
+              type="number"
+              placeholder="₹ Enter service charges"
+              value={form.serviceCharges}
+              onChange={(e) => set("serviceCharges", e.target.value)}
+            />
+          </div>
+          <div className="uni-form-group">
+            <label>GST Applicable *</label>
+            <div className="uni-radio-group">
+              <label className="uni-radio-label">
+                <input
+                  type="radio"
+                  name="gstApplicable"
+                  value="Yes"
+                  checked={form.gstApplicable === "Yes"}
+                  onChange={(e) => set("gstApplicable", e.target.value)}
+                />
+                Yes
+              </label>
+              <label className="uni-radio-label">
+                <input
+                  type="radio"
+                  name="gstApplicable"
+                  value="No"
+                  checked={form.gstApplicable === "No"}
+                  onChange={(e) => set("gstApplicable", e.target.value)}
+                />
+                No
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <div className="uni-form-grid-2">
+          <div className="uni-form-group">
+            <label>3. GST % *</label>
+            <select value={form.gstPercent} onChange={(e) => set("gstPercent", e.target.value)}>
+              <option value="" disabled>Select GST %</option>
+              <option value="18">18%</option>
+              <option value="12">12%</option>
+              <option value="5">5%</option>
+              <option value="0">0%</option>
+            </select>
+          </div>
+          <div className="uni-form-group">
+            <label>Service Charges + GST (INR)</label>
+            <input
+              type="text"
+              placeholder="₹ Auto calculated"
+              value={form.serviceChargesWithGst}
+              readOnly
+              style={{ background: "#f8fafc" }}
+            />
+          </div>
+        </div>
+
+        <div className="uni-form-group">
+          <label>Notes (Optional)</label>
+          <textarea
+            rows="2"
+            placeholder="Enter any additional notes"
+            value={form.notes}
+            onChange={(e) => set("notes", e.target.value)}
+          ></textarea>
+          <span style={{ fontSize: "10px", color: "#94a3b8", textAlign: "right" }}>0 / 500</span>
+        </div>
+      </div>
+
+      {formError && <p style={{ color: "#dc2626", fontSize: "13px", marginBottom: "8px" }}>{formError}</p>}
+      {formSuccess && <p style={{ color: "#16a34a", fontSize: "13px", marginBottom: "8px" }}>✔ {formSuccess}</p>}
+
+      {/* Modal Footer Actions */}
+      <div className="uni-modal-footer">
+        <button type="button" className="uni-btn-cancel" onClick={() => setShowForm(false)}>
+          Cancel
+        </button>
+        <button type="submit" className="uni-btn-submit" disabled={submitting}>
+          {submitting ? "Saving…" : "Save University"}
+        </button>
+      </div>
+    </form>
+
   </div>
+</div>
 )}
 
       {/* ── Delete confirm modal ── */}
