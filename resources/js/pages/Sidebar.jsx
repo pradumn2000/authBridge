@@ -2323,7 +2323,6 @@ const navItems = (ROLE_NAV[role] || ROLE_NAV.admin).map((item) =>
   style={{
     width: "16px",
     height: "16px",
-    transform: isOpen ? "rotate(180deg)" : "rotate(0deg)",
     transition: "transform 0.2s ease",
     marginLeft: "auto",
     display: "inline-block",
