@@ -1264,17 +1264,17 @@ export default function EmploymentCheck() {
                     <div style={{ overflowX: "auto" }}>
                       <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "13px" }}>
                         <thead>
-                          <tr style={{ background: "#f8fafc", textAlign: "left", color: "#64748b" }}>
-                            <th style={{ padding: "10px" }}><input type="checkbox" /></th>
-                            <th style={{ padding: "10px" }}>#</th>
-                            <th style={{ padding: "10px" }}>Client Name</th>
-                            <th style={{ padding: "10px" }}>Company Name</th>
-                            <th style={{ padding: "10px" }}>New Cases</th>
-                            <th style={{ padding: "10px" }}>Pending</th>
-                            <th style={{ padding: "10px" }}>In Progress</th>
-                            <th style={{ padding: "10px" }}>Completed</th>
-                            <th style={{ padding: "10px" }}>Verifiers (Name)</th>
-                            <th style={{ padding: "10px" }}>Action</th>
+                          <tr style={{ background: "#1e2761", textAlign: "left", color: "#fff" ,fontSize:"14px", fontWeight:"600",padding:"14px"}}>
+                            <th style={{ padding: "14px", borderTopRightRadius: "15px"  }}><input type="checkbox" /></th>
+                            <th style={{ padding: "14px" }}>#</th>
+                            <th style={{ padding: "14px" }}>Client Name</th>
+                            <th style={{ padding: "14px" }}>Company Name</th>
+                            <th style={{ padding: "14px" }}>New Cases</th>
+                            <th style={{ padding: "14px" }}>Pending</th>
+                            <th style={{ padding: "14px" }}>In Progress</th>
+                            <th style={{ padding: "14px" }}>Completed</th>
+                            <th style={{ padding: "14px" }}>Verifiers (Name)</th>
+                            <th style={{ padding: "14px", borderTopRightRadius: "15px"  }}>Action</th>
                           </tr>
                         </thead>
                         <tbody>
@@ -1354,17 +1354,17 @@ export default function EmploymentCheck() {
                     <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "13px" }}>
                       <thead>
                         <tr style={{ background: "#1e2761", textAlign: "left", color: "#fff" ,fontSize:"14px", fontWeight:"600",padding:"14px"}}>
-                          <th style={{ padding: "10px",borderTopLeftRadius: "15px"}}><input type="checkbox" /></th>
-                          <th style={{ padding: "10px" }}>Case ID</th>
-                          <th style={{ padding: "10px" }}>Candidate Name</th>
-                          <th style={{ padding: "10px" }}>Client Name</th>
-                          <th style={{ padding: "10px" }}>Company Name</th>
-                          <th style={{ padding: "10px" }}>HR Email ID</th>
-                          <th style={{ padding: "10px" }}>HR Phone Number</th>
-                          <th style={{ padding: "10px" }}>Verifier (Name)</th>
-                          <th style={{ padding: "10px" }}>SLA</th>
-                          <th style={{ padding: "10px" }}>Status</th>
-                          <th style={{ padding: "10px",borderTopRightRadius: "15px" }}>Action</th>
+                          <th style={{ padding: "14px",borderTopLeftRadius: "15px"}}><input type="checkbox" /></th>
+                          <th style={{ padding: "14px" }}>Case ID</th>
+                          <th style={{ padding: "14px" }}>Candidate Name</th>
+                          <th style={{ padding: "14px" }}>Client Name</th>
+                          <th style={{ padding: "14px" }}>Company Name</th>
+                          <th style={{ padding: "14px" }}>HR Email ID</th>
+                          <th style={{ padding: "14px" }}>HR Phone Number</th>
+                          <th style={{ padding: "14px" }}>Verifier (Name)</th>
+                          <th style={{ padding: "14px" }}>SLA</th>
+                          <th style={{ padding: "14px" }}>Status</th>
+                          <th style={{ padding: "14px",borderTopRightRadius: "15px" }}>Action</th>
                         </tr>
                       </thead>
                       <tbody>
