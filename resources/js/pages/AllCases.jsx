@@ -2846,67 +2846,73 @@ export default function AllCases() {
             <div className="bk-stats-grid">
               <div className="bk-stat-card card-blue">
                 <div className="bk-stat-left">
-                  <div className="bk-stat-icon icon-blue"><img src="/images/dashboard/total-case.svg" alt="" style={{ width: "20px", height: "20px" }} /></div>
-                  <div>
+                 <div>
                     <span className="bk-stat-label">Total Cases</span>
                     <h2 className="bk-stat-value">{countFor("all")}</h2>
                     <span className="bk-stat-badge badge-green">▲ 12% vs. last week</span>
                   </div>
+                  <div className="bk-stat-icon icon-blue"><img src="/images/dashboard/total-case.svg" alt="" style={{ width: "20px", height: "20px" }} /></div>
+                 
                 </div>
               </div>
 
               <div className="bk-stat-card card-yellow">
                 <div className="bk-stat-left">
-                  <div className="bk-stat-icon icon-yellow"><img src="/images/dashboard/pending-icon.svg" alt="" style={{ width: "20px", height: "20px" }} /></div>
-                  <div>
+                <div>
                     <span className="bk-stat-label">Pending</span>
                     <h2 className="bk-stat-value">{countFor("pending")}</h2>
                     <span className="bk-stat-badge badge-green">▲ 8% vs. last week</span>
                   </div>
+                  <div className="bk-stat-icon icon-yellow"><img src="/images/dashboard/pending-icon.svg" alt="" style={{ width: "20px", height: "20px" }} /></div>
+                  
                 </div>
               </div>
 
               <div className="bk-stat-card card-purple">
                 <div className="bk-stat-left">
-                  <div className="bk-stat-icon icon-purple"><img src="/images/dashboard/progress-icon.svg" alt="" style={{ width: "20px", height: "20px" }} /></div>
-                  <div>
+                <div>
                     <span className="bk-stat-label">In Progress</span>
                     <h2 className="bk-stat-value">{countFor("in-progress")}</h2>
                     <span className="bk-stat-badge badge-green">▲ 14% vs. last week</span>
                   </div>
+                  <div className="bk-stat-icon icon-purple"><img src="/images/dashboard/progress-icon.svg" alt="" style={{ width: "20px", height: "20px" }} /></div>
+                  
                 </div>
               </div>
 
               <div className="bk-stat-card card-pink">
                 <div className="bk-stat-left">
-                  <div className="bk-stat-icon icon-pink"><img src="/images/dashboard/qc-review.svg" alt="" style={{ width: "20px", height: "20px" }} /></div>
-                  <div>
+                <div>
                     <span className="bk-stat-label">QC Review</span>
                     <h2 className="bk-stat-value">{countFor("qc-review")}</h2>
                     <span className="bk-stat-badge badge-red">▼ 6% vs. last week</span>
                   </div>
+                  <div className="bk-stat-icon icon-pink"><img src="/images/dashboard/qc-review.svg" alt="" style={{ width: "20px", height: "20px" }} /></div>
+                  
                 </div>
               </div>
 
               <div className="bk-stat-card card-green-light">
                 <div className="bk-stat-left">
-                  <div className="bk-stat-icon icon-green-light"><img src="/images/dashboard/disc.svg" alt="" style={{ width: "20px", height: "20px" }} /></div>
-                  <div>
+                <div>
                     <span className="bk-stat-label">Discrepancy</span>
                     <h2 className="bk-stat-value">{countFor("discrepancy")}</h2>
                     <span className="bk-stat-badge badge-red">▼ 10% vs. last week</span>
                   </div>
+                  <div className="bk-stat-icon icon-green-light"><img src="/images/dashboard/disc.svg" alt="" style={{ width: "20px", height: "20px" }} /></div>
+                  
                 </div>
               </div>
 
               <div className="bk-stat-card card-teal">
                 <div className="bk-stat-left">
-                  <div className="bk-stat-icon icon-teal"><img src="/images/dashboard/final-check.svg" alt="" style={{ width: "20px", height: "20px" }} /></div>
-                  <div>
+                <div>
                     <span className="bk-stat-label">Completed</span>
                     <h2 className="bk-stat-value">{countFor("completed")}</h2>
                     <span className="bk-stat-badge badge-green">▲ 20% vs. last week</span>
                   </div>
+                  <div className="bk-stat-icon icon-teal"><img src="/images/dashboard/final-check.svg" alt="" style={{ width: "20px", height: "20px" }} /></div>
+                  
                 </div>
               </div>
             </div>
