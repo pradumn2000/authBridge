@@ -1353,8 +1353,8 @@ export default function EmploymentCheck() {
                   <div style={{ overflowX: "auto" }}>
                     <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "13px" }}>
                       <thead>
-                        <tr style={{ background: "#f8fafc", textAlign: "left", color: "#64748b" }}>
-                          <th style={{ padding: "10px" }}><input type="checkbox" /></th>
+                        <tr style={{ background: "#1e2761", textAlign: "left", color: "#fff" ,fontSize:"14px", fontWeight:"600",padding:"14px"}}>
+                          <th style={{ padding: "10px",borderTopLeftRadius: "15px"}}><input type="checkbox" /></th>
                           <th style={{ padding: "10px" }}>Case ID</th>
                           <th style={{ padding: "10px" }}>Candidate Name</th>
                           <th style={{ padding: "10px" }}>Client Name</th>
@@ -1364,7 +1364,7 @@ export default function EmploymentCheck() {
                           <th style={{ padding: "10px" }}>Verifier (Name)</th>
                           <th style={{ padding: "10px" }}>SLA</th>
                           <th style={{ padding: "10px" }}>Status</th>
-                          <th style={{ padding: "10px" }}>Action</th>
+                          <th style={{ padding: "10px",borderTopRightRadius: "15px" }}>Action</th>
                         </tr>
                       </thead>
                       <tbody>

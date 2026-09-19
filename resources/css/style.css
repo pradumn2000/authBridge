@@ -5765,7 +5765,7 @@ button.btn.btn-request {
   font-size: 13px;
   font-weight: 700;
   color: var(--white);
-  text-transform: uppercase;
+  /* text-transform: uppercase; */
   letter-spacing: 0.3px;
   border-bottom: 1px solid var(--primary-dark);
 }

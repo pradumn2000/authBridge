@@ -944,9 +944,9 @@ export default function Dashboard() {
                     </thead>
                     <tbody>
                       {loading ? (
-                        <tr><td colSpan="7" style={{ textAlign: "center", padding: "25px" }}>Loading Cases...</td></tr>
+                        <tr><td colSpan="7" style={{ textAlign: "center" }}>Loading Cases...</td></tr>
                       ) : cases.length === 0 ? (
-                        <tr><td colSpan="7" style={{ textAlign: "center", padding: "25px" }}>No cases found</td></tr>
+                        <tr><td colSpan="7" style={{ textAlign: "center" }}>No cases found</td></tr>
                       ) : (
                         currentCases.map(row => (
                           <tr key={row.case_id}>
@@ -985,7 +985,7 @@ export default function Dashboard() {
               {/* Right: Quick Stats */}
               <div className="dash-inner-right">
                 <div className="quick-stats">
-                  <div className="stats-header"><h3>QUICK STATS</h3></div>
+                  <div className="stats-header"><h3>Quick Stats</h3></div>
                   <div className="stats-body">
                     <div className="stats-row"><span>Avg TAT</span><strong>{stats.avg_tat}</strong></div>
                     <div className="stats-row"><span>Clear Rate</span><strong>{stats.clear_rate}</strong></div>
