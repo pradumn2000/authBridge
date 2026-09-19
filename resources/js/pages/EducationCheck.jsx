@@ -1719,10 +1719,10 @@ export default function EducationVerification() {
               {/* Stat Cards */}
               <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "16px", marginBottom: "24px" }}>
                 {[
-                  { title: "Total Education Cases", val: "1,248", sub: "Across all Universities", icon: "🎓", bg: "#eff6ff" },
-                  { title: "Unassigned Cases", val: "143", sub: "Require allocation", icon: "👤", bg: "#fff7ed" },
-                  { title: "In Progress", val: "685", sub: "With Verifiers", icon: "👥", bg: "#f0fdf4" },
-                  { title: "Completed (This Month)", val: "420", sub: "This Month", icon: "✓", bg: "#dcfce7" },
+                  { title: "Total Education Cases", val: "1,248", sub: "Across all Universities", icon:<img src="/images/dashboard/education-icon.svg" alt="" style={{ width: "20px", height: "20px" }} />, bg: "#eff6ff" },
+                  { title: "Unassigned Cases", val: "143", sub: "Require allocation", icon: <img src="/images/dashboard/un-asign.svg" alt="" style={{ width: "20px", height: "20px" }} />, bg: "#fff7ed" },
+                  { title: "In Progress", val: "685", sub: "With Verifiers", icon: <img src="/images/dashboard/progress-icon.svg" alt="" style={{ width: "20px", height: "20px" }} />, bg: "#f0fdf4" },
+                  { title: "Completed (This Month)", val: "420", sub: "This Month", icon: <img src="/images/dashboard/final-check.svg" alt="" style={{ width: "20px", height: "20px" }} />, bg: "#dcfce7" },
                 ].map((st, i) => (
                   <div key={i} style={{ background: "#fff", padding: "16px 20px", borderRadius: "8px", border: "1px solid #e2e8f0", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                     <div>
