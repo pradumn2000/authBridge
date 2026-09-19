@@ -1603,7 +1603,7 @@ const ROLE_NAV = {
     {
       path: "/Verifyer",
       label: "Verifier Cases",
-      img: "images/sidebar/setting-icon.svg",
+      img: "images/sidebar/ver-check.svg",
     },
 
     {

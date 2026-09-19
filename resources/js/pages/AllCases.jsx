@@ -2818,7 +2818,7 @@ export default function AllCases() {
             {/* 1. Header Top Bar (Header Title + Date & Action Controls) */}
             <div className="bk-upper-header">
               <div className="bk-title-box">
-                <div className="bk-folder-icon">📁</div>
+                {/* <div className="bk-folder-icon">📁</div> */}
                 <div>
                   <h1 className="bk-main-title">All Cases</h1>
                   <p className="bk-sub-title">Manage and track all background verification cases</p>
@@ -2836,7 +2836,7 @@ export default function AllCases() {
                 </select>
                 {(isAdmin || user.role === "client") && (
                   <button className="bk-add-case-btn" onClick={() => navigate("/AddCase")}>
-                    + Add New Case
+                   <img src="/images/dashboard/plus-wht.svg" alt="" /> + Add New Case
                   </button>
                 )}
               </div>
