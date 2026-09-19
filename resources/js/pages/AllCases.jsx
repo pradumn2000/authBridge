@@ -2835,8 +2835,8 @@ export default function AllCases() {
                   <option value="90">Last 3 Months</option>
                 </select>
                 {(isAdmin || user.role === "client") && (
-                  <button className="bk-add-case-btn" onClick={() => navigate("/AddCase")}>
-                   <img src="/images/dashboard/plus-wht.svg" alt="" /> + Add New Case
+                  <button className="bk-add-case-btn" onClick={() => navigate("/AddCase")} style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                   <img src="/images/dashboard/plus-wht.svg" alt="" style={{ width: "20px", height: "20px" }} />  Add New Case
                   </button>
                 )}
               </div>
