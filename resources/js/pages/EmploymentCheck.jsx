@@ -1261,11 +1261,11 @@ export default function EmploymentCheck() {
                 <div style={{ display: "flex", gap: "20px", marginBottom: "24px", alignItems: "flex-start" }}>
                   <div style={{ flex: 1, background: "#fff", borderRadius: "8px", border: "1px solid #e2e8f0", padding: "18px" }}>
                     <h3 style={{ fontSize: "16px", fontWeight: 700, marginBottom: "14px", color: "#1e293b" }}>Company-wise Case Allocation</h3>
-                    <div style={{ overflowX: "auto" }}>
-                      <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "13px" }}>
+                    <div style={{ overflowX: "auto", width: "100%" }}>
+                      <table style={{ width: "100%", minWidth: "842px", borderCollapse: "collapse", fontSize: "13px", whiteSpace: "nowrap" }}>
                         <thead>
                           <tr style={{ background: "#1e2761", textAlign: "left", color: "#fff" ,fontSize:"14px", fontWeight:"600",padding:"14px"}}>
-                            <th style={{ padding: "14px", borderTopRightRadius: "15px"  }}><input type="checkbox" /></th>
+                            <th style={{ padding: "14px", borderTopLeftRadius: "15px"  }}><input type="checkbox" /></th>
                             <th style={{ padding: "14px" }}>#</th>
                             <th style={{ padding: "14px" }}>Client Name</th>
                             <th style={{ padding: "14px" }}>Company Name</th>
