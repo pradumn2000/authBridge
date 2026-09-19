@@ -581,7 +581,7 @@ export default function DatabaseCheck() {
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "16px" }}>
               <div>
                 <h1 style={{ fontSize: "24px", fontWeight: "600", color: "#000", margin: 0 }}>
-                  DATABASE VERIFICATION CHECK
+                  Database Verification Check
                 </h1>
                 <p style={{ fontSize: "14px", fontWeight: "500", color: "#606060", margin: "2px 0 0 0" }}>
                   Manage and track database verification requests assigned to verifiers

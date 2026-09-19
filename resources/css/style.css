@@ -1000,15 +1000,19 @@ input:checked+.slider:before {
 }
 
 .dash-inner-wrp-both .dash-inner-left .down-table table th {
-  padding: 16px;
+  padding: 14px;
   text-align: left;
   font-size: 14px;
+  font-weight: 600;
+  color: var(--white);
 }
 
 .dash-inner-wrp-both .dash-inner-left .down-table table td {
   padding: 14px 16px;
   border-bottom: 1px solid #dcdcdc;
   font-size: 14px;
+  font-weight: 400;
+  color:var(--black);
 }
 
 .dash-inner-wrp-both .dash-inner-left .down-table table tbody tr {
@@ -1081,7 +1085,7 @@ input:checked+.slider:before {
 .quick-stats {
   /* width: 340px; */
   background: var(--white);
-  border-radius: 8px;
+  border-radius: 15px;
   overflow: hidden;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
@@ -1090,13 +1094,13 @@ input:checked+.slider:before {
 }
 .stats-header {
   background: var(--primary-color);
-  padding: 16px 18px;
+  padding: 14px;
 }
 
 .stats-header h3 {
   color: var(--white);
-  font-size: 18px;
-  font-weight: 700;
+  font-size: 16px;
+  font-weight: 500;
   margin: 0;
 }
 
