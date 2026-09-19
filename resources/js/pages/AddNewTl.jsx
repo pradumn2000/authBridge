@@ -127,15 +127,16 @@ export default function AddNewTl() {
 
         /* Page Header */
         .add-tl-page-header h2 {
-          font-size: 20px;
-          font-weight: 700;
-          color: #1e293b;
+          font-size: 24px;
+          font-weight: 600;
+          color: #000;
           margin: 0;
         }
 
         .add-tl-page-header p {
-          font-size: 13px;
-          color: #64748b;
+          font-size: 14px;
+          color: #606060;
+          font-weight: 500;
           margin-top: 4px;
           margin-bottom: 20px;
           text-align: left;

@@ -12,7 +12,7 @@ export default function Settings() {
 
             <div className="dash-upper-head">
               <div className="left">
-                <h3 style={{ margin: 0, fontSize: "18px", fontWeight: 600 }}>Settings</h3>
+                <h3 style={{ margin: 0, color: "#000", fontSize: "24px", fontWeight: 600 }}>Settings</h3>
               </div>
             </div>
 

@@ -290,8 +290,8 @@ export default function AllClients() {
             {/* ── Top bar ── */}
             <div className="dash-upper-head">
               <div className="left">
-                <h3 className="dash-title-text">All Clients</h3>
-                <span style={{ fontSize: "12px", color: "#64748b", background: "#eef3ff", padding: "3px 10px", borderRadius: "20px", marginLeft: "10px" }}>
+                <h3 className="dash-title-text">All Clients</h3> <br></br>
+                <span style={{ fontSize: "14px", color: "#606060", fontWeight: "500", padding: "3px 10px", borderRadius: "20px", marginLeft: "10px" }}>
                   {filtered.length} of {clients.length}
                 </span>
               </div>

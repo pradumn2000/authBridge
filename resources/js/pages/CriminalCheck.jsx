@@ -328,9 +328,9 @@ const scopedCss = `
   }
 
   .pvc-page-title {
-    font-size: 18px;
-    font-weight: 700;
-    color: #0f172a;
+    font-size: 24px;
+    font-weight: 600;
+    color: #000;
     margin: 0;
   }
 

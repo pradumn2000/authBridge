@@ -1759,9 +1759,9 @@ export default function AddInstitution() {
             <div className="dash-upper-head">
               <div className="left">
                 <div className="dash-title-flex">
-                  <h3 className="dash-title-text">Institution Database</h3>
+                  <h3 className="dash-title-text">Institution Database</h3> <br></br>
                   <span style={{
-                    fontSize: "12px", color: "#64748b",
+                    fontSize: "14px", color: "#606060", fontWeight: 500,
                     background: "#eef3ff", padding: "3px 10px", borderRadius: "20px"
                   }}>
                     {activeCount} total

@@ -98,16 +98,17 @@ export default function ViewPermission() {
         }
 
         .view-perm-header-title h2 {
-          font-size: 20px;
-          font-weight: 700;
-          color: #1e293b;
+          font-size: 24px;
+          font-weight: 600;
+          color: #000;
           margin: 0;
         }
 
         .view-perm-header-title p {
-          font-size: 13px;
-          color: #64748b;
+          font-size: 14px;
+          color: #606060;
           margin: 2px 0 0 0;
+          font-weight: 500;
         }
 
         /* Top Dropdowns & Info Card Grid */

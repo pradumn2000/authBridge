@@ -597,15 +597,16 @@ export default function DrugTestVerification() {
         }
 
         .ndv-heading {
-          font-size: 18px;
-          font-weight: 800;
-          color: #0f172a;
+          font-size: 24px;
+          font-weight: 600;
+          color: #000;
           margin: 0;
         }
 
         .ndv-subheading {
-          font-size: 12px;
-          color: #64748b;
+          font-size: 14px;
+          fontWeight: 500;
+          color: #606060;
           margin: 2px 0 0 0;
         }
 

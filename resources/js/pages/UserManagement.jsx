@@ -2804,7 +2804,7 @@ export default function UserManagement() {
             {/* ── Page header ── */}
             <div className="dash-upper-head">
               <div className="left">
-                <h3 style={{ fontSize: "16px", fontWeight: 700, margin: 0, color: "#2b3b8c" }}>
+                <h3 style={{ fontSize: "24px", fontWeight: 600, margin: 0, color: "#000" }}>
                   User Management
                 </h3>
               </div>

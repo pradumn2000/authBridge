@@ -159,8 +159,8 @@ export default function AddressCheck() {
           
           {/* Top Header Section with Navigation Tabs */}
           <div style={{ marginBottom: "20px" }}>
-            <h1 style={{ fontSize: "18px", fontWeight: "800", color: "#0f172a", margin: "0 0 2px 0" }}>Address Verification</h1>
-            <p style={{ fontSize: "12px", color: "#64748b", margin: "0 0 16px 0",textAlign:"left" }}>Manage and track address verification for all candidates</p>
+            <h1 style={{ fontSize: "24px", fontWeight: "600", color: "#000", margin: "0 0 2px 0" }}>Address Verification</h1>
+            <p style={{ fontSize: "14px", fontWeight: "500", color: "#606060", margin: "0 0 16px 0",textAlign:"left" }}>Manage and track address verification for all candidates</p>
 
             {/* Image-2 Style Tabs Layout */}
             <div style={{ display: "flex", borderBottom: "1px solid #e2e8f0", gap: "24px" }}>

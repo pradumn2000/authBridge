@@ -1534,7 +1534,7 @@ export default function AddCase() {
 
 // ── Styles ─────────────────────────────────────────
 const sharedStyles = `
-  .ac-page-title { font-size: 1.25rem; font-weight: 700; color: #2b3b8c; margin: 0; }
+  .ac-page-title { font-size: 24px; font-weight: 600; color: #000; margin: 0; }
   .ac-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 0px; }
   @media (max-width: 960px) { .ac-layout { grid-template-columns: 1fr; } }
   .ac-left, .ac-right { display: flex; flex-direction: column; gap: 20px; }
