@@ -2857,7 +2857,7 @@ export default function AllCases() {
 
               <div className="bk-stat-card card-yellow">
                 <div className="bk-stat-left">
-                  <div className="bk-stat-icon icon-yellow">🕒</div>
+                  <div className="bk-stat-icon icon-yellow"><img src="/images/dashboard/pending-icon.svg" alt="" style={{ width: "20px", height: "20px" }} /></div>
                   <div>
                     <span className="bk-stat-label">Pending</span>
                     <h2 className="bk-stat-value">{countFor("pending")}</h2>
@@ -2868,7 +2868,7 @@ export default function AllCases() {
 
               <div className="bk-stat-card card-purple">
                 <div className="bk-stat-left">
-                  <div className="bk-stat-icon icon-purple">▶</div>
+                  <div className="bk-stat-icon icon-purple"><img src="/images/dashboard/progress-icon.svg" alt="" style={{ width: "20px", height: "20px" }} /></div>
                   <div>
                     <span className="bk-stat-label">In Progress</span>
                     <h2 className="bk-stat-value">{countFor("in-progress")}</h2>
@@ -2879,7 +2879,7 @@ export default function AllCases() {
 
               <div className="bk-stat-card card-pink">
                 <div className="bk-stat-left">
-                  <div className="bk-stat-icon icon-pink">🔍</div>
+                  <div className="bk-stat-icon icon-pink"><img src="/images/dashboard/qc-review.svg" alt="" style={{ width: "20px", height: "20px" }} /></div>
                   <div>
                     <span className="bk-stat-label">QC Review</span>
                     <h2 className="bk-stat-value">{countFor("qc-review")}</h2>
@@ -2890,7 +2890,7 @@ export default function AllCases() {
 
               <div className="bk-stat-card card-green-light">
                 <div className="bk-stat-left">
-                  <div className="bk-stat-icon icon-green-light">⚠️</div>
+                  <div className="bk-stat-icon icon-green-light"><img src="/images/dashboard/disc.svg" alt="" style={{ width: "20px", height: "20px" }} /></div>
                   <div>
                     <span className="bk-stat-label">Discrepancy</span>
                     <h2 className="bk-stat-value">{countFor("discrepancy")}</h2>
@@ -2901,7 +2901,7 @@ export default function AllCases() {
 
               <div className="bk-stat-card card-teal">
                 <div className="bk-stat-left">
-                  <div className="bk-stat-icon icon-teal">✓</div>
+                  <div className="bk-stat-icon icon-teal"><img src="/images/dashboard/final-check.svg" alt="" style={{ width: "20px", height: "20px" }} /></div>
                   <div>
                     <span className="bk-stat-label">Completed</span>
                     <h2 className="bk-stat-value">{countFor("completed")}</h2>
