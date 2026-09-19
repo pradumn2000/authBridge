@@ -2846,7 +2846,7 @@ export default function AllCases() {
             <div className="bk-stats-grid">
               <div className="bk-stat-card card-blue">
                 <div className="bk-stat-left">
-                  <div className="bk-stat-icon icon-blue">💼</div>
+                  <div className="bk-stat-icon icon-blue"><img src="/images/dashboard/total-case.svg" alt="" style={{ width: "20px", height: "20px" }} /></div>
                   <div>
                     <span className="bk-stat-label">Total Cases</span>
                     <h2 className="bk-stat-value">{countFor("all")}</h2>
