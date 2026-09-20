@@ -1096,68 +1096,6 @@ function getTabFromURL(search) {
   return ["all", "pending", "in-progress", "completed"].includes(tab) ? tab : "";
 }
 
-function inferCheckStatus(caseStat) {
-  if (caseStat === "completed")   return "clear";
-  if (caseStat === "in-progress") return "in_progress";
-  if (caseStat === "pending")     return "pending";
-  return "na";
-}
-
-function buildTimeline(c) {
-  const created = c.created_at ? new Date(c.created_at) : new Date();
-  const fmt = (d) => d.toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" });
-  const fmtTime = (d) => d.toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit" });
-  const addDays = (d, n) => { const x = new Date(d); x.setDate(x.getDate() + n); return x; };
-
-  const events = [
-    { icon: "✓", color: "#10b981", title: "Case Submitted",
-      desc: `Case ${c.case_id} created and submitted for processing.`,
-      date: fmt(created), time: fmtTime(created), done: true },
-  ];
-
-  if (["in-progress", "qc-review", "completed"].includes(c.status)) {
-    const d2 = addDays(created, 1);
-    events.push({ icon: "✓", color: "#028090", title: "Verification Started",
-      desc: "Documents received. Verification team assigned and checks initiated.",
-      date: fmt(d2), time: fmtTime(d2), done: true });
-  } else {
-    events.push({ icon: "○", color: "#94a3b8", title: "Verification Pending",
-      desc: "Awaiting assignment to verification team.", date: "—", time: "", done: false });
-  }
-
-  if (["in-progress", "qc-review", "completed"].includes(c.status)) {
-    const d3 = addDays(created, 3);
-    events.push({ icon: "✓", color: "#028090", title: "Checks In Progress",
-      desc: `Running ${c.checks ? (Array.isArray(c.checks) ? c.checks.join(", ") : c.checks) : "all"} checks.`,
-      date: fmt(d3), time: fmtTime(d3), done: true });
-  } else {
-    events.push({ icon: "○", color: "#94a3b8", title: "Checks In Progress",
-      desc: "Check-wise verification not yet started.", date: "—", time: "", done: false });
-  }
-
-  if (["qc-review", "completed"].includes(c.status)) {
-    const d4 = addDays(created, 5);
-    events.push({ icon: "✓", color: "#7c3aed", title: "QC Review",
-      desc: "Case submitted for quality control review.",
-      date: fmt(d4), time: fmtTime(d4), done: true });
-  } else {
-    events.push({ icon: "○", color: "#94a3b8", title: "QC Review",
-      desc: "Quality check pending.", date: "—", time: "", done: false });
-  }
-
-  if (c.status === "completed") {
-    const d5 = addDays(created, 7);
-    events.push({ icon: "✓", color: "#10b981", title: "Report Dispatched",
-      desc: "Final BGV report generated and dispatched to client.",
-      date: fmt(d5), time: fmtTime(d5), done: true });
-  } else {
-    events.push({ icon: "○", color: "#94a3b8", title: "Report Dispatch",
-      desc: "Report will be generated after QC approval.", date: "—", time: "", done: false });
-  }
-
-  return events;
-}
-
 export default function Client() {
   const navigate = useNavigate();
   const location = useLocation();
@@ -1168,18 +1106,14 @@ export default function Client() {
   const [search, setSearch]             = useState("");
   const [statusTab, setStatusTab]       = useState(() => getTabFromURL(location.search));
   const [dateFilter, setDateFilter]     = useState("month");
-  const [customFrom, setCustomFrom]     = useState("");
-  const [customTo, setCustomTo]         = useState("");
-  const [activeDetailTab, setActiveDetailTab] = useState("overview");
 
-  // Additional Filter States matching the UI image
+  // Additional Filter States
   const [caseTypeFilter, setCaseTypeFilter]   = useState("All");
   const [checkTypeFilter, setCheckTypeFilter] = useState("All");
   const [tatStatusFilter, setTatStatusFilter] = useState("All");
 
   const [openCheck, setOpenCheck] = useState(null);
   const token = localStorage.getItem("token");
-  const user  = (() => { try { return JSON.parse(localStorage.getItem("user")) || {}; } catch { return {}; } })();
 
   const fetchCases = () => {
     setLoading(true);
@@ -1204,76 +1138,18 @@ export default function Client() {
     const tab = getTabFromURL(location.search);
     setStatusTab(tab);
     setSearch("");
-    setActiveDetailTab("overview");
     if (cases.length > 0) {
       const first = cases.find(c => !tab || tab === "all" || c.status === tab);
       setSelectedCase(first || null);
     }
   }, [location.search]);
 
-  const isInRange = (createdAt) => {
-    if (!createdAt) return true;
-    const d   = new Date(createdAt);
-    const now = new Date();
-    if (dateFilter === "today") return d.toDateString() === now.toDateString();
-    if (dateFilter === "week")  { const w = new Date(now); w.setDate(now.getDate() - 7); return d >= w; }
-    if (dateFilter === "month") { return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear(); }
-    if (dateFilter === "custom") {
-      if (!customFrom && !customTo) return true;
-      const from = customFrom ? new Date(customFrom) : null;
-      const to   = customTo   ? new Date(customTo + "T23:59:59") : null;
-      if (from && d < from) return false;
-      if (to   && d > to)   return false;
-      return true;
-    }
-    return true;
-  };
-
-  const isDashboard = !getTabFromURL(location.search);
-  const isSplitView = statusTab === "pending" || statusTab === "completed";
-  const isTotalCasesView = statusTab === "all";
-
-  const filtered = cases.filter(c => {
-    const matchTab    = !statusTab || statusTab === "all" || c.status === statusTab;
-    const matchSearch = !search ||
-      (c.case_id || "").toLowerCase().includes(search.toLowerCase()) ||
-      (c.candidate || c.candidate_name || "").toLowerCase().includes(search.toLowerCase());
-    const matchDate = isDashboard ? isInRange(c.created_at) : true;
-    return matchTab && matchSearch && matchDate;
-  });
-
-  const [totalDateFilter, setTotalDateFilter] = useState("month");
-  const [totalCustomFrom, setTotalCustomFrom] = useState("");
-  const [totalCustomTo, setTotalCustomTo]     = useState("");
-
-  const isInRangeWith = (createdAt, filterKey, from, to) => {
-    if (!createdAt) return true;
-    const d   = new Date(createdAt);
-    const now = new Date();
-    if (filterKey === "today") return d.toDateString() === now.toDateString();
-    if (filterKey === "week")  { const w = new Date(now); w.setDate(now.getDate() - 7); return d >= w; }
-    if (filterKey === "month") { return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear(); }
-    if (filterKey === "custom") {
-      if (!from && !to) return true;
-      const f = from ? new Date(from) : null;
-      const t = to   ? new Date(to + "T23:59:59") : null;
-      if (f && d < f) return false;
-      if (t && d > t) return false;
-      return true;
-    }
-    return true;
-  };
-
   const totalFiltered = cases.filter(c => {
     const matchSearch = !search ||
       (c.case_id || "").toLowerCase().includes(search.toLowerCase()) ||
       (c.candidate || c.candidate_name || "").toLowerCase().includes(search.toLowerCase());
-    const matchDate = isInRangeWith(c.created_at, totalDateFilter, totalCustomFrom, totalCustomTo);
-    
-    // Additional Filters Matching
     const matchCaseType = caseTypeFilter === "All" || (c.case_type || "New Case") === caseTypeFilter;
-    
-    return matchSearch && matchDate && matchCaseType;
+    return matchSearch && matchCaseType;
   });
 
   const counts = {
@@ -1285,14 +1161,14 @@ export default function Client() {
     completed:     cases.filter(c => c.status === "completed").length,
   };
 
-  const total           = cases.length;
-  const pendingLinkCount = counts["in-progress"] || 0;
-  const clearRate        = total > 0 ? Math.round((counts.completed / total) * 100) : 0;
-  const chartCases       = isDashboard ? cases.filter(c => isInRange(c.created_at)) : cases;
+  const handleAddCase = () => {
+    // Navigate or trigger Add Case modal logic here
+    navigate("/add-case"); 
+  };
 
   const exportCSV = () => {
     const headers = ["Case ID", "Candidate Name", "Case Type", "Check Type", "Assigned Date", "TAT", "Status"];
-    const rows    = filtered.map(c => [
+    const rows    = totalFiltered.map(c => [
       c.case_id,
       c.candidate || c.candidate_name,
       c.case_type || "New Case",
@@ -1309,57 +1185,50 @@ export default function Client() {
     URL.revokeObjectURL(url);
   };
 
-  // Image reference matching KPI Cards
-  const SummaryCards = () => {
-    return (
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "16px", marginBottom: "20px" }}>
-        {/* Active Cases */}
-        <div style={{ background: "#fff", padding: "16px", borderRadius: "10px", display: "flex", alignItems: "center", gap: "16px", border: "1px solid #f1f5f9", boxShadow: "0 1px 3px rgba(0,0,0,0.05)" }}>
-          <div style={{ background: "#eff6ff", color: "#2563eb", width: "44px", height: "44px", borderRadius: "8px", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "20px" }}>🔍</div>
-          <div>
-            <div style={{ fontSize: "22px", fontWeight: "700", color: "#1e2761" }}>{counts.pending}</div>
-            <div style={{ fontSize: "13px", color: "#1e2761", fontWeight: "600" }}>Active Cases</div>
-            <div style={{ fontSize: "11px", color: "#94a3b8" }}>In Progress</div>
-          </div>
-        </div>
-
-        {/* Due Today */}
-        <div style={{ background: "#fff", padding: "16px", borderRadius: "10px", display: "flex", alignItems: "center", gap: "16px", border: "1px solid #f1f5f9", boxShadow: "0 1px 3px rgba(0,0,0,0.05)" }}>
-          <div style={{ background: "#f0fdf4", color: "#16a34a", width: "44px", height: "44px", borderRadius: "8px", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "20px" }}>📅</div>
-          <div>
-            <div style={{ fontSize: "22px", fontWeight: "700", color: "#16a34a" }}>{counts.dueToday}</div>
-            <div style={{ fontSize: "13px", color: "#1e2761", fontWeight: "600" }}>Due Today</div>
-          </div>
-        </div>
-
-        {/* Due Soon */}
-        <div style={{ background: "#fff", padding: "16px", borderRadius: "10px", display: "flex", alignItems: "center", gap: "16px", border: "1px solid #f1f5f9", boxShadow: "0 1px 3px rgba(0,0,0,0.05)" }}>
-          <div style={{ background: "#fffbeb", color: "#d97706", width: "44px", height: "44px", borderRadius: "8px", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "20px" }}>⏰</div>
-          <div>
-            <div style={{ fontSize: "22px", fontWeight: "700", color: "#d97706" }}>{counts.dueSoon}</div>
-            <div style={{ fontSize: "13px", color: "#1e2761", fontWeight: "600" }}>Due Soon</div>
-            <div style={{ fontSize: "11px", color: "#94a3b8" }}>Next 3 Days</div>
-          </div>
-        </div>
-
-        {/* Overdue */}
-        <div style={{ background: "#fff", padding: "16px", borderRadius: "10px", display: "flex", alignItems: "center", gap: "16px", border: "1px solid #f1f5f9", boxShadow: "0 1px 3px rgba(0,0,0,0.05)" }}>
-          <div style={{ background: "#fef2f2", color: "#dc2626", width: "44px", height: "44px", borderRadius: "8px", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "20px" }}>📅</div>
-          <div>
-            <div style={{ fontSize: "22px", fontWeight: "700", color: "#dc2626" }}>{counts.overdue}</div>
-            <div style={{ fontSize: "13px", color: "#dc2626", fontWeight: "600" }}>Overdue</div>
-          </div>
+  const SummaryCards = () => (
+    <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "16px", marginBottom: "20px" }}>
+      <div style={{ background: "#fff", padding: "16px", borderRadius: "10px", display: "flex", alignItems: "center", gap: "16px", border: "1px solid #f1f5f9", boxShadow: "0 1px 3px rgba(0,0,0,0.05)" }}>
+        <div style={{ background: "#eff6ff", color: "#2563eb", width: "44px", height: "44px", borderRadius: "8px", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "20px" }}>🔍</div>
+        <div>
+          <div style={{ fontSize: "22px", fontWeight: "700", color: "#1e2761" }}>{counts.pending}</div>
+          <div style={{ fontSize: "13px", color: "#1e2761", fontWeight: "600" }}>Active Cases</div>
+          <div style={{ fontSize: "11px", color: "#94a3b8" }}>In Progress</div>
         </div>
       </div>
-    );
-  };
+
+      <div style={{ background: "#fff", padding: "16px", borderRadius: "10px", display: "flex", alignItems: "center", gap: "16px", border: "1px solid #f1f5f9", boxShadow: "0 1px 3px rgba(0,0,0,0.05)" }}>
+        <div style={{ background: "#f0fdf4", color: "#16a34a", width: "44px", height: "44px", borderRadius: "8px", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "20px" }}>📅</div>
+        <div>
+          <div style={{ fontSize: "22px", fontWeight: "700", color: "#16a34a" }}>{counts.dueToday}</div>
+          <div style={{ fontSize: "13px", color: "#1e2761", fontWeight: "600" }}>Due Today</div>
+        </div>
+      </div>
+
+      <div style={{ background: "#fff", padding: "16px", borderRadius: "10px", display: "flex", alignItems: "center", gap: "16px", border: "1px solid #f1f5f9", boxShadow: "0 1px 3px rgba(0,0,0,0.05)" }}>
+        <div style={{ background: "#fffbeb", color: "#d97706", width: "44px", height: "44px", borderRadius: "8px", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "20px" }}>⏰</div>
+        <div>
+          <div style={{ fontSize: "22px", fontWeight: "700", color: "#d97706" }}>{counts.dueSoon}</div>
+          <div style={{ fontSize: "13px", color: "#1e2761", fontWeight: "600" }}>Due Soon</div>
+          <div style={{ fontSize: "11px", color: "#94a3b8" }}>Next 3 Days</div>
+        </div>
+      </div>
+
+      <div style={{ background: "#fff", padding: "16px", borderRadius: "10px", display: "flex", alignItems: "center", gap: "16px", border: "1px solid #f1f5f9", boxShadow: "0 1px 3px rgba(0,0,0,0.05)" }}>
+        <div style={{ background: "#fef2f2", color: "#dc2626", width: "44px", height: "44px", borderRadius: "8px", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "20px" }}>📅</div>
+        <div>
+          <div style={{ fontSize: "22px", fontWeight: "700", color: "#dc2626" }}>{counts.overdue}</div>
+          <div style={{ fontSize: "13px", color: "#dc2626", fontWeight: "600" }}>Overdue</div>
+        </div>
+      </div>
+    </div>
+  );
 
   const FilterSection = () => (
     <div style={{ background: "#fff", padding: "16px 20px", borderRadius: "10px", border: "1px solid #f1f5f9", marginBottom: "20px" }}>
       <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "16px", marginBottom: "16px" }}>
         <div>
           <label style={{ display: "block", fontSize: "12px", fontWeight: 600, color: "#1e2761", marginBottom: "6px" }}>Date Range</label>
-          <select value={dateFilter} onChange={e => setDateFilter(e.target.value)} style={{ width: "100%", padding: "8px 12px", borderRadius: "6px", border: "1px solid #e2e8f0", fontSize: "13px", outline: "none", color: "#475569" }}>
+          <select value={dateFilter} onChange={e => setDateFilter(e.target.value)} style={{ width: "100%", padding: "8px 12px", borderRadius: "6px", border: "1px solid #e2e8f0", fontSize: "13px", color: "#475569" }}>
             <option value="all">All</option>
             <option value="today">Today</option>
             <option value="week">This Week</option>
@@ -1368,7 +1237,7 @@ export default function Client() {
         </div>
         <div>
           <label style={{ display: "block", fontSize: "12px", fontWeight: 600, color: "#1e2761", marginBottom: "6px" }}>Case Type</label>
-          <select value={caseTypeFilter} onChange={e => setCaseTypeFilter(e.target.value)} style={{ width: "100%", padding: "8px 12px", borderRadius: "6px", border: "1px solid #e2e8f0", fontSize: "13px", outline: "none", color: "#475569" }}>
+          <select value={caseTypeFilter} onChange={e => setCaseTypeFilter(e.target.value)} style={{ width: "100%", padding: "8px 12px", borderRadius: "6px", border: "1px solid #e2e8f0", fontSize: "13px", color: "#475569" }}>
             <option value="All">All</option>
             <option value="New Case">New Case</option>
             <option value="Re-verification">Re-verification</option>
@@ -1376,7 +1245,7 @@ export default function Client() {
         </div>
         <div>
           <label style={{ display: "block", fontSize: "12px", fontWeight: 600, color: "#1e2761", marginBottom: "6px" }}>Check Type (All Checks)</label>
-          <select value={checkTypeFilter} onChange={e => setCheckTypeFilter(e.target.value)} style={{ width: "100%", padding: "8px 12px", borderRadius: "6px", border: "1px solid #e2e8f0", fontSize: "13px", outline: "none", color: "#475569" }}>
+          <select value={checkTypeFilter} onChange={e => setCheckTypeFilter(e.target.value)} style={{ width: "100%", padding: "8px 12px", borderRadius: "6px", border: "1px solid #e2e8f0", fontSize: "13px", color: "#475569" }}>
             <option value="All">All</option>
             <option value="Background Verification">Background Verification</option>
             <option value="Identity Check">Identity Check</option>
@@ -1384,7 +1253,7 @@ export default function Client() {
         </div>
         <div>
           <label style={{ display: "block", fontSize: "12px", fontWeight: 600, color: "#1e2761", marginBottom: "6px" }}>TAT Status</label>
-          <select value={tatStatusFilter} onChange={e => setTatStatusFilter(e.target.value)} style={{ width: "100%", padding: "8px 12px", borderRadius: "6px", border: "1px solid #e2e8f0", fontSize: "13px", outline: "none", color: "#475569" }}>
+          <select value={tatStatusFilter} onChange={e => setTatStatusFilter(e.target.value)} style={{ width: "100%", padding: "8px 12px", borderRadius: "6px", border: "1px solid #e2e8f0", fontSize: "13px", color: "#475569" }}>
             <option value="All">All</option>
             <option value="Within TAT">Within TAT</option>
             <option value="Delayed">Delayed</option>
@@ -1432,6 +1301,19 @@ export default function Client() {
 
   const CasesTable = ({ rows }) => (
     <div style={{ background: "#fff", borderRadius: "8px", overflow: "hidden", border: "1px solid #e2e8f0" }}>
+      {/* Table Header Action Bar with Add Case Button */}
+      <div style={{ padding: "14px 20px", display: "flex", justifyContent: "space-between", alignItems: "center", borderBottom: "1px solid #e2e8f0", background: "#fff" }}>
+        <div style={{ fontSize: "14px", fontWeight: 700, color: "#1e2761" }}>
+          Cases List ({rows.length})
+        </div>
+        <button 
+          onClick={handleAddCase}
+          style={{ background: "#1d4ed8", color: "#fff", border: "none", padding: "8px 16px", borderRadius: "6px", fontWeight: 600, fontSize: "13px", cursor: "pointer", display: "flex", alignItems: "center", gap: "6px" }}
+        >
+          ➕ Add Case
+        </button>
+      </div>
+
       <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "13px" }}>
         <thead>
           <tr style={{ background: "#1e2761" }}>
@@ -1450,7 +1332,7 @@ export default function Client() {
               <th key={index} style={{
                 backgroundColor: "#1e2761",
                 textAlign: "left",
-                color: "var(--white, #fff)",
+                color: "#fff",
                 padding: "14px",
                 fontSize: "14px",
                 fontWeight: 600,
@@ -1468,10 +1350,7 @@ export default function Client() {
             <tr><td colSpan={10} style={{ padding: "40px", textAlign: "center", color: "#94a3b8" }}>No cases found.</td></tr>
           ) : (
             rows.map((c, i) => (
-              <tr key={c.case_id || i} style={{
-                background: "#fff",
-                borderBottom: "1px solid #f1f5f9",
-              }}>
+              <tr key={c.case_id || i} style={{ background: "#fff", borderBottom: "1px solid #f1f5f9" }}>
                 <td style={{ padding: "14px", color: "#1e293b", fontWeight: 700 }}>{i + 1}</td>
                 <td style={{ padding: "14px", color: "#2563eb", fontWeight: 600 }}>{c.case_id}</td>
                 <td style={{ padding: "14px", color: "#1e293b", fontWeight: 600 }}>{c.candidate || c.candidate_name || "—"}</td>
@@ -1503,7 +1382,7 @@ export default function Client() {
         </tbody>
       </table>
 
-      {/* Pagination Footer matching Image */}
+      {/* Pagination Footer */}
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "14px 20px", borderTop: "1px solid #f1f5f9", background: "#fff" }}>
         <div style={{ fontSize: "13px", color: "#64748b" }}>
           Showing 1 to {rows.length} of {rows.length} entries (In Progress)
@@ -1534,8 +1413,11 @@ export default function Client() {
                 <div style={{ position: "relative", width: "260px" }}>
                   <input type="text" placeholder="Search by Case ID, Candidate Name..." style={{ width: "100%", padding: "8px 12px", borderRadius: "6px", border: "1px solid #e2e8f0", fontSize: "13px", outline: "none" }} />
                 </div>
-                <button className="primary-cta export" onClick={exportCSV} style={{ background: "#fff", border: "1px solid #e2e8f0", color: "#1e2761", padding: "8px 16px", borderRadius: "6px", fontWeight: "600", fontSize: "13px", cursor: "pointer", display: "flex", alignItems: "center", gap: "6px" }}>
+                <button onClick={exportCSV} style={{ background: "#fff", border: "1px solid #e2e8f0", color: "#1e2761", padding: "8px 16px", borderRadius: "6px", fontWeight: "600", fontSize: "13px", cursor: "pointer", display: "flex", alignItems: "center", gap: "6px" }}>
                   📥 Export
+                </button>
+                <button onClick={handleAddCase} style={{ background: "#2563eb", border: "none", color: "#fff", padding: "8px 16px", borderRadius: "6px", fontWeight: "600", fontSize: "13px", cursor: "pointer", display: "flex", alignItems: "center", gap: "6px" }}>
+                  ➕ Add Case
                 </button>
               </div>
             </div>
@@ -1549,7 +1431,7 @@ export default function Client() {
             {/* Cases Table */}
             <CasesTable rows={totalFiltered} />
             
-            {/* Footer matching reference image */}
+            {/* Footer */}
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: "24px", paddingTop: "16px", borderTop: "1px solid #e2e8f0", fontSize: "12px", color: "#94a3b8" }}>
               <div>© 2025 Satyapan. All rights reserved.</div>
               <div>Version 2.0.0</div>
