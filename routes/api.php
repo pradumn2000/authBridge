@@ -6,6 +6,8 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use App\Models\BGVCase;
 use App\Models\User;
 use App\Models\CaseCheck;
@@ -282,7 +284,7 @@ Route::post('/candidate-link/{token}/documents', function (Request $request, $to
     $check = CaseCheck::where('case_id', $link->case_id)->where('check_type', $checkType)->firstOrFail();
 
     $path = $request->file('file')->store("case-documents/{$link->case_id}/{$checkType}", 'public');
-    $url  = \Illuminate\Support\Facades\Storage::disk('public')->url($path);
+    $url  = Storage::disk('public')->url($path);
 
     $documents = $check->documents ?? [];
     $documents[$request->document_key] = [
@@ -307,12 +309,20 @@ Route::post('/candidate-link/{token}/submit', function (Request $request, $token
 
     if ($link->case_id) {
         $case = BGVCase::where('case_id', $link->case_id)->first();
+
+        // ── FIX: the CaseEvent::log() call below used $case->case_id, but
+        //    $case was only null-checked for the status update above. A link
+        //    pointing at a deleted or mistyped case_id therefore threw
+        //    "Attempt to read property case_id on null" — a 500 on the
+        //    candidate's final submit, after they'd already uploaded
+        //    everything. Logging against $link->case_id and guarding the
+        //    status update separately.
         if ($case && $case->status === 'pending') {
             $case->update(['status' => 'in-progress']);
         }
-        
+
         \App\Models\CaseEvent::log(
-            $case->case_id,
+            $link->case_id,
             'candidate_submitted',
             'Candidate submitted documents',
             $link->check_type ? ucfirst($link->check_type) . ' info/documents submitted by candidate' : 'Documents submitted by candidate',
@@ -401,7 +411,15 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::delete('/users/{id}', function (Request $request, $id) {
         if ($request->user()->role !== 'admin') return response()->json(['message' => 'Unauthorized'], 403);
+
+        // ── FIX: User::find() returns null for an unknown id, and the next
+        //    line read $user->id straight away — deleting an already-deleted
+        //    user returned a 500 instead of a 404. (The /users/{id}/status
+        //    route two blocks up already guards this correctly; this one
+        //    didn't.)
         $user = User::find($id);
+        if (!$user) return response()->json(['message' => 'User not found'], 404);
+
         if ($user->id === $request->user()->id) return response()->json(['message' => 'You cannot delete your own account'], 400);
         $user->delete();
         return response()->json(['message' => 'User deleted successfully']);
@@ -456,6 +474,11 @@ Route::middleware('auth:sanctum')->group(function () {
             'checkTat'           => 'nullable|array',
             'registrationId'     => 'nullable|integer|exists:client_registrations,id',
             'agreement'          => 'nullable|file|max:10240|mimes:pdf,doc,docx,jpg,jpeg,png',
+            // Added: these two were being written to the User but never
+            // validated, so a malformed date string from the form reached
+            // the DB untouched.
+            'agreementStartDate' => 'nullable|date',
+            'agreementEndDate'   => 'nullable|date|after_or_equal:agreementStartDate',
         ]);
 
         $totalAmount = 0;
@@ -463,9 +486,19 @@ Route::middleware('auth:sanctum')->group(function () {
             $totalAmount += ($request->checkRates[$check] ?? 1500);
         }
 
-        $agreementPath = null;
+        // ── FIX: User::$fillable declares 'agreement_url', not
+        //    'agreement_path'. The old code wrote 'agreement_path' here, so
+        //    mass assignment silently dropped it (not fillable = ignored)
+        //    and the uploaded file's location was never saved — the file
+        //    landed in storage/app/public/agreements/ and then became
+        //    unreachable. Storing the resolved public URL instead, matching
+        //    the pattern the candidate-document-upload routes above already
+        //    use (Storage::disk('public')->url($path)), which is also the
+        //    shape AddClient.jsx expects when it reads c.agreement_url.
+        $agreementUrl = null;
         if ($request->hasFile('agreement')) {
-            $agreementPath = $request->file('agreement')->store('agreements', 'public');
+            $agreementStoredPath = $request->file('agreement')->store('agreements', 'public');
+            $agreementUrl = Storage::disk('public')->url($agreementStoredPath);
         }
 
         $user = User::create([
@@ -484,9 +517,9 @@ Route::middleware('auth:sanctum')->group(function () {
             'check_tat'            => $request->checkTat ?? [],
             'total_amount'         => $totalAmount,
             'notes'                => $request->notes,
-            'agreement_path'       => $agreementPath,
-            'agreement_start_date' => $request->agreementStartDate,
-            'agreement_end_date'   => $request->agreementEndDate,
+            'agreement_url'        => $agreementUrl,
+            'agreement_start_date' => $request->agreementStartDate ?: null,
+            'agreement_end_date'   => $request->agreementEndDate ?: null,
         ]);
 
         if ($request->registrationId) {
@@ -616,6 +649,10 @@ Route::middleware('auth:sanctum')->group(function () {
     //                   and billing_mode become optional. We fall back to
     //                   a placeholder client name and prepaid_candidate
     //                   billing if the frontend didn't send one.
+    //
+    // NOTE: case_source, overall_tat and candidate_portal_link only
+    // actually persist now that they've been added to BGVCase::$fillable —
+    // before that fix they were accepted here and silently discarded.
     // -------------------------------------------------------------
     Route::post('/cases', function (Request $request) {
         $request->validate([
@@ -635,6 +672,7 @@ Route::middleware('auth:sanctum')->group(function () {
             'check_tat'       => 'nullable|array',
             'check_rates'     => 'nullable|array',
             'overall_tat'     => 'nullable|numeric|min:0',
+            'candidate_portal_link' => 'nullable|string|max:2048',
         ]);
 
         $caseSource = $request->case_source ?? 'client';
@@ -663,30 +701,34 @@ Route::middleware('auth:sanctum')->group(function () {
             'po_number'        => $request->po_number,
             'total_amount'     => $request->total_amount ?? 0,
             'payment_link'     => $request->payment_link,
+            // Added: AddCase.jsx has always sent this and read it back on
+            // edit, but nothing here ever wrote it, so a generated portal
+            // link was lost the moment the page reloaded.
+            'candidate_portal_link' => $request->candidate_portal_link,
             'status'           => 'pending',
             'notes'            => $request->notes,
             'created_by'       => $request->user()->id,
         ]);
 
         // 2. Map and Register Individual Checks in `case_checks` table
-$caseChecksData = [];
-foreach ($request->checks as $checkKey) {
-    $tat = $request->check_tat[$checkKey] ?? 0;
-    $working  = is_array($tat) ? (int) ($tat['working_days']  ?? 0) : (int) $tat;
-    $calendar = is_array($tat) ? (int) ($tat['calendar_days'] ?? 0) : (int) $tat;
-    $caseChecksData[] = [
-        'case_id'       => $case->case_id,
-        'check_type'    => $checkKey,
-        'rate'          => $request->check_rates[$checkKey] ?? 0,
-        'working_days'  => $working,
-        'calendar_days' => $calendar,
-        'tat_days'      => max($working, $calendar), // legacy column, kept for anything still reading it
-        'status'        => 'pending',
-        'created_at'    => now(),
-        'updated_at'    => now(),
-    ];
-}
-CaseCheck::insert($caseChecksData);
+        $caseChecksData = [];
+        foreach ($request->checks as $checkKey) {
+            $tat = $request->check_tat[$checkKey] ?? 0;
+            $working  = is_array($tat) ? (int) ($tat['working_days']  ?? 0) : (int) $tat;
+            $calendar = is_array($tat) ? (int) ($tat['calendar_days'] ?? 0) : (int) $tat;
+            $caseChecksData[] = [
+                'case_id'       => $case->case_id,
+                'check_type'    => $checkKey,
+                'rate'          => $request->check_rates[$checkKey] ?? 0,
+                'working_days'  => $working,
+                'calendar_days' => $calendar,
+                'tat_days'      => max($working, $calendar), // legacy column, kept for anything still reading it
+                'status'        => 'pending',
+                'created_at'    => now(),
+                'updated_at'    => now(),
+            ];
+        }
+        CaseCheck::insert($caseChecksData);
 
         \App\Models\CaseEvent::log(
             $case->case_id,
@@ -754,13 +796,13 @@ CaseCheck::insert($caseChecksData);
                 ->filter()->unique()->values();
 
             $checkTat = $caseChecks->mapWithKeys(fn ($chk) => [
-    $chk->check_type => [
-        'working_days'  => $chk->working_days,
-        'calendar_days' => $chk->calendar_days,
-    ],
-])->toArray();
-$maxTat  = collect($checkTat)->flatMap(fn ($t) => [$t['working_days'], $t['calendar_days']])->max() ?: ($c->overall_tat ?? 0);
-$dueDate = ($maxTat > 0 && $c->created_at) ? $c->created_at->copy()->addDays((int) round($maxTat))->format('d M Y') : null;
+                $chk->check_type => [
+                    'working_days'  => $chk->working_days,
+                    'calendar_days' => $chk->calendar_days,
+                ],
+            ])->toArray();
+            $maxTat  = collect($checkTat)->flatMap(fn ($t) => [$t['working_days'], $t['calendar_days']])->max() ?: ($c->overall_tat ?? 0);
+            $dueDate = ($maxTat > 0 && $c->created_at) ? $c->created_at->copy()->addDays((int) round($maxTat))->format('d M Y') : null;
 
             // Reconstructing legacy array structures for the frontend
             $checkDetails = $caseChecks->mapWithKeys(function($chk) {
@@ -809,11 +851,11 @@ $dueDate = ($maxTat > 0 && $c->created_at) ? $c->created_at->copy()->addDays((in
 
         $caseArray = $case->toArray();
         $caseArray['check_tat'] = $case->caseChecks->mapWithKeys(fn ($chk) => [
-    $chk->check_type => [
-        'working_days'  => $chk->working_days,
-        'calendar_days' => $chk->calendar_days,
-    ],
-])->toArray();
+            $chk->check_type => [
+                'working_days'  => $chk->working_days,
+                'calendar_days' => $chk->calendar_days,
+            ],
+        ])->toArray();
         $caseArray['check_rates'] = $case->caseChecks->pluck('rate', 'check_type')->toArray();
         $caseArray['check_details'] = $case->caseChecks->mapWithKeys(function($chk) {
             return [$chk->check_type => ['fields' => $chk->fields, 'documents' => $chk->documents]];
@@ -856,6 +898,10 @@ $dueDate = ($maxTat > 0 && $c->created_at) ? $c->created_at->copy()->addDays((in
             // Now checks against the check_types catalogue (admin-managed via
             // AddCheckType.jsx) instead of a hardcoded list.
             'checks.*'        => 'exists:check_types,key',
+            'check_tat'       => 'nullable|array',
+            'check_rates'     => 'nullable|array',
+            'overall_tat'     => 'nullable|numeric|min:0',
+            'candidate_portal_link' => 'nullable|string|max:2048',
         ]);
 
         $updateData = $request->only([
@@ -863,6 +909,8 @@ $dueDate = ($maxTat > 0 && $c->created_at) ? $c->created_at->copy()->addDays((in
             'position', 'client_name', 'client_id', 'checks', 'priority',
             'billing_mode', 'payment_timing', 'invoice_cycle', 'po_number',
             'total_amount', 'payment_link', 'notes', 'overall_tat',
+            // Added alongside the create route, for the same reason.
+            'candidate_portal_link',
         ]);
         $updateData['case_source'] = $caseSource;
 
@@ -880,22 +928,78 @@ $dueDate = ($maxTat > 0 && $c->created_at) ? $c->created_at->copy()->addDays((in
 
         $case->update($updateData);
 
-        // Synchronize checks: Add new checks if they were added to the case array
-foreach ($request->checks as $checkKey) {
-    $tat = $request->check_tat[$checkKey] ?? 0;
-    $working  = is_array($tat) ? (int) ($tat['working_days']  ?? 0) : (int) $tat;
-    $calendar = is_array($tat) ? (int) ($tat['calendar_days'] ?? 0) : (int) $tat;
-    CaseCheck::firstOrCreate(
-        ['case_id' => $caseId, 'check_type' => $checkKey],
-        [
-            'rate'          => $request->check_rates[$checkKey] ?? 0,
-            'working_days'  => $working,
-            'calendar_days' => $calendar,
-            'tat_days'      => max($working, $calendar),
-            'status'        => 'pending',
-        ]
-    );
-}
+        // ── Synchronise case_checks with the submitted check list ─────────
+        //
+        // FIX: the old code used CaseCheck::firstOrCreate(), which only ever
+        // wrote the rate/TAT attributes when the row did NOT already exist.
+        // Editing a case and changing an existing check's amount or TAT
+        // therefore saved nothing — the second array argument was ignored
+        // for every check already on the case. firstOrNew() + explicit
+        // assignment fixes that.
+        //
+        // The old code also never removed checks that had been unticked, so
+        // a check taken off a case stayed in case_checks forever: it kept
+        // showing in check_details, kept counting toward documents_count,
+        // and dragged the progress percentage down because the denominator
+        // (count($checks)) shrank while the completed count didn't.
+        foreach ($request->checks as $checkKey) {
+            $check = CaseCheck::firstOrNew([
+                'case_id'    => $caseId,
+                'check_type' => $checkKey,
+            ]);
+
+            $isNew = ! $check->exists;
+
+            // Only overwrite rate/TAT when this request actually carries a
+            // value for this check — a partial update from another screen
+            // shouldn't zero out figures it never sent.
+            $rates = $request->check_rates ?? [];
+            if (array_key_exists($checkKey, $rates)) {
+                $check->rate = $rates[$checkKey] ?? 0;
+            } elseif ($isNew) {
+                $check->rate = 0;
+            }
+
+            $tats = $request->check_tat ?? [];
+            if (array_key_exists($checkKey, $tats)) {
+                $tat = $tats[$checkKey];
+                $working  = is_array($tat) ? (int) ($tat['working_days']  ?? 0) : (int) $tat;
+                $calendar = is_array($tat) ? (int) ($tat['calendar_days'] ?? 0) : (int) $tat;
+                $check->working_days  = $working;
+                $check->calendar_days = $calendar;
+                $check->tat_days      = max($working, $calendar);
+            } elseif ($isNew) {
+                $check->working_days  = 0;
+                $check->calendar_days = 0;
+                $check->tat_days      = 0;
+            }
+
+            if ($isNew) {
+                $check->status = 'pending';
+            }
+
+            $check->save();
+        }
+
+        // Remove checks that were unticked — but ONLY the untouched ones.
+        // A check that already has a verifier, uploaded documents, filled
+        // fields or a saved result represents real work, so it's left in
+        // place rather than silently deleted; deselecting it just stops it
+        // counting toward the case's check list.
+        $removed = CaseCheck::where('case_id', $caseId)
+            ->whereNotIn('check_type', $request->checks)
+            ->get()
+            ->filter(fn ($chk) =>
+                $chk->status === 'pending'
+                && empty($chk->documents)
+                && empty($chk->fields)
+                && empty($chk->result)
+                && empty($chk->verifier_id)
+            );
+
+        foreach ($removed as $chk) {
+            $chk->delete();
+        }
 
         \App\Models\CaseEvent::log($case->case_id, 'edited', 'Case details updated', "Case details for {$case->candidate_name} were edited", ['checks' => $case->checks], $user);
 
@@ -933,13 +1037,39 @@ foreach ($request->checks as $checkKey) {
         $clearRate  = $total > 0 ? round(($completed / $total) * 100) : 0;
 
         // Onboarding-source breakdown — how many cases came in via a
-        // client vs. self-onboarded by the candidate.
+        // client vs. self-onboarded by the candidate. These counts only
+        // become meaningful for cases created after the BGVCase::$fillable
+        // fix; anything created before it has a NULL case_source and will
+        // fall into neither bucket. See the backfill note in my summary.
         $viaClient    = (clone $query)->where('case_source', 'client')->count();
         $viaCandidate = (clone $query)->where('case_source', 'candidate')->count();
 
-        $avgTat = BGVCase::where('status', 'completed')
-            ->selectRaw('AVG(JULIANDAY(updated_at) - JULIANDAY(created_at)) as avg_days')
-            ->value('avg_days');
+        // ── Average TAT, computed per database driver.
+        //
+        // FIX: JULIANDAY() is SQLite-only. On MySQL/MariaDB this threw
+        // SQLSTATE[42000] "FUNCTION julianday does not exist" and took the
+        // whole dashboard down with a 500. Branching on the connection
+        // driver so this works on both — relevant the moment you deploy to
+        // anything other than your local SQLite file.
+        $driver = DB::connection()->getDriverName();
+
+        $avgTatQuery = BGVCase::where('status', 'completed');
+        $avgTat = match ($driver) {
+            'sqlite' => $avgTatQuery
+                ->selectRaw('AVG(JULIANDAY(updated_at) - JULIANDAY(created_at)) as avg_days')
+                ->value('avg_days'),
+            'mysql', 'mariadb' => $avgTatQuery
+                ->selectRaw('AVG(TIMESTAMPDIFF(SECOND, created_at, updated_at) / 86400) as avg_days')
+                ->value('avg_days'),
+            'pgsql' => $avgTatQuery
+                ->selectRaw('AVG(EXTRACT(EPOCH FROM (updated_at - created_at)) / 86400) as avg_days')
+                ->value('avg_days'),
+            default => $avgTatQuery->get()->avg(
+                fn ($c) => $c->created_at && $c->updated_at
+                    ? $c->created_at->diffInSeconds($c->updated_at) / 86400
+                    : null
+            ),
+        };
 
         return response()->json([
             'total'          => $total,
@@ -966,7 +1096,15 @@ foreach ($request->checks as $checkKey) {
         $check->verifier_id = $request->filled('user_id') ? (int) $request->user_id : null;
         $check->save();
 
-        \App\Models\CaseEvent::log($caseId, 'verifier_assigned', ucfirst($request->check_type) . ' verifier updated', 'Assigned to user #' . $request->user_id, [], $request->user());
+        \App\Models\CaseEvent::log(
+            $caseId,
+            'verifier_assigned',
+            ucfirst($request->check_type) . ' verifier updated',
+            // Unassigning sent "Assigned to user #" with nothing after it.
+            $check->verifier_id ? 'Assigned to user #' . $check->verifier_id : 'Verifier unassigned',
+            [],
+            $request->user()
+        );
 
         return response()->json(['message' => 'Assigned', 'verifier_id' => $check->verifier_id]);
     });
@@ -1007,7 +1145,7 @@ foreach ($request->checks as $checkKey) {
         $check = CaseCheck::where('case_id', $caseId)->where('check_type', $checkKey)->firstOrFail();
 
         $path = $request->file('file')->store("case-documents/{$caseId}/{$checkKey}", 'public');
-        $url  = \Illuminate\Support\Facades\Storage::disk('public')->url($path);
+        $url  = Storage::disk('public')->url($path);
 
         $documents = $check->documents ?? [];
         $documents[$request->document_key] = [
@@ -1049,7 +1187,10 @@ foreach ($request->checks as $checkKey) {
         $case = BGVCase::where('case_id', $caseId)->first();
         if ($case) {
             $allChecks = CaseCheck::where('case_id', $caseId)->get();
-            $allDone = $allChecks->every(fn($c) => $c->status === 'completed');
+            // Guard against an empty check list: ->every() on an empty
+            // collection returns true, which would have flipped a case with
+            // zero checks straight to qc-review.
+            $allDone = $allChecks->isNotEmpty() && $allChecks->every(fn($c) => $c->status === 'completed');
             if ($allDone && $case->status !== 'qc-review' && $case->status !== 'completed') {
                 $case->update(['status' => 'qc-review']);
             }
@@ -1258,6 +1399,10 @@ foreach ($request->checks as $checkKey) {
             'scope'      => 'nullable|in:national,international',
         ]);
 
+        // NOTE: $request->all() here means anything the client sends is
+        // handed to the model — it's only safe because Institution::$fillable
+        // constrains it. Worth passing $request->validated() instead when
+        // you next touch this.
         $inst = \App\Models\Institution::create($request->all());
         return response()->json(['institution' => $inst], 201);
     });
@@ -1345,6 +1490,13 @@ foreach ($request->checks as $checkKey) {
     });
 
     Route::get('/clients/{id}', function (Request $request, $id) {
+        // NOTE: this is admin-only, but AddCase.jsx's handleClientChange
+        // calls it to auto-fill checks/rates/TAT when a client is picked —
+        // and that dropdown is also shown to allocators (GET /clients allows
+        // admin + allocator). For an allocator the fetch 403s, the fix
+        // silently returns, and the check table stays empty. If allocators
+        // are meant to raise cases, widen this to in_array($role,
+        // ['admin','allocator']) the same way GET /clients does.
         if ($request->user()->role !== 'admin') return response()->json(['message' => 'Unauthorized'], 403);
         $client = User::where('role', 'client')->findOrFail($id);
         return response()->json(['client' => $client]);
@@ -1360,17 +1512,38 @@ foreach ($request->checks as $checkKey) {
             }
         }
 
-    $request->validate([
-    'companyName'  => 'required|string|max:255',
-    'contactEmail' => 'required|email|unique:users,email,' . $client->id,
-    'billingMode'  => 'nullable|in:prepaid_client,prepaid_candidate,postpaid_client,postpaid_prepaid_client',
-    'agreement'    => 'nullable|file|max:10240|mimes:pdf,doc,docx,jpg,jpeg,png',
-]);
+        $request->validate([
+            'companyName'        => 'required|string|max:255',
+            'contactEmail'       => 'required|email|unique:users,email,' . $client->id,
+            'billingMode'        => 'nullable|in:prepaid_client,prepaid_candidate,postpaid_client,postpaid_prepaid_client',
+            'agreement'          => 'nullable|file|max:10240|mimes:pdf,doc,docx,jpg,jpeg,png',
+            'agreementStartDate' => 'nullable|date',
+            'agreementEndDate'   => 'nullable|date|after_or_equal:agreementStartDate',
+        ]);
 
-        $agreementPath = $client->agreement_path;
+        // ── FIX: same bug as the register route, with an extra consequence.
+        //    This read $client->agreement_path — a column that isn't in
+        //    User::$fillable and (per the register route) was never written
+        //    — so it always evaluated to null. That null was then passed
+        //    straight back into update() under the same non-fillable key,
+        //    meaning an edit could never preserve OR update the agreement
+        //    reference. Reading and writing agreement_url fixes both ends.
+        //
+        //    Deletion of the superseded file strips the public storage URL
+        //    prefix back down to the relative path Storage::delete()
+        //    expects. This assumes the default 'public' disk (the
+        //    public/storage symlink created by `php artisan storage:link`);
+        //    adjust if your disk config differs. Str::after() returns the
+        //    original string when '/storage/' isn't present, so a legacy
+        //    row holding a bare relative path still deletes correctly.
+        $agreementUrl = $client->agreement_url;
         if ($request->hasFile('agreement')) {
-            if ($agreementPath) \Illuminate\Support\Facades\Storage::disk('public')->delete($agreementPath);
-            $agreementPath = $request->file('agreement')->store('agreements', 'public');
+            if ($agreementUrl) {
+                $oldRelativePath = Str::after($agreementUrl, '/storage/');
+                Storage::disk('public')->delete($oldRelativePath);
+            }
+            $agreementStoredPath = $request->file('agreement')->store('agreements', 'public');
+            $agreementUrl = Storage::disk('public')->url($agreementStoredPath);
         }
 
         $client->update([
@@ -1385,9 +1558,9 @@ foreach ($request->checks as $checkKey) {
             'check_rates'          => $request->checkRates ?? $client->check_rates,
             'check_tat'            => $request->checkTat ?? $client->check_tat,
             'notes'                => $request->notes,
-            'agreement_path'       => $agreementPath,
-            'agreement_start_date' => $request->agreementStartDate ?? $client->agreement_start_date,
-            'agreement_end_date'   => $request->agreementEndDate ?? $client->agreement_end_date,
+            'agreement_url'        => $agreementUrl,
+            'agreement_start_date' => $request->agreementStartDate ?: $client->agreement_start_date,
+            'agreement_end_date'   => $request->agreementEndDate ?: $client->agreement_end_date,
         ]);
 
         return response()->json(['message' => 'Client updated', 'client' => $client]);
