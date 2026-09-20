@@ -1568,7 +1568,7 @@ export default function Client() {
               style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "8px",
                 padding: "13px", height: "auto", borderRadius: "6px" }}>
               <img src="images/dashboard/export-excel.svg" alt="" style={{ width: "18px", height: "18px" }} />
-              Download Report123
+              Download Report
             </button>
             <button className="primary-cta export"
               style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "8px",
@@ -1596,7 +1596,7 @@ export default function Client() {
             <p style={{ color: "#94a3b8", fontSize: "14px" }}>No {statusTab === "all" ? "" : statusTab + " "}cases found.</p>
             {cases.length === 0 && (
               <button className="primary-cta" onClick={() => navigate("/AddCase")} style={{ marginTop: "12px" }}>
-                + Add Your First Case
+                + Add Your First Case123
               </button>
             )}
           </div>
