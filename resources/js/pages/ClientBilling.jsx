@@ -58,265 +58,342 @@
 //     </>
 //   );'
 // }
-import { useState } from "react";
+import React, { useState } from "react";
 import Sidebar from "./Sidebar";
 import Header from "./Header";
 
-// TODO: replace with GET /api/clients/:id/invoices
-const MOCK_INVOICES = [
-  { id: "INV-1042", period: "May 2026", checks: 38, amount: 13860, status: "Paid", dueDate: "2026-06-05", breakdown: { employment: 5, education: 8, address: 10, criminal: 7, drug: 5, court: 3 } },
-  { id: "INV-1051", period: "Jun 2026", checks: 21, amount: 7980,  status: "Due",  dueDate: "2026-07-05", breakdown: { employment: 4, education: 6, address: 5, criminal: 4, drug: 2 } },
+// Mock Data matching the UI design
+const MOCK_SUMMARY = {
+  walletBalance: 28450,
+  totalCases: 48,
+  amountUsed: 21550,
+  pendingPayment: 8760,
+  lastRecharge: "12 Sep 2025",
+  lastRechargeAmount: 50000,
+  autoRechargeThreshold: 5000,
+  billingMode: "Prepaid — Client",
+  billingModeDesc: "You will be billed in advance through your wallet.",
+};
+
+const MOCK_RATE_CARD = [
+  { label: "Employment", rate: 1200 },
+  { label: "Criminal", rate: 1500 },
+  { label: "Education", rate: 1000 },
+  { label: "Global Check", rate: 2000 },
+  { label: "Identity", rate: 800 },
+  { label: "Drug Verification", rate: 1800 },
+  { label: "Address", rate: 700 },
+  { label: "Other Checks", rate: 900 },
 ];
 
-const CHECK_RATES = {
-  employment: 350, education: 280, address: 180,
-  database: 120,  criminal: 220,  drug: 400, court: 160,
+const MOCK_TRANSACTIONS = [
+  { date: "19 Sep 2025 10:24 AM", id: "TXN-00876", desc: "Wallet Recharge", type: "-", cases: "-", amount: "+50,000", balance: "28,450", status: "Success", positive: true },
+  { date: "18 Sep 2025 04:15 PM", id: "TXN-00875", desc: "Case Charge - Employment", type: "Employment", cases: 3, amount: "-3,600", balance: "-21,550", status: "Success", positive: false },
+  { date: "17 Sep 2025 11:32 AM", id: "TXN-00874", desc: "Case Charge - Education", type: "Education", cases: 2, amount: "-2,000", balance: "-17,950", status: "Success", positive: false },
+  { date: "16 Sep 2025 03:27 PM", id: "TXN-00873", desc: "Case Charge - Identity", type: "Identity", cases: 1, amount: "-800", balance: "-15,950", status: "Success", positive: false },
+  { date: "14 Sep 2025 12:18 PM", id: "TXN-00872", desc: "Case Charge - Address", type: "Address", cases: 1, amount: "-700", balance: "-15,150", status: "Success", positive: false },
+];
+
+const MOCK_INVOICE = {
+  no: "INV-2025-09-001",
+  period: "01 Sep 2025 – 30 Sep 2025",
+  checks: 42,
+  amount: 21550,
+  gst: 3879,
+  total: 25429,
+  paid: 16669,
+  due: 8760,
 };
 
-const CHECK_LABELS = {
-  employment: "Employment", education: "Education", address: "Address",
-  database: "Database", criminal: "Criminal", drug: "Drug Test", court: "Courtroom",
-};
-
-function getUser() {
-  try { return JSON.parse(localStorage.getItem("user")) || {}; } catch { return {}; }
-}
+const MOCK_CASE_CHARGES = [
+  { name: "Rahul Sharma / C-1001", checks: "Employment, Education, Identity", rate: 3000, gst: 540, total: 3540 },
+  { name: "Priya Verma / C-1002", checks: "Address, Criminal", rate: 2200, gst: 396, total: 2596 },
+  { name: "Amit Kumar / C-1003", checks: "Education, Global Check", rate: 3000, gst: 540, total: 3540 },
+  { name: "Neha Singh / C-1004", checks: "Identity, Drug Verification", rate: 3600, gst: 648, total: 4248 },
+];
 
 export default function ClientBilling() {
-  const user = getUser();
-  const [expandedInv, setExpandedInv] = useState(null);
-  const [payingInv, setPayingInv] = useState(null);
-  const [paid, setPaid] = useState([]);
-
-  const invoices = MOCK_INVOICES.map(inv => ({
-    ...inv,
-    status: paid.includes(inv.id) ? "Paid" : inv.status,
-  }));
-
-  const totalDue   = invoices.filter(i => i.status === "Due").reduce((s, i) => s + i.amount, 0);
-  const totalPaid  = invoices.filter(i => i.status === "Paid").reduce((s, i) => s + i.amount, 0);
-  const dueCount   = invoices.filter(i => i.status === "Due").length;
-
-  // Client's agreed checks from registration
-  const agreedChecks = user.agreedChecks || [];
-  const checkRates   = user.checkRates   || CHECK_RATES;
-
-  const handlePay = (invId) => {
-    setPaid(p => [...p, invId]);
-    setPayingInv(null);
-  };
+  const [rechargeModalOpen, setRechargeModalOpen] = useState(false);
 
   return (
     <>
       <Sidebar />
       <section id="content">
         <Header />
-        <main>
-          <div className="dash-wrper">
+        <main className="cb-main-container">
+          {/* Top Title & Subtitle */}
+          <div className="cb-page-header">
+            <h2>Billing</h2>
+            <p>Manage your wallet, payments and invoices</p>
+          </div>
 
-            {/* ── Stats ── */}
-            <div className="cards-head-dash">
-              <div className="card-inner-dash bdr-total">
-                <h4>{invoices.length}</h4>
-                <p>Total Invoices</p>
-              </div>
-              <div className="card-inner-dash bdr-progress">
-                <h4>₹{totalDue.toLocaleString()}</h4>
-                <p>Amount Due</p>
-              </div>
-              <div className="card-inner-dash bdr-com">
-                <h4>₹{totalPaid.toLocaleString()}</h4>
-                <p>Total Paid</p>
-              </div>
-              <div className="card-inner-dash bdr-rate">
-                <h4>{dueCount}</h4>
-                <p>Pending Bills</p>
+          {/* Top 4 Summary Cards */}
+          <div className="cb-summary-grid">
+            <div className="cb-summary-card">
+              <div className="cb-card-icon green-bg">👛</div>
+              <div>
+                <span className="cb-summary-title">Wallet Balance</span>
+                <div className="cb-summary-value">₹{MOCK_SUMMARY.walletBalance.toLocaleString()}</div>
+                <span className="cb-summary-sub">Available balance in your wallet</span>
               </div>
             </div>
 
-            <div className="cb-layout">
-
-              {/* ══ LEFT — Invoice Table ══ */}
-              <div className="cb-main">
-                <div className="cb-card">
-                  <div className="cb-card-header">
-                    <div className="cb-card-header-left">
-                      <span className="ac-num">01</span>
-                      <h3>BILLING & INVOICES</h3>
-                    </div>
-                    {dueCount > 0 && (
-                      <span className="cb-due-badge">{dueCount} due</span>
-                    )}
-                  </div>
-
-                  <div className="cb-invoice-list">
-                    {invoices.map((inv) => {
-                      const isExpanded = expandedInv === inv.id;
-                      const isDue = inv.status === "Due";
-                      return (
-                        <div key={inv.id}
-                          className={`cb-invoice-row ${isDue ? "cb-inv-due" : "cb-inv-paid"}`}>
-                          <div className="cb-inv-main"
-                            onClick={() => setExpandedInv(isExpanded ? null : inv.id)}>
-                            <div className="cb-inv-left">
-                              <div className="cb-inv-id">{inv.id}</div>
-                              <div className="cb-inv-meta">{inv.period} · {inv.checks} checks</div>
-                            </div>
-                            <div className="cb-inv-right">
-                              <div className="cb-inv-amount">₹{inv.amount.toLocaleString()}</div>
-                              <div className="cb-inv-due-date">
-                                {isDue ? `Due ${inv.dueDate}` : `Paid`}
-                              </div>
-                            </div>
-                            <div className="cb-inv-status-col">
-                              <span className={`cb-status-pill ${isDue ? "cb-pill-due" : "cb-pill-paid"}`}>
-                                {inv.status}
-                              </span>
-                              <span className="cb-chevron">{isExpanded ? "▲" : "▼"}</span>
-                            </div>
-                          </div>
-
-                          {isExpanded && inv.breakdown && (
-                            <div className="cb-inv-breakdown">
-                              <div className="cb-breakdown-title">Check Breakdown</div>
-                              <div className="cb-breakdown-grid">
-                                {Object.entries(inv.breakdown).map(([key, count]) => (
-                                  <div key={key} className="cb-breakdown-row">
-                                    <span className="cb-breakdown-label">
-                                      {CHECK_LABELS[key] || key}
-                                    </span>
-                                    <span className="cb-breakdown-count">{count}×</span>
-                                    <span className="cb-breakdown-rate">
-                                      ₹{(checkRates[key] || CHECK_RATES[key] || 0) * count}
-                                    </span>
-                                  </div>
-                                ))}
-                              </div>
-                              {isDue && (
-                                <button
-                                  className="primary-cta cb-pay-btn"
-                                  onClick={() => setPayingInv(inv)}>
-                                  Pay ₹{inv.amount.toLocaleString()} →
-                                </button>
-                              )}
-                            </div>
-                          )}
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-              </div>
-
-              {/* ══ RIGHT — Rate Card ══ */}
-              <div className="cb-side">
-
-                {/* Rate Card */}
-                <div className="cb-card">
-                  <div className="cb-card-header">
-                    <div className="cb-card-header-left">
-                      <span className="ac-num">02</span>
-                      <h3>YOUR RATE CARD</h3>
-                    </div>
-                  </div>
-
-                  {agreedChecks.length > 0 ? (
-                    <>
-                      <p className="cb-rate-note">
-                        Rates agreed during registration. Contact your account manager to update.
-                      </p>
-                      <div className="cb-rate-list">
-                        {agreedChecks.map((key) => {
-                          const rate = checkRates[key] ?? CHECK_RATES[key] ?? 0;
-                          const label = CHECK_LABELS[key] || key;
-                          return (
-                            <div key={key} className="cb-rate-row">
-                              <div className="cb-rate-dot-label">
-                                <span className="cb-rate-dot" />
-                                <span className="cb-rate-label">{label}</span>
-                              </div>
-                              <span className="cb-rate-amount">₹{rate}</span>
-                            </div>
-                          );
-                        })}
-                      </div>
-
-                      <div className="cb-rate-footer">
-                        <span>Billing Mode</span>
-                        <strong style={{ color: "#2b3b8c" }}>
-                          {user.billingMode === "prepaid_client"    ? "Prepaid — Client"
-                          : user.billingMode === "prepaid_candidate" ? "Prepaid — Candidate"
-                          : user.billingMode === "postpaid_client"   ? "Postpaid — Client"
-                          : "—"}
-                        </strong>
-                      </div>
-                    </>
-                  ) : (
-                    <div className="cb-empty-rate">
-                      No rate card configured. Contact support.
-                    </div>
-                  )}
-                </div>
-
-                {/* Quick Pay — show only if any due */}
-                {dueCount > 0 && (
-                  <div className="cb-card cb-quick-pay">
-                    <div className="cb-card-header">
-                      <div className="cb-card-header-left">
-                        <span className="ac-num" style={{ background: "#eb4d4b" }}>!</span>
-                        <h3>PAYMENT DUE</h3>
-                      </div>
-                    </div>
-                    <div className="cb-due-amount">₹{totalDue.toLocaleString()}</div>
-                    <p className="cb-due-label">outstanding balance</p>
-                    {invoices.filter(i => i.status === "Due").map(inv => (
-                      <button key={inv.id}
-                        className="primary-cta cb-pay-full-btn"
-                        onClick={() => setPayingInv(inv)}>
-                        Pay {inv.id} — ₹{inv.amount.toLocaleString()}
-                      </button>
-                    ))}
-                  </div>
-                )}
-
+            <div className="cb-summary-card">
+              <div className="cb-card-icon blue-bg">👤</div>
+              <div>
+                <span className="cb-summary-title">Total Cases</span>
+                <div className="cb-summary-value">{MOCK_SUMMARY.totalCases}</div>
+                <span className="cb-summary-sub">Cases created till date</span>
               </div>
             </div>
 
+            <div className="cb-summary-card">
+              <div className="cb-card-icon orange-bg">₹</div>
+              <div>
+                <span className="cb-summary-title">Amount Used</span>
+                <div className="cb-summary-value">₹{MOCK_SUMMARY.amountUsed.toLocaleString()}</div>
+                <span className="cb-summary-sub">Total amount deducted</span>
+              </div>
+            </div>
+
+            <div className="cb-summary-card">
+              <div className="cb-card-icon red-bg">🕒</div>
+              <div>
+                <span className="cb-summary-title">Pending Payment</span>
+                <div className="cb-summary-value">₹{MOCK_SUMMARY.pendingPayment.toLocaleString()}</div>
+                <span className="cb-summary-sub">Outstanding amount</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Section 1: Wallet Details + Billing Mode + Rate Card */}
+          <div className="cb-row-grid three-col">
+            {/* Wallet Details */}
+            <div className="cb-panel">
+              <div className="cb-panel-header">
+                <h3>👛 Wallet Details</h3>
+              </div>
+              <div className="cb-wallet-info">
+                <div className="cb-wallet-amounts">
+                  <div>
+                    <span className="cb-label">Current Wallet Balance</span>
+                    <p className="cb-bold-amount">₹{MOCK_SUMMARY.walletBalance.toLocaleString()}</p>
+                  </div>
+                  <div>
+                    <span className="cb-label">Available Credit / Balance</span>
+                    <p className="cb-bold-amount">₹{MOCK_SUMMARY.walletBalance.toLocaleString()}</p>
+                  </div>
+                  <button className="cb-btn-primary" onClick={() => setRechargeModalOpen(true)}>
+                    + Add Money / Recharge Wallet
+                  </button>
+                </div>
+                <hr className="cb-divider" />
+                <div className="cb-wallet-meta">
+                  <div>
+                    <span className="cb-label">🗓️ Last Recharge</span>
+                    <p className="cb-sm-text">{MOCK_SUMMARY.lastRecharge} &nbsp; ₹{MOCK_SUMMARY.lastRechargeAmount.toLocaleString()}</p>
+                  </div>
+                  <div>
+                    <span className="cb-label">🔄 Auto-Recharge</span>
+                    <p className="cb-status-text">
+                      <span className="cb-badge-green">Enabled</span>
+                      <small>(When balance falls below ₹{MOCK_SUMMARY.autoRechargeThreshold.toLocaleString()})</small>
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Billing Mode */}
+            <div className="cb-panel">
+              <div className="cb-panel-header">
+                <h3>📄 Billing Mode</h3>
+              </div>
+              <div className="cb-mode-content">
+                <h4 className="cb-mode-title">{MOCK_SUMMARY.billingMode}</h4>
+                <p className="cb-mode-desc">{MOCK_SUMMARY.billingModeDesc}</p>
+              </div>
+            </div>
+
+            {/* Rate Card */}
+            <div className="cb-panel">
+              <div className="cb-panel-header">
+                <h3>🛡️ Rate Card <small>(Per Check)</small></h3>
+              </div>
+              <div className="cb-rate-grid">
+                {MOCK_RATE_CARD.map((item) => (
+                  <div key={item.label} className="cb-rate-item">
+                    <span>{item.label}</span>
+                    <strong>₹{item.rate.toLocaleString()}</strong>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Section 2: Ledger & Side Menu */}
+          <div className="cb-row-grid main-with-sidebar">
+            <div className="cb-main-column">
+              {/* Wallet Ledger / Transaction History */}
+              <div className="cb-panel">
+                <div className="cb-panel-header space-between">
+                  <h3>📜 Wallet Ledger / Transaction History</h3>
+                  <button className="cb-btn-outline">👁️ View All Transactions</button>
+                </div>
+                <div className="cb-table-wrapper">
+                  <table className="cb-table">
+                    <thead>
+                      <tr>
+                        <th>Date</th>
+                        <th>Transaction ID</th>
+                        <th>Description</th>
+                        <th>Check Type</th>
+                        <th>Cases</th>
+                        <th>Amount (₹)</th>
+                        <th>Balance (₹)</th>
+                        <th>Status</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {MOCK_TRANSACTIONS.map((txn) => (
+                        <tr key={txn.id}>
+                          <td>{txn.date}</td>
+                          <td className="cb-font-mono">{txn.id}</td>
+                          <td>{txn.desc}</td>
+                          <td>{txn.type}</td>
+                          <td>{txn.cases}</td>
+                          <td className={txn.positive ? "cb-text-green" : "cb-text-red"}>{txn.amount}</td>
+                          <td>{txn.balance}</td>
+                          <td><span className="cb-badge-pill">{txn.status}</span></td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+              {/* Latest Invoice */}
+              <div className="cb-panel">
+                <div className="cb-panel-header">
+                  <h3>🧾 Latest Invoice</h3>
+                </div>
+                <div className="cb-table-wrapper">
+                  <table className="cb-table">
+                    <thead>
+                      <tr>
+                        <th>Invoice No.</th>
+                        <th>Billing Period</th>
+                        <th>Total Checks</th>
+                        <th>Amount (₹)</th>
+                        <th>GST (₹)</th>
+                        <th>Total (₹)</th>
+                        <th>Paid / Due</th>
+                        <th>Action</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td className="cb-font-mono">{MOCK_INVOICE.no}</td>
+                        <td>{MOCK_INVOICE.period}</td>
+                        <td>{MOCK_INVOICE.checks}</td>
+                        <td>₹{MOCK_INVOICE.amount.toLocaleString()}</td>
+                        <td>₹{MOCK_INVOICE.gst.toLocaleString()}</td>
+                        <td>₹{MOCK_INVOICE.total.toLocaleString()}</td>
+                        <td>
+                          <span className="cb-text-green">₹{MOCK_INVOICE.paid.toLocaleString()}</span> /{" "}
+                          <span className="cb-text-red">₹{MOCK_INVOICE.due.toLocaleString()}</span>
+                        </td>
+                        <td>
+                          <button className="cb-btn-sm-outline">📥 Download Invoice</button>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+              {/* Case-wise Charges */}
+              <div className="cb-panel">
+                <div className="cb-panel-header space-between">
+                  <h3>📋 Case-wise Charges</h3>
+                  <span className="cb-chevron-icon">▼</span>
+                </div>
+                <div className="cb-table-wrapper">
+                  <table className="cb-table">
+                    <thead>
+                      <tr>
+                        <th>Candidate / Case ID</th>
+                        <th>Checks Performed</th>
+                        <th>Rate (₹)</th>
+                        <th>GST (₹)</th>
+                        <th>Total (₹)</th>
+                        <th></th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {MOCK_CASE_CHARGES.map((c, i) => (
+                        <tr key={i}>
+                          <td className="cb-font-semibold">{c.name}</td>
+                          <td>{c.checks}</td>
+                          <td>{c.rate.toLocaleString()}</td>
+                          <td>{c.gst}</td>
+                          <td>{c.total.toLocaleString()}</td>
+                          <td className="cb-text-center">&gt;</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+
+            {/* Right Sidebar Widgets */}
+            <div className="cb-side-column">
+              {/* Connected Wallet Banner */}
+              <div className="cb-panel cb-green-card">
+                <div className="cb-green-card-title">
+                  <span className="cb-check-circle">✓</span>
+                  <h4>Connected to Admin Wallet</h4>
+                </div>
+                <p>
+                  Your client wallet is managed by the Satyapan Admin Portal. Admin controls wallet credit, rates, invoices and adjustments.
+                </p>
+                <div className="cb-green-tags">
+                  <span>● Secure</span>
+                  <span>● Transparent</span>
+                  <span>● Managed</span>
+                </div>
+              </div>
+
+              {/* Quick Actions */}
+              <div className="cb-panel">
+                <div className="cb-panel-header">
+                  <h3>⚡ Quick Actions</h3>
+                </div>
+                <div className="cb-quick-actions">
+                  <button className="cb-btn-full-green" onClick={() => setRechargeModalOpen(true)}>
+                    👛 Recharge Wallet
+                  </button>
+                  <button className="cb-btn-full-outline">📥 Download Invoice</button>
+                  <button className="cb-btn-full-outline">📊 View Transactions</button>
+                  <button className="cb-btn-full-outline">💳 Request Credit</button>
+                </div>
+              </div>
+            </div>
           </div>
         </main>
       </section>
 
-      {/* ── Payment Modal ── */}
-      {payingInv && (
-        <div className="cb-modal-overlay" onClick={() => setPayingInv(null)}>
-          <div className="cb-modal" onClick={e => e.stopPropagation()}>
-            <div className="cb-modal-header">
-              <h3>Pay Invoice</h3>
-              <button className="cb-modal-close" onClick={() => setPayingInv(null)}>✕</button>
-            </div>
-
-            <div className="cb-modal-body">
-              <div className="cb-modal-inv-id">{payingInv.id}</div>
-              <div className="cb-modal-amount">₹{payingInv.amount.toLocaleString()}</div>
-              <div className="cb-modal-period">{payingInv.period} · {payingInv.checks} checks</div>
-
-              <div className="cb-payment-methods">
-                {[
-                  { key: "upi",    label: "UPI / QR",      icon: "📱" },
-                  { key: "card",   label: "Credit / Debit", icon: "💳" },
-                  { key: "neft",   label: "NEFT / IMPS",    icon: "🏦" },
-                ].map(m => (
-                  <button key={m.key} className="cb-pay-method-btn"
-                    onClick={() => handlePay(payingInv.id)}>
-                    <span className="cb-pay-method-icon">{m.icon}</span>
-                    <span>{m.label}</span>
-                  </button>
-                ))}
-              </div>
-
-              <p className="cb-modal-note">
-                This is a demo. In production this opens your payment gateway.
-              </p>
+      {/* Basic Recharge Modal */}
+      {rechargeModalOpen && (
+        <div className="cb-modal-overlay" onClick={() => setRechargeModalOpen(false)}>
+          <div className="cb-modal-box" onClick={(e) => e.stopPropagation()}>
+            <h3>Recharge Wallet</h3>
+            <p>Enter the amount to add to your wallet balance.</p>
+            <input type="number" placeholder="Enter Amount (₹)" className="cb-input-field" defaultValue="5000" />
+            <div className="cb-modal-actions">
+              <button className="cb-btn-outline" onClick={() => setRechargeModalOpen(false)}>Cancel</button>
+              <button className="cb-btn-primary" onClick={() => setRechargeModalOpen(false)}>Proceed to Pay</button>
             </div>
           </div>
         </div>
@@ -328,83 +405,96 @@ export default function ClientBilling() {
 }
 
 const styles = `
-  .cb-layout { display: grid; grid-template-columns: 1fr 320px; gap: 20px; margin-top: 20px; }
-  @media (max-width: 960px) { .cb-layout { grid-template-columns: 1fr; } }
+  .cb-main-container { padding: 24px; background: #f4f7fc; min-height: 100vh; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; color: #334155; }
+  .cb-page-header { margin-bottom: 20px; }
+  .cb-page-header h2 { font-size: 1.5rem; font-weight: 700; color: #0f172a; margin: 0; }
+  .cb-page-header p { font-size: 0.875rem; color: #64748b; margin-top: 2px; }
 
-  .cb-card { background: #fff; border: 1px solid #e8ecf4; border-radius: 12px; padding: 22px; margin-bottom: 16px; }
-  .cb-card:last-child { margin-bottom: 0; }
+  /* Summary Grid */
+  .cb-summary-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 20px; }
+  .cb-summary-card { background: #fff; border: 1px solid #e2e8f0; border-radius: 10px; padding: 16px; display: flex; align-items: flex-start; gap: 14px; }
+  .cb-card-icon { width: 42px; height: 42px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; flex-shrink: 0; }
+  .green-bg { background: #e6f4ea; color: #137333; }
+  .blue-bg { background: #e8f0fe; color: #1a73e8; }
+  .orange-bg { background: #fef7e0; color: #b06000; }
+  .red-bg { background: #fce8e6; color: #c5221f; }
+  .cb-summary-title { font-size: 0.75rem; font-weight: 600; color: #64748b; text-transform: uppercase; }
+  .cb-summary-value { font-size: 1.35rem; font-weight: 800; color: #0f172a; margin: 2px 0; }
+  .cb-summary-sub { font-size: 0.7rem; color: #94a3b8; }
 
-  .cb-card-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px; padding-bottom: 14px; border-bottom: 2px solid #f0f2f8; }
-  .cb-card-header-left { display: flex; align-items: center; gap: 10px; }
-  .cb-card-header h3 { font-size: 0.82rem; font-weight: 700; color: #2b3b8c; letter-spacing: 0.06em; text-transform: uppercase; margin: 0; }
+  /* Generic Panels */
+  .cb-panel { background: #fff; border: 1px solid #e2e8f0; border-radius: 10px; padding: 18px; margin-bottom: 16px; }
+  .cb-panel-header { margin-bottom: 14px; }
+  .cb-panel-header.space-between { display: flex; justify-content: space-between; align-items: center; }
+  .cb-panel-header h3 { font-size: 0.95rem; font-weight: 700; color: #1e293b; margin: 0; display: flex; align-items: center; gap: 6px; }
+  .cb-panel-header h3 small { font-size: 0.75rem; color: #64748b; font-weight: normal; }
 
-  .cb-due-badge { background: #fff5f5; color: #eb4d4b; border: 1px solid #fca5a5; border-radius: 20px; font-size: 0.7rem; font-weight: 700; padding: 3px 10px; }
+  /* Layout Grids */
+  .cb-row-grid { display: grid; gap: 16px; }
+  .cb-row-grid.three-col { grid-template-columns: 2fr 1fr 1.5fr; }
+  .cb-row-grid.main-with-sidebar { grid-template-columns: 1fr 300px; }
 
-  /* Invoice rows */
-  .cb-invoice-list { display: flex; flex-direction: column; gap: 10px; }
-  .cb-invoice-row { border: 1.5px solid #e2e8f0; border-radius: 10px; overflow: hidden; transition: border-color 0.15s; }
-  .cb-inv-due { border-color: #fca5a5; }
-  .cb-inv-paid { border-color: #bbf7d0; }
+  /* Wallet Details Card */
+  .cb-wallet-amounts { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
+  .cb-label { font-size: 0.75rem; color: #64748b; font-weight: 500; }
+  .cb-bold-amount { font-size: 1.25rem; font-weight: 800; color: #0f172a; margin-top: 2px; }
+  .cb-divider { border: 0; border-top: 1px solid #f1f5f9; margin: 14px 0; }
+  .cb-wallet-meta { display: flex; gap: 40px; }
+  .cb-sm-text { font-size: 0.8rem; font-weight: 600; color: #334155; margin-top: 2px; }
+  .cb-badge-green { background: #dcfce7; color: #166534; font-size: 0.7rem; font-weight: 700; padding: 2px 8px; border-radius: 12px; margin-right: 6px; }
+  .cb-status-text { font-size: 0.8rem; color: #64748b; margin-top: 2px; display: flex; align-items: center; }
 
-  .cb-inv-main { display: flex; align-items: center; gap: 12px; padding: 14px 16px; cursor: pointer; background: #f8fafc; transition: background 0.15s; }
-  .cb-inv-main:hover { background: #f1f5f9; }
-  .cb-inv-due .cb-inv-main { background: #fff5f5; }
-  .cb-inv-paid .cb-inv-main { background: #f0fdf4; }
+  /* Billing Mode Card */
+  .cb-mode-content { background: #f8fafc; padding: 14px; border-radius: 8px; border: 1px dashed #cbd5e1; }
+  .cb-mode-title { font-size: 0.95rem; font-weight: 700; color: #1e3a8a; margin: 0 0 6px 0; }
+  .cb-mode-desc { font-size: 0.75rem; color: #64748b; line-height: 1.4; margin: 0; }
 
-  .cb-inv-left { flex: 1; }
-  .cb-inv-id { font-size: 0.9rem; font-weight: 700; color: #1e293b; }
-  .cb-inv-meta { font-size: 0.75rem; color: #94a3b8; margin-top: 2px; }
+  /* Rate Card Grid */
+  .cb-rate-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 16px; font-size: 0.78rem; }
+  .cb-rate-item { display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid #f1f5f9; }
+  .cb-rate-item span { color: #475569; }
+  .cb-rate-item strong { color: #0f172a; }
 
-  .cb-inv-right { text-align: right; margin-right: 12px; }
-  .cb-inv-amount { font-size: 1rem; font-weight: 800; color: #1e293b; }
-  .cb-inv-due-date { font-size: 0.72rem; color: #94a3b8; margin-top: 2px; }
+  /* Tables */
+  .cb-table-wrapper { overflow-x: auto; }
+  .cb-table { width: 100%; border-collapse: collapse; font-size: 0.78rem; text-align: left; }
+  .cb-table th { background: #f8fafc; color: #64748b; font-weight: 600; padding: 10px 12px; border-bottom: 1px solid #e2e8f0; white-space: nowrap; }
+  .cb-table td { padding: 10px 12px; border-bottom: 1px solid #f1f5f9; color: #334155; white-space: nowrap; }
+  .cb-font-mono { font-family: monospace; font-size: 0.8rem; }
+  .cb-font-semibold { font-weight: 600; }
+  .cb-text-green { color: #16a34a; font-weight: 600; }
+  .cb-text-red { color: #dc2626; font-weight: 600; }
+  .cb-badge-pill { background: #dcfce7; color: #15803d; padding: 2px 8px; border-radius: 10px; font-size: 0.7rem; font-weight: 600; }
 
-  .cb-inv-status-col { display: flex; flex-direction: column; align-items: center; gap: 4px; }
-  .cb-status-pill { font-size: 0.68rem; font-weight: 700; padding: 3px 10px; border-radius: 20px; white-space: nowrap; }
-  .cb-pill-due  { background: #fff5f5; color: #eb4d4b; border: 1px solid #fca5a5; }
-  .cb-pill-paid { background: #f0fdf4; color: #16a34a; border: 1px solid #86efac; }
-  .cb-chevron { font-size: 0.6rem; color: #94a3b8; }
+  /* Buttons */
+  .cb-btn-primary { background: #00a86b; color: #fff; border: none; padding: 8px 16px; border-radius: 6px; font-size: 0.8rem; font-weight: 600; cursor: pointer; transition: background 0.2s; }
+  .cb-btn-primary:hover { background: #008f5a; }
+  .cb-btn-outline { background: #fff; border: 1px solid #cbd5e1; color: #334155; padding: 6px 12px; border-radius: 6px; font-size: 0.75rem; font-weight: 600; cursor: pointer; }
+  .cb-btn-sm-outline { background: #fff; border: 1px solid #cbd5e1; color: #1e293b; padding: 4px 8px; border-radius: 4px; font-size: 0.7rem; cursor: pointer; }
+  .cb-btn-full-green { width: 100%; background: #00a86b; color: #fff; border: none; padding: 10px; border-radius: 6px; font-size: 0.8rem; font-weight: 600; cursor: pointer; margin-bottom: 8px; text-align: left; }
+  .cb-btn-full-outline { width: 100%; background: #fff; border: 1px solid #e2e8f0; color: #334155; padding: 9px; border-radius: 6px; font-size: 0.78rem; font-weight: 500; cursor: pointer; margin-bottom: 8px; text-align: left; transition: background 0.15s; }
+  .cb-btn-full-outline:hover { background: #f8fafc; }
 
-  /* Breakdown */
-  .cb-inv-breakdown { padding: 14px 16px; border-top: 1px dashed #e2e8f0; background: #fff; }
-  .cb-breakdown-title { font-size: 0.72rem; font-weight: 700; color: #475569; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 10px; }
-  .cb-breakdown-grid { display: flex; flex-direction: column; gap: 6px; margin-bottom: 14px; }
-  .cb-breakdown-row { display: flex; align-items: center; gap: 8px; font-size: 0.8rem; }
-  .cb-breakdown-label { flex: 1; color: #475569; }
-  .cb-breakdown-count { color: #94a3b8; font-weight: 600; width: 28px; text-align: right; }
-  .cb-breakdown-rate { font-weight: 700; color: #2b3b8c; width: 60px; text-align: right; }
-  .cb-pay-btn { width: 100%; padding: 10px; font-size: 0.85rem; margin-top: 4px; }
+  /* Right Side Connected Wallet Box */
+  .cb-green-card { background: #f0fdf4; border: 1px solid #bbf7d0; }
+  .cb-green-card-title { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+  .cb-check-circle { width: 20px; height: 20px; background: #16a34a; color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: bold; }
+  .cb-green-card h4 { margin: 0; font-size: 0.85rem; color: #14532d; font-weight: 700; }
+  .cb-green-card p { font-size: 0.75rem; color: #166534; line-height: 1.4; margin: 0 0 12px 0; }
+  .cb-green-tags { display: flex; gap: 12px; font-size: 0.7rem; color: #15803d; font-weight: 600; }
 
-  /* Rate card */
-  .cb-rate-note { font-size: 0.75rem; color: #94a3b8; margin: 0 0 14px; }
-  .cb-rate-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px; }
-  .cb-rate-row { display: flex; align-items: center; justify-content: space-between; padding: 8px 12px; background: #f8fafc; border-radius: 8px; border: 1px solid #e2e8f0; }
-  .cb-rate-dot-label { display: flex; align-items: center; gap: 8px; }
-  .cb-rate-dot { width: 8px; height: 8px; border-radius: 50%; background: #2b3b8c; flex-shrink: 0; }
-  .cb-rate-label { font-size: 0.8rem; font-weight: 600; color: #334155; }
-  .cb-rate-amount { font-size: 0.8rem; font-weight: 700; color: #2b3b8c; }
-  .cb-rate-footer { display: flex; justify-content: space-between; align-items: center; padding-top: 14px; border-top: 1px solid #f0f2f8; font-size: 0.78rem; color: #64748b; }
-  .cb-empty-rate { font-size: 0.8rem; color: #94a3b8; text-align: center; padding: 16px 0; }
+  /* Modal */
+  .cb-modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.4); display: flex; align-items: center; justify-content: center; z-index: 1000; }
+  .cb-modal-box { background: #fff; padding: 24px; border-radius: 10px; width: 360px; }
+  .cb-modal-box h3 { margin: 0 0 6px 0; font-size: 1.1rem; }
+  .cb-modal-box p { margin: 0 0 16px 0; font-size: 0.8rem; color: #64748b; }
+  .cb-input-field { width: 100%; padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.9rem; margin-bottom: 16px; box-sizing: border-box; }
+  .cb-modal-actions { display: flex; justify-content: flex-end; gap: 8px; }
 
-  /* Quick pay card */
-  .cb-quick-pay { text-align: center; }
-  .cb-due-amount { font-size: 2rem; font-weight: 800; color: #eb4d4b; }
-  .cb-due-label { font-size: 0.75rem; color: #94a3b8; margin: 2px 0 16px; }
-  .cb-pay-full-btn { width: 100%; padding: 11px; font-size: 0.85rem; margin-bottom: 8px; }
-
-  /* Payment modal */
-  .cb-modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 1000; display: flex; align-items: center; justify-content: center; }
-  .cb-modal { background: #fff; border-radius: 16px; padding: 32px; width: 100%; max-width: 420px; box-shadow: 0 20px 60px rgba(0,0,0,0.2); }
-  .cb-modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-  .cb-modal-header h3 { font-size: 1.1rem; font-weight: 700; color: #1e293b; margin: 0; }
-  .cb-modal-close { background: none; border: none; font-size: 1.1rem; color: #94a3b8; cursor: pointer; }
-  .cb-modal-body { text-align: center; }
-  .cb-modal-inv-id { font-size: 0.8rem; font-weight: 700; color: #2b3b8c; background: #eef1fb; display: inline-block; padding: 4px 12px; border-radius: 20px; margin-bottom: 12px; }
-  .cb-modal-amount { font-size: 2.2rem; font-weight: 800; color: #1e293b; }
-  .cb-modal-period { font-size: 0.78rem; color: #94a3b8; margin: 4px 0 24px; }
-  .cb-payment-methods { display: flex; flex-direction: column; gap: 10px; margin-bottom: 16px; }
-  .cb-pay-method-btn { display: flex; align-items: center; gap: 12px; padding: 14px 16px; border: 1.5px solid #e2e8f0; border-radius: 10px; background: #f8fafc; cursor: pointer; font-size: 0.875rem; font-weight: 600; color: #334155; transition: all 0.15s; }
-  .cb-pay-method-btn:hover { border-color: #2b3b8c; background: #eef1fb; color: #2b3b8c; }
-  .cb-pay-method-icon { font-size: 1.2rem; }
-  .cb-modal-note { font-size: 0.7rem; color: #94a3b8; }
+  /* Responsive Adjustments */
+  @media (max-width: 1024px) {
+    .cb-summary-grid { grid-template-columns: 1fr 1fr; }
+    .cb-row-grid.three-col { grid-template-columns: 1fr; }
+    .cb-row-grid.main-with-sidebar { grid-template-columns: 1fr; }
+  }
 `;
