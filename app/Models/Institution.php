@@ -1,34 +1,77 @@
 <?php
+Route::post('/institutions', function (Request $request) {
+    if ($request->user()->role !== 'admin') return response()->json(['message' => 'Unauthorized'], 403);
 
-namespace App\Models;
+    $request->validate([
+        'type'                => 'required|in:university,college,institute,lab,court',
+        'name'                => 'required|string|max:255',
+        'code'                => 'nullable|string|max:20',
+        'state'               => 'nullable|string|max:100',
+        'city'                => 'nullable|string|max:100',
+        'pinCode'             => 'nullable|string|max:10',
+        'scope'               => 'nullable|in:National,International,national,international',
+        'website'             => 'nullable|string|max:255',
+        'email'               => 'nullable|email|max:255',
+        'phone'               => 'nullable|string|max:20',
+        'alternatePhone'      => 'nullable|string|max:20',
+        'verificationFeesBy'  => 'nullable|string|max:50',
+        'fromYop'             => 'nullable|integer',
+        'toYop'               => 'nullable|integer',
+        'feesAmount'          => 'nullable|numeric|min:0',
+        'universityFees'      => 'nullable|numeric|min:0',
+        'regulatoryBody'      => 'nullable|string|max:50',
+        'ugcRecognized'       => 'nullable|in:Yes,No',
+        'aicteApproved'       => 'nullable|in:Yes,No',
+        'addressLine1'        => 'nullable|string|max:255',
+        'addressLine2'        => 'nullable|string|max:255',
+        'landmark'            => 'nullable|string|max:255',
+        'country'             => 'nullable|string|max:100',
+        'charges'             => 'nullable|numeric|min:0',
+        'status'              => 'nullable|in:Active,Inactive,active,inactive',
+        'serviceCharges'      => 'nullable|numeric|min:0',
+        'gstApplicable'       => 'nullable|in:Yes,No',
+        'gstPercent'          => 'nullable|numeric|min:0',
+        'serviceChargesWithGst' => 'nullable|numeric|min:0',
+        'totalAmount'         => 'nullable|numeric|min:0',
+        'notes'               => 'nullable|string|max:2000',
+    ]);
 
-use Illuminate\Database\Eloquent\Model;
+    $inst = \App\Models\Institution::create([
+        'type'                     => strtolower($request->type),
+        'scope'                    => $request->scope ? strtolower($request->scope) : null,
+        'name'                     => $request->name,
+        'code'                     => $request->code,
+        'state'                    => $request->state,
+        'city'                     => $request->city,
+        'pin_code'                 => $request->pinCode,
+        'website'                  => $request->website,
+        'email'                    => $request->email,
+        'phone'                    => $request->phone,
+        'alternate_phone'          => $request->alternatePhone,
+        'verification_fees_by'     => $request->verificationFeesBy,
+        'from_yop'                 => $request->fromYop,
+        'to_yop'                   => $request->toYop,
+        'fees_amount'              => $request->feesAmount,
+        'university_fees'          => $request->universityFees,
+        'regulatory_body'          => $request->regulatoryBody,
+        'ugc_recognized'           => $request->ugcRecognized === 'Yes',
+        'aicte_approved'           => $request->aicteApproved === 'Yes',
+        // legacy 'aicte' badge column kept in sync so the existing table
+        // display (`inst.aicte === "Yes"`) keeps working unchanged
+        'aicte'                    => $request->aicteApproved,
+        'address_line1'            => $request->addressLine1,
+        'address_line2'            => $request->addressLine2,
+        'landmark'                 => $request->landmark,
+        'country'                  => $request->country ?: 'India',
+        'charges'                  => $request->charges,
+        'status'                   => $request->status ? strtolower($request->status) : 'active',
+        'service_charges'          => $request->serviceCharges,
+        'gst_applicable'           => $request->gstApplicable !== 'No',
+        'gst_percent'              => $request->gstPercent,
+        'service_charges_with_gst' => $request->serviceChargesWithGst,
+        'total_amount'             => $request->totalAmount,
+        'notes'                    => $request->notes,
+    ]);
 
-class Institution extends Model
-{
-    protected $fillable = [
-        'type',
-        'scope',
-        'name',
-        'code',
-        'state',
-        'website',
-        'stature',
-        'aicte',
-        'accredited',
-        'level',
-        'verified',
-        'status',
-    ];
-
-    protected $casts = [
-        'accredited' => 'boolean',
-        'verified'   => 'boolean',
-    ];
-
-    protected $attributes = [
-        'status'     => 'active',
-        'verified'   => false,
-        'accredited' => false,
-    ];
-}
+    return response()->json(['institution' => $inst], 201);
+});

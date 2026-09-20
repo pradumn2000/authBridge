@@ -784,6 +784,28 @@ export default function EducationVerification() {
       prev.map((q) => (q.id === id ? { ...q, [field]: value } : q))
     );
   };
+  const handleInstituteSelect = (qId, universityName) => {
+  const uni = universities.find((u) => u.name === universityName);
+
+  setQualifications((prev) =>
+    prev.map((q) => {
+      if (q.id !== qId) return q;
+      if (!uni) return { ...q, instituteUniversity: universityName };
+
+      return {
+        ...q,
+        instituteUniversity: universityName,
+        verificationFeesBy: uni.verification_fees_by || q.verificationFeesBy,
+        universityFees:
+          q.studyType === "International"
+            ? uni.university_fees ?? q.universityFees
+            : uni.fees_amount ?? q.universityFees,
+        gst: uni.gst_percent ?? q.gst,
+        totalAmount: uni.total_amount ?? q.totalAmount,
+      };
+    })
+  );
+};
 
   // Accordion Toggle Handler
   const toggleAccordion = (id) => {
@@ -1582,8 +1604,8 @@ export default function EducationVerification() {
         <div>
           <label style={{ display: "block", fontSize: "11px", fontWeight: 700, marginBottom: "6px", color: "#374151" }}>Institute / University *</label>
           <select
-            value={q.instituteUniversity || ""}
-            onChange={(e) => handleQualificationChange(q.id, "instituteUniversity", e.target.value)}
+  value={q.instituteUniversity || ""}
+  onChange={(e) => handleInstituteSelect(q.id, e.target.value)}
             style={{ width: "100%", padding: "9px 12px", borderRadius: "6px", border: "1px solid #cbd5e1", fontSize: "12px", color: q.instituteUniversity ? "#0f172a" : "#94a3b8" }}
           >
             <option value="">
