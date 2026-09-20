@@ -1071,12 +1071,6 @@ function formatTAT(tat) {
   return str;
 }
 
-// ── Displays the case-level TAT as the individual per-check values
-//    (e.g. "5, 6 days" for Employment=5 + Education=6) using the check_tat
-//    breakdown AddCase.jsx saves, instead of combining them into one
-//    number. Falls back to the single overall_tat/tat value for older
-//    cases that don't have a check_tat breakdown. Mirrors AllCases.jsx so
-//    admin and client see the same TAT for the same case.
 function formatTatDisplay(c) {
   const checks = Array.isArray(c.checks)
     ? c.checks
@@ -1104,7 +1098,6 @@ function inferCheckStatus(caseStat) {
   return "na";
 }
 
-// ── Timeline events generator based on case status ─────────────────────────
 function buildTimeline(c) {
   const created = c.created_at ? new Date(c.created_at) : new Date();
   const fmt = (d) => d.toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" });
@@ -1294,10 +1287,6 @@ export default function Client() {
     return inferCheckStatus(c.status);
   };
 
-  // ── Per-check TAT — reads the real check_tat breakdown the API now
-  //    returns (previously this looked for `check_tats`, plural, which
-  //    the backend never sends, so this fallback silently never matched
-  //    and every case fell through to the old case-age `tat` field).
   const getCheckTAT = (c, checkName) => {
     const detail = c.check_details?.[checkName];
     if (detail?.tat) return formatTAT(detail.tat);
@@ -1325,7 +1314,6 @@ export default function Client() {
     URL.revokeObjectURL(url);
   };
 
-  // ── Summary Cards — Exact match to reference image ─────────────────────
   const SummaryCards = ({ totalCount, activeCount, completedCount, pendingLinkCount: plCount, clearRate: cr }) => {
     const cardBase = {
       flex: 1,
@@ -1346,52 +1334,27 @@ export default function Client() {
         marginBottom: "24px",
         flexWrap: "wrap"
       }}>
-        {/* Total Cases — linked to sidebar's "Total Cases" tab */}
-        <div
-          onClick={() => goTo("all")}
-          title="View Total Cases"
-          style={{ ...cardBase, borderLeft: "6px solid #10b981" }}
-        >
+        <div onClick={() => goTo("all")} title="View Total Cases" style={{ ...cardBase, borderLeft: "6px solid #10b981" }}>
           <div style={{ fontSize: "36px", fontWeight: 700, color: "#10b981", lineHeight: 1 }}>{totalCount}</div>
           <div style={{ fontSize: "14px", color: "#475569", marginTop: "6px", fontWeight: 500 }}>Total Cases</div>
         </div>
 
-        {/* Active — linked to sidebar's "Active Cases" tab */}
-        <div
-          onClick={() => goTo("pending")}
-          title="View Active Cases"
-          style={{ ...cardBase, borderLeft: "6px solid #10b981" }}
-        >
+        <div onClick={() => goTo("pending")} title="View Active Cases" style={{ ...cardBase, borderLeft: "6px solid #10b981" }}>
           <div style={{ fontSize: "36px", fontWeight: 700, color: "#10b981", lineHeight: 1 }}>{activeCount}</div>
           <div style={{ fontSize: "14px", color: "#475569", marginTop: "6px", fontWeight: 500 }}>Active</div>
         </div>
 
-        {/* Completed — linked to sidebar's "Completed Cases" tab */}
-        <div
-          onClick={() => goTo("completed")}
-          title="View Completed Cases"
-          style={{ ...cardBase, borderLeft: "6px solid #14b8a6" }}
-        >
+        <div onClick={() => goTo("completed")} title="View Completed Cases" style={{ ...cardBase, borderLeft: "6px solid #14b8a6" }}>
           <div style={{ fontSize: "36px", fontWeight: 700, color: "#14b8a6", lineHeight: 1 }}>{completedCount}</div>
           <div style={{ fontSize: "14px", color: "#475569", marginTop: "6px", fontWeight: 500 }}>Completed</div>
         </div>
 
-        {/* Pending Link — linked to Generate Links (sidebar) */}
-        <div
-          onClick={() => navigate("/clientportal")}
-          title="Go to Generate Links"
-          style={{ ...cardBase, borderLeft: "6px solid #f59e0b" }}
-        >
+        <div onClick={() => navigate("/clientportal")} title="Go to Generate Links" style={{ ...cardBase, borderLeft: "6px solid #f59e0b" }}>
           <div style={{ fontSize: "36px", fontWeight: 700, color: "#f59e0b", lineHeight: 1 }}>{plCount}</div>
           <div style={{ fontSize: "14px", color: "#475569", marginTop: "6px", fontWeight: 500 }}>Pending Link</div>
         </div>
 
-        {/* Clear Rate — linked to Reports & Trends (sidebar) */}
-        <div
-          onClick={() => navigate("/Trends")}
-          title="Go to Reports & Trends"
-          style={{ ...cardBase, borderLeft: "6px solid #1e40af" }}
-        >
+        <div onClick={() => navigate("/Trends")} title="Go to Reports & Trends" style={{ ...cardBase, borderLeft: "6px solid #1e40af" }}>
           <div style={{ fontSize: "36px", fontWeight: 700, color: "#1e40af", lineHeight: 1 }}>{cr}%</div>
           <div style={{ fontSize: "14px", color: "#475569", marginTop: "6px", fontWeight: 500 }}>Clear Rate</div>
         </div>
@@ -1399,7 +1362,6 @@ export default function Client() {
     );
   };
 
-  // ── Check-wise Status grid ─────────────────────────────────────────────────
   const CheckwiseGrid = ({ c }) => {
     const checks = getChecksArray(c);
     if (checks.length === 0) return (
@@ -1498,7 +1460,7 @@ export default function Client() {
         </div>
       ) : (
         <>
-          <div style={{ background: "#27348B", color: "#fff", padding: "14px 18px", fontWeight: 700, fontSize: "14px", borderRadius: "6px 6px 0 0" }}>
+          <div style={{ background: "#1e2761", color: "#fff", padding: "14px 18px", fontWeight: 700, fontSize: "14px", borderRadius: "6px 6px 0 0" }}>
             CASE DETAIL — {selectedCase.case_id} | {selectedCase.candidate || selectedCase.candidate_name}
           </div>
 
@@ -1507,9 +1469,9 @@ export default function Client() {
               <button key={t} onClick={() => setActiveDetailTab(t)} style={{
                 padding: "12px 0", border: "none",
                 borderRight: i < 3 ? "1px solid #e2e8f0" : "none",
-                borderBottom: activeDetailTab === t ? "3px solid #27348B" : "3px solid transparent",
+                borderBottom: activeDetailTab === t ? "3px solid #1e2761" : "3px solid transparent",
                 background: activeDetailTab === t ? "#f0f4ff" : "#fff",
-                color: activeDetailTab === t ? "#27348B" : "#64748b",
+                color: activeDetailTab === t ? "#1e2761" : "#64748b",
                 fontWeight: activeDetailTab === t ? 700 : 400,
                 fontSize: "13px", cursor: "pointer", textTransform: "capitalize",
                 transition: "all 0.15s",
@@ -1616,7 +1578,7 @@ export default function Client() {
                     style={{
                       cursor: "pointer",
                       background: isSelected ? "#eef3ff" : undefined,
-                      borderLeft: isSelected ? "3px solid #2b3b8c" : "3px solid transparent",
+                      borderLeft: isSelected ? "3px solid #1e2761" : "3px solid transparent",
                     }}>
                     <td>
                       <div className="criminal-case">
@@ -1652,66 +1614,39 @@ export default function Client() {
 
   const StatusBadge = ({ status }) => (
     <span style={{
-      background: getStatusMeta(status).color, color: "#fff", fontSize: "12px", fontWeight: 700,
-      padding: "6px 18px", borderRadius: "6px", display: "inline-block", minWidth: "90px", textAlign: "center",
+      background: "#e6f4ea", color: "#137333", fontSize: "12px", fontWeight: 600,
+      padding: "4px 10px", borderRadius: "12px", display: "inline-flex", alignItems: "center", gap: "6px"
     }}>
+      <span style={{ width: "6px", height: "6px", borderRadius: "50%", background: "#137333" }}></span>
       {statusLabel(status)}
     </span>
   );
 
-  const ViewButton = ({ c }) => (
-    <button
-      onClick={() => {
-        const dest = c.status === "completed" ? "completed" : "pending";
-        navigate(`/Client?tab=${dest}`);
-        setSelectedCase(c);
-        setActiveDetailTab("overview");
-      }}
-      style={{
-        background: "#27348B", color: "#fff", border: "none", padding: "10px 22px",
-        borderRadius: "6px", fontSize: "13px", fontWeight: 700, cursor: "pointer",
-      }}
-    >
-      View
-    </button>
-  );
-
-  const EditButton = ({ c }) => (
-    <button
-      onClick={(e) => {
-        e.stopPropagation();
-        // Client-editable only while the case hasn't gone to verification yet.
-        navigate(`/AddCase?editCaseId=${encodeURIComponent(c.case_id)}`);
-      }}
-      disabled={c.status !== "pending"}
-      title={c.status !== "pending" ? "Case is already in verification — editing is locked" : "Edit case"}
-      style={{
-        background: c.status === "pending" ? "#fff" : "#f1f5f9",
-        color: c.status === "pending" ? "#27348B" : "#94a3b8",
-        border: `1px solid ${c.status === "pending" ? "#27348B" : "#e2e8f0"}`,
-        padding: "9px 18px",
-        borderRadius: "6px", fontSize: "13px", fontWeight: 700,
-        cursor: c.status === "pending" ? "pointer" : "not-allowed",
-      }}
-    >
-      Edit
-    </button>
-  );
-
-  const CasesTable = ({ rows, showDate }) => (
-    <div style={{ background: "#fff", borderRadius: "10px", overflow: "hidden", border: "1px solid #e2e8f0" }}>
+  const CasesTable = ({ rows }) => (
+    <div style={{ background: "#fff", borderRadius: "8px", overflow: "hidden", border: "1px solid #e2e8f0" }}>
       <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "14px" }}>
         <thead>
-          <tr style={{ background: "#27348B" }}>
+          <tr style={{ background: "#1e2761" }}>
             {[
-              "Case ID",
-              ...(showDate ? ["Case Receive Date"] : []),
-              "Candidate", "Client", "Checks", "Status", "TAT", "Action",
-            ].map(h => (
-              <th key={h} style={{
-                padding: "16px 20px", textAlign: "left", color: "#fff",
-                fontWeight: 700, fontSize: "13px", textTransform: "uppercase",
-                letterSpacing: "0.04em", whiteSpace: "nowrap",
+              "#",
+              "Case ID ⇅",
+              "Candidate Name ⇅",
+              "Case Type ⇅",
+              "Check Type (All Checks)",
+              "Assigned Date ⇅",
+              "TAT",
+              "Status",
+              "Documentation",
+              "Action"
+            ].map((h, index) => (
+              <th key={index} style={{
+                backgroundColor: "#1e2761",
+                textAlign: "left",
+                color: "var(--white, #fff)",
+                padding: "14px",
+                fontSize: "14px",
+                fontWeight: 600,
+                whiteSpace: "nowrap",
               }}>
                 {h}
               </th>
@@ -1720,32 +1655,36 @@ export default function Client() {
         </thead>
         <tbody>
           {loading ? (
-            <tr><td colSpan={showDate ? 8 : 7} style={{ padding: "40px", textAlign: "center", color: "#94a3b8" }}>Loading…</td></tr>
+            <tr><td colSpan={10} style={{ padding: "40px", textAlign: "center", color: "#94a3b8" }}>Loading…</td></tr>
           ) : rows.length === 0 ? (
-            <tr><td colSpan={showDate ? 8 : 7} style={{ padding: "40px", textAlign: "center", color: "#94a3b8" }}>No cases found.</td></tr>
+            <tr><td colSpan={10} style={{ padding: "40px", textAlign: "center", color: "#94a3b8" }}>No cases found.</td></tr>
           ) : (
             rows.map((c, i) => (
-              <tr key={c.case_id} style={{
-                background: i % 2 === 0 ? "#f5f7fc" : "#fff",
+              <tr key={c.case_id || i} style={{
+                background: "#fff",
                 borderBottom: "1px solid #eef1f6",
               }}>
-                <td style={{ padding: "18px 20px", color: "#1e293b" }}>{c.case_id}</td>
-                {showDate && (
-                  <td style={{ padding: "18px 20px", color: "#1e293b" }}>
-                    {c.created_at ? new Date(c.created_at).toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" }) : "—"}
-                  </td>
-                )}
-                <td style={{ padding: "18px 20px", color: "#1e293b" }}>{c.candidate || c.candidate_name || "—"}</td>
-                <td style={{ padding: "18px 20px", color: "#1e293b" }}>{c.client || c.client_name || "—"}</td>
-                <td style={{ padding: "18px 20px", color: "#1e293b" }}>
-                  {displayChecks(c.checks) || "—"}
+                <td style={{ padding: "14px", color: "#1e293b", fontWeight: 700 }}>{i + 1}</td>
+                <td style={{ padding: "14px", color: "#2563eb", fontWeight: 600 }}>{c.case_id}</td>
+                <td style={{ padding: "14px", color: "#1e293b", fontWeight: 600 }}>{c.candidate || c.candidate_name || "—"}</td>
+                <td style={{ padding: "14px", color: "#475569" }}>{c.case_type || "New Case"}</td>
+                <td style={{ padding: "14px", color: "#475569", maxWidth: "250px" }}>{c.checks_formatted || displayChecks(c.checks) || "—"}</td>
+                <td style={{ padding: "14px", color: "#475569" }}>
+                  {c.created_at ? new Date(c.created_at).toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" }) : "—"}
                 </td>
-                <td style={{ padding: "18px 20px" }}><StatusBadge status={c.status} /></td>
-                <td style={{ padding: "18px 20px", color: "#1e293b" }}>{formatTatDisplay(c)}</td>
-                <td style={{ padding: "18px 20px" }}>
-                  <div style={{ display: "flex", gap: "8px" }}>
-                    <ViewButton c={c} />
-                    <EditButton c={c} />
+                <td style={{ padding: "14px", color: "#475569" }}>{formatTatDisplay(c)}</td>
+                <td style={{ padding: "14px" }}><StatusBadge status={c.status} /></td>
+                <td style={{ padding: "14px" }}>
+                  <button style={{ background: "#f8fafc", border: "1px solid #e2e8f0", padding: "6px 12px", borderRadius: "6px", cursor: "pointer", fontSize: "13px", display: "inline-flex", alignItems: "center", gap: "4px" }}>
+                    📥 Download
+                  </button>
+                </td>
+                <td style={{ padding: "14px" }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                    <button onClick={() => { navigate(`/Client?tab=pending`); setSelectedCase(c); }} style={{ background: "#f8fafc", border: "1px solid #e2e8f0", color: "#2563eb", padding: "6px 12px", borderRadius: "6px", cursor: "pointer", fontSize: "13px", fontWeight: 600 }}>
+                      View Details
+                    </button>
+                    <span style={{ cursor: "pointer", color: "#64748b", fontWeight: "bold" }}>⋮</span>
                   </div>
                 </td>
               </tr>
@@ -1775,7 +1714,6 @@ export default function Client() {
     />
   );
 
-  // Shared Date Filter Component
   const DateFilterBar = ({ filter, setFilter, customFromVal, setCustomFromVal, customToVal, setCustomToVal }) => (
     <div style={{ display: "flex", gap: "8px", flexWrap: "wrap", alignItems: "center", marginBottom: "16px" }}>
       {DATE_FILTERS.map(df => (
@@ -1807,9 +1745,6 @@ export default function Client() {
     </div>
   );
 
-  // ════════════════════════════════════════════════════════════════════════
-  // TOTAL CASES VIEW
-  // ════════════════════════════════════════════════════════════════════════
   if (isTotalCasesView) {
     return (
       <>
@@ -1838,13 +1773,13 @@ export default function Client() {
                 </div>
               </div>
 
-            <SummaryCards 
-  totalCount={totalFiltered.length}
-  activeCount={counts.pending} 
-  completedCount={counts.completed} 
-  pendingLinkCount={pendingLinkCount} 
-  clearRate={clearRate} 
-/>
+              <SummaryCards 
+                totalCount={totalFiltered.length}
+                activeCount={counts.pending} 
+                completedCount={counts.completed} 
+                pendingLinkCount={pendingLinkCount} 
+                clearRate={clearRate} 
+              />
 
               <DateFilterBar 
                 filter={totalDateFilter} 
@@ -1855,7 +1790,7 @@ export default function Client() {
                 setCustomToVal={setTotalCustomTo} 
               />
 
-              <CasesTable rows={totalFiltered} showDate />
+              <CasesTable rows={totalFiltered} />
             </div>
           </main>
         </section>
@@ -1865,9 +1800,6 @@ export default function Client() {
     );
   }
 
-  // ════════════════════════════════════════════════════════════════════════
-  // SPLIT VIEW — Active / Completed Cases
-  // ════════════════════════════════════════════════════════════════════════
   if (isSplitView) {
     return (
       <>
@@ -1895,13 +1827,13 @@ export default function Client() {
                 </div>
               </div>
 
-             <SummaryCards 
-  totalCount={total}
-  activeCount={counts.pending} 
-  completedCount={counts.completed} 
-  pendingLinkCount={pendingLinkCount} 
-  clearRate={clearRate} 
-/>
+              <SummaryCards 
+                totalCount={total}
+                activeCount={counts.pending} 
+                completedCount={counts.completed} 
+                pendingLinkCount={pendingLinkCount} 
+                clearRate={clearRate} 
+              />
 
               <DateFilterBar 
                 filter={dateFilter} 
@@ -1925,9 +1857,6 @@ export default function Client() {
     );
   }
 
-  // ════════════════════════════════════════════════════════════════════════
-  // DASHBOARD (Home)
-  // ════════════════════════════════════════════════════════════════════════
   return (
     <>
       <Sidebar />
@@ -1966,7 +1895,6 @@ export default function Client() {
               setCustomToVal={setCustomTo} 
             />
 
-            {/* Stat cards (matches screenshot) */}
             <SummaryCards 
               totalCount={total}
               activeCount={counts.pending} 
@@ -1975,7 +1903,6 @@ export default function Client() {
               clearRate={clearRate} 
             />
 
-            {/* Chart + Quick Stats */}
             <div className="dash-inner-wrp-both" style={{ marginBottom: "0" }}>
               <div className="dash-inner-left">
                 <CaseTrendsChart
@@ -1988,7 +1915,7 @@ export default function Client() {
               </div>
               <div className="dash-inner-right">
                 <div style={{ borderRadius: "10px", overflow: "hidden", border: "1px solid #e2e8f0", height: "100%" }}>
-                  <div style={{ background: "#27348B", padding: "14px 20px" }}>
+                  <div style={{ background: "#1e2761", padding: "14px 20px" }}>
                     <h3 style={{ margin: 0, color: "#fff", fontSize: "13px", fontWeight: 700, letterSpacing: "0.08em" }}>
                       QUICK STATS
                     </h3>
@@ -2016,7 +1943,7 @@ export default function Client() {
             </div>
 
             <div style={{ marginTop: "4px" }}>
-              <CasesTable rows={chartCases.slice(0, 5)} showDate={false} />
+              <CasesTable rows={chartCases.slice(0, 5)} />
             </div>
           </div>
         </main>
