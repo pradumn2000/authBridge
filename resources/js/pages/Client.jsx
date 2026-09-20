@@ -1000,12 +1000,14 @@
 //     </>
 //   );
 // }
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import Sidebar from "./Sidebar";
 import Header from "./Header";
+import CaseTrendsChart from "./CaseTrendsChart";
 import { API_URL } from "../src/config";
 import CheckDetailForm from "./CheckDetailForm";
+import { computeCheckStatus } from "../src/checkFormsConfig";
 
 const CHECK_ABBREV = {
   employment: "Employment Verification",
@@ -1242,7 +1244,7 @@ export default function ClientCases() {
                   <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
                     <div style={iconBoxStyle("#fef3c7", "#d97706")}>🕒</div>
                     <div>
-                      <div style={{ fontSize: "24px", fontWeight 700, color: "#d97706" }}>0</div>
+                      <div style={{ fontSize: "24px", fontWeight: 700, color: "#d97706" }}>0</div>
                       <div style={{ fontSize: "12px", color: "#475569", fontWeight: 600 }}>Due Soon</div>
                       <div style={{ fontSize: "11px", color: "#94a3b8" }}>Next 3 Days</div>
                     </div>
