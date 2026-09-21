@@ -25,7 +25,6 @@ import Confrimpassword from "./pages/Confrimpassword";
 import Dashboard from "./pages/Dashboard";
 import Client from "./pages/Client";
 import Clientportal from "./pages/Clientportal";
-import PendingLinks from "./pages/PendingLinks";
 import Allocator from "./pages/Allocator";
 import Verifyer from "./pages/verifyer";
 import Specialist from "./pages/Specialist";
