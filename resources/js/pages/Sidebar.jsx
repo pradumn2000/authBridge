@@ -1700,7 +1700,11 @@ const ROLE_NAV = {
       label: "Completed Cases",
       img: "images/sidebar/completed-icon.svg",
     },
-
+{
+      path: "/PendingLinks",
+      label: "Pending Links",
+      img: "images/sidebar/chart-bar-regular-full.svg",
+    },
     {
       path: "/clientportal",
       label: "Generate Links",
