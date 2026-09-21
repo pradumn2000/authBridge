@@ -25,6 +25,7 @@ import Confrimpassword from "./pages/Confrimpassword";
 import Dashboard from "./pages/Dashboard";
 import Client from "./pages/Client";
 import Clientportal from "./pages/Clientportal";
+import PendingLinks from "./pages/PendingLinks";
 import Allocator from "./pages/Allocator";
 import Verifyer from "./pages/verifyer";
 import Specialist from "./pages/Specialist";
@@ -135,6 +136,8 @@ function getRoleRoute(role) {
     client: "/Client",
 
     onboarding: "/clientportal",
+
+    pending_links: "/PendingLinks",
 
     employment_verifier: "/Verifyer",
 
@@ -861,7 +864,25 @@ function App() {
           }
         />
 
+{/* =================================================
+            PENDING LINKS PAGE (NEW)
+            ================================================= */}
 
+        <Route
+          path="/PendingLinks"
+          element={
+            <PrivateRoute
+              role={[
+                "onboarding",
+                "client",
+                "admin",
+              ]}
+            >
+              <PendingLinks />
+            </PrivateRoute>
+          }
+        />
+        
         {/* =================================================
             SETTINGS
             ================================================= */}
