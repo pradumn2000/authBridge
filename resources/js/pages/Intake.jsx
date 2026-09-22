@@ -638,76 +638,26 @@
 //     </>
 //   );
 // }
-import { useState, useRef, useEffect } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useState, useEffect } from "react";
 import Sidebar from "./Sidebar";
 import Header from "./Header";
-import CaseTrendsChart from "./CaseTrendsChart";
 import { API_URL } from "../src/config";
 
-// ── Standard date filters (per spec: today / this month / custom) ──────────
-const DATE_FILTERS = [
-  { key: "today",  label: "Today"      },
-  { key: "month",  label: "This Month" },
-  { key: "custom", label: "Custom"     },
-  { key: "all",    label: "All Time"   },
-];
-
-const BADGE_CONFIG = {
-  pending:     { label: "NEW",      bg: "var(--tab-btn-color)"    },
-  "on-hold":   { label: "INCOMPLETE", bg: "var(--alert-red)"      },
-  "qc-review": { label: "REVIEW",   bg: "var(--yellow-color)"     },
-  "in-progress": { label: "APPROVED", bg: "var(--sucess-btn-color)" },
-  completed:   { label: "APPROVED", bg: "var(--sucess-btn-color)" },
-};
-
-function getTabFromURL(search) {
-  const tab = new URLSearchParams(search).get("tab") || "";
-  return ["active", "approved", "incomplete", "clear-rate"].includes(tab) ? tab : "active";
-}
-
-function getChecksArray(c) {
-  if (Array.isArray(c.checks)) return c.checks;
-  if (typeof c.checks === "string") return c.checks.split(/[·,]/).map(x => x.trim()).filter(Boolean);
-  return [];
-}
-
-// Real uploaded documents live nested per-check in check_details (see
-// CheckDetailForm.jsx), not as a flat list on the case. Flatten them here so
-// QC can see everything the candidate/client has uploaded across all checks,
-// with the actual download URL the upload endpoint returned.
-function flattenDocuments(c) {
-  const details = c.check_details || {};
-  const out = [];
-  Object.entries(details).forEach(([checkKey, detail]) => {
-    const docs = detail?.documents || {};
-    Object.entries(docs).forEach(([docKey, doc]) => {
-      if (doc?.url) out.push({ checkKey, docKey, name: doc.name || docKey, url: doc.url });
-    });
-  });
-  return out;
-}
-
 export default function Intake() {
-  const navigate = useNavigate();
-  const location = useLocation();
-
-  const [cases, setCases]     = useState([]);
+  const [cases, setCases] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError]     = useState("");
+  const [error, setError] = useState("");
 
-  const [selected, setSelected]         = useState(null);
-  const [commentInput, setCommentInput] = useState("");
-  const [comments, setComments]         = useState({}); // case_id -> [comment,...] — local only, see note below
-  const [actionMsg, setActionMsg]       = useState("");
-  const [actionWarning, setActionWarning] = useState("");
-  const commentsEndRef = useRef(null);
+  // Filter States
+  const [dateRange, setDateRange] = useState("01 Apr 2025 - 30 Apr 2025");
+  const [clientFilter, setClientFilter] = useState("All");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [checkTypeFilter, setCheckTypeFilter] = useState("All");
+  const [verificationStatus, setVerificationStatus] = useState("All");
+  const [tlNameFilter, setTlNameFilter] = useState("All");
+  const [reportStatusFilter, setReportStatusFilter] = useState("All");
+  const [qcStatusFilter, setQcStatusFilter] = useState("All");
 
-  const [dateFilter, setDateFilter] = useState("month");
-  const [customFrom, setCustomFrom] = useState("");
-  const [customTo, setCustomTo]     = useState("");
-
-  const tab = getTabFromURL(location.search);
   const token = localStorage.getItem("token");
 
   const fetchCases = () => {
@@ -723,424 +673,281 @@ export default function Intake() {
         if (!r.ok) throw new Error("Failed to load cases.");
         return r.json();
       })
-      .then(data => setCases(data.cases || []))
-      .catch(err => setError(err.message || "Failed to load cases."))
+      .then((data) => setCases(data.cases || []))
+      .catch((err) => setError(err.message || "Failed to load cases."))
       .finally(() => setLoading(false));
   };
 
-  useEffect(() => { fetchCases(); }, []);
-
   useEffect(() => {
-    commentsEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [selected, comments]);
+    fetchCases();
+  }, []);
 
-  // ── Date range filter ───────────────────────────────────────────────────
-  const isInRange = (createdAt) => {
-    if (!createdAt) return true;
-    if (dateFilter === "all") return true;
-    const d   = new Date(createdAt);
-    const now = new Date();
-    if (dateFilter === "today") return d.toDateString() === now.toDateString();
-    if (dateFilter === "month") return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
-    if (dateFilter === "custom") {
-      if (!customFrom && !customTo) return true;
-      const from = customFrom ? new Date(customFrom) : null;
-      const to   = customTo   ? new Date(customTo + "T23:59:59") : null;
-      if (from && d < from) return false;
-      if (to   && d > to)   return false;
-      return true;
-    }
-    return true;
-  };
+  // Filter Logic
+  const filteredCases = cases.filter((c) => {
+    const caseIdStr = (c.case_id || "").toString().toLowerCase();
+    const candidateStr = (c.candidate || c.candidate_name || "").toLowerCase();
+    const query = searchQuery.toLowerCase();
 
-  const dateCases = cases.filter(c => isInRange(c.created_at));
+    const matchesSearch = caseIdStr.includes(query) || candidateStr.includes(query);
+    const matchesClient = clientFilter === "All" || (c.client || c.client_name) === clientFilter;
+    const matchesQc = qcStatusFilter === "All" || c.status === qcStatusFilter.toLowerCase();
 
-  // ── The four buckets QC cares about ─────────────────────────────────────
-  // pending      = submitted by client, awaiting QC review (the "queue")
-  // in-progress / qc-review / completed = QC has approved and forwarded it on
-  // on-hold      = QC returned it / flagged as incomplete
-  const queueCases      = dateCases.filter(c => c.status === "pending");
-  const approvedCases   = dateCases.filter(c => ["in-progress", "qc-review", "completed"].includes(c.status));
-  const incompleteCases = dateCases.filter(c => c.status === "on-hold");
-  const clearRate        = dateCases.length > 0 ? Math.round((approvedCases.length / dateCases.length) * 100) : 0;
-
-  const counts = {
-    active:     queueCases.length,
-    approved:   approvedCases.length,
-    incomplete: incompleteCases.length,
-    clearRate,
-  };
-
-  // Which list backs the 3-column board depends on the tab.
-  const boardList = tab === "incomplete" ? incompleteCases : queueCases;
-
-  useEffect(() => {
-    // Keep `selected` valid whenever the tab, filters, or data change.
-    if (tab === "approved" || tab === "clear-rate") { setSelected(null); return; }
-    if (!selected || !boardList.find(c => c.case_id === selected.case_id)) {
-      setSelected(boardList[0] || null);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [tab, cases, dateFilter, customFrom, customTo]);
-
-  const selectCase = (c) => {
-    setSelected(c);
-    setActionMsg("");
-    setActionWarning("");
-  };
-
-  // ── Approve / Return / Request Docs ─────────────────────────────────────
-  // Confirmed: PATCH /api/cases/{caseId}/status, body {status: "pending"|"in-progress"|"qc-review"|"completed"|"on-hold"}.
-  // Note: this route has no role restriction in api.php, so any authenticated
-  // user can currently call it — worth tightening server-side to pvt_qc/admin
-  // if that matters for your access model.
-  const handleAction = async (action) => {
-    if (!selected) return;
-    const statusMap = { approve: "in-progress", return: "on-hold", request_docs: selected.status };
-    const msgMap = {
-      approve:      "Case approved and forwarded to Allocator / Verifiers.",
-      return:       "Case returned to client.",
-      request_docs: "Document request noted (candidate notification not yet wired up).",
-    };
-    const nextStatus = statusMap[action];
-    setActionWarning("");
-
-    if (action !== "request_docs") {
-      try {
-        const res = await fetch(`${API_URL}/api/cases/${selected.case_id}/status`, {
-          method: "PATCH",
-          headers: {
-            "Content-Type": "application/json",
-            Accept: "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({ status: nextStatus }),
-        });
-        if (!res.ok) {
-          setActionWarning("Status update failed — this change is local only and won't survive a refresh.");
-        }
-      } catch {
-        setActionWarning("Couldn't reach the server — this change is local only and won't survive a refresh.");
-      }
-    }
-
-    setCases(prev => prev.map(c => c.case_id === selected.case_id ? { ...c, status: nextStatus } : c));
-    setSelected(prev => prev ? { ...prev, status: nextStatus } : prev);
-    setActionMsg(msgMap[action]);
-    setTimeout(() => setActionMsg(""), 4000);
-  };
-
-  // ── Comments — local only, same limitation as Client.jsx's Comments tab.
-  // TODO: POST /api/cases/{id}/comments once that endpoint exists.
-  const handleComment = (e) => {
-    e.preventDefault();
-    if (!commentInput.trim() || !selected) return;
-    const user = (() => { try { return JSON.parse(localStorage.getItem("user")) || {}; } catch { return {}; } })();
-    const name = user.name || "PVT/QC";
-    const newComment = {
-      author: name, avatar: name.charAt(0).toUpperCase(), color: "#0d9488",
-      time: new Date().toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit" }),
-      text: commentInput.trim(),
-    };
-    setComments(prev => ({ ...prev, [selected.case_id]: [...(prev[selected.case_id] || []), newComment] }));
-    setCommentInput("");
-  };
-
-  const selectedComments = selected ? (comments[selected.case_id] || []) : [];
-  const selectedDocs      = selected ? flattenDocuments(selected) : [];
-
-  const setTab = (next) => navigate(`/Intake?tab=${next}`, { replace: true });
-
-  // ── Shared read-only table for the Approved tab ──────────────────────────
-  const ApprovedTable = () => (
-    <div className="down-table">
-      {loading ? (
-        <p style={{ padding: "24px", color: "#888", fontSize: "14px" }}>Loading cases...</p>
-      ) : (
-        <table>
-          <thead>
-            <tr>
-              <th>Case ID</th><th>Candidate</th><th>Client</th><th>Checks</th><th>Status</th><th>Approved / Forwarded</th>
-            </tr>
-          </thead>
-          <tbody>
-            {approvedCases.length === 0 ? (
-              <tr><td colSpan={6} style={{ textAlign: "center", padding: "32px", color: "#94a3b8" }}>No approved cases in this range.</td></tr>
-            ) : (
-              approvedCases.map(c => (
-                <tr key={c.case_id}>
-                  <td style={{ fontWeight: 700, color: "#2b3b8c" }}>{c.case_id}</td>
-                  <td>{c.candidate || c.candidate_name || "—"}</td>
-                  <td>{c.client || c.client_name || "—"}</td>
-                  <td style={{ fontSize: "12px", color: "#475569" }}>{getChecksArray(c).join(", ") || "—"}</td>
-                  <td><span className={`status ${c.status}`}>{c.status}</span></td>
-                  <td style={{ fontSize: "12px", color: "#94a3b8" }}>Now visible on the Allocator board</td>
-                </tr>
-              ))
-            )}
-          </tbody>
-        </table>
-      )}
-    </div>
-  );
-
-  // ── Clear Rate tab — analytics view, not a case list ────────────────────
-  const ClearRateView = () => (
-    <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
-      <CaseTrendsChart
-        casesData={dateCases}
-        label={DATE_FILTERS.find(d => d.key === dateFilter)?.label}
-        vsText={`${clearRate}% clear rate — ${approvedCases.length} of ${dateCases.length} cases`}
-        vsColor={approvedCases.length > 0 ? "#14d8a7" : "#94a3b8"}
-        dateFilter={dateFilter} customFrom={customFrom} customTo={customTo}
-      />
-      <div className="cards-head-dash">
-        <div className="card-inner-dash bdr-total"><h4>{counts.active}</h4><p>Awaiting QC</p></div>
-        <div className="card-inner-dash bdr-com"><h4>{counts.approved}</h4><p>Approved</p></div>
-        <div className="card-inner-dash bdr-progress"><h4>{counts.incomplete}</h4><p>Incomplete</p></div>
-        <div className="card-inner-dash bdr-rate"><h4>{clearRate}%</h4><p>Clear Rate</p></div>
-      </div>
-    </div>
-  );
+    return matchesSearch && matchesClient && matchesQc;
+  });
 
   return (
     <>
       <Sidebar />
-      <section id="content">
+      <section id="content" style={{ background: "#f8fafc", minHeight: "100vh" }}>
         <Header />
-        <main>
-          <div className="dash-wrper">
-
-            {/* ── Tabs — mirrors the sidebar's Active/Approved/Incomplete/Clear Rate links ── */}
-            <div className="dash-upper-head">
-              <div className="left">
-                <button className={`tab-cta ${tab === "active" ? "active" : ""}`} onClick={() => setTab("active")}>
-                  Active
-                  <span style={{ marginLeft: "5px", background: "rgba(0,0,0,.08)", borderRadius: "10px", padding: "1px 6px", fontSize: "12px" }}>{counts.active}</span>
-                </button>
-                <button className={`tab-cta ${tab === "approved" ? "active" : ""}`} onClick={() => setTab("approved")}>
-                  Approved
-                  <span style={{ marginLeft: "5px", background: "rgba(0,0,0,.08)", borderRadius: "10px", padding: "1px 6px", fontSize: "12px" }}>{counts.approved}</span>
-                </button>
-                <button className={`tab-cta ${tab === "incomplete" ? "active" : ""}`} onClick={() => setTab("incomplete")}>
-                  Incomplete
-                  <span style={{ marginLeft: "5px", background: "rgba(0,0,0,.08)", borderRadius: "10px", padding: "1px 6px", fontSize: "12px" }}>{counts.incomplete}</span>
-                </button>
-                <button className={`tab-cta ${tab === "clear-rate" ? "active" : ""}`} onClick={() => setTab("clear-rate")}>
-                  Clear Rate
-                  <span style={{ marginLeft: "5px", background: "rgba(0,0,0,.08)", borderRadius: "10px", padding: "1px 6px", fontSize: "12px" }}>{clearRate}%</span>
-                </button>
+        <main style={{ padding: "24px" }}>
+          <div className="qc-intake-container" style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
+            
+            {/* Top Title Bar & Banner Alerts */}
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: "16px" }}>
+              <div>
+                <h1 style={{ fontSize: "22px", fontWeight: "700", color: "#1e293b", margin: 0 }}>
+                  QC Intake <span style={{ fontWeight: "400", color: "#64748b" }}>— Verification Review & Report Status</span>
+                </h1>
+                <p style={{ fontSize: "13px", color: "#64748b", margin: "4px 0 0" }}>
+                  Review verification results, check documents, manage reports and QC approvals.
+                </p>
               </div>
-            </div>
 
-            {/* ── Date filters ── */}
-            <div style={{ display: "flex", gap: "8px", flexWrap: "wrap", alignItems: "center" }}>
-              {DATE_FILTERS.map(df => (
-                <button key={df.key} className={`tab-cta ${dateFilter === df.key ? "active" : ""}`}
-                  onClick={() => setDateFilter(df.key)}>
-                  {df.label}
-                </button>
-              ))}
-              {dateFilter === "custom" && (
-                <>
-                  <input type="date" value={customFrom} onChange={e => setCustomFrom(e.target.value)}
-                    style={{ padding: "8px 12px", border: "1px solid #e2e8f0", borderRadius: "10px", fontSize: "13px" }} />
-                  <span style={{ color: "#94a3b8" }}>→</span>
-                  <input type="date" value={customTo} onChange={e => setCustomTo(e.target.value)}
-                    style={{ padding: "8px 12px", border: "1px solid #e2e8f0", borderRadius: "10px", fontSize: "13px" }} />
-                </>
-              )}
-            </div>
-
-            {/* ── Stats — same 4 numbers regardless of tab, driven by the date range ── */}
-            <div className="cards-head-dash">
-              <div className="card-inner-dash bdr-total"><h4>{loading ? "—" : counts.active}</h4><p>Active</p></div>
-              <div className="card-inner-dash bdr-com"><h4>{loading ? "—" : counts.approved}</h4><p>Approved</p></div>
-              <div className="card-inner-dash bdr-progress"><h4>{loading ? "—" : counts.incomplete}</h4><p>Incomplete</p></div>
-              <div className="card-inner-dash bdr-rate"><h4>{loading ? "—" : `${clearRate}%`}</h4><p>Clear Rate</p></div>
-            </div>
-
-            {error && (
-              <div style={{ padding: "12px 16px", background: "#fff5f5", border: "1px solid #fca5a5",
-                borderRadius: "8px", color: "#dc2626", fontSize: "14px" }}>
-                {error}
-              </div>
-            )}
-
-            {/* ── Tab content ── */}
-            {tab === "approved" ? (
-              <ApprovedTable />
-            ) : tab === "clear-rate" ? (
-              <ClearRateView />
-            ) : (
-              <div className="intake-wrp">
-
-                {/* ── COL 1: Queue ── */}
-                <section className="dashboard-column queue-column" id="queue-section">
-                  <header className="column-header">
-                    <h2>{tab === "incomplete" ? "INCOMPLETE CASES" : "NEW CASES QUEUE"}</h2>
-                  </header>
-                  <div className="column-content scrollable-content" style={{ padding: "12px" }}>
-                    {loading ? (
-                      <p style={{ color: "#94a3b8", fontSize: "13px" }}>Loading…</p>
-                    ) : boardList.length === 0 ? (
-                      <p style={{ color: "#94a3b8", fontSize: "13px", padding: "8px 4px" }}>Nothing here right now.</p>
-                    ) : (
-                      boardList.map(c => {
-                        const badge = BADGE_CONFIG[c.status] || BADGE_CONFIG.pending;
-                        const isSelected = selected?.case_id === c.case_id;
-                        return (
-                          <article key={c.case_id}
-                            className={`case-card ${isSelected ? "active" : ""}`}
-                            onClick={() => selectCase(c)}
-                            style={{ marginBottom: "10px", cursor: "pointer" }}>
-                            <div className="case-card-info">
-                              <h3 className="case-id">{c.case_id}</h3>
-                              <p className="case-candidate">{c.candidate || c.candidate_name || "—"}</p>
-                            </div>
-                            <span className="badge" style={{ background: badge.bg }}>{badge.label}</span>
-                          </article>
-                        );
-                      })
-                    )}
+              {/* Alert Boxes */}
+              <div style={{ display: "flex", gap: "12px" }}>
+                <div style={{ background: "#fef2f2", border: "1px solid #fecaca", borderRadius: "10px", padding: "10px 16px", display: "flex", alignItems: "center", gap: "12px" }}>
+                  <span style={{ color: "#ef4444", fontSize: "18px" }}>⚠️</span>
+                  <div>
+                    <div style={{ fontSize: "11px", color: "#991b1b", textTransform: "uppercase", fontWeight: "600" }}>Cases Awaiting QC Review</div>
+                    <div style={{ fontSize: "16px", fontWeight: "800", color: "#991b1b" }}>12</div>
                   </div>
-                </section>
-
-                {/* ── COL 2: Case Detail ── */}
-                <section className="dashboard-column detail-column" id="detail-section">
-                  <header className="column-header">
-                    <h2>{selected ? `CASE DETAIL — ${selected.case_id} | ${selected.candidate || selected.candidate_name || "—"}` : "CASE DETAIL"}</h2>
-                  </header>
-                  {!selected ? (
-                    <div style={{ padding: "40px", textAlign: "center", color: "#94a3b8", fontSize: "14px" }}>
-                      Select a case from the queue.
-                    </div>
-                  ) : (
-                    <div className="column-content detail-content">
-                      <div className="detail-fields-group">
-                        <div className="detail-field">
-                          <span className="field-label">Candidate</span>
-                          <span className="field-value">{selected.candidate || selected.candidate_name || "—"}</span>
-                        </div>
-                        <div className="detail-field">
-                          <span className="field-label">Client</span>
-                          <span className="field-value">{selected.client || selected.client_name || "—"}</span>
-                        </div>
-                        <div className="detail-field">
-                          <span className="field-label">Submitted</span>
-                          <span className="field-value">
-                            {selected.created_at ? new Date(selected.created_at).toLocaleString("en-IN") : "—"}
-                          </span>
-                        </div>
-                        <div className="detail-field">
-                          <span className="field-label">Check Types</span>
-                          <span className="field-value check-types">{getChecksArray(selected).join(" · ") || "—"}</span>
-                        </div>
-                        <div className="detail-field documents-field">
-                          <span className="field-label">Documents</span>
-                          <div className="documents-list">
-                            {selectedDocs.length === 0 ? (
-                              <span style={{ fontSize: "12px", color: "#94a3b8" }}>No documents uploaded yet.</span>
-                            ) : (
-                              selectedDocs.map((d, i) => (
-                                <a key={i} className="doc-item" href={d.url} target="_blank" rel="noreferrer"
-                                  style={{ textDecoration: "none", cursor: "pointer" }}>
-                                  {d.name} <span className="checkmark">⬇</span>
-                                </a>
-                              ))
-                            )}
-                          </div>
-                        </div>
-                      </div>
-
-                      {actionMsg && (
-                        <div style={{ background: "#f0fdf4", border: "1px solid #86efac", borderRadius: "8px",
-                          padding: "10px 14px", fontSize: "13px", fontWeight: 600, color: "#16a34a", margin: "12px 0 0" }}>
-                          ✓ {actionMsg}
-                        </div>
-                      )}
-                      {actionWarning && (
-                        <div style={{ background: "#fffbeb", border: "1px solid #fde68a", borderRadius: "8px",
-                          padding: "10px 14px", fontSize: "13px", fontWeight: 600, color: "#a16207", margin: "8px 0 0" }}>
-                          ⚠ {actionWarning}
-                        </div>
-                      )}
-
-                      <div className="detail-actions">
-                        <button className="btn btn-approve" onClick={() => handleAction("approve")}>
-                          <svg className="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
-                            <polyline points="20 6 9 17 4 12" />
-                          </svg>
-                          APPROVE & ROUTE
-                        </button>
-                        <button className="btn btn-return" onClick={() => handleAction("return")}>
-                          <svg className="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
-                            <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
-                          </svg>
-                          RETURN TO CLIENT
-                        </button>
-                        <button className="btn btn-request" onClick={() => handleAction("request_docs")}>
-                          <svg className="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                            <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67" />
-                          </svg>
-                          REQUEST DOCS
-                        </button>
-                      </div>
-                    </div>
-                  )}
-                </section>
-
-                {/* ── COL 3: Comments ── */}
-                <div className="dashboard-column right-column">
-                  <section className="right-subcolumn comments-section" id="comments-section" style={{ height: "100%" }}>
-                    <header className="column-header"><h2>COMMENTS</h2></header>
-                    <div className="column-content comments-content">
-                      <div className="comments-list" style={{ flex: 1, overflowY: "auto", maxHeight: "340px" }}>
-                        {!selected ? (
-                          <p style={{ color: "#94a3b8", fontSize: "13px", textAlign: "center", padding: "16px" }}>
-                            Select a case to see comments.
-                          </p>
-                        ) : selectedComments.length === 0 ? (
-                          <p style={{ color: "#94a3b8", fontSize: "13px", textAlign: "center", padding: "16px" }}>
-                            No comments yet.
-                          </p>
-                        ) : (
-                          selectedComments.map((cm, i) => (
-                            <div key={i} className="comment-card">
-                              <div className="comment-avatar" style={{ background: cm.color }}>{cm.avatar}</div>
-                              <div className="comment-body">
-                                <div className="comment-meta">
-                                  <span className="comment-author">{cm.author}</span>
-                                  <span className="comment-time">{cm.time}</span>
-                                </div>
-                                <p className="comment-text">{cm.text}</p>
-                              </div>
-                            </div>
-                          ))
-                        )}
-                        <div ref={commentsEndRef} />
-                      </div>
-
-                      <form className="comment-input-area" onSubmit={handleComment} style={{ marginTop: "auto" }}>
-                        <input type="text" className="comment-input" placeholder="Add comment..."
-                          value={commentInput} onChange={e => setCommentInput(e.target.value)}
-                          disabled={!selected} aria-label="Add comment" />
-                        <button type="submit" className="comment-send-btn" aria-label="Send comment" disabled={!selected}>
-                          <svg className="send-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                            <line x1="22" y1="2" x2="11" y2="13" />
-                            <polygon points="22 2 15 22 11 13 2 9 22 2" />
-                          </svg>
-                        </button>
-                      </form>
-                    </div>
-                  </section>
                 </div>
-
+                <div style={{ background: "#fffbebf", border: "1px solid #fef08a", borderRadius: "10px", padding: "10px 16px", display: "flex", alignItems: "center", gap: "12px" }}>
+                  <span style={{ color: "#f59e0b", fontSize: "18px" }}>⚠️</span>
+                  <div>
+                    <div style={{ fontSize: "11px", color: "#92400e", textTransform: "uppercase", fontWeight: "600" }}>Final Reports Not Generated</div>
+                    <div style={{ fontSize: "16px", fontWeight: "800", color: "#92400e" }}>18</div>
+                  </div>
+                </div>
               </div>
-            )}
+            </div>
+
+            {/* Metric KPI Cards */}
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(130px, 1fr))", gap: "12px" }}>
+              {[
+                { label: "Total Cases", count: cases.length || 156, color: "#2563eb", bg: "#eff6ff" },
+                { label: "Documents Received", count: 142, color: "#059669", bg: "#ecfdf5" },
+                { label: "Checks Completed", count: 118, color: "#7c3aed", bg: "#f5f3ff" },
+                { label: "Checks Pending", count: 38, color: "#ea580c", bg: "#fff7ed" },
+                { label: "Interim Reports", count: 42, color: "#4f46e5", bg: "#eef2ff" },
+                { label: "Final Reports", count: 28, color: "#0d9488", bg: "#f0fdfa" },
+                { label: "QC Pending", count: 12, color: "#e11d48", bg: "#fff1f2" },
+                { label: "QC Approved", count: 36, color: "#0284c7", bg: "#f0f9ff" },
+              ].map((m, i) => (
+                <div key={i} style={{ background: "#fff", border: "1px solid #e2e8f0", borderRadius: "12px", padding: "12px 16px", display: "flex", alignItems: "center", gap: "12px", boxShadow: "0 1px 2px rgba(0,0,0,0.03)" }}>
+                  <div style={{ width: "36px", height: "36px", borderRadius: "8px", background: m.bg, color: m.color, display: "flex", alignItems: "center", justifyContent: "center", fontWeight: "bold", fontSize: "14px" }}>
+                    📋
+                  </div>
+                  <div>
+                    <div style={{ fontSize: "18px", fontWeight: "800", color: "#0f172a" }}>{m.count}</div>
+                    <div style={{ fontSize: "11px", color: "#64748b", fontWeight: "500" }}>{m.label}</div>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* Filter Section */}
+            <div style={{ background: "#fff", border: "1px solid #e2e8f0", borderRadius: "12px", padding: "16px", display: "flex", flexDirection: "column", gap: "12px", boxShadow: "0 1px 2px rgba(0,0,0,0.03)" }}>
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "12px" }}>
+                <div>
+                  <label style={{ fontSize: "11px", fontWeight: "600", color: "#64748b", marginBottom: "4px", display: "block" }}>Date Range</label>
+                  <input type="text" value={dateRange} onChange={(e) => setDateRange(e.target.value)} style={{ width: "100%", padding: "8px 12px", border: "1px solid #cbd5e1", borderRadius: "6px", fontSize: "13px" }} />
+                </div>
+                <div>
+                  <label style={{ fontSize: "11px", fontWeight: "600", color: "#64748b", marginBottom: "4px", display: "block" }}>Client</label>
+                  <select value={clientFilter} onChange={(e) => setClientFilter(e.target.value)} style={{ width: "100%", padding: "8px 12px", border: "1px solid #cbd5e1", borderRadius: "6px", fontSize: "13px" }}>
+                    <option value="All">All Clients</option>
+                    <option value="ABC Tech Pvt Ltd">ABC Tech Pvt Ltd</option>
+                    <option value="Global Infotech">Global Infotech</option>
+                  </select>
+                </div>
+                <div>
+                  <label style={{ fontSize: "11px", fontWeight: "600", color: "#64748b", marginBottom: "4px", display: "block" }}>Case ID / Candidate Name</label>
+                  <input type="text" placeholder="Search by Case ID or Candidate Name" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} style={{ width: "100%", padding: "8px 12px", border: "1px solid #cbd5e1", borderRadius: "6px", fontSize: "13px" }} />
+                </div>
+                <div>
+                  <label style={{ fontSize: "11px", fontWeight: "600", color: "#64748b", marginBottom: "4px", display: "block" }}>Check Type</label>
+                  <select value={checkTypeFilter} onChange={(e) => setCheckTypeFilter(e.target.value)} style={{ width: "100%", padding: "8px 12px", border: "1px solid #cbd5e1", borderRadius: "6px", fontSize: "13px" }}>
+                    <option value="All">All</option>
+                    <option value="Identity">Identity</option>
+                    <option value="Education">Education</option>
+                  </select>
+                </div>
+              </div>
+
+              {/* Secondary Filters */}
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(160px, 1fr))", gap: "12px", alignItems: "flex-end" }}>
+                <div>
+                  <label style={{ fontSize: "11px", fontWeight: "600", color: "#64748b", marginBottom: "4px", display: "block" }}>Verification Status</label>
+                  <select value={verificationStatus} onChange={(e) => setVerificationStatus(e.target.value)} style={{ width: "100%", padding: "8px 12px", border: "1px solid #cbd5e1", borderRadius: "6px", fontSize: "13px" }}>
+                    <option value="All">All</option>
+                  </select>
+                </div>
+                <div>
+                  <label style={{ fontSize: "11px", fontWeight: "600", color: "#64748b", marginBottom: "4px", display: "block" }}>TL Name</label>
+                  <select value={tlNameFilter} onChange={(e) => setTlNameFilter(e.target.value)} style={{ width: "100%", padding: "8px 12px", border: "1px solid #cbd5e1", borderRadius: "6px", fontSize: "13px" }}>
+                    <option value="All">All</option>
+                  </select>
+                </div>
+                <div>
+                  <label style={{ fontSize: "11px", fontWeight: "600", color: "#64748b", marginBottom: "4px", display: "block" }}>Report Status</label>
+                  <select value={reportStatusFilter} onChange={(e) => setReportStatusFilter(e.target.value)} style={{ width: "100%", padding: "8px 12px", border: "1px solid #cbd5e1", borderRadius: "6px", fontSize: "13px" }}>
+                    <option value="All">All</option>
+                  </select>
+                </div>
+                <div>
+                  <label style={{ fontSize: "11px", fontWeight: "600", color: "#64748b", marginBottom: "4px", display: "block" }}>QC Status</label>
+                  <select value={qcStatusFilter} onChange={(e) => setQcStatusFilter(e.target.value)} style={{ width: "100%", padding: "8px 12px", border: "1px solid #cbd5e1", borderRadius: "6px", fontSize: "13px" }}>
+                    <option value="All">All</option>
+                    <option value="Pending">Pending</option>
+                    <option value="Approved">Approved</option>
+                  </select>
+                </div>
+                <div style={{ display: "flex", gap: "8px" }}>
+                  <button style={{ background: "#0d9488", color: "#fff", border: "none", borderRadius: "6px", padding: "8px 16px", fontWeight: "600", fontSize: "13px", cursor: "pointer", flex: 1 }}>Apply</button>
+                  <button style={{ background: "#fff", color: "#475569", border: "1px solid #cbd5e1", borderRadius: "6px", padding: "8px 16px", fontWeight: "600", fontSize: "13px", cursor: "pointer" }}>Reset</button>
+                </div>
+              </div>
+            </div>
+
+            {/* Responsive Scrollable Data Table Container */}
+            <div style={{ background: "#fff", border: "1px solid #e2e8f0", borderRadius: "12px", overflow: "hidden", boxShadow: "0 1px 3px rgba(0,0,0,0.05)" }}>
+              {/* Horizontal Scroll wrapper */}
+              <div style={{ width: "100%", overflowX: "auto" }}>
+                <table style={{ width: "100%", minWidth: "1600px", borderCollapse: "collapse", textAlign: "left", fontSize: "12px" }}>
+                  <thead>
+                    <tr style={{ background: "#f1f5f9", color: "#475569", textTransform: "uppercase", fontSize: "10px", fontWeight: "700", borderBottom: "1px solid #e2e8f0" }}>
+                      <th style={{ padding: "12px 10px" }}>#</th>
+                      <th style={{ padding: "12px 10px" }}>CASE ID</th>
+                      <th style={{ padding: "12px 10px" }}>CANDIDATE NAME</th>
+                      <th style={{ padding: "12px 10px" }}>CLIENT</th>
+                      <th style={{ padding: "12px 10px" }}>CHECK TYPES</th>
+                      <th style={{ padding: "12px 10px" }}>DOCUMENTS STATUS</th>
+                      
+                      {/* Verification Group Header */}
+                      <th colSpan={6} style={{ padding: "12px 10px", textAlign: "center", background: "#e2e8f0", borderRight: "1px solid #cbd5e1" }}>VERIFICATION STATUS</th>
+                      
+                      <th style={{ padding: "12px 10px" }}>TL / VERIFIER</th>
+                      <th colSpan={2} style={{ padding: "12px 10px", textAlign: "center", background: "#e2e8f0" }}>REPORTS</th>
+                      <th style={{ padding: "12px 10px" }}>QC STATUS</th>
+                      <th style={{ padding: "12px 10px" }}>LAST UPDATED</th>
+                      <th style={{ padding: "12px 10px" }}>TAT</th>
+                      <th style={{ padding: "12px 10px", textAlign: "center" }}>ACTION</th>
+                    </tr>
+                    <tr style={{ background: "#f8fafc", color: "#64748b", fontSize: "9px", borderBottom: "1px solid #e2e8f0" }}>
+                      <th colSpan={6}></th>
+                      <th style={{ padding: "6px" }}>IDENTITY</th>
+                      <th style={{ padding: "6px" }}>EDUCATION</th>
+                      <th style={{ padding: "6px" }}>EMPLOYMENT</th>
+                      <th style={{ padding: "6px" }}>ADDRESS</th>
+                      <th style={{ padding: "6px" }}>CRIMINAL</th>
+                      <th style={{ padding: "6px", borderRight: "1px solid #cbd5e1" }}>DRUG TEST</th>
+                      <th></th>
+                      <th style={{ padding: "6px" }}>INTERIM</th>
+                      <th style={{ padding: "6px" }}>FINAL</th>
+                      <colSpan colSpan={4}></colSpan>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {loading ? (
+                      <tr><td colSpan={18} style={{ padding: "24px", textAlign: "center", color: "#94a3b8" }}>Loading cases...</td></tr>
+                    ) : filteredCases.length === 0 ? (
+                      <tr><td colSpan={18} style={{ padding: "32px", textAlign: "center", color: "#94a3b8" }}>No records found.</td></tr>
+                    ) : (
+                      filteredCases.map((c, index) => (
+                        <tr key={c.case_id || index} style={{ borderBottom: "1px solid #f1f5f9", height: "48px" }}>
+                          <td style={{ padding: "10px", color: "#64748b" }}>{index + 1}</td>
+                          <td style={{ padding: "10px", fontWeight: "700", color: "#2563eb" }}>{c.case_id || `BGV-250${index}`}</td>
+                          <td style={{ padding: "10px", fontWeight: "600", color: "#1e293b" }}>{c.candidate || c.candidate_name || "Suraj Kumar"}</td>
+                          <td style={{ padding: "10px", color: "#475569" }}>{c.client || c.client_name || "ABC Tech Pvt Ltd"}</td>
+                          <td style={{ padding: "10px", color: "#475569" }}>6</td>
+                          <td style={{ padding: "10px" }}>
+                            <span style={{ background: "#dcfce7", color: "#15803d", padding: "3px 8px", borderRadius: "12px", fontSize: "10px", fontWeight: "600" }}>Docs Received</span>
+                          </td>
+
+                          {/* Verification Badges */}
+                          <td style={{ padding: "6px" }}><Badge status="Completed" /></td>
+                          <td style={{ padding: "6px" }}><Badge status="Completed" /></td>
+                          <td style={{ padding: "6px" }}><Badge status="In Review" /></td>
+                          <td style={{ padding: "6px" }}><Badge status="Completed" /></td>
+                          <td style={{ padding: "6px" }}><Badge status="N/A" /></td>
+                          <td style={{ padding: "6px", borderRight: "1px solid #e2e8f0" }}><Badge status="Pending" /></td>
+
+                          <td style={{ padding: "10px", color: "#475569" }}>Neha Sharma <br/><span style={{ fontSize: "10px", color: "#94a3b8" }}>(TL-Employment)</span></td>
+                          
+                          {/* Reports */}
+                          <td style={{ padding: "10px", color: "#0d9488", fontWeight: "600" }}>Generated</td>
+                          <td style={{ padding: "10px", color: "#94a3b8" }}>Not Generated</td>
+
+                          {/* QC Status */}
+                          <td style={{ padding: "10px" }}>
+                            <span style={{
+                              background: c.status === "approved" ? "#dcfce7" : c.status === "in-review" ? "#e0f2fe" : "#fef3c7",
+                              color: c.status === "approved" ? "#15803d" : c.status === "in-review" ? "#0369a1" : "#b45309",
+                              padding: "4px 10px", borderRadius: "6px", fontWeight: "700", fontSize: "10px"
+                            }}>
+                              {c.status ? c.status.toUpperCase() : "PENDING"}
+                            </span>
+                          </td>
+
+                          <td style={{ padding: "10px", color: "#64748b", fontSize: "11px" }}>28 Apr 2025<br/>03:42 PM</td>
+                          <td style={{ padding: "10px", color: "#ef4444", fontWeight: "600" }}>1d 4h</td>
+                          <td style={{ padding: "10px", textAlign: "center" }}>
+                            <button style={{ background: "#4f46e5", color: "#fff", border: "none", padding: "6px 12px", borderRadius: "6px", fontSize: "11px", fontWeight: "600", cursor: "pointer" }}>
+                              Actions ▾
+                            </button>
+                          </td>
+                        </tr>
+                      ))
+                    )}
+                  </tbody>
+                </table>
+              </div>
+
+              {/* Table Footer / Pagination */}
+              <div style={{ padding: "12px 16px", background: "#f8fafc", borderTop: "1px solid #e2e8f0", display: "flex", justifyContent: "space-between", alignItems: "center", fontSize: "12px", color: "#64748b" }}>
+                <div>Showing 1 to {filteredCases.length} of {cases.length || 156} entries</div>
+                <div style={{ display: "flex", gap: "4px" }}>
+                  <button style={{ border: "1px solid #cbd5e1", background: "#fff", padding: "4px 8px", borderRadius: "4px" }}>&lt;</button>
+                  <button style={{ border: "none", background: "#2563eb", color: "#fff", padding: "4px 8px", borderRadius: "4px" }}>1</button>
+                  <button style={{ border: "1px solid #cbd5e1", background: "#fff", padding: "4px 8px", borderRadius: "4px" }}>2</button>
+                  <button style={{ border: "1px solid #cbd5e1", background: "#fff", padding: "4px 8px", borderRadius: "4px" }}>&gt;</button>
+                </div>
+              </div>
+            </div>
+
           </div>
         </main>
       </section>
     </>
+  );
+}
+
+// Status Badges Component
+function Badge({ status }) {
+  const styles = {
+    Completed: { bg: "#dcfce7", color: "#166534" },
+    "In Review": { bg: "#fef3c7", color: "#92400e" },
+    Pending: { bg: "#ffedd5", color: "#9a3412" },
+    "N/A": { bg: "#f1f5f9", color: "#94a3b8" },
+  };
+
+  const current = styles[status] || styles["N/A"];
+
+  return (
+    <span style={{ background: current.bg, color: current.color, padding: "2px 6px", borderRadius: "4px", fontSize: "10px", fontWeight: "600", display: "inline-block", textAlign: "center", width: "100%" }}>
+      {status}
+    </span>
   );
 }

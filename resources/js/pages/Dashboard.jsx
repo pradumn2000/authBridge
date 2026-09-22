@@ -788,9 +788,9 @@ export default function Dashboard() {
   const [customFrom, setCustomFrom] = useState("");
   const [customTo,   setCustomTo]   = useState("");
 
-  // Pagination States (यहाँ हमने इन्हें define कर दिया है)
+ 
   const [currentPage, setCurrentPage] = useState(1);
-  const usersPerPage = 4; // प्रति पेज कितने केस दिखाने हैं
+  const usersPerPage = 4; 
 
   const token = localStorage.getItem("token");
 
