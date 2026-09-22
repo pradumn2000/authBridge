@@ -1,4 +1,8 @@
-import React, { useState } from "react";
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import Header from "./Header";
+import Sidebar from "./Sidebar";
+import { API_URL } from "../src/config";
 import { 
   FiSearch, 
   FiDownload, 
