@@ -651,6 +651,7 @@ export default function Intake() {
   const [dateRange, setDateRange] = useState("01 Apr 2025 - 30 Apr 2025");
   const [clientFilter, setClientFilter] = useState("All");
   const [searchQuery, setSearchQuery] = useState("");
+  const [checkTypeFilter, setCheckTypeFilter] = useState("All");
   const [selectedCheckType, setSelectedCheckType] = useState("All");
   const [verificationStatus, setVerificationStatus] = useState("All");
   const [tlNameFilter, setTlNameFilter] = useState("All");
@@ -660,7 +661,6 @@ export default function Intake() {
   const token = localStorage.getItem("token");
 
   useEffect(() => {
-    // Fetch cases if backend is available
     if (token) {
       fetch(`${API_URL}/api/cases`, {
         headers: { Authorization: `Bearer ${token}`, Accept: "application/json" },
@@ -799,8 +799,8 @@ export default function Intake() {
             {/* Filter Section */}
             <div style={{ background: "#fff", border: "1px solid #e2e8f0", borderRadius: "12px", padding: "16px", display: "flex", flexDirection: "column", gap: "16px", boxShadow: "0 1px 2px rgba(0,0,0,0.03)" }}>
               
-              {/* Row 1: Date Range with Arrow Icon & Search Inputs */}
-              <div style={{ display: "grid", gridTemplateColumns: "1.2fr 1fr 1.5fr", gap: "12px" }}>
+              {/* Row 1: Date Range, Client, Case ID Search, AND Check Type Dropdown */}
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "12px" }}>
                 <div>
                   <label style={{ fontSize: "11px", fontWeight: "600", color: "#64748b", marginBottom: "4px", display: "block" }}>Date Range</label>
                   <div style={{ position: "relative", display: "flex", alignItems: "center" }}>
@@ -833,26 +833,35 @@ export default function Intake() {
                     style={{ width: "100%", padding: "8px 12px", border: "1px solid #cbd5e1", borderRadius: "6px", fontSize: "13px" }}
                   />
                 </div>
+
+                {/* Added Check Type Dropdown */}
                 <div>
                   <label style={{ fontSize: "11px", fontWeight: "600", color: "#64748b", marginBottom: "4px", display: "block" }}>Check Type</label>
                   <select value={checkTypeFilter} onChange={(e) => setCheckTypeFilter(e.target.value)} style={{ width: "100%", padding: "8px 12px", border: "1px solid #cbd5e1", borderRadius: "6px", fontSize: "13px" }}>
                     <option value="All">All</option>
                     <option value="Identity">Identity</option>
                     <option value="Education">Education</option>
+                    <option value="Employment">Employment</option>
+                    <option value="Address">Address</option>
+                    <option value="Criminal">Criminal</option>
+                    <option value="Drug Test">Drug Test</option>
                   </select>
                 </div>
               </div>
 
               {/* Row 2: Check Type Filter with Pill Buttons */}
               <div>
-                
+                <label style={{ fontSize: "11px", fontWeight: "600", color: "#64748b", marginBottom: "6px", display: "block" }}>Check Type Options</label>
                 <div style={{ display: "flex", flexWrap: "wrap", gap: "8px" }}>
                   {checkTypeButtons.map((btn) => {
                     const isActive = selectedCheckType === btn;
                     return (
                       <button
                         key={btn}
-                        onClick={() => setSelectedCheckType(btn)}
+                        onClick={() => {
+                          setSelectedCheckType(btn);
+                          setCheckTypeFilter(btn);
+                        }}
                         style={{
                           padding: "6px 14px",
                           borderRadius: "20px",
