@@ -833,11 +833,19 @@ export default function Intake() {
                     style={{ width: "100%", padding: "8px 12px", border: "1px solid #cbd5e1", borderRadius: "6px", fontSize: "13px" }}
                   />
                 </div>
+                <div>
+                  <label style={{ fontSize: "11px", fontWeight: "600", color: "#64748b", marginBottom: "4px", display: "block" }}>Check Type</label>
+                  <select value={checkTypeFilter} onChange={(e) => setCheckTypeFilter(e.target.value)} style={{ width: "100%", padding: "8px 12px", border: "1px solid #cbd5e1", borderRadius: "6px", fontSize: "13px" }}>
+                    <option value="All">All</option>
+                    <option value="Identity">Identity</option>
+                    <option value="Education">Education</option>
+                  </select>
+                </div>
               </div>
 
               {/* Row 2: Check Type Filter with Pill Buttons */}
               <div>
-                <label style={{ fontSize: "11px", fontWeight: "600", color: "#64748b", marginBottom: "6px", display: "block" }}>Check Type</label>
+                
                 <div style={{ display: "flex", flexWrap: "wrap", gap: "8px" }}>
                   {checkTypeButtons.map((btn) => {
                     const isActive = selectedCheckType === btn;
