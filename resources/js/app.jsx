@@ -70,6 +70,8 @@ import ClientBilling from "./pages/ClientBilling";
 import AddNewTl from "./pages/AddNewTl";
 import Permissions from "./pages/Permissions";
 import ViewPermission from "./pages/ViewPermission"
+import SubUser from "./pages/SubUser";
+import SubUserPermission from "./pages/SubUserPermission";
 /* =========================================================
    ADMIN MANAGEMENT
    ========================================================= */
@@ -460,6 +462,27 @@ function App() {
           element={
             <PrivateRoute role="admin">
               <ViewPermission />
+            </PrivateRoute>
+          }
+        />
+
+        {/* =================================================
+            SUB USER MANAGEMENT
+            ================================================= */}
+        <Route
+          path="/SubUsers"
+          element={
+            <PrivateRoute role="admin">
+              <SubUser />
+            </PrivateRoute>
+          }
+        />
+
+        <Route
+          path="/SubUserPermissions"
+          element={
+            <PrivateRoute role="admin">
+              <SubUserPermission />
             </PrivateRoute>
           }
         />
@@ -882,7 +905,7 @@ function App() {
             </PrivateRoute>
           }
         />
-        
+
         {/* =================================================
             SETTINGS
             ================================================= */}
