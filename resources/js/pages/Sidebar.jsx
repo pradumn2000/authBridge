@@ -1525,6 +1525,21 @@ const CLIENT_MANAGEMENT_SUBMENU = [
 ];
 
 /* =========================================================
+   SUB USER MANAGEMENT SUBMENU
+   ========================================================= */
+
+const SUB_USER_MANAGEMENT_SUBMENU = [
+  {
+    path: "/SubUsers",
+    label: "Sub Users",
+  },
+  {
+    path: "/SubUserPermissions",
+    label: "Permissions",
+  },
+];
+
+/* =========================================================
    TL MANAGEMENT SUBMENU
    ========================================================= */
 
@@ -1622,6 +1637,14 @@ const ROLE_NAV = {
       path: "/UserManagement",
       label: "User Management",
       img: "images/sidebar/user-mana.svg",
+    },
+
+    /* SUB USER MANAGEMENT */
+    {
+      label: "Sub User Management",
+      img: "images/sidebar/user-mana.svg", // SVG icon Path
+      submenu: SUB_USER_MANAGEMENT_SUBMENU,
+      id: "subUserManagement",
     },
 
     /* TL MANAGEMENT */
