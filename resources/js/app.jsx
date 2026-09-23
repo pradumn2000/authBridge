@@ -78,8 +78,8 @@ import SubUserPermission from "./pages/SubUserPermission";
 import TLDashboard from "./pages/TLDashboard";
 import TLEducationCheck from "./pages/TLEducationCheck";
 import TLAllocator from "./pages/TLAllocator";
-import TLIntake from "./pages/TLIntake";
-import TLAddInstitution from "./pages/TLAddInstitution";
+import { TLIntake } from "./pages/TLIntake";
+import { TLAddInstitution } from "./pages/TLAddInstitution";
 import TLViewPermission from "./pages/TLViewPermission";
 
 /* =========================================================
