@@ -1321,6 +1321,10 @@ const normalizeRole = (role) => {
 
   const roleMap = {
 
+    tl: "tl",
+    "team lead": "tl",
+    "team_lead": "tl",
+
     verifier: "verifyer",
 
     verifyer: "verifyer",
@@ -1562,6 +1566,43 @@ const TL_MANAGEMENT_SUBMENU = [
    ========================================================= */
 
 const ROLE_NAV = {
+
+  /* =======================================================
+     TL (TEAM LEAD)
+     ======================================================= */
+
+  tl: [
+    {
+      path: "/TLDashboard",
+      label: "Dashboard",
+      img: "images/sidebar/home-icon.svg",
+    },
+    {
+      path: "/TLEducationCheck",
+      label: "Education Case",
+      img: "images/sidebar/report-icon.svg",
+    },
+    {
+      path: "/TLAllocator",
+      label: "Case Allocation",
+      img: "images/sidebar/cases-icon.svg",
+    },
+    {
+      path: "/TLIntake",
+      label: "QA Review",
+      img: "images/sidebar/wip-icon.svg",
+    },
+    {
+      path: "/TLAddInstitution",
+      label: "University Selection",
+      img: "images/sidebar/ad-ins.svg",
+    },
+    {
+      path: "/TLViewPermission",
+      label: "View Permission",
+      img: "images/sidebar/setting-icon.svg",
+    },
+  ],
 
 
   /* =======================================================
