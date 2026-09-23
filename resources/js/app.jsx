@@ -65,23 +65,13 @@ import ClientCases from "./pages/ClientCases";
 import ClientBilling from "./pages/ClientBilling";
 
 /* =========================================================
-   TL MANAGEMENT
+    TL MANAGEMENT
    ========================================================= */
-
 import AddNewTl from "./pages/AddNewTl";
 import Permissions from "./pages/Permissions";
-import ViewPermission from "./pages/ViewPermission";
+import ViewPermission from "./pages/ViewPermission"
 import SubUser from "./pages/SubUser";
 import SubUserPermission from "./pages/SubUserPermission";
-
-// TL Custom Pages
-import TLDashboard from "./pages/TLDashboard";
-import TLEducationCheck from "./pages/TLEducationCheck";
-import TLAllocator from "./pages/TLAllocator";
-import { TLIntake } from "./pages/TLIntake";
-import { TLAddInstitution } from "./pages/TLAddInstitution";
-import TLViewPermission from "./pages/TLViewPermission";
-
 /* =========================================================
    ADMIN MANAGEMENT
    ========================================================= */
@@ -105,7 +95,6 @@ import DatabaseUserProfile from "./pages/DatabaseUserProfile";
 import EducationUserProfile from "./pages/EducationUserProfile";
 import EmploymentUserProfile from "./pages/EmploymentUserProfile";
 import AddressUserProfile from "./pages/AddressUserProfile";
-
 /* =========================================================
    AUTH HELPERS
    ========================================================= */
@@ -113,6 +102,7 @@ import AddressUserProfile from "./pages/AddressUserProfile";
 const getToken = () => {
   return localStorage.getItem("token");
 };
+
 
 const getUser = () => {
   try {
@@ -122,40 +112,61 @@ const getUser = () => {
   }
 };
 
+
 /* =========================================================
    ROLE HOME ROUTES
    ========================================================= */
 
 function getRoleRoute(role) {
+
   const routes = {
+
     admin: "/dashboard",
-    tl: "/TLDashboard",
+
     allocator: "/Allocator",
+
     verifier: "/Verifyer",
+
     verifyer: "/Verifyer",
+
     check_manager: "/AllCases",
+
     report_writing: "/Specialist",
+
     pvt_qc: "/Intake",
+
     client: "/Client",
+
     onboarding: "/clientportal",
+
     pending_links: "/PendingLinks",
+
     employment_verifier: "/Verifyer",
+
     education_verifier: "/Verifyer",
+
     address_verifier: "/Verifyer",
+
     database_verifier: "/Verifyer",
+
     criminal_verifier: "/Verifyer",
+
     drug_test_verifier: "/Verifyer",
+
     courtroom_verifier: "/Verifyer",
+
   };
 
   return routes[role] || "/";
 }
+
 
 /* =========================================================
    NORMALIZE ROLE
    ========================================================= */
 
 function normalizeRole(role) {
+
   if (!role) {
     return "admin";
   }
@@ -166,78 +177,212 @@ function normalizeRole(role) {
     .trim();
 
   const roleMap = {
-    tl: "tl",
-    "team lead": "tl",
-    "team_lead": "tl",
+
     verifier: "verifier",
+
     verifyer: "verifier",
+
     "employment verifier": "employment_verifier",
+
     "education verifier": "education_verifier",
+
     "address verifier": "address_verifier",
+
     "database verifier": "database_verifier",
+
     "criminal verifier": "criminal_verifier",
+
     "drug test verifier": "drug_test_verifier",
+
     "courtroom verifier": "courtroom_verifier",
+
   };
 
   return roleMap[value] || value;
 }
 
+
 /* =========================================================
    PRIVATE ROUTE
+   =========================================================
+
+   Usage:
+
+   <PrivateRoute>
+      <Page />
+   </PrivateRoute>
+
+   Any logged-in user can access.
+
+   OR
+
+   <PrivateRoute role="admin">
+      <Page />
+   </PrivateRoute>
+
+   Only admin can access.
+
+   OR
+
+   <PrivateRoute role={["admin", "client"]}>
+      <Page />
+   </PrivateRoute>
+
+   Admin + client can access.
+
    ========================================================= */
 
 function PrivateRoute({ children, role }) {
+
   const token = getToken();
+
   const user = getUser();
 
+
+  /* -------------------------------------------------------
+     USER NOT LOGGED IN
+     ------------------------------------------------------- */
+
   if (!token || !user) {
-    return <Navigate to="/" replace />;
+
+    return (
+      <Navigate
+        to="/"
+        replace
+      />
+    );
+
   }
+
+
+  /* -------------------------------------------------------
+     NO ROLE RESTRICTION
+     ------------------------------------------------------- */
 
   if (!role) {
+
     return children;
+
   }
 
+
+  /* -------------------------------------------------------
+     NORMALIZE CURRENT USER ROLE
+     ------------------------------------------------------- */
+
   const currentRole = normalizeRole(user.role);
+
+
+  /* -------------------------------------------------------
+     NORMALIZE ALLOWED ROLES
+     ------------------------------------------------------- */
 
   const allowedRoles = Array.isArray(role)
     ? role.map(normalizeRole)
     : [normalizeRole(role)];
 
+
+  /* -------------------------------------------------------
+     ADMIN CAN ACCESS EVERYTHING
+     ------------------------------------------------------- */
+
   if (currentRole === "admin") {
+
     return children;
+
   }
+
+
+  /* -------------------------------------------------------
+     USER HAS REQUIRED ROLE
+     ------------------------------------------------------- */
 
   if (allowedRoles.includes(currentRole)) {
+
     return children;
+
   }
 
-  return <Navigate to={getRoleRoute(currentRole)} replace />;
+
+  /* -------------------------------------------------------
+     WRONG ROLE
+     SEND USER TO THEIR OWN DASHBOARD
+     ------------------------------------------------------- */
+
+  return (
+    <Navigate
+      to={getRoleRoute(currentRole)}
+      replace
+    />
+  );
 }
+
 
 /* =========================================================
    APPLICATION
    ========================================================= */
 
 function App() {
+
   return (
+
     <BrowserRouter>
+
       <Routes>
-        {/* PUBLIC ROUTES */}
-        <Route path="/" element={<Login />} />
-        <Route path="/signup" element={<Signup />} />
-        <Route path="/client-register" element={<ClientRegistration />} />
-        <Route path="/forgetpassword" element={<Forgetpassword />} />
-        <Route path="/verifyaccount" element={<VerifyAccount />} />
-        <Route path="/resetpassword" element={<Resetpassword />} />
-        <Route path="/confirmpassword" element={<Confrimpassword />} />
+
+
+        {/* =================================================
+            PUBLIC ROUTES
+            ================================================= */}
+
         <Route
-          path="/candidate-verification"
-          element={<CandidateVerificationWizard />}
+          path="/"
+          element={<Login />}
         />
 
-        {/* ADMIN DASHBOARD */}
+        <Route
+          path="/signup"
+          element={<Signup />}
+        />
+
+        {/* CLIENT REGISTRATION MUST BE PUBLIC */}
+        <Route
+          path="/client-register"
+          element={<ClientRegistration />}
+        />
+
+        <Route
+          path="/forgetpassword"
+          element={<Forgetpassword />}
+        />
+
+        <Route
+          path="/verifyaccount"
+          element={<VerifyAccount />}
+        />
+
+        <Route
+          path="/resetpassword"
+          element={<Resetpassword />}
+        />
+
+        <Route
+          path="/confirmpassword"
+          element={<Confrimpassword />}
+        />
+
+         <Route
+           path="/candidate-verification"
+         element={
+            <CandidateVerificationWizard />
+         }
+         />
+
+
+        {/* =================================================
+            ADMIN DASHBOARD
+            ================================================= */}
+
         <Route
           path="/dashboard"
           element={
@@ -247,7 +392,11 @@ function App() {
           }
         />
 
-        {/* ADMIN - ALL CASES */}
+
+        {/* =================================================
+            ADMIN - ALL CASES
+            ================================================= */}
+
         <Route
           path="/AllCases"
           element={
@@ -257,17 +406,27 @@ function App() {
           }
         />
 
-        {/* ADMIN - ADD CASE */}
+
+        {/* =================================================
+            ADMIN - ADD CASE
+            ================================================= */}
+
         <Route
           path="/AddCase"
           element={
-            <PrivateRoute role={["admin", "allocator", "client"]}>
+            <PrivateRoute
+              role={["admin", "allocator", "client"]}
+            >
               <AddCase />
             </PrivateRoute>
           }
         />
 
-        {/* ADMIN - ALL CLIENTS */}
+
+        {/* =================================================
+            ADMIN - ALL CLIENTS
+            ================================================= */}
+
         <Route
           path="/AllClients"
           element={
@@ -277,8 +436,10 @@ function App() {
           }
         />
 
-        {/* TL MANAGEMENT */}
-        <Route
+{/* ==================================================
+        Tl Management
+    ================================================     */}
+          <Route
           path="/AddNewTl"
           element={
             <PrivateRoute role="admin">
@@ -296,7 +457,7 @@ function App() {
           }
         />
 
-        <Route
+           <Route
           path="/ViewPermission"
           element={
             <PrivateRoute role="admin">
@@ -305,7 +466,9 @@ function App() {
           }
         />
 
-        {/* SUB USER MANAGEMENT */}
+        {/* =================================================
+            SUB USER MANAGEMENT
+            ================================================= */}
         <Route
           path="/SubUsers"
           element={
@@ -324,8 +487,10 @@ function App() {
           }
         />
 
-        {/* ADMIN - INNER USER PROFILES */}
-        <Route
+           {/* =================================================
+                 ADMIN - Inner user Profile
+            ================================================= */}
+            <Route
           path="/CriminalUserProfile"
           element={
             <PrivateRoute role="admin">
@@ -334,7 +499,7 @@ function App() {
           }
         />
 
-        <Route
+  <Route
           path="/DatabaseUserProfile"
           element={
             <PrivateRoute role="admin">
@@ -343,7 +508,7 @@ function App() {
           }
         />
 
-        <Route
+<Route
           path="/EducationUserProfile"
           element={
             <PrivateRoute role="admin">
@@ -369,8 +534,10 @@ function App() {
             </PrivateRoute>
           }
         />
+        {/* =================================================
+            ADMIN - ADD CLIENT
+            ================================================= */}
 
-        {/* ADMIN - OTHER MANAGEMENT */}
         <Route
           path="/AddClient"
           element={
@@ -379,6 +546,11 @@ function App() {
             </PrivateRoute>
           }
         />
+
+
+        {/* =================================================
+            ADMIN - USER MANAGEMENT
+            ================================================= */}
 
         <Route
           path="/UserManagement"
@@ -389,6 +561,11 @@ function App() {
           }
         />
 
+
+        {/* =================================================
+            ADMIN - INSTITUTION
+            ================================================= */}
+
         <Route
           path="/AddInstitution"
           element={
@@ -397,6 +574,11 @@ function App() {
             </PrivateRoute>
           }
         />
+
+
+        {/* =================================================
+            ADMIN - COMPANY
+            ================================================= */}
 
         <Route
           path="/AddCompany"
@@ -407,6 +589,11 @@ function App() {
           }
         />
 
+
+        {/* =================================================
+            ADMIN - TRENDS
+            ================================================= */}
+
         <Route
           path="/Trends"
           element={
@@ -415,6 +602,11 @@ function App() {
             </PrivateRoute>
           }
         />
+
+
+        {/* =================================================
+            ADMIN - API INTEGRATION
+            ================================================= */}
 
         <Route
           path="/Apiintegretion"
@@ -425,7 +617,11 @@ function App() {
           }
         />
 
-        {/* ALLOCATOR & VERIFIER */}
+ 
+        {/* =================================================
+            ALLOCATOR
+            ================================================= */}
+
         <Route
           path="/Allocator"
           element={
@@ -434,6 +630,11 @@ function App() {
             </PrivateRoute>
           }
         />
+
+
+        {/* =================================================
+            VERIFIER DASHBOARD
+            ================================================= */}
 
         <Route
           path="/Verifyer"
@@ -455,7 +656,11 @@ function App() {
           }
         />
 
-        {/* EMPLOYMENT */}
+
+        {/* =================================================
+            EMPLOYMENT
+            ================================================= */}
+
         <Route
           path="/emploment"
           element={
@@ -470,6 +675,7 @@ function App() {
             </PrivateRoute>
           }
         />
+
 
         <Route
           path="/StatusEmploment"
@@ -486,7 +692,11 @@ function App() {
           }
         />
 
-        {/* VERIFICATION CHECKS */}
+
+        {/* =================================================
+            VERIFICATION CHECKS
+            ================================================= */}
+
         <Route
           path="/EmploymentCheck"
           element={
@@ -495,6 +705,7 @@ function App() {
             </PrivateRoute>
           }
         />
+
 
         <Route
           path="/EducationCheck"
@@ -505,6 +716,7 @@ function App() {
           }
         />
 
+
         <Route
           path="/AddressCheck"
           element={
@@ -513,6 +725,7 @@ function App() {
             </PrivateRoute>
           }
         />
+
 
         <Route
           path="/DatabaseCheck"
@@ -523,6 +736,7 @@ function App() {
           }
         />
 
+
         <Route
           path="/CriminalCheck"
           element={
@@ -531,6 +745,7 @@ function App() {
             </PrivateRoute>
           }
         />
+
 
         <Route
           path="/DrugtestCheck"
@@ -541,6 +756,7 @@ function App() {
           }
         />
 
+
         <Route
           path="/CourtroomCheck"
           element={
@@ -549,6 +765,11 @@ function App() {
             </PrivateRoute>
           }
         />
+
+
+        {/* =================================================
+            ADD / MANAGE CHECK TYPES
+            ================================================= */}
 
         <Route
           path="/AddCheckType/New"
@@ -569,15 +790,19 @@ function App() {
         />
 
         <Route
-          path="/VerificationCheck/:key"
-          element={
-            <PrivateRoute role="admin">
-              <VerificationCheck />
-            </PrivateRoute>
-          }
-        />
+  path="/VerificationCheck/:key"
+  element={
+    <PrivateRoute role="admin">
+      <VerificationCheck />
+    </PrivateRoute>
+  }
+/>
 
-        {/* OTHER ROLES */}
+
+        {/* =================================================
+            REPORT WRITING
+            ================================================= */}
+
         <Route
           path="/Specialist"
           element={
@@ -586,6 +811,11 @@ function App() {
             </PrivateRoute>
           }
         />
+
+
+        {/* =================================================
+            QC / INTAKE
+            ================================================= */}
 
         <Route
           path="/Intake"
@@ -596,6 +826,11 @@ function App() {
           }
         />
 
+
+        {/* =================================================
+            CLIENT DASHBOARD
+            ================================================= */}
+
         <Route
           path="/Client"
           element={
@@ -604,6 +839,11 @@ function App() {
             </PrivateRoute>
           }
         />
+
+
+        {/* =================================================
+            CLIENT CASES
+            ================================================= */}
 
         <Route
           path="/ClientCases"
@@ -614,6 +854,11 @@ function App() {
           }
         />
 
+
+        {/* =================================================
+            CLIENT BILLING
+            ================================================= */}
+
         <Route
           path="/ClientBilling"
           element={
@@ -623,23 +868,47 @@ function App() {
           }
         />
 
+
+        {/* =================================================
+            CLIENT PORTAL
+            ================================================= */}
+
         <Route
           path="/clientportal"
           element={
-            <PrivateRoute role={["onboarding", "client"]}>
+            <PrivateRoute
+              role={[
+                "onboarding",
+                "client",
+              ]}
+            >
               <Clientportal />
             </PrivateRoute>
           }
         />
 
+{/* =================================================
+            PENDING LINKS PAGE (NEW)
+            ================================================= */}
+
         <Route
           path="/PendingLinks"
           element={
-            <PrivateRoute role={["onboarding", "client", "admin"]}>
+            <PrivateRoute
+              role={[
+                "onboarding",
+                "client",
+                "admin",
+              ]}
+            >
               <PendingLinks />
             </PrivateRoute>
           }
         />
+
+        {/* =================================================
+            SETTINGS
+            ================================================= */}
 
         <Route
           path="/Settings"
@@ -650,70 +919,27 @@ function App() {
           }
         />
 
-        {/* TL MANAGEMENT & PAGES ROUTES */}
-        <Route
-          path="/TLDashboard"
-          element={
-            <PrivateRoute role={["tl", "admin"]}>
-              <TLDashboard />
-            </PrivateRoute>
-          }
-        />
 
-        <Route
-          path="/TLEducationCheck"
-          element={
-            <PrivateRoute role={["tl", "admin"]}>
-              <TLEducationCheck />
-            </PrivateRoute>
-          }
-        />
+        {/* =================================================
+            UNKNOWN ROUTE
+            ================================================= */}
 
-        <Route
-          path="/TLAllocator"
-          element={
-            <PrivateRoute role={["tl", "admin"]}>
-              <TLAllocator />
-            </PrivateRoute>
-          }
-        />
-
-        <Route
-          path="/TLIntake"
-          element={
-            <PrivateRoute role={["tl", "admin"]}>
-              <TLIntake />
-            </PrivateRoute>
-          }
-        />
-
-        <Route
-          path="/TLAddInstitution"
-          element={
-            <PrivateRoute role={["tl", "admin"]}>
-              <TLAddInstitution />
-            </PrivateRoute>
-          }
-        />
-
-        <Route
-          path="/TLViewPermission"
-          element={
-            <PrivateRoute role={["tl", "admin"]}>
-              <TLViewPermission />
-            </PrivateRoute>
-          }
-        />
-
-        {/* UNKNOWN ROUTE - ALWAYS KEEP THIS AT THE BOTTOM */}
         <Route
           path="*"
-          element={<Navigate to="/" replace />}
+          element={
+            <Navigate
+              to="/"
+              replace
+            />
+          }
         />
+
       </Routes>
+
     </BrowserRouter>
   );
 }
+
 
 /* =========================================================
    REACT ROOT
@@ -722,7 +948,11 @@ function App() {
 const container = document.getElementById("app");
 
 if (!container) {
-  throw new Error("React root element #app was not found.");
+
+  throw new Error(
+    "React root element #app was not found."
+  );
+
 }
 
 const root = ReactDOM.createRoot(container);
