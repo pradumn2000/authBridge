@@ -4069,7 +4069,8 @@
 //   );
 // }
 import React, { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+// import { useParams } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
 import { API_URL } from "../src/config";
 
 // ── Field shapes below match exactly what the admin pages
@@ -4152,9 +4153,12 @@ async function fetchLinkGated(url, options) {
   return res;
 }
 
+// export default function CandidateVerificationWizard() {
+//   const { token } = useParams();
 export default function CandidateVerificationWizard() {
-  const { token } = useParams();
-
+  const [searchParams] = useSearchParams();
+  const token = searchParams.get("token");
+  
   const [status, setStatus] = useState("loading"); // loading | ready | expired | submitted | invalid | error
   const [linkData, setLinkData] = useState(null);
   const [checkDetails, setCheckDetails] = useState({});

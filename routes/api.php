@@ -1355,7 +1355,9 @@ Route::middleware('auth:sanctum')->group(function () {
             'expires_at'     => \App\Models\CandidateLink::expiryToCarbon('72h'),
         ]);
 
-        return response()->json(['url' => url("/candidate/{$token}")]);
+        // Candidate wizard lives at /candidate-verification and reads the
+        // token from the query string (see bg.jsx's useSearchParams()).
+        return response()->json(['url' => url("/candidate-verification?token={$token}")]);
     });
 
     // ── Added: GENERATE SHARE LINK FOR MULTIPLE CHECKS ON A CASE (combined
@@ -1396,7 +1398,9 @@ Route::middleware('auth:sanctum')->group(function () {
             'expires_at'     => \App\Models\CandidateLink::expiryToCarbon($expiry),
         ]);
 
-        return response()->json(['url' => url("/candidate/{$token}")]);
+        // Candidate wizard lives at /candidate-verification and reads the
+        // token from the query string (see bg.jsx's useSearchParams()).
+        return response()->json(['url' => url("/candidate-verification?token={$token}")]);
     });
 
     // CASE TIMELINE
@@ -1424,65 +1428,43 @@ Route::middleware('auth:sanctum')->group(function () {
     });
 
     // ── CANDIDATE LINKS (Link Generator Dashboard) ───────────
-    // Route::get('/candidate-links', function (Request $request) {
-    //     $user  = $request->user();
-    //     $query = \App\Models\CandidateLink::orderByDesc('created_at');
-
-    //     if ($user->role !== 'admin') {
-    //         $query->where('client_id', $user->id);
-    //     }
-
-    //     $links = $query->get()->map(function ($l) {
-    //         return [
-    //             'id'            => $l->id,
-    //             'candidateName' => $l->candidate_name,
-    //             'email'         => $l->email,
-    //             'mobile'        => $l->mobile,
-    //             'position'      => $l->position,
-    //             'checks'        => $l->checks,
-    //             'expiry'        => $l->expiry,
-    //             'status'        => $l->status,
-    //             'link'          => url("/candidate/{$l->token}"),
-    //             'createdAt'     => $l->created_at->format('Y-m-d'),
-    //         ];
-    //     });
-
-    //     return response()->json(['links' => $links]);
-    // });
     Route::get('/candidate-links', function (Request $request) {
-    $user  = $request->user();
-    $query = \App\Models\CandidateLink::orderByDesc('created_at');
+        $user  = $request->user();
+        $query = \App\Models\CandidateLink::orderByDesc('created_at');
 
-    if ($user->role !== 'admin') {
-        $query->where('client_id', $user->id);
-    }
+        if ($user->role !== 'admin') {
+            $query->where('client_id', $user->id);
+        }
 
-    $links = $query->get()->map(function ($l) {
-        $isExpired = $l->expires_at && now()->greaterThan($l->expires_at);
+        $links = $query->get()->map(function ($l) {
+            $isExpired = $l->expires_at && now()->greaterThan($l->expires_at);
 
-        return [
-            'id'            => $l->id,
-            'caseId'        => $l->case_id,
-            'candidateName' => $l->candidate_name,
-            'email'         => $l->email,
-            'mobile'        => $l->mobile,
-            'position'      => $l->position,
-            'checks'        => $l->checks,
-            'expiry'        => $l->expiry,
-            'status'        => $l->status,
-            'expired'       => $isExpired,
-            'displayStatus' => $l->status === 'submitted'
-                ? 'submitted'
-                : ($isExpired ? 'expired' : 'pending'),
-            'link'          => url("/candidate/{$l->token}"),
-            // Full ISO timestamps — table formats these client-side
-            'createdAt'     => $l->created_at->toIso8601String(),
-            'expiresAt'     => optional($l->expires_at)->toIso8601String(),
-        ];
+            return [
+                'id'            => $l->id,
+                'caseId'        => $l->case_id,
+                'candidateName' => $l->candidate_name,
+                'email'         => $l->email,
+                'mobile'        => $l->mobile,
+                'position'      => $l->position,
+                'checks'        => $l->checks,
+                'expiry'        => $l->expiry,
+                'status'        => $l->status,
+                'expired'       => $isExpired,
+                'displayStatus' => $l->status === 'submitted'
+                    ? 'submitted'
+                    : ($isExpired ? 'expired' : 'pending'),
+                // Candidate wizard lives at /candidate-verification and
+                // reads the token from the query string.
+                'link'          => url("/candidate-verification?token={$l->token}"),
+                // Full ISO timestamps — table formats these client-side
+                'createdAt'     => $l->created_at->toIso8601String(),
+                'expiresAt'     => optional($l->expires_at)->toIso8601String(),
+            ];
+        });
+
+        return response()->json(['links' => $links]);
     });
 
-    return response()->json(['links' => $links]);
-});
     Route::post('/candidate-links', function (Request $request) {
         $request->validate([
             'candidateName' => 'required|string|max:255',
@@ -1508,7 +1490,15 @@ Route::middleware('auth:sanctum')->group(function () {
             'expires_at'     => \App\Models\CandidateLink::expiryToCarbon($request->expiry),
         ]);
 
-        return response()->json(['message' => 'Candidate link generated', 'link' => ['id' => $link->id, 'link' => url("/candidate/{$token}")]], 201);
+        return response()->json([
+            'message' => 'Candidate link generated',
+            'link'    => [
+                'id'   => $link->id,
+                // Candidate wizard lives at /candidate-verification and
+                // reads the token from the query string.
+                'link' => url("/candidate-verification?token={$token}"),
+            ],
+        ], 201);
     });
 
     Route::post('/candidate-links/bulk', function (Request $request) {
@@ -1536,7 +1526,12 @@ Route::middleware('auth:sanctum')->group(function () {
                 'client_id'      => $clientId,
                 'expires_at'     => \App\Models\CandidateLink::expiryToCarbon('72h'),
             ]);
-            $created[] = ['id' => $link->id, 'link' => url("/candidate/{$token}")];
+            $created[] = [
+                'id'   => $link->id,
+                // Candidate wizard lives at /candidate-verification and
+                // reads the token from the query string.
+                'link' => url("/candidate-verification?token={$token}"),
+            ];
         }
 
         return response()->json(['message' => count($created) . ' link(s) generated', 'links' => $created], 201);
@@ -1553,7 +1548,9 @@ Route::middleware('auth:sanctum')->group(function () {
 
         if ($request->method === 'Email') {
             Mail::raw(
-                "Hi {$link->candidate_name},\n\nPlease complete your verification here: " . url("/candidate/{$link->token}"),
+                // Candidate wizard lives at /candidate-verification and
+                // reads the token from the query string.
+                "Hi {$link->candidate_name},\n\nPlease complete your verification here: " . url("/candidate-verification?token={$link->token}"),
                 function ($message) use ($link) {
                     $message->to($link->email)->subject('Complete Your Background Verification');
                 }
