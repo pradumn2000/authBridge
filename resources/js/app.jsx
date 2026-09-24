@@ -99,6 +99,12 @@ import AddressUserProfile from "./pages/AddressUserProfile";
    AUTH HELPERS
    ========================================================= */
 
+   /* =========================================================
+    TL Management
+   ========================================================= */
+import TLDashboard from "./pages/TLDashboard";
+
+
 const getToken = () => {
   return localStorage.getItem("token");
 };
@@ -933,6 +939,19 @@ function App() {
             />
           }
         />
+
+        {/* ==================================================
+        Tl Management
+    ================================================     */}
+
+    <Route
+  path="/TLDashboard"
+  element={
+    <PrivateRoute role={["tl", "admin"]}>
+      <TLDashboard />
+    </PrivateRoute>
+  }
+/>
 
       </Routes>
 
