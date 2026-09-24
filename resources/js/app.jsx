@@ -103,6 +103,7 @@ import AddressUserProfile from "./pages/AddressUserProfile";
     TL Management
    ========================================================= */
 import TLDashboard from "./pages/TLDashboard";
+import TLAllocator from "./pages/TLAllocator";
 
 
 const getToken = () => {
@@ -949,6 +950,15 @@ function App() {
   element={
     <PrivateRoute role={["tl", "admin"]}>
       <TLDashboard />
+    </PrivateRoute>
+  }
+/>
+
+<Route
+  path="/TLAllocator"
+  element={
+    <PrivateRoute role={["tl", "admin"]}>
+      <TLAllocator />
     </PrivateRoute>
   }
 />
