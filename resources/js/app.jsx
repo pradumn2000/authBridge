@@ -105,6 +105,7 @@ import AddressUserProfile from "./pages/AddressUserProfile";
 import TLDashboard from "./pages/TLDashboard";
 import TLAllocator from "./pages/TLAllocator";
 import TLEducationCheck from "./pages/TLEducationCheck";
+import TLQCReview from "./pages/TLQCReview";
 
 
 const getToken = () => {
@@ -969,6 +970,15 @@ function App() {
   element={
     <PrivateRoute role={["tl", "admin"]}>
       <TLEducationCheck />
+    </PrivateRoute>
+  }
+/>
+
+<Route
+  path="/TLQCReview"
+  element={
+    <PrivateRoute role={["tl", "admin"]}>
+      <TLQCReview />
     </PrivateRoute>
   }
 />
