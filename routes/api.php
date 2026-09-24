@@ -226,18 +226,31 @@ Route::get('/candidate-link/{token}', function ($token) use ($normalizeCheckKey)
     }
 
     $checks = collect($link->checks ?? [])->map($normalizeCheckKey)->values()->all();
-    
+
     // Transform CaseChecks back into old checkDetails shape for candidate portal
     $checkDetails = [];
+    $caseDob = null;
     if ($link->case_id) {
         $caseChecks = CaseCheck::where('case_id', $link->case_id)->get();
         foreach ($caseChecks as $check) {
             $checkDetails[$check->check_type] = [
-                'fields' => $check->fields ?? [],
+                'fields'    => $check->fields ?? [],
                 'documents' => $check->documents ?? [],
             ];
         }
+        // Added: the candidate wizard's Personal & Identity step shows the
+        // candidate's DOB read-only (already collected at case creation),
+        // so it doesn't need to be re-typed.
+        $case = BGVCase::where('case_id', $link->case_id)->first();
+        $caseDob = $case->candidate_dob ?? null;
     }
+
+    // Added: Personal & Identity data collected in the wizard's Step 3,
+    // stored separately from case_checks since it isn't a verification
+    // check — see CandidateIdentity model / candidate_identities table.
+    $identity = $link->case_id
+        ? \App\Models\CandidateIdentity::where('case_id', $link->case_id)->first()
+        : null;
 
     return response()->json([
         'link' => [
@@ -245,13 +258,133 @@ Route::get('/candidate-link/{token}', function ($token) use ($normalizeCheckKey)
             'email'         => $link->email,
             'mobile'        => $link->mobile,
             'position'      => $link->position,
+            'dob'           => $caseDob,
             'caseId'        => $link->case_id,
             'checkType'     => $link->check_type ? $normalizeCheckKey($link->check_type) : null,
             'checks'        => $checks,
             'expiresAt'     => $link->expires_at,
+            // Added: drives the wizard's Step 2 email-verification gate.
+            'emailVerified' => (bool) $link->email_verified_at,
         ],
         'checkDetails' => $checkDetails,
+        'identity'     => $identity,
     ]);
+});
+
+// ── Added: email OTP for the candidate wizard's consent step. Sends to the
+//    link's own email (from the case) — the candidate can't type an
+//    arbitrary address. Same rand(1000,9999) + 10-minute-expiry pattern as
+//    the existing /forgot-password flow above, but scoped to the link
+//    itself rather than the password_resets table (no user account here).
+Route::post('/candidate-link/{token}/send-otp', function ($token) {
+    $link = \App\Models\CandidateLink::where('token', $token)->first();
+    if (!$link) return response()->json(['message' => 'Invalid link'], 404);
+    if ($link->expires_at && now()->greaterThan($link->expires_at)) {
+        return response()->json(['message' => 'Link expired', 'expired' => true], 410);
+    }
+
+    $otp = rand(1000, 9999);
+    $link->update(['otp_code' => $otp, 'otp_expires_at' => now()->addMinutes(10)]);
+
+    Mail::raw("Your verification code is: $otp\nThis code expires in 10 minutes.", function ($message) use ($link) {
+        $message->to($link->email)->subject('Verify Your Email — Background Verification');
+    });
+
+    return response()->json(['message' => 'OTP sent successfully']);
+});
+
+Route::post('/candidate-link/{token}/verify-otp', function (Request $request, $token) {
+    $request->validate(['otp' => 'required|digits:4']);
+
+    $link = \App\Models\CandidateLink::where('token', $token)->first();
+    if (!$link) return response()->json(['message' => 'Invalid link'], 404);
+
+    if (!$link->otp_code || !$link->otp_expires_at || now()->greaterThan($link->otp_expires_at)) {
+        return response()->json(['message' => 'OTP expired. Please request a new one.'], 400);
+    }
+    if ((string) $link->otp_code !== (string) $request->otp) {
+        return response()->json(['message' => 'Incorrect OTP.'], 400);
+    }
+
+    $link->update(['email_verified_at' => now(), 'otp_code' => null, 'otp_expires_at' => null]);
+
+    return response()->json(['message' => 'Email verified successfully']);
+});
+
+// ── Added: Personal & Identity save — one row per case (candidate_identities),
+//    upserted by case_id. Not a verification check, so it deliberately
+//    doesn't touch case_checks.
+Route::patch('/candidate-link/{token}/identity', function (Request $request, $token) {
+    $link = \App\Models\CandidateLink::where('token', $token)->first();
+    if (!$link || !$link->case_id) return response()->json(['message' => 'Invalid link or case'], 404);
+    if ($link->expires_at && now()->greaterThan($link->expires_at)) return response()->json(['message' => 'Link expired'], 410);
+
+    $request->validate([
+        'gender'                     => 'nullable|string|max:20',
+        'current_address'            => 'nullable|string|max:1000',
+        'current_address_doc_type'   => 'nullable|string|max:50',
+        'is_permanent_same'          => 'nullable|boolean',
+        'permanent_address'          => 'nullable|string|max:1000',
+        'permanent_address_doc_type' => 'nullable|string|max:50',
+        'aadhaar_number'             => 'nullable|string|max:20',
+        'pan_number'                 => 'nullable|string|max:10',
+    ]);
+
+    $identity = \App\Models\CandidateIdentity::firstOrNew(['case_id' => $link->case_id]);
+    $identity->fill($request->only([
+        'gender', 'current_address', 'current_address_doc_type',
+        'is_permanent_same', 'permanent_address', 'permanent_address_doc_type',
+        'aadhaar_number', 'pan_number',
+    ]));
+    $identity->save();
+
+    return response()->json(['message' => 'Saved', 'identity' => $identity]);
+});
+
+// ── Added: identity documents (profile photo, address proofs, etc.) —
+//    same {name,path,url,uploaded_by,uploaded_at} shape as case_checks
+//    documents, but stored on candidate_identities.documents instead,
+//    since identity isn't tied to a check_type.
+Route::post('/candidate-link/{token}/identity-documents', function (Request $request, $token) {
+    $request->validate([
+        'document_key' => 'required|string',
+        'file'         => 'required|file|max:10240|mimes:pdf,jpg,jpeg,png',
+    ]);
+
+    $link = \App\Models\CandidateLink::where('token', $token)->first();
+    if (!$link || !$link->case_id) return response()->json(['message' => 'Invalid link or case'], 404);
+
+    $identity = \App\Models\CandidateIdentity::firstOrNew(['case_id' => $link->case_id]);
+    if (!$identity->exists) $identity->save();
+
+    $path = $request->file('file')->store("case-documents/{$link->case_id}/identity", 'public');
+    $url  = Storage::disk('public')->url($path);
+
+    $documents = $identity->documents ?? [];
+    $documents[$request->document_key] = [
+        'name'        => $request->file('file')->getClientOriginalName(),
+        'path'        => $path,
+        'url'         => $url,
+        'uploaded_by' => 'candidate',
+        'uploaded_at' => now()->toDateTimeString(),
+    ];
+    $identity->documents = $documents;
+    $identity->save();
+
+    return response()->json(['message' => 'Uploaded', 'url' => $url]);
+});
+
+// ── Added: DigiLocker — placeholder only. A real integration needs a
+//    registered DigiLocker Partner API client ID/secret and an OAuth2
+//    redirect flow (partners.digilocker.gov.in). Wire this up once those
+//    credentials exist; until then it reports itself unconfigured so the
+//    frontend can show an honest "not available yet" state instead of a
+//    fake success.
+Route::post('/candidate-link/{token}/digilocker/connect', function ($token) {
+    return response()->json([
+        'configured' => false,
+        'message'    => 'DigiLocker verification is not yet configured for this account.',
+    ], 501);
 });
 
 Route::patch('/candidate-link/{token}/fields', function (Request $request, $token) use ($normalizeCheckKey) {
@@ -1225,6 +1358,47 @@ Route::middleware('auth:sanctum')->group(function () {
         return response()->json(['url' => url("/candidate/{$token}")]);
     });
 
+    // ── Added: GENERATE SHARE LINK FOR MULTIPLE CHECKS ON A CASE (combined
+    //    candidate link — Option B2). Distinct from the single-check route
+    //    above, which is left untouched. Used by AddCase.jsx's
+    //    generateCandidatePortalLink() to send one link covering every
+    //    check on the case, rather than one link per check.
+    Route::post('/cases/{caseId}/share-link', function (Request $request, $caseId) {
+        $case = BGVCase::where('case_id', $caseId)->firstOrFail();
+
+        $request->validate([
+            'checks'   => 'nullable|array|min:1',
+            'checks.*' => 'exists:check_types,key',
+            'expiry'   => 'nullable|in:24h,48h,72h,7 days',
+        ]);
+
+        // Default to every check on the case if the caller doesn't specify a subset.
+        $checks = $request->checks ?? ($case->checks ?? []);
+        if (empty($checks)) {
+            return response()->json(['message' => 'This case has no checks to share.'], 422);
+        }
+
+        $expiry = $request->expiry ?? '72h';
+        $token  = \App\Models\CandidateLink::generateToken();
+
+        \App\Models\CandidateLink::create([
+            'token'          => $token,
+            'candidate_name' => $case->candidate_name,
+            'email'          => $case->candidate_email,
+            'mobile'         => $case->candidate_mobile,
+            'position'       => $case->position,
+            'case_id'        => $case->case_id,
+            'check_type'     => null, // combined link — no single check_type
+            'checks'         => $checks,
+            'expiry'         => $expiry,
+            'status'         => 'pending',
+            'client_id'      => $request->user()->id,
+            'expires_at'     => \App\Models\CandidateLink::expiryToCarbon($expiry),
+        ]);
+
+        return response()->json(['url' => url("/candidate/{$token}")]);
+    });
+
     // CASE TIMELINE
     Route::get('/cases/{caseId}/timeline', function (Request $request, $caseId) {
         $case = BGVCase::where('case_id', $caseId)->firstOrFail();
@@ -1250,32 +1424,65 @@ Route::middleware('auth:sanctum')->group(function () {
     });
 
     // ── CANDIDATE LINKS (Link Generator Dashboard) ───────────
+    // Route::get('/candidate-links', function (Request $request) {
+    //     $user  = $request->user();
+    //     $query = \App\Models\CandidateLink::orderByDesc('created_at');
+
+    //     if ($user->role !== 'admin') {
+    //         $query->where('client_id', $user->id);
+    //     }
+
+    //     $links = $query->get()->map(function ($l) {
+    //         return [
+    //             'id'            => $l->id,
+    //             'candidateName' => $l->candidate_name,
+    //             'email'         => $l->email,
+    //             'mobile'        => $l->mobile,
+    //             'position'      => $l->position,
+    //             'checks'        => $l->checks,
+    //             'expiry'        => $l->expiry,
+    //             'status'        => $l->status,
+    //             'link'          => url("/candidate/{$l->token}"),
+    //             'createdAt'     => $l->created_at->format('Y-m-d'),
+    //         ];
+    //     });
+
+    //     return response()->json(['links' => $links]);
+    // });
     Route::get('/candidate-links', function (Request $request) {
-        $user  = $request->user();
-        $query = \App\Models\CandidateLink::orderByDesc('created_at');
+    $user  = $request->user();
+    $query = \App\Models\CandidateLink::orderByDesc('created_at');
 
-        if ($user->role !== 'admin') {
-            $query->where('client_id', $user->id);
-        }
+    if ($user->role !== 'admin') {
+        $query->where('client_id', $user->id);
+    }
 
-        $links = $query->get()->map(function ($l) {
-            return [
-                'id'            => $l->id,
-                'candidateName' => $l->candidate_name,
-                'email'         => $l->email,
-                'mobile'        => $l->mobile,
-                'position'      => $l->position,
-                'checks'        => $l->checks,
-                'expiry'        => $l->expiry,
-                'status'        => $l->status,
-                'link'          => url("/candidate/{$l->token}"),
-                'createdAt'     => $l->created_at->format('Y-m-d'),
-            ];
-        });
+    $links = $query->get()->map(function ($l) {
+        $isExpired = $l->expires_at && now()->greaterThan($l->expires_at);
 
-        return response()->json(['links' => $links]);
+        return [
+            'id'            => $l->id,
+            'caseId'        => $l->case_id,
+            'candidateName' => $l->candidate_name,
+            'email'         => $l->email,
+            'mobile'        => $l->mobile,
+            'position'      => $l->position,
+            'checks'        => $l->checks,
+            'expiry'        => $l->expiry,
+            'status'        => $l->status,
+            'expired'       => $isExpired,
+            'displayStatus' => $l->status === 'submitted'
+                ? 'submitted'
+                : ($isExpired ? 'expired' : 'pending'),
+            'link'          => url("/candidate/{$l->token}"),
+            // Full ISO timestamps — table formats these client-side
+            'createdAt'     => $l->created_at->toIso8601String(),
+            'expiresAt'     => optional($l->expires_at)->toIso8601String(),
+        ];
     });
 
+    return response()->json(['links' => $links]);
+});
     Route::post('/candidate-links', function (Request $request) {
         $request->validate([
             'candidateName' => 'required|string|max:255',
