@@ -8,12 +8,10 @@ import {
   Calendar,
   ChevronDown,
 } from "lucide-react";
-import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from "recharts";
 
 const TLDashboard = () => {
   const [dateRange, setDateRange] = useState("01 Sep 2025 - 30 Sep 2025");
 
-  // Summary Metrics Data
   const stats = [
     {
       title: "Total Education Cases",
@@ -65,7 +63,6 @@ const TLDashboard = () => {
     },
   ];
 
-  // Qualification Donut Chart Data
   const qualificationData = [
     { name: "10th", value: 32, percentage: "12.9%", color: "#0088FE" },
     { name: "12th", value: 58, percentage: "23.4%", color: "#00C49F" },
@@ -74,7 +71,6 @@ const TLDashboard = () => {
     { name: "Other", value: 16, percentage: "6.5%", color: "#FFBB28" },
   ];
 
-  // Recent Cases Table Data
   const recentCases = [
     {
       id: "EDU-1001",
@@ -138,7 +134,6 @@ const TLDashboard = () => {
             </p>
           </div>
 
-          {/* Date Picker Button */}
           <div className="relative self-start sm:self-auto">
             <button className="flex items-center gap-2 bg-white px-3.5 py-2 rounded-lg border border-slate-200 text-xs sm:text-sm font-medium text-slate-700 shadow-sm hover:bg-slate-50 transition-colors">
               <Calendar className="w-4 h-4 text-slate-500" />
@@ -148,8 +143,8 @@ const TLDashboard = () => {
           </div>
         </div>
 
-        {/* METRICS CARDS GRID (6 Cards) */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        {/* METRICS CARDS GRID */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {stats.map((stat, idx) => {
             const Icon = stat.icon;
             return (
@@ -193,36 +188,26 @@ const TLDashboard = () => {
         {/* LOWER SECTION: DONUT CHART + RECENT CASES TABLE */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
           
-          {/* QUALIFICATION DISTRIBUTION (Donut Chart) */}
+          {/* QUALIFICATION DISTRIBUTION (SVG Donut Chart) */}
           <div className="lg:col-span-5 bg-white p-5 sm:p-6 rounded-xl border border-slate-100 shadow-sm flex flex-col justify-between">
             <h2 className="text-base font-semibold text-slate-900 mb-4">
               Qualification Distribution
             </h2>
 
             <div className="flex flex-col sm:flex-row items-center justify-between gap-6">
-              {/* Donut Chart Container */}
-              <div className="relative w-48 h-48 flex-shrink-0">
-                <ResponsiveContainer width="100%" height="100%">
-                  <PieChart>
-                    <Pie
-                      data={qualificationData}
-                      cx="50%"
-                      cy="50%"
-                      innerRadius={55}
-                      outerRadius={80}
-                      paddingAngle={3}
-                      dataKey="value"
-                    >
-                      {qualificationData.map((entry, index) => (
-                        <Cell key={`cell-${index}`} fill={entry.color} />
-                      ))}
-                    </Pie>
-                    <Tooltip />
-                  </PieChart>
-                </ResponsiveContainer>
+              {/* Pure SVG Donut Chart */}
+              <div className="relative w-44 h-44 flex-shrink-0 flex items-center justify-center">
+                <svg className="w-full h-full transform -rotate-90" viewBox="0 0 36 36">
+                  <circle cx="18" cy="18" r="15.9155" fill="transparent" stroke="#f1f5f9" strokeWidth="4.5" />
+                  <circle cx="18" cy="18" r="15.9155" fill="transparent" stroke="#0088FE" strokeWidth="4.5" strokeDasharray="12.9 87.1" strokeDashoffset="0" />
+                  <circle cx="18" cy="18" r="15.9155" fill="transparent" stroke="#00C49F" strokeWidth="4.5" strokeDasharray="23.4 76.6" strokeDashoffset="-12.9" />
+                  <circle cx="18" cy="18" r="15.9155" fill="transparent" stroke="#10B981" strokeWidth="4.5" strokeDasharray="39.5 60.5" strokeDashoffset="-36.3" />
+                  <circle cx="18" cy="18" r="15.9155" fill="transparent" stroke="#8884d8" strokeWidth="4.5" strokeDasharray="17.7 82.3" strokeDashoffset="-75.8" />
+                  <circle cx="18" cy="18" r="15.9155" fill="transparent" stroke="#FFBB28" strokeWidth="4.5" strokeDasharray="6.5 93.5" strokeDashoffset="-93.5" />
+                </svg>
 
-                {/* Center Overlay Text */}
-                <div className="absolute inset-0 flex flex-col items-center justify-center text-center pointer-events-none">
+                {/* Center Text */}
+                <div className="absolute flex flex-col items-center justify-center text-center">
                   <span className="text-2xl font-bold text-slate-900 leading-none">
                     248
                   </span>
@@ -273,7 +258,6 @@ const TLDashboard = () => {
               </button>
             </div>
 
-            {/* Responsive Table Wrapper */}
             <div className="overflow-x-auto">
               <table className="w-full text-left text-xs sm:text-sm">
                 <thead>
