@@ -332,66 +332,167 @@ export default function AllClients() {
                 <p style={{ padding: "24px", color: "#888", fontSize: "14px" }}>Loading clients...</p>
               ) : (
                 <table>
-                  <thead>
-                    <tr>
-                      <th>Company</th>
-                      <th>Contact Person</th>
-                      <th>Email</th>
-                      <th>Phone</th>
-                      <th>GSTIN</th>
-                      <th>Active Checks</th>
-                      <th>Agreement Validity</th>
-                      <th>Billing Mode</th>
-                      <th>Agreement Document</th>
-                      <th>Total Billed</th>
-                      <th>Avg TAT</th>
-                      <th>Added</th>
-                      <th>Action</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {filtered.length === 0 ? (
-                      <tr>
-                        <td colSpan={10} style={{ textAlign: "center", padding: "32px", color: "#94a3b8", fontSize: "14px" }}>
-                          {clients.length === 0 ? (
-                            <>No clients yet. <button onClick={() => navigate("/AddClient")} style={{ color: "#2b3b8c", fontWeight: 700, background: "none", border: "none", cursor: "pointer" }}>Add your first client →</button></>
-                          ) : (
-                            "No clients match your search."
-                          )}
-                        </td>
-                      </tr>
-                    ) : (
-                      filtered.map(row => {
-                        const stats = clientStatsFor(row.id);
-                        return (
-                        <tr key={row.id}>
-                          <td style={{ fontWeight: 700, color: "#2b3b8c" }}>{row.company_name || "—"}</td>
-                          <td>{row.name || row.primary_contact || "—"}</td>
-                          <td style={{ fontSize: "13px" }}>{row.contact_email || row.email || "—"}</td>
-                          <td style={{ fontSize: "13px" }}>{row.contact_phone || row.phone || "—"}</td>
-                          <td style={{ fontSize: "12px", color: "#475569" }}>{row.gstin || "—"}</td>
-                          <td style={{ textAlign: "center", color: "#64748b", fontSize: "13px" }}>{stats.caseCount}</td>
-                          <td style={{ fontWeight: 700, color: "#2b3b8c", fontSize: "13px", whiteSpace: "nowrap" }}>
-                            {stats.totalAmount > 0 ? `₹${stats.totalAmount.toLocaleString()}` : "—"}
-                          </td>
-                          <td style={{ fontSize: "13px", whiteSpace: "nowrap" }}>
-                            {stats.avgTat > 0 ? `${stats.avgTat} day${stats.avgTat > 1 ? "s" : ""}` : "—"}
-                          </td>
-                          <td style={{ fontSize: "12px", color: "#94a3b8" }}>
-                            {row.created_at ? new Date(row.created_at).toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" }) : "—"}
-                          </td>
-                          <td>
-                            <div style={{ display: "flex", gap: "8px" }}>
-                              <ViewButton c={row} />
-                              <EditButton c={row} />
-                            </div>
-                          </td>
-                        </tr>
-                        );
-                      })
-                    )}
-                  </tbody>
-                </table>
+  <thead>
+    <tr>
+      <th>Company</th>
+      <th>Contact Person</th>
+      <th>Email</th>
+      <th>Phone</th>
+      <th>GSTIN</th>
+      <th>Active Checks</th>
+      <th>Agreement Validity</th>
+      <th>Billing Mode</th>
+      <th>Agreement Document</th>
+      <th>Total Billed</th>
+      <th>Avg TAT</th>
+      <th>Added</th>
+      <th>Action</th>
+    </tr>
+  </thead>
+  <tbody>
+    {filtered.length === 0 ? (
+      <tr>
+        <td colSpan={13} style={{ textAlign: "center", padding: "32px", color: "#94a3b8", fontSize: "14px" }}>
+          {clients.length === 0 ? (
+            <>No clients yet. <button onClick={() => navigate("/AddClient")} style={{ color: "#2b3b8c", fontWeight: 700, background: "none", border: "none", cursor: "pointer" }}>Add your first client →</button></>
+          ) : (
+            "No clients match your search."
+          )}
+        </td>
+      </tr>
+    ) : (
+      filtered.map(row => {
+        const stats = clientStatsFor(row.id);
+
+        // Date formatting helper for Agreement Validity
+        const formatDate = (dateStr) => {
+          if (!dateStr) return null;
+          return new Date(dateStr).toLocaleDateString("en-GB", {
+            day: "2-digit",
+            month: "short",
+            year: "2-digit",
+          }).replace(/ /g, "-");
+        };
+
+        const startDate = formatDate(row.agreement_start_date || row.agreement_start);
+        const endDate = formatDate(row.agreement_end_date || row.agreement_end);
+        
+        // Dynamic status badge check
+        const isExpired = row.agreement_end_date && new Date(row.agreement_end_date) < new Date();
+        const validityStatus = isExpired ? "Expired" : "Active";
+
+        return (
+          <tr key={row.id}>
+            <td style={{ fontWeight: 700, color: "#2b3b8c" }}>{row.company_name || "—"}</td>
+            <td>{row.name || row.primary_contact || "—"}</td>
+            <td style={{ fontSize: "13px" }}>{row.contact_email || row.email || "—"}</td>
+            <td style={{ fontSize: "13px" }}>{row.contact_phone || row.phone || "—"}</td>
+            <td style={{ fontSize: "12px", color: "#475569" }}>{row.gstin || "—"}</td>
+            
+            {/* Active Checks / Total Cases */}
+            <td style={{ textAlign: "center", color: "#64748b", fontSize: "13px" }}>{stats.caseCount}</td>
+
+            {/* 1. Agreement Validity (UI matched to Image 1) */}
+            <td>
+              <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-start", gap: "4px" }}>
+                <span style={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: "4px",
+                  padding: "2px 8px",
+                  borderRadius: "6px",
+                  fontSize: "11px",
+                  fontWeight: 600,
+                  backgroundColor: validityStatus === "Active" ? "#f0fdf4" : "#fef2f2",
+                  color: validityStatus === "Active" ? "#16a34a" : "#dc2626",
+                  border: `1px solid ${validityStatus === "Active" ? "#bbf7d0" : "#fecaca"}`
+                }}>
+                  <span style={{
+                    width: "6px",
+                    height: "6px",
+                    borderRadius: "50%",
+                    backgroundColor: validityStatus === "Active" ? "#16a34a" : "#dc2626"
+                  }}></span>
+                  {validityStatus}
+                </span>
+                <span style={{ fontSize: "12px", fontWeight: 700, color: "#334155", lineHeight: "1.2" }}>
+                  {startDate || "—"}
+                </span>
+                <span style={{ fontSize: "12px", fontWeight: 700, color: "#334155", lineHeight: "1.2" }}>
+                  {endDate || "—"}
+                </span>
+              </div>
+            </td>
+
+            {/* 2. Billing Mode (UI matched to Image 2) */}
+            <td>
+              <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "4px" }}>
+                <span style={{
+                  padding: "3px 10px",
+                  borderRadius: "6px",
+                  fontSize: "12px",
+                  fontWeight: 600,
+                  backgroundColor: "#f3e8ff",
+                  color: "#7e22ce",
+                  border: "1px solid #e9d5ff"
+                }}>
+                  {row.billing_mode || row.billing_type || "Prepaid"}
+                </span>
+                <span style={{ fontSize: "12px", color: "#64748b" }}>
+                  {row.client_type || row.role_type || "Client"}
+                </span>
+              </div>
+            </td>
+
+            {/* 3. Agreement Document */}
+            <td>
+              {row.agreement_doc || row.agreement_file ? (
+                <a
+                  href={row.agreement_doc || row.agreement_file}
+                  target="_blank"
+                  rel="noreferrer"
+                  style={{
+                    display: "inline-flex",
+                    alignItems: "center",
+                    gap: "4px",
+                    color: "#2563eb",
+                    fontSize: "12px",
+                    fontWeight: 600,
+                    textDecoration: "none"
+                  }}
+                >
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                    <polyline points="14 2 14 8 20 8"></polyline>
+                  </svg>
+                  View Doc
+                </a>
+              ) : (
+                <span style={{ fontSize: "12px", color: "#94a3b8" }}>—</span>
+              )}
+            </td>
+
+            <td style={{ fontWeight: 700, color: "#2b3b8c", fontSize: "13px", whiteSpace: "nowrap" }}>
+              {stats.totalAmount > 0 ? `₹${stats.totalAmount.toLocaleString()}` : "—"}
+            </td>
+            <td style={{ fontSize: "13px", whiteSpace: "nowrap" }}>
+              {stats.avgTat > 0 ? `${stats.avgTat} day${stats.avgTat > 1 ? "s" : ""}` : "—"}
+            </td>
+            <td style={{ fontSize: "12px", color: "#94a3b8" }}>
+              {row.created_at ? new Date(row.created_at).toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" }) : "—"}
+            </td>
+            <td>
+              <div style={{ display: "flex", gap: "8px" }}>
+                <ViewButton c={row} />
+                <EditButton c={row} />
+              </div>
+            </td>
+          </tr>
+        );
+      })
+    )}
+  </tbody>
+</table>
               )}
 
               {!loading && (
