@@ -339,7 +339,10 @@ export default function AllClients() {
                       <th>Email</th>
                       <th>Phone</th>
                       <th>GSTIN</th>
-                      <th>Cases</th>
+                      <th>Active Checks</th>
+                      <th>Agreement Validity</th>
+                      <th>Billing Mode</th>
+                      <th>Agreement Document</th>
                       <th>Total Billed</th>
                       <th>Avg TAT</th>
                       <th>Added</th>
