@@ -5456,7 +5456,7 @@ export default function Verifyer() {
               <EducationCheckView cases={clearCases} />
             ) : (
               /* Original 3-Column Workspace for Active / Discrepancy Views */
-              <div style={{ display: "grid",display: isVisible ? "grid" : "none", gridTemplateColumns: "300px 1fr 280px", gap: "16px", alignItems: "start" }}>
+              <div style={{ display: "none", gridTemplateColumns: "300px 1fr 280px", gap: "16px", alignItems: "start" }}>
 
                 {/* Left Queue Table */}
                 <div className="down-table" style={{ margin: 0 }}>
