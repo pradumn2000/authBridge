@@ -4586,7 +4586,7 @@ function FormField({ f, value, onChange }) {
 
 function QueueItem({ c, selectedCase, selectCase }) {
   const pm       = PRIORITY_META[c.priority] || PRIORITY_META.LOW;
-  const sm       = STATUS_META[c.status] || STATUS_META["pending"];
+  const sm       = STATUS_META[String(c.status || "").toLowerCase()] || STATUS_META["pending"];
   const isActive = selectedCase?.case_id === c.case_id;
   const checkLabels = c.checks_norm.map(k => CHECK_TABS.find(t => t.key === k)?.label?.slice(0, 3).toUpperCase() || k.slice(0, 3).toUpperCase());
 
@@ -4625,7 +4625,7 @@ function DetailPanel({ selectedCase, activeCheck, setActiveCheck, canAccessTab, 
   );
 
   const fields = CHECK_FIELDS[activeCheck] || [];
-  const sm     = STATUS_META[selectedCase.status] || STATUS_META["pending"];
+  const sm     = STATUS_META[String(selectedCase.status || "").toLowerCase()] || STATUS_META["pending"];
   const pm     = PRIORITY_META[selectedCase.priority] || PRIORITY_META.LOW;
 
   return (
@@ -4791,14 +4791,12 @@ function RightPanel({ comments, commentInput, setCommentInput, sendComment, comm
   );
 }
 
-// ── EDUCATION CHECK VIEW (EXACTLY MATCHING ATTACHED DESIGN) ──
+// ── EDUCATION CHECK VIEW (NEW UI MATCHING DESIGN) ──
 function EducationCheckView({ cases, loading }) {
-  const [selectedCase, setSelectedCase] = useState(cases[0] || null);
-
-  const totalCases = 128;
+  const totalCases = cases.length || 128;
   const linkSent = 42;
-  const inProgress = 31;
-  const completed = 45;
+  const inProgress = cases.filter(c => String(c.status || "").toLowerCase() !== "completed").length || 31;
+  const completed = cases.filter(c => String(c.status || "").toLowerCase() === "completed").length || 45;
   const discrepancy = 10;
 
   return (
@@ -4937,36 +4935,44 @@ function EducationCheckView({ cases, loading }) {
               </tr>
             </thead>
             <tbody>
-              {cases.map((c, idx) => (
-                <tr key={c.case_id || idx} style={{ borderBottom: "1px solid #f1f5f9" }}>
-                  <td style={{ padding: "12px 8px" }}><input type="checkbox" /></td>
-                  <td style={{ padding: "12px 8px", color: "#64748b" }}>{idx + 1}</td>
-                  <td style={{ padding: "12px 8px", fontWeight: 700, color: "#1e293b" }}>{c.case_id || `EDU-102${idx + 4}`}</td>
-                  <td style={{ padding: "12px 8px", color: "#334155" }}>{c.candidate || "Candidate Name"}</td>
-                  <td style={{ padding: "12px 8px", color: "#64748b" }}>{c.client || "Client"}</td>
-                  <td style={{ padding: "12px 8px", color: "#334155" }}>{c.university || "Delhi University"}</td>
-                  <td style={{ padding: "12px 8px", color: "#64748b" }}>{c.degree || "B.Tech"}</td>
-                  <td style={{ padding: "12px 8px", color: "#64748b" }}>{c.year || "2022"}</td>
-                  <td style={{ padding: "12px 8px" }}>
-                    <span style={{ padding: "4px 10px", borderRadius: "12px", fontSize: "11px", fontWeight: 600, backgroundColor: "#fff7ed", color: "#c2410c" }}>
-                      In Progress
-                    </span>
+              {cases.length === 0 ? (
+                <tr>
+                  <td colSpan="13" style={{ textAlign: "center", padding: "24px", color: "#94a3b8" }}>
+                    No Education Check Cases Found
                   </td>
-                  <td style={{ padding: "12px 8px", color: "#64748b" }}>22 Aug 2025</td>
-                  <td style={{ padding: "12px 8px" }}>
-                    <div style={{ display: "flex", gap: "6px" }}>
-                      <button style={{ padding: "4px 8px", border: "1px solid #cbd5e1", background: "#fff", borderRadius: "4px", fontSize: "11px", cursor: "pointer" }}>📄 Upload</button>
-                      <button style={{ padding: "4px 8px", border: "1px solid #cbd5e1", background: "#fff", borderRadius: "4px", fontSize: "11px", cursor: "pointer" }}>👁 View</button>
-                    </div>
-                  </td>
-                  <td style={{ padding: "12px 8px" }}>
-                    <button style={{ padding: "5px 10px", border: "1px solid #bfdbfe", background: "#eff6ff", color: "#2563eb", borderRadius: "4px", fontSize: "11px", fontWeight: 600, cursor: "pointer" }}>
-                      📩 Send Verification Link
-                    </button>
-                  </td>
-                  <td style={{ padding: "12px 8px", textAlign: "center", color: "#94a3b8", cursor: "pointer" }}>⋮</td>
                 </tr>
-              ))}
+              ) : (
+                cases.map((c, idx) => (
+                  <tr key={c.case_id || idx} style={{ borderBottom: "1px solid #f1f5f9" }}>
+                    <td style={{ padding: "12px 8px" }}><input type="checkbox" /></td>
+                    <td style={{ padding: "12px 8px", color: "#64748b" }}>{idx + 1}</td>
+                    <td style={{ padding: "12px 8px", fontWeight: 700, color: "#1e293b" }}>{c.case_id || `EDU-102${idx + 4}`}</td>
+                    <td style={{ padding: "12px 8px", color: "#334155" }}>{c.candidate || "Candidate Name"}</td>
+                    <td style={{ padding: "12px 8px", color: "#64748b" }}>{c.client || c.client_name || "Client"}</td>
+                    <td style={{ padding: "12px 8px", color: "#334155" }}>{c.check_details?.education?.fields?.instituteName || "University"}</td>
+                    <td style={{ padding: "12px 8px", color: "#64748b" }}>{c.check_details?.education?.fields?.qualification || "Degree"}</td>
+                    <td style={{ padding: "12px 8px", color: "#64748b" }}>{c.check_details?.education?.fields?.yearOfPassing || "—"}</td>
+                    <td style={{ padding: "12px 8px" }}>
+                      <span style={{ padding: "4px 10px", borderRadius: "12px", fontSize: "11px", fontWeight: 600, backgroundColor: "#fff7ed", color: "#c2410c" }}>
+                        {c.status || "In Progress"}
+                      </span>
+                    </td>
+                    <td style={{ padding: "12px 8px", color: "#64748b" }}>—</td>
+                    <td style={{ padding: "12px 8px" }}>
+                      <div style={{ display: "flex", gap: "6px" }}>
+                        <button style={{ padding: "4px 8px", border: "1px solid #cbd5e1", background: "#fff", borderRadius: "4px", fontSize: "11px", cursor: "pointer" }}>📄 Upload</button>
+                        <button style={{ padding: "4px 8px", border: "1px solid #cbd5e1", background: "#fff", borderRadius: "4px", fontSize: "11px", cursor: "pointer" }}>👁 View</button>
+                      </div>
+                    </td>
+                    <td style={{ padding: "12px 8px" }}>
+                      <button style={{ padding: "5px 10px", border: "1px solid #bfdbfe", background: "#eff6ff", color: "#2563eb", borderRadius: "4px", fontSize: "11px", fontWeight: 600, cursor: "pointer" }}>
+                        📩 Send Verification Link
+                      </button>
+                    </td>
+                    <td style={{ padding: "12px 8px", textAlign: "center", color: "#94a3b8", cursor: "pointer" }}>⋮</td>
+                  </tr>
+                ))
+              )}
             </tbody>
           </table>
         </div>
@@ -4994,7 +5000,7 @@ export default function Verifyer() {
   const [activeCheck,  setActiveCheck]  = useState(assignedCheck || "employment");
   const [search,       setSearch]       = useState("");
 
-  const [dateFilter, setDateFilter] = useState("month");
+  const [dateFilter, setDateFilter] = useState("all");
   const [customFrom, setCustomFrom] = useState("");
   const [customTo, setCustomTo]     = useState("");
 
@@ -5027,8 +5033,8 @@ export default function Verifyer() {
         setCases(normalised);
         if (normalised.length > 0 && !selectedCase) {
           const first = sidebarView === "completed"
-            ? normalised.find(c => c.status === "completed")
-            : normalised.find(c => c.status !== "completed");
+            ? normalised.find(c => String(c.status || "").toLowerCase() === "completed")
+            : normalised.find(c => String(c.status || "").toLowerCase() !== "completed");
           setSelectedCase(first || normalised[0]);
         }
       })
@@ -5079,13 +5085,27 @@ export default function Verifyer() {
     return true;
   };
 
-  const caseHasOutcome = (c, outcome) =>
-    Object.values(c.check_results || {}).some(r => r?.outcome === outcome);
+  const caseHasOutcome = (c, targetOutcome) =>
+    Object.values(c.check_results || {}).some(
+      r => String(r?.outcome || "").trim().toLowerCase() === String(targetOutcome).toLowerCase()
+    );
 
-  const activeCases      = cases.filter(c => c.status !== "completed" && isInRange(c.created_at));
-  const completedCases   = cases.filter(c => c.status === "completed" && isInRange(c.created_at));
-  const clearCases       = cases.filter(c => isInRange(c.created_at) && caseHasOutcome(c, "clear"));
-  const discrepancyCases = cases.filter(c => isInRange(c.created_at) && caseHasOutcome(c, "discrepancy"));
+  // SAFE LOWERCASE MATCHING FOR STATUS
+  const activeCases = cases.filter(c =>
+    String(c.status || "").trim().toLowerCase() !== "completed" && isInRange(c.created_at)
+  );
+
+  const completedCases = cases.filter(c =>
+    String(c.status || "").trim().toLowerCase() === "completed" && isInRange(c.created_at)
+  );
+
+  const clearCases = cases.filter(c =>
+    isInRange(c.created_at) && (caseHasOutcome(c, "clear") || c.checks_norm.includes("education"))
+  );
+
+  const discrepancyCases = cases.filter(c =>
+    isInRange(c.created_at) && caseHasOutcome(c, "discrepancy")
+  );
 
   const VIEW_LISTS = {
     active:      activeCases,
