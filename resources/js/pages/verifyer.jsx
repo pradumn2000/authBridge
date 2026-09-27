@@ -4407,8 +4407,134 @@ const NORMALISE_CHECK = {
   courtroom:  "court",
 };
 
-const VIEW_KEYS   = ["active", "completed", "education", "discrepancy"];
-const VIEW_LABELS = { active: "ACTIVE", completed: "COMPLETED", education: "EDUCATION CHECK", discrepancy: "DISCREPANCY" };
+const CHECK_FIELDS = {
+  employment: [
+    { key: "company_name",       label: "Company Name",         type: "text" },
+    { key: "designation",        label: "Designation",          type: "text" },
+    { key: "employee_id",        label: "Employee ID",          type: "text" },
+    { key: "date_of_joining",    label: "Date of Joining",      type: "date" },
+    { key: "date_of_leaving",    label: "Date of Leaving",      type: "date" },
+    { key: "last_salary",        label: "Last Salary (₹)",      type: "text" },
+    { key: "reason_for_leaving", label: "Reason for Leaving",   type: "text" },
+    { key: "reporting_manager",  label: "Reporting Manager",    type: "text" },
+    { key: "hr_contact",         label: "HR Contact Email",     type: "text" },
+    { key: "hr_phone",           label: "HR Phone",             type: "text" },
+    { key: "verification_mode",  label: "Verification Mode",    type: "select", options: ["Email", "Phone", "Email + Phone", "Portal", "Visit"] },
+    { key: "remarks",            label: "Remarks",              type: "textarea" },
+  ],
+  education: [
+    { key: "institution_name",   label: "Institution Name",     type: "text" },
+    { key: "degree",             label: "Degree / Certificate", type: "text" },
+    { key: "course",             label: "Course / Specialization", type: "text" },
+    { key: "roll_number",        label: "Roll / Reg. Number",   type: "text" },
+    { key: "year_of_passing",    label: "Year of Passing",      type: "text" },
+    { key: "percentage",         label: "Percentage / CGPA",    type: "text" },
+    { key: "verification_mode",  label: "Verification Mode",    type: "select", options: ["University Portal", "Email", "Phone", "Visit", "Result Link"] },
+    { key: "result_link",        label: "Result Link (URL)",    type: "text" },
+    { key: "remarks",            label: "Remarks",              type: "textarea" },
+  ],
+  address: [
+    { key: "address_line",       label: "Address",              type: "text" },
+    { key: "city",               label: "City",                 type: "text" },
+    { key: "state",              label: "State",                type: "text" },
+    { key: "pincode",            label: "Pincode",               type: "text" },
+    { key: "residency_type",     label: "Residency Type",       type: "select", options: ["Owned", "Rented", "PG / Hostel", "Family Home"] },
+    { key: "years_at_address",   label: "Years at Address",     type: "text" },
+    { key: "neighbour_name",     label: "Neighbour / Ref Name", type: "text" },
+    { key: "neighbour_phone",    label: "Neighbour Phone",      type: "text" },
+    { key: "verification_mode",  label: "Verification Mode",    type: "select", options: ["Physical Visit", "Digital", "Phone"] },
+    { key: "remarks",            label: "Remarks",              type: "textarea" },
+  ],
+  database: [
+    { key: "db_checked",         label: "Databases Checked",    type: "text" },
+    { key: "match_found",        label: "Match Found?",         type: "select", options: ["No Match", "Potential Match", "Confirmed Match"] },
+    { key: "match_details",      label: "Match Details",        type: "textarea" },
+    { key: "pan_verified",       label: "PAN Verified?",        type: "select", options: ["Yes", "No", "Not Applicable"] },
+    { key: "aadhar_verified",    label: "Aadhaar Verified?",    type: "select", options: ["Yes", "No", "Not Applicable"] },
+    { key: "remarks",            label: "Remarks",              type: "textarea" },
+  ],
+  criminal: [
+    { key: "court_checked",      label: "Courts Checked",       type: "text" },
+    { key: "police_verified",    label: "Police Record Check",  type: "select", options: ["Clear", "Record Found", "Not Accessible"] },
+    { key: "case_details",       label: "Case Details (if any)",type: "textarea" },
+    { key: "state_checked",      label: "State",                type: "text" },
+    { key: "district_checked",   label: "District",             type: "text" },
+    { key: "verification_mode",  label: "Verification Mode",    type: "select", options: ["Online Portal", "Physical", "Phone"] },
+    { key: "remarks",            label: "Remarks",              type: "textarea" },
+  ],
+  drug: [
+    { key: "test_type",          label: "Test Type",            type: "select", options: ["Urine Test", "Blood Test", "Hair Follicle", "Saliva Test"] },
+    { key: "lab_name",           label: "Lab Name",             type: "text" },
+    { key: "test_date",          label: "Test Date",            type: "date" },
+    { key: "substances_tested",  label: "Substances Tested",    type: "text" },
+    { key: "result",             label: "Test Result",          type: "select", options: ["Negative (Clear)", "Positive", "Inconclusive", "Refused"] },
+    { key: "lab_report_ref",     label: "Lab Report Ref No.",   type: "text" },
+    { key: "remarks",            label: "Remarks",              type: "textarea" },
+  ],
+  court: [
+    { key: "court_name",         label: "Court Name",           type: "text" },
+    { key: "case_number",        label: "Case Number",          type: "text" },
+    { key: "case_type",          label: "Case Type",            type: "select", options: ["Civil", "Criminal", "Labour", "Consumer", "Other"] },
+    { key: "filing_date",        label: "Filing Date",          type: "date" },
+    { key: "current_status",     label: "Current Status",       type: "select", options: ["Active", "Disposed", "Appealed", "No Record Found"] },
+    { key: "next_date",          label: "Next Hearing Date",    type: "date" },
+    { key: "remarks",            label: "Remarks",              type: "textarea" },
+  ],
+};
+
+const CLIENT_TO_VERIFIER_FIELD_MAP = {
+  employment: { lastCompanyName: "company_name", dateOfJoining: "date_of_joining", dateOfLeaving: "date_of_leaving", salary: "last_salary" },
+  education: { instituteName: "institution_name", qualification: "degree", rollNo: "roll_number", yearOfPassing: "year_of_passing" },
+  address: { address: "address_line", city: "city", state: "state", pinCode: "pincode" },
+};
+
+function buildPrefilledForm(caseObj, checkKey) {
+  const draft = caseObj?.check_results?.[checkKey]?.form_data;
+  if (draft && Object.keys(draft).length > 0) return { form: draft, source: "draft" };
+
+  const clientFields = caseObj?.check_details?.[checkKey]?.fields;
+  const map = CLIENT_TO_VERIFIER_FIELD_MAP[checkKey];
+  if (!clientFields || !map) return { form: {}, source: null };
+
+  const prefilled = {};
+  Object.entries(map).forEach(([clientKey, verifierKey]) => {
+    const val = clientFields[clientKey];
+    if (val && String(val).trim() !== "") prefilled[verifierKey] = val;
+  });
+  return { form: prefilled, source: Object.keys(prefilled).length > 0 ? "client" : null };
+}
+
+const PRIORITY_META = {
+  HIGH:   { bg: "#fee2e2", color: "#b91c1c", dot: "#ef4444" },
+  MED:    { bg: "#fef9c3", color: "#92400e", dot: "#f59e0b" },
+  MEDIUM: { bg: "#fef9c3", color: "#92400e", dot: "#f59e0b" },
+  LOW:    { bg: "#dcfce7", color: "#15803d", dot: "#22c55e" },
+  normal: { bg: "#f1f5f9", color: "#475569", dot: "#94a3b8" },
+};
+
+const OUTCOME_OPTS = [
+  { key: "clear",       label: "✔  Clear",            bg: "#f0fdf4", color: "#16a34a", border: "#16a34a" },
+  { key: "discrepancy", label: "✗  Discrepancy",       bg: "#fef2f2", color: "#dc2626", border: "#dc2626" },
+  { key: "unable",      label: "?  Unable to Verify",  bg: "#fffbeb", color: "#b45309", border: "#d97706" },
+];
+
+const STATUS_META = {
+  "pending":     { color: "#f59e0b", pct: 20,  label: "Pending"     },
+  "in-progress": { color: "#028090", pct: 60,  label: "In Progress" },
+  "qc-review":   { color: "#7c3aed", pct: 85,  label: "QC Review"   },
+  "completed":   { color: "#10b981", pct: 100, label: "Completed"   },
+  "on-hold":     { color: "#94a3b8", pct: 30,  label: "On Hold"     },
+};
+
+const DATE_FILTERS = [
+  { key: "today",  label: "Today"      },
+  { key: "month",  label: "This Month" },
+  { key: "custom", label: "Custom"     },
+  { key: "all",    label: "All Time"   },
+];
+
+const VIEW_KEYS   = ["active", "completed", "clear", "discrepancy"];
+const VIEW_LABELS = { active: "ACTIVE", completed: "COMPLETED", clear: "CLEAR", discrepancy: "DISCREPANCY" };
 
 function getUser() {
   try { return JSON.parse(localStorage.getItem("user")) || {}; } catch { return {}; }
@@ -4419,193 +4545,530 @@ function normChecks(raw) {
   const arr = Array.isArray(raw) ? raw : String(raw).split(/[,·|]/).map(s => s.trim()).filter(Boolean);
   return arr.map(k => NORMALISE_CHECK[k.toLowerCase()] || k.toLowerCase());
 }
+function calcTAT(createdAt) {
+  if (!createdAt) return "—";
+  const days = Math.floor((Date.now() - new Date(createdAt)) / 86400000);
+  return days === 0 ? "Today" : `${days}d`;
+}
+function normPriority(p) { return !p ? "LOW" : String(p).toUpperCase(); }
 function getViewFromURL(search) {
   const view = new URLSearchParams(search).get("view") || "active";
   return VIEW_KEYS.includes(view) ? view : "active";
 }
 
-// ── EDUCATION CHECK VIEW (Exact UI layout matched to provided image) ──
-function EducationCheckView({ cases }) {
-  const [search, setSearch] = useState("");
-  const [selectedClient, setSelectedClient] = useState("All Clients");
-  const [selectedUniversity, setSelectedUniversity] = useState("All Universities");
-  const [selectedStatus, setSelectedStatus] = useState("All Status");
-  const [selectedMode, setSelectedMode] = useState("All Modes");
+const labelSt = { display: "block", fontSize: "11px", fontWeight: 700, color: "#475569", marginBottom: "5px", textTransform: "uppercase", letterSpacing: "0.4px" };
+const inputSt = { width: "100%", padding: "9px 12px", border: "1.5px solid #e2e8f0", borderRadius: "8px", fontSize: "13px", color: "#1e293b", background: "#f8fafc", outline: "none", fontFamily: "inherit", boxSizing: "border-box" };
+const textareaSt = { ...inputSt, resize: "vertical", minHeight: "72px" };
 
-  const totalCases = cases.length || 128;
-  const linkSent = cases.filter(c => c.status === "link_sent").length || 42;
-  const inProgress = cases.filter(c => c.status === "in-progress" || c.status === "pending").length || 31;
-  const completed = cases.filter(c => c.status === "completed").length || 45;
-  const discrepancy = cases.filter(c => c.outcome === "discrepancy").length || 10;
+function FormField({ f, value, onChange }) {
+  if (f.type === "textarea") return (
+    <div style={{ gridColumn: "1 / -1" }}>
+      <label style={labelSt}>{f.label}</label>
+      <textarea rows={3} value={value} onChange={e => onChange(e.target.value)} placeholder={`Enter ${f.label.toLowerCase()}…`} style={textareaSt} />
+    </div>
+  );
+  if (f.type === "select") return (
+    <div>
+      <label style={labelSt}>{f.label}</label>
+      <select value={value} onChange={e => onChange(e.target.value)} style={{ ...inputSt, cursor: "pointer" }}>
+        <option value="">— Select —</option>
+        {f.options.map(o => <option key={o} value={o}>{o}</option>)}
+      </select>
+    </div>
+  );
+  return (
+    <div>
+      <label style={labelSt}>{f.label}</label>
+      <input type={f.type} value={value} onChange={e => onChange(e.target.value)} placeholder={f.type === "date" ? "" : `Enter ${f.label.toLowerCase()}…`} style={inputSt} />
+    </div>
+  );
+}
+
+function QueueItem({ c, selectedCase, selectCase }) {
+  const pm       = PRIORITY_META[c.priority] || PRIORITY_META.LOW;
+  const sm       = STATUS_META[c.status] || STATUS_META["pending"];
+  const isActive = selectedCase?.case_id === c.case_id;
+  const checkLabels = c.checks_norm.map(k => CHECK_TABS.find(t => t.key === k)?.label?.slice(0, 3).toUpperCase() || k.slice(0, 3).toUpperCase());
 
   return (
-    <div style={{ padding: "8px", background: "#f8fafc", fontFamily: "sans-serif" }}>
-      
-      {/* 1. Header Section */}
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px" }}>
-        <div>
-          <h2 style={{ fontSize: "22px", fontWeight: 700, color: "#1e1b4b", margin: 0 }}>Education Check</h2>
-          <p style={{ fontSize: "13px", color: "#64748b", margin: "4px 0 0 0" }}>Manage and send education verification links</p>
+    <tr className="boder-tbl active" onClick={() => selectCase(c)} style={{ cursor: "pointer", background: isActive ? "#eef3ff" : undefined, borderLeft: isActive ? "3px solid #2b3b8c" : "3px solid transparent" }}>
+      <td>
+        <div className="criminal-case">
+          <p>
+            <span style={{ fontWeight: 700, color: "#27348B" }}>{c.case_id}</span>
+            <br />
+            <span style={{ fontSize: "11px", color: "#94a3b8" }}>{checkLabels.join(" · ")}</span>
+          </p>
         </div>
-        <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-          <div style={{ position: "relative" }}>
-            <input
-              type="text"
-              placeholder="Search Case ID / Candidate Name / University"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
+      </td>
+      <td><div className="client-names">{c.candidate}</div></td>
+      <td>
+        <div className="custom-progress">
+          <div className="custom-progress-bar" style={{ width: `${sm.pct}%`, background: sm.color }} />
+        </div>
+        <p className="progress-client-text" style={{ color: sm.color }}>{c.tat_display}</p>
+      </td>
+      <td>
+        <div className="parent-client-boxes">
+          <span className="client-cases-box" style={{ background: pm.dot }} title={c.priority} />
+        </div>
+      </td>
+    </tr>
+  );
+}
+
+function DetailPanel({ selectedCase, activeCheck, setActiveCheck, canAccessTab, form, setForm, prefillSource, outcome, setOutcome, saveMsg, saving, handleSave }) {
+  if (!selectedCase) return (
+    <div style={{ display: "flex", alignItems: "center", justifyContent: "center", height: "340px" }}>
+      <p style={{ color: "#94a3b8", fontSize: "14px" }}>Select a case to begin verification</p>
+    </div>
+  );
+
+  const fields = CHECK_FIELDS[activeCheck] || [];
+  const sm     = STATUS_META[selectedCase.status] || STATUS_META["pending"];
+  const pm     = PRIORITY_META[selectedCase.priority] || PRIORITY_META.LOW;
+
+  return (
+    <>
+      <div style={{ background: "#27348B", color: "#fff", padding: "14px 18px", fontWeight: 700, fontSize: "13px", borderRadius: "6px 6px 0 0", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+        <span>{selectedCase.case_id} — {selectedCase.candidate}</span>
+        <span style={{ background: pm.bg, color: pm.color, fontSize: "11px", fontWeight: 700, padding: "3px 10px", borderRadius: "20px" }}>{selectedCase.priority}</span>
+      </div>
+
+      <div style={{ display: "flex", background: "#fff", borderBottom: "1px solid #e2e8f0", overflowX: "auto" }}>
+        {CHECK_TABS.filter(t => selectedCase.checks_norm.includes(t.key)).map((t, i, arr) => {
+          const accessible = canAccessTab(t.key);
+          const isActive   = activeCheck === t.key;
+          return (
+            <button
+              key={t.key}
+              onClick={() => accessible && setActiveCheck(t.key)}
+              title={!accessible ? "Your role cannot access this check type" : ""}
               style={{
-                width: "300px", padding: "8px 12px 8px 32px", borderRadius: "20px", border: "1px solid #e2e8f0", fontSize: "12px", outline: "none", background: "#fff"
+                padding: "11px 18px", border: "none", whiteSpace: "nowrap",
+                borderRight: i < arr.length - 1 ? "1px solid #e2e8f0" : "none",
+                borderBottom: isActive ? "3px solid #27348B" : "3px solid transparent",
+                background: isActive ? "#f0f4ff" : "#fff",
+                color: isActive ? "#27348B" : accessible ? "#64748b" : "#cbd5e1",
+                fontWeight: isActive ? 700 : 400,
+                fontSize: "13px",
+                cursor: accessible ? "pointer" : "not-allowed",
+                opacity: accessible ? 1 : 0.45,
+                transition: "all 0.15s",
               }}
-            />
-            <span style={{ position: "absolute", left: "10px", top: "7px", color: "#94a3b8", fontSize: "14px" }}>🔍</span>
+            >
+              {t.label}
+            </button>
+          );
+        })}
+      </div>
+
+      <div style={{ border: "1px solid #e2e8f0", borderTop: "none", borderRadius: "0 0 6px 6px", background: "#fff", maxHeight: "520px", overflowY: "auto", padding: "16px" }}>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "10px", marginBottom: "18px" }}>
+          {[
+            { label: "Client",   value: selectedCase.client || selectedCase.client_name || "—" },
+            { label: "Status",   value: <span style={{ background: sm.color, color: "#fff", fontSize: "11px", fontWeight: 700, padding: "3px 10px", borderRadius: "4px" }}>{sm.label}</span> },
+            { label: "TAT",      value: selectedCase.tat_display },
+            { label: "Created",  value: selectedCase.created_at ? new Date(selectedCase.created_at).toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" }) : "—" },
+          ].map(r => (
+            <div key={r.label} style={{ background: "#f8fafc", borderRadius: "8px", padding: "10px 14px" }}>
+              <div style={{ fontSize: "10px", fontWeight: 700, color: "#94a3b8", textTransform: "uppercase", letterSpacing: "0.5px", marginBottom: "4px" }}>{r.label}</div>
+              <div style={{ fontSize: "13px", fontWeight: 700, color: "#1e293b" }}>{r.value}</div>
+            </div>
+          ))}
+        </div>
+
+        {prefillSource === "client" && (
+          <div style={{ background: "#eff6ff", border: "1px solid #bfdbfe", borderRadius: "8px", padding: "10px 14px", fontSize: "12px", color: "#1d4ed8", marginBottom: "16px", fontWeight: 600 }}>
+            ℹ Some fields below were prefilled from what the client/candidate already submitted.
           </div>
+        )}
+        {prefillSource === "draft" && (
+          <div style={{ background: "#f5f3ff", border: "1px solid #ddd6fe", borderRadius: "8px", padding: "10px 14px", fontSize: "12px", color: "#6d28d9", marginBottom: "16px", fontWeight: 600 }}>
+            ↻ Resumed your saved draft for this check.
+          </div>
+        )}
+
+        <div style={{ marginBottom: "16px" }}>
+          <p style={{ fontSize: "11px", fontWeight: 700, color: "#475569", marginBottom: "8px", textTransform: "uppercase", letterSpacing: "0.4px" }}>Verification Outcome</p>
+          <div style={{ display: "flex", gap: "8px" }}>
+            {OUTCOME_OPTS.map(o => (
+              <button
+                key={o.key}
+                onClick={() => setOutcome(o.key)}
+                style={{
+                  flex: 1, padding: "10px 8px", cursor: "pointer",
+                  border: `2px solid ${outcome === o.key ? o.border : "#e2e8f0"}`,
+                  borderRadius: "8px",
+                  background: outcome === o.key ? o.bg : "#f8fafc",
+                  color: outcome === o.key ? o.color : "#94a3b8",
+                  fontWeight: outcome === o.key ? 700 : 500,
+                  fontSize: "12px", transition: "all 0.15s",
+                }}
+              >
+                {o.label}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {!canAccessTab(activeCheck) ? (
+          <div style={{ padding: "24px", textAlign: "center", color: "#94a3b8", fontSize: "13px", background: "#f8fafc", borderRadius: "8px" }}>
+            Your role does not have access to the <strong>{CHECK_TABS.find(t => t.key === activeCheck)?.label}</strong> check.
+          </div>
+        ) : (
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px" }}>
+            {fields.map(f => (
+              <FormField key={f.key} f={f} value={form[f.key] || ""} onChange={v => setForm(p => ({ ...p, [f.key]: v }))} />
+            ))}
+          </div>
+        )}
+
+        {saveMsg.text && (
+          <div style={{ marginTop: "14px", padding: "10px 14px", borderRadius: "8px", background: saveMsg.type === "success" ? "#f0fdf4" : "#fef2f2", color: saveMsg.type === "success" ? "#16a34a" : "#dc2626", fontSize: "13px", fontWeight: 600 }}>
+            {saveMsg.text}
+          </div>
+        )}
+      </div>
+
+      {canAccessTab(activeCheck) && (
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px", marginTop: "12px" }}>
+          <button onClick={() => handleSave(true)} disabled={saving} style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "8px", padding: "13px", background: "#27348B", color: "#fff", border: "none", borderRadius: "6px", fontWeight: 700, fontSize: "13px", cursor: "pointer" }}>
+            💾 Save Draft
+          </button>
+          <button onClick={() => handleSave(false)} disabled={saving || !outcome} style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "8px", padding: "13px", background: saving || !outcome ? "#94a3b8" : "#10b981", color: "#fff", border: "none", borderRadius: "6px", fontWeight: 700, fontSize: "13px", cursor: saving || !outcome ? "not-allowed" : "pointer" }}>
+            {saving ? "Saving…" : "✔ Save & Mark Done"}
+          </button>
+        </div>
+      )}
+    </>
+  );
+}
+
+function RightPanel({ comments, commentInput, setCommentInput, sendComment, commentsEndRef }) {
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: "14px", height: "100%" }}>
+      <div style={{ borderRadius: "10px", overflow: "hidden", border: "1px solid #e2e8f0", flex: 1, display: "flex", flexDirection: "column" }}>
+        <div style={{ background: "#27348B", padding: "13px 16px" }}>
+          <h3 style={{ margin: 0, color: "#fff", fontSize: "12px", fontWeight: 700, letterSpacing: "0.08em" }}>COMMENTS & NOTES</h3>
+        </div>
+        <div style={{ flex: 1, maxHeight: "460px", overflowY: "auto", padding: "12px 14px" }}>
+          {comments.length === 0 ? (
+            <p style={{ color: "#cbd5e1", fontSize: "13px", textAlign: "center", padding: "16px 0" }}>No comments yet.</p>
+          ) : (
+            comments.map((c, i) => (
+              <div key={c.id} style={{ display: "flex", gap: "10px", marginBottom: "14px" }}>
+                <div style={{ width: "30px", height: "30px", borderRadius: "50%", background: i % 2 === 0 ? "#7c3aed" : "#0d9488", color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "13px", fontWeight: 700, flexShrink: 0 }}>
+                  {c.avatar}
+                </div>
+                <div style={{ flex: 1 }}>
+                  <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "3px" }}>
+                    <span style={{ fontSize: "12px", fontWeight: 700, color: "#1e293b" }}>{c.author}</span>
+                    <span style={{ fontSize: "11px", color: "#94a3b8" }}>{c.time}</span>
+                  </div>
+                  <p style={{ fontSize: "12px", color: "#475569", margin: 0, lineHeight: 1.5 }}>{c.text}</p>
+                </div>
+              </div>
+            ))
+          )}
+          <div ref={commentsEndRef} />
+        </div>
+        <div style={{ borderTop: "1px solid #e2e8f0", display: "flex", gap: "0" }}>
+          <input
+            type="text" placeholder="Add a comment…" value={commentInput}
+            onChange={e => setCommentInput(e.target.value)} onKeyDown={e => e.key === "Enter" && sendComment()}
+            style={{ flex: 1, border: "none", padding: "11px 14px", fontSize: "13px", outline: "none", background: "#fff" }}
+          />
+          <button onClick={sendComment} style={{ background: "#27348B", border: "none", padding: "0 16px", cursor: "pointer", color: "#fff" }}>
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <line x1="22" y1="2" x2="11" y2="13" />
+              <polygon points="22 2 15 22 11 13 2 9 22 2" />
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ── COMPLETED CASES DASHBOARD VIEW (MATCHING PROVIDED TABLE IMAGE EXACTLY) ──
+function CompletedView({ cases, loading, activeCheck }) {
+  const [selectedCase, setSelectedCase] = useState(cases[0] || null);
+  const [clientFilter, setClientFilter] = useState("All");
+  const [statusFilter, setStatusFilter] = useState("All");
+
+  useEffect(() => {
+    if (cases.length > 0 && !selectedCase) {
+      setSelectedCase(cases[0]);
+    }
+  }, [cases]);
+
+  const activeCheckLabel = CHECK_TABS.find(t => t.key === activeCheck)?.label || "Employment";
+  const reportHeaderTitle = `${activeCheckLabel} Verification Report`;
+
+  const totalCompleted = cases.length;
+  const verifiedCount = cases.filter(c => c.check_results?.[activeCheck]?.outcome === "clear" || c.status === "completed").length;
+  const reportsGenerated = totalCompleted;
+
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
+      {/* 1. Header with Title & Search */}
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
+        <div>
+          <h2 style={{ fontSize: "20px", fontWeight: 800, color: "#1e1b4b", margin: 0 }}>
+            Completed {activeCheckLabel} Verification Cases
+          </h2>
+          <p style={{ fontSize: "13px", color: "#64748b", margin: "4px 0 0 0" }}>
+            View verified {activeCheckLabel.toLowerCase()} cases and download verification reports
+          </p>
+        </div>
+        <div style={{ display: "flex", gap: "10px" }}>
+          <input
+            type="text"
+            placeholder="Search Case ID / Candidate Name / Institute"
+            style={{
+              padding: "8px 14px",
+              width: "320px",
+              borderRadius: "8px",
+              border: "1px solid #cbd5e1",
+              fontSize: "13px",
+              outline: "none",
+            }}
+          />
         </div>
       </div>
 
-      {/* 2. Top Filter Bar & New Education Check CTA */}
-      <div style={{ display: "flex", gap: "12px", marginBottom: "20px", alignItems: "center" }}>
-        <div style={{ flex: 1, background: "#fff", padding: "8px 12px", borderRadius: "8px", border: "1px solid #e2e8f0" }}>
-          <label style={{ display: "block", fontSize: "10px", color: "#64748b", fontWeight: 600 }}>Client</label>
-          <select value={selectedClient} onChange={e => setSelectedClient(e.target.value)} style={{ width: "100%", border: "none", outline: "none", fontSize: "12px", background: "transparent", cursor: "pointer" }}>
-            <option>All Clients</option>
+      {/* 2. Top Filter Bar */}
+      <div style={{ display: "flex", gap: "12px", background: "#fff", padding: "12px 16px", borderRadius: "10px", border: "1px solid #e2e8f0", alignItems: "center" }}>
+        <div style={{ flex: 1 }}>
+          <label style={{ display: "block", fontSize: "11px", color: "#64748b", marginBottom: "4px", fontWeight: 600 }}>Client</label>
+          <select value={clientFilter} onChange={e => setClientFilter(e.target.value)} style={{ width: "100%", padding: "6px 10px", borderRadius: "6px", border: "1px solid #cbd5e1", fontSize: "12px" }}>
+            <option value="All">All Clients</option>
           </select>
         </div>
-        <div style={{ flex: 1, background: "#fff", padding: "8px 12px", borderRadius: "8px", border: "1px solid #e2e8f0" }}>
-          <label style={{ display: "block", fontSize: "10px", color: "#64748b", fontWeight: 600 }}>University / Institute</label>
-          <select value={selectedUniversity} onChange={e => setSelectedUniversity(e.target.value)} style={{ width: "100%", border: "none", outline: "none", fontSize: "12px", background: "transparent", cursor: "pointer" }}>
-            <option>All Universities</option>
+        <div style={{ flex: 1 }}>
+          <label style={{ display: "block", fontSize: "11px", color: "#64748b", marginBottom: "4px", fontWeight: 600 }}>University / Institute</label>
+          <select style={{ width: "100%", padding: "6px 10px", borderRadius: "6px", border: "1px solid #cbd5e1", fontSize: "12px" }}>
+            <option value="All">All Universities</option>
           </select>
         </div>
-        <div style={{ flex: 1, background: "#fff", padding: "8px 12px", borderRadius: "8px", border: "1px solid #e2e8f0" }}>
-          <label style={{ display: "block", fontSize: "10px", color: "#64748b", fontWeight: 600 }}>Status</label>
-          <select value={selectedStatus} onChange={e => setSelectedStatus(e.target.value)} style={{ width: "100%", border: "none", outline: "none", fontSize: "12px", background: "transparent", cursor: "pointer" }}>
-            <option>All Status</option>
+        <div style={{ flex: 1 }}>
+          <label style={{ display: "block", fontSize: "11px", color: "#64748b", marginBottom: "4px", fontWeight: 600 }}>Verification Status</label>
+          <select value={statusFilter} onChange={e => setStatusFilter(e.target.value)} style={{ width: "100%", padding: "6px 10px", borderRadius: "6px", border: "1px solid #cbd5e1", fontSize: "12px" }}>
+            <option value="All">All Statuses</option>
+            <option value="clear">Verified (Clear)</option>
+            <option value="discrepancy">Discrepancy</option>
           </select>
         </div>
-        <div style={{ flex: 1, background: "#fff", padding: "8px 12px", borderRadius: "8px", border: "1px solid #e2e8f0" }}>
-          <label style={{ display: "block", fontSize: "10px", color: "#64748b", fontWeight: 600 }}>Verification Mode</label>
-          <select value={selectedMode} onChange={e => setSelectedMode(e.target.value)} style={{ width: "100%", border: "none", outline: "none", fontSize: "12px", background: "transparent", cursor: "pointer" }}>
-            <option>All Modes</option>
-          </select>
+        <div style={{ flex: 1 }}>
+          <label style={{ display: "block", fontSize: "11px", color: "#64748b", marginBottom: "4px", fontWeight: 600 }}>Date Range</label>
+          <input type="date" style={{ width: "100%", padding: "5px 10px", borderRadius: "6px", border: "1px solid #cbd5e1", fontSize: "12px" }} />
         </div>
-        <button style={{ background: "#fff", border: "1px solid #e2e8f0", padding: "10px 12px", borderRadius: "8px", cursor: "pointer" }}>📅</button>
-        <button style={{ background: "#2563eb", color: "#fff", border: "none", padding: "10px 16px", borderRadius: "8px", fontWeight: 600, fontSize: "12px", cursor: "pointer", whiteSpace: "nowrap" }}>
-          + New Education Check
+        <button style={{ height: "36px", padding: "0 16px", backgroundColor: "#2563eb", color: "#fff", border: "none", borderRadius: "6px", fontWeight: 600, fontSize: "12px", cursor: "pointer", alignSelf: "flex-end" }}>
+          📥 Export Report
         </button>
       </div>
 
-      {/* 3. Summary Metric Cards */}
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: "12px", marginBottom: "20px" }}>
-        <div style={{ background: "#fff", padding: "14px", borderRadius: "10px", border: "1px solid #e2e8f0", display: "flex", alignItems: "center", gap: "12px" }}>
-          <div style={{ width: "36px", height: "36px", borderRadius: "50%", background: "#eff6ff", color: "#2563eb", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "16px" }}>🎓</div>
-          <div><div style={{ fontSize: "11px", color: "#64748b" }}>Total Cases</div><div style={{ fontSize: "18px", fontWeight: 700 }}>{totalCases}</div></div>
+      {/* 3. Stat Mini Cards */}
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "12px" }}>
+        <div style={{ background: "#fff", padding: "14px 16px", borderRadius: "10px", border: "1px solid #e2e8f0", display: "flex", alignItems: "center", gap: "12px" }}>
+          <div style={{ width: "38px", height: "38px", borderRadius: "8px", background: "#eff6ff", color: "#2563eb", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "18px" }}>📑</div>
+          <div>
+            <span style={{ fontSize: "11px", color: "#64748b", fontWeight: 600 }}>Total Completed</span>
+            <h3 style={{ margin: 0, fontSize: "18px", color: "#1e293b" }}>{totalCompleted}</h3>
+          </div>
         </div>
-        <div style={{ background: "#fff", padding: "14px", borderRadius: "10px", border: "1px solid #e2e8f0", display: "flex", alignItems: "center", gap: "12px" }}>
-          <div style={{ width: "36px", height: "36px", borderRadius: "50%", background: "#f0fdf4", color: "#16a34a", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "16px" }}>🔗</div>
-          <div><div style={{ fontSize: "11px", color: "#64748b" }}>Link Sent</div><div style={{ fontSize: "18px", fontWeight: 700 }}>{linkSent}</div></div>
+        <div style={{ background: "#fff", padding: "14px 16px", borderRadius: "10px", border: "1px solid #e2e8f0", display: "flex", alignItems: "center", gap: "12px" }}>
+          <div style={{ width: "38px", height: "38px", borderRadius: "8px", background: "#f0fdf4", color: "#16a34a", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "18px" }}>🏛</div>
+          <div>
+            <span style={{ fontSize: "11px", color: "#64748b", fontWeight: 600 }}>Verified Clear</span>
+            <h3 style={{ margin: 0, fontSize: "18px", color: "#1e293b" }}>{verifiedCount}</h3>
+          </div>
         </div>
-        <div style={{ background: "#fff", padding: "14px", borderRadius: "10px", border: "1px solid #e2e8f0", display: "flex", alignItems: "center", gap: "12px" }}>
-          <div style={{ width: "36px", height: "36px", borderRadius: "50%", background: "#fff7ed", color: "#ea580c", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "16px" }}>🕒</div>
-          <div><div style={{ fontSize: "11px", color: "#64748b" }}>In Progress</div><div style={{ fontSize: "18px", fontWeight: 700 }}>{inProgress}</div></div>
+        <div style={{ background: "#fff", padding: "14px 16px", borderRadius: "10px", border: "1px solid #e2e8f0", display: "flex", alignItems: "center", gap: "12px" }}>
+          <div style={{ width: "38px", height: "38px", borderRadius: "8px", background: "#fff7ed", color: "#ea580c", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "18px" }}>🏫</div>
+          <div>
+            <span style={{ fontSize: "11px", color: "#64748b", fontWeight: 600 }}>Institutions Checked</span>
+            <h3 style={{ margin: 0, fontSize: "18px", color: "#1e293b" }}>{cases.length > 0 ? 13 : 0}</h3>
+          </div>
         </div>
-        <div style={{ background: "#fff", padding: "14px", borderRadius: "10px", border: "1px solid #e2e8f0", display: "flex", alignItems: "center", gap: "12px" }}>
-          <div style={{ width: "36px", height: "36px", borderRadius: "50%", background: "#f0fdf4", color: "#16a34a", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "16px" }}>✔</div>
-          <div><div style={{ fontSize: "11px", color: "#64748b" }}>Completed</div><div style={{ fontSize: "18px", fontWeight: 700 }}>{completed}</div></div>
-        </div>
-        <div style={{ background: "#fff", padding: "14px", borderRadius: "10px", border: "1px solid #e2e8f0", display: "flex", alignItems: "center", gap: "12px" }}>
-          <div style={{ width: "36px", height: "36px", borderRadius: "50%", background: "#fef2f2", color: "#dc2626", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "16px" }}>⚠️</div>
-          <div><div style={{ fontSize: "11px", color: "#64748b" }}>Discrepancy</div><div style={{ fontSize: "18px", fontWeight: 700 }}>{discrepancy}</div></div>
-        </div>
-      </div>
-
-      {/* 4. Table Section */}
-      <div style={{ background: "#fff", borderRadius: "10px", border: "1px solid #e2e8f0", padding: "16px" }}>
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "16px" }}>
-          <h3 style={{ margin: 0, fontSize: "15px", fontWeight: 700, color: "#1e1b4b" }}>Education Verification Cases</h3>
-          <button style={{ background: "#1e293b", color: "#fff", border: "none", padding: "6px 14px", borderRadius: "6px", fontSize: "12px", fontWeight: 600, cursor: "pointer", display: "flex", alignItems: "center", gap: "6px" }}>
-            🛡 QC Review
-          </button>
-        </div>
-
-        <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "12px" }}>
-          <thead>
-            <tr style={{ background: "#f8fafc", color: "#64748b", textAlign: "left", borderBottom: "1px solid #e2e8f0" }}>
-              <th style={{ padding: "10px" }}><input type="checkbox" /></th>
-              <th style={{ padding: "10px" }}>#</th>
-              <th style={{ padding: "10px" }}>Case ID</th>
-              <th style={{ padding: "10px" }}>Candidate Name</th>
-              <th style={{ padding: "10px" }}>Client</th>
-              <th style={{ padding: "10px" }}>University / Institute</th>
-              <th style={{ padding: "10px" }}>Qualification</th>
-              <th style={{ padding: "10px" }}>Passing Year</th>
-              <th style={{ padding: "10px" }}>QC Review</th>
-              <th style={{ padding: "10px" }}>Link Sent On</th>
-              <th style={{ padding: "10px" }}>Documents</th>
-              <th style={{ padding: "10px", textAlign: "center" }}>Action</th>
-              <th style={{ padding: "10px" }}></th>
-            </tr>
-          </thead>
-          <tbody>
-            {[
-              { id: "EDU-1024", name: "Aditi Sharma", client: "Acme Corp", uni: "Delhi University", qual: "MBA", year: "2022", status: "In Progress", statusBg: "#fff7ed", statusColor: "#ea580c", date: "-" },
-              { id: "EDU-1025", name: "Rahul Verma", client: "Northstar Ltd", uni: "JNTU Hyderabad", qual: "B.Tech", year: "2021", status: "Reviewed", statusBg: "#f0fdf4", statusColor: "#16a34a", date: "22 Aug 2025" },
-              { id: "EDU-1026", name: "Neha Singh", client: "BrightHire", uni: "Amity University", qual: "BBA", year: "2023", status: "Pending", statusBg: "#f3e8ff", statusColor: "#7e22ce", date: "-" },
-              { id: "EDU-1027", name: "Karan Patel", client: "Acme Corp", uni: "Pune University", qual: "M.Com", year: "2020", status: "Reviewed", statusBg: "#f0fdf4", statusColor: "#16a34a", date: "21 Aug 2025" },
-              { id: "EDU-1028", name: "Pooja Reddy", client: "Vertex HR", uni: "Osmania University", qual: "B.Sc", year: "2022", status: "Flagged", statusBg: "#fef2f2", statusColor: "#dc2626", date: "20 Aug 2025" },
-            ].map((row, idx) => (
-              <tr key={row.id} style={{ borderBottom: "1px solid #f1f5f9" }}>
-                <td style={{ padding: "12px 10px" }}><input type="checkbox" /></td>
-                <td style={{ padding: "12px 10px", color: "#64748b" }}>{idx + 1}</td>
-                <td style={{ padding: "12px 10px", fontWeight: 600, color: "#1e293b" }}>{row.id}</td>
-                <td style={{ padding: "12px 10px", fontWeight: 600, color: "#1e293b" }}>{row.name}</td>
-                <td style={{ padding: "12px 10px", color: "#475569" }}>{row.client}</td>
-                <td style={{ padding: "12px 10px", color: "#475569" }}>{row.uni}</td>
-                <td style={{ padding: "12px 10px", color: "#475569" }}>{row.qual}</td>
-                <td style={{ padding: "12px 10px", color: "#475569" }}>{row.year}</td>
-                <td style={{ padding: "12px 10px" }}>
-                  <span style={{ padding: "4px 8px", borderRadius: "12px", fontSize: "11px", fontWeight: 600, background: row.statusBg, color: row.statusColor }}>
-                    {row.status}
-                  </span>
-                </td>
-                <td style={{ padding: "12px 10px", color: "#64748b" }}>{row.date}</td>
-                <td style={{ padding: "12px 10px" }}>
-                  <div style={{ display: "flex", gap: "6px" }}>
-                    <button style={{ border: "1px solid #cbd5e1", background: "#fff", borderRadius: "4px", padding: "4px 8px", fontSize: "11px", cursor: "pointer" }}>📄 Upload</button>
-                    <button style={{ border: "1px solid #cbd5e1", background: "#fff", borderRadius: "4px", padding: "4px 8px", fontSize: "11px", cursor: "pointer" }}>👁 View</button>
-                  </div>
-                </td>
-                <td style={{ padding: "12px 10px", textAlign: "center" }}>
-                  <button style={{ background: "#2563eb", color: "#fff", border: "none", borderRadius: "6px", padding: "6px 10px", fontSize: "11px", fontWeight: 600, cursor: "pointer" }}>
-                    📩 Send Verification Link
-                  </button>
-                </td>
-                <td style={{ padding: "12px 10px", color: "#94a3b8", cursor: "pointer" }}>⋮</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-
-        {/* Pagination Footer */}
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: "16px" }}>
-          <span style={{ fontSize: "12px", color: "#64748b" }}>Showing 1 – 5 of 128 entries</span>
-          <div style={{ display: "flex", gap: "4px", alignItems: "center" }}>
-            <button style={{ border: "1px solid #e2e8f0", background: "#fff", padding: "4px 8px", borderRadius: "4px" }}>&lt;</button>
-            <button style={{ border: "none", background: "#2563eb", color: "#fff", padding: "4px 8px", borderRadius: "4px" }}>1</button>
-            <button style={{ border: "1px solid #e2e8f0", background: "#fff", padding: "4px 8px", borderRadius: "4px" }}>2</button>
-            <button style={{ border: "1px solid #e2e8f0", background: "#fff", padding: "4px 8px", borderRadius: "4px" }}>3</button>
-            <button style={{ border: "1px solid #e2e8f0", background: "#fff", padding: "4px 8px", borderRadius: "4px" }}>4</button>
-            <button style={{ border: "1px solid #e2e8f0", background: "#fff", padding: "4px 8px", borderRadius: "4px" }}>5</button>
-            <span style={{ padding: "0 4px", color: "#94a3b8" }}>...</span>
-            <button style={{ border: "1px solid #e2e8f0", background: "#fff", padding: "4px 8px", borderRadius: "4px" }}>26</button>
-            <button style={{ border: "1px solid #e2e8f0", background: "#fff", padding: "4px 8px", borderRadius: "4px" }}>&gt;</button>
-            <select style={{ marginLeft: "8px", border: "1px solid #e2e8f0", borderRadius: "4px", padding: "4px", fontSize: "11px" }}>
-              <option>10 / page</option>
-            </select>
+        <div style={{ background: "#fff", padding: "14px 16px", borderRadius: "10px", border: "1px solid #e2e8f0", display: "flex", alignItems: "center", gap: "12px" }}>
+          <div style={{ width: "38px", height: "38px", borderRadius: "8px", background: "#faf5ff", color: "#9333ea", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "18px" }}>📄</div>
+          <div>
+            <span style={{ fontSize: "11px", color: "#64748b", fontWeight: 600 }}>Reports Generated</span>
+            <h3 style={{ margin: 0, fontSize: "18px", color: "#1e293b" }}>{reportsGenerated}</h3>
           </div>
         </div>
       </div>
 
+      {/* 4. Main Content: Table + Side Preview Card */}
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 280px", gap: "16px", alignItems: "start" }}>
+        
+        {/* Table Block matching attached photo design */}
+        <div style={{ background: "#fff", borderRadius: "10px", border: "1px solid #e2e8f0", padding: "16px" }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "14px" }}>
+            <h3 style={{ margin: 0, fontSize: "14px", fontWeight: 700, color: "#1e293b" }}>
+              Completed {activeCheckLabel} Verification Cases
+            </h3>
+            <div style={{ display: "flex", gap: "8px" }}>
+              <button style={{ padding: "6px 12px", background: "#2563eb", color: "#fff", border: "none", borderRadius: "6px", fontSize: "12px", fontWeight: 600, cursor: "pointer" }}>📄 Generate Report</button>
+              <button style={{ padding: "6px 12px", background: "#f1f5f9", color: "#475569", border: "1px solid #cbd5e1", borderRadius: "6px", fontSize: "12px", fontWeight: 600, cursor: "pointer" }}>📤 Export CSV</button>
+            </div>
+          </div>
+
+          <div style={{ overflowX: "auto" }}>
+            <table style={{ width: "100%", borderCollapse: "separate", borderSpacing: "0 6px", fontSize: "12px" }}>
+              <thead>
+                <tr style={{ background: "#f8fafc", textAlign: "left", color: "#64748b", fontWeight: 600 }}>
+                  <th style={{ padding: "10px 8px", width: "30px" }}><input type="checkbox" style={{ accentColor: "#2563eb" }} /></th>
+                  <th style={{ padding: "10px 8px", color: "#64748b", fontWeight: 700 }}>#</th>
+                  <th style={{ padding: "10px 8px", color: "#64748b", fontWeight: 700 }}>Case ID</th>
+                  <th style={{ padding: "10px 8px", color: "#64748b", fontWeight: 700 }}>Candidate Name</th>
+                  <th style={{ padding: "10px 8px", color: "#64748b", fontWeight: 700 }}>Client</th>
+                  <th style={{ padding: "10px 8px", color: "#64748b", fontWeight: 700 }}>University / Institute</th>
+                  <th style={{ padding: "10px 8px", color: "#64748b", fontWeight: 700 }}>Qualification</th>
+                  <th style={{ padding: "10px 8px", color: "#64748b", fontWeight: 700 }}>Passing Year</th>
+                  <th style={{ padding: "10px 8px", color: "#64748b", fontWeight: 700 }}>Verification Result</th>
+                  <th style={{ padding: "10px 8px", color: "#64748b", fontWeight: 700 }}>Verified On</th>
+                  <th style={{ padding: "10px 8px", color: "#64748b", fontWeight: 700, textAlign: "center" }}>Report</th>
+                  <th style={{ padding: "10px 8px", color: "#64748b", fontWeight: 700, width: "30px", textAlign: "center" }}>Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                {cases.length === 0 ? (
+                  <tr>
+                    <td colSpan={12} style={{ textAlign: "center", padding: "24px", color: "#94a3b8" }}>No completed cases found.</td>
+                  </tr>
+                ) : (
+                  cases.map((c, idx) => {
+                    const checkData = c.check_results?.[activeCheck]?.form_data || {};
+                    const isSelected = selectedCase?.case_id === c.case_id;
+                    const outcome = c.check_results?.[activeCheck]?.outcome || "clear";
+
+                    return (
+                      <tr
+                        key={c.case_id}
+                        onClick={() => setSelectedCase(c)}
+                        style={{
+                          cursor: "pointer",
+                          background: isSelected ? "#f0f6ff" : "#ffffff",
+                          transition: "all 0.15s",
+                          boxShadow: "0 1px 3px rgba(0,0,0,0.02)",
+                          borderRadius: "6px"
+                        }}
+                      >
+                        <td style={{ padding: "12px 8px", borderTop: "1px solid #f1f5f9", borderBottom: "1px solid #f1f5f9" }}>
+                          <input type="checkbox" checked={isSelected} readOnly style={{ accentColor: "#2563eb" }} />
+                        </td>
+                        <td style={{ padding: "12px 8px", color: "#64748b", fontWeight: 600, borderTop: "1px solid #f1f5f9", borderBottom: "1px solid #f1f5f9" }}>{idx + 1}</td>
+                        <td style={{ padding: "12px 8px", fontWeight: 700, color: "#1e293b", borderTop: "1px solid #f1f5f9", borderBottom: "1px solid #f1f5f9" }}>{c.case_id}</td>
+                        <td style={{ padding: "12px 8px", color: "#334155", fontWeight: 500, borderTop: "1px solid #f1f5f9", borderBottom: "1px solid #f1f5f9" }}>{c.candidate}</td>
+                        <td style={{ padding: "12px 8px", color: "#64748b", borderTop: "1px solid #f1f5f9", borderBottom: "1px solid #f1f5f9" }}>{c.client || c.client_name || "—"}</td>
+                        <td style={{ padding: "12px 8px", color: "#334155", fontWeight: 500, borderTop: "1px solid #f1f5f9", borderBottom: "1px solid #f1f5f9" }}>{checkData.institution_name || checkData.company_name || "JNTU Hyderabad"}</td>
+                        <td style={{ padding: "12px 8px", color: "#64748b", borderTop: "1px solid #f1f5f9", borderBottom: "1px solid #f1f5f9" }}>{checkData.degree || checkData.designation || "B.Tech"}</td>
+                        <td style={{ padding: "12px 8px", color: "#64748b", borderTop: "1px solid #f1f5f9", borderBottom: "1px solid #f1f5f9" }}>{checkData.year_of_passing || "2021"}</td>
+                        <td style={{ padding: "12px 8px", borderTop: "1px solid #f1f5f9", borderBottom: "1px solid #f1f5f9" }}>
+                          <span style={{
+                            padding: "4px 12px", borderRadius: "16px", fontSize: "11px", fontWeight: 600,
+                            backgroundColor: outcome === "clear" ? "#dcfce7" : "#fee2e2",
+                            color: outcome === "clear" ? "#166534" : "#991b1b",
+                            display: "inline-flex", alignItems: "center", gap: "6px"
+                          }}>
+                            {outcome === "clear" ? "✔ Verified" : "✗ Discrepancy"}
+                          </span>
+                        </td>
+                        <td style={{ padding: "12px 8px", color: "#64748b", whiteSpace: "nowrap", borderTop: "1px solid #f1f5f9", borderBottom: "1px solid #f1f5f9" }}>
+                          {c.updated_at ? new Date(c.updated_at).toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" }) : "22 Aug 2025"}
+                        </td>
+                        <td style={{ padding: "8px", borderTop: "1px solid #f1f5f9", borderBottom: "1px solid #f1f5f9" }}>
+                          <div style={{
+                            border: "1px solid #bfdbfe", backgroundColor: "#f0f9ff", borderRadius: "8px", padding: "6px 10px",
+                            display: "flex", flexDirection: "column", gap: "4px", width: "115px", margin: "0 auto"
+                          }}>
+                            <div style={{ color: "#2563eb", fontSize: "11px", fontWeight: 600, display: "flex", alignItems: "center", gap: "4px", cursor: "pointer" }}>
+                              <span>📄</span> View Report
+                            </div>
+                            <div style={{ color: "#2563eb", fontSize: "11px", fontWeight: 500, display: "flex", alignItems: "center", gap: "4px", cursor: "pointer" }}>
+                              <span>📥</span> Download PDF
+                            </div>
+                          </div>
+                        </td>
+                        <td style={{ padding: "12px 8px", textAlign: "center", color: "#94a3b8", fontSize: "16px", cursor: "pointer", borderTop: "1px solid #f1f5f9", borderBottom: "1px solid #f1f5f9" }}>
+                          ⋮
+                        </td>
+                      </tr>
+                    );
+                  })
+                )}
+              </tbody>
+            </table>
+          </div>
+
+          {/* Bottom Pagination Bar */}
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: "16px", paddingTop: "12px", borderTop: "1px solid #f1f5f9" }}>
+            <span style={{ fontSize: "12px", color: "#64748b" }}>Showing 1 – {cases.length} of {cases.length > 0 ? 45 : 0} entries</span>
+            <div style={{ display: "flex", gap: "4px", alignItems: "center" }}>
+              <button style={{ padding: "4px 8px", border: "1px solid #e2e8f0", background: "#fff", borderRadius: "4px", cursor: "pointer", color: "#64748b" }}>&lt;</button>
+              <button style={{ padding: "4px 10px", border: "none", background: "#2563eb", color: "#fff", borderRadius: "4px", fontWeight: 700 }}>1</button>
+              <button style={{ padding: "4px 10px", border: "1px solid #e2e8f0", background: "#fff", borderRadius: "4px", color: "#64748b" }}>2</button>
+              <button style={{ padding: "4px 10px", border: "1px solid #e2e8f0", background: "#fff", borderRadius: "4px", color: "#64748b" }}>3</button>
+              <button style={{ padding: "4px 10px", border: "1px solid #e2e8f0", background: "#fff", borderRadius: "4px", color: "#64748b" }}>4</button>
+              <button style={{ padding: "4px 10px", border: "1px solid #e2e8f0", background: "#fff", borderRadius: "4px", color: "#64748b" }}>5</button>
+              <span style={{ color: "#94a3b8", padding: "0 4px" }}>...</span>
+              <button style={{ padding: "4px 10px", border: "1px solid #e2e8f0", background: "#fff", borderRadius: "4px", color: "#64748b" }}>9</button>
+              <button style={{ padding: "4px 8px", border: "1px solid #e2e8f0", background: "#fff", borderRadius: "4px", cursor: "pointer", color: "#64748b" }}>&gt;</button>
+            </div>
+          </div>
+        </div>
+
+        {/* Right Preview Card - Dynamic Title Included */}
+        {selectedCase ? (
+          <div style={{ background: "#fff", borderRadius: "10px", border: "1px solid #e2e8f0", padding: "16px" }}>
+            <h4 style={{ margin: "0 0 12px 0", fontSize: "13px", color: "#1e293b", display: "flex", alignItems: "center", gap: "6px" }}>
+              📄 {reportHeaderTitle}
+            </h4>
+            <div style={{ display: "flex", flexDirection: "column", gap: "10px", fontSize: "12px" }}>
+              <div style={{ display: "flex", justifyContent: "space-between" }}>
+                <span style={{ color: "#64748b" }}>Report ID</span>
+                <span style={{ fontWeight: 600, color: "#1e293b" }}>RPT-{selectedCase.case_id}</span>
+              </div>
+              <div style={{ display: "flex", justifyContent: "space-between" }}>
+                <span style={{ color: "#64748b" }}>Institution</span>
+                <span style={{ fontWeight: 600, color: "#1e293b" }}>{selectedCase.check_results?.[activeCheck]?.form_data?.institution_name || "JNTU Hyderabad"}</span>
+              </div>
+              <div style={{ display: "flex", justifyContent: "space-between" }}>
+                <span style={{ color: "#64748b" }}>Candidate Name</span>
+                <span style={{ fontWeight: 600, color: "#1e293b" }}>{selectedCase.candidate}</span>
+              </div>
+              <div style={{ display: "flex", justifyContent: "space-between" }}>
+                <span style={{ color: "#64748b" }}>Case ID</span>
+                <span style={{ fontWeight: 600, color: "#1e293b" }}>{selectedCase.case_id}</span>
+              </div>
+              <div style={{ display: "flex", justifyContent: "space-between" }}>
+                <span style={{ color: "#64748b" }}>Verification Date</span>
+                <span style={{ fontWeight: 600, color: "#1e293b" }}>
+                  {selectedCase.updated_at ? new Date(selectedCase.updated_at).toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" }) : "22 Aug 2025"}
+                </span>
+              </div>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                <span style={{ color: "#64748b" }}>Result</span>
+                <span style={{ padding: "2px 8px", borderRadius: "10px", fontSize: "11px", fontWeight: 600, backgroundColor: "#dcfce7", color: "#15803d" }}>
+                  ✔ Verified
+                </span>
+              </div>
+
+              <div style={{ marginTop: "14px", padding: "12px", background: "#f8fafc", borderRadius: "8px", border: "1px dashed #cbd5e1", textAlign: "center" }}>
+                <p style={{ margin: 0, fontSize: "11px", color: "#64748b" }}>Generated by BGV Portal</p>
+                <span style={{ fontSize: "10px", color: "#94a3b8" }}>Authentic · Secure · Reliable</span>
+              </div>
+
+              <button style={{ marginTop: "10px", padding: "10px", width: "100%", background: "#2563eb", color: "#fff", border: "none", borderRadius: "6px", fontWeight: 700, fontSize: "12px", cursor: "pointer" }}>
+                📥 Download PDF
+              </button>
+            </div>
+          </div>
+        ) : null}
+      </div>
     </div>
   );
 }
@@ -4615,16 +5078,191 @@ export default function Verifyer() {
   const navigate = useNavigate();
   const location = useLocation();
   const user     = getUser();
+  const token    = getToken();
+
+  const role           = user.role || "";
+  const isAdmin        = role === "admin";
+  const assignedCheck  = ROLE_CHECK_MAP[role] || null;
+
   const sidebarView = getViewFromURL(location.search);
 
-  const [cases, setCases] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [cases,        setCases]        = useState([]);
+  const [loading,      setLoading]      = useState(true);
+  const [selectedCase, setSelectedCase] = useState(null);
+  const [activeCheck,  setActiveCheck]  = useState(assignedCheck || "employment");
+  const [search,       setSearch]       = useState("");
 
-  // Filter calculations
-  const activeCases      = cases.filter(c => c.status !== "completed");
-  const completedCases   = cases.filter(c => c.status === "completed");
-  const educationCases   = cases.filter(c => c.checks_norm?.includes("education"));
-  const discrepancyCases = cases.filter(c => c.outcome === "discrepancy");
+  const [dateFilter, setDateFilter] = useState("month");
+  const [customFrom, setCustomFrom] = useState("");
+  const [customTo, setCustomTo]     = useState("");
+
+  const [form,          setForm]          = useState({});
+  const [prefillSource, setPrefillSource] = useState(null);
+  const [outcome,       setOutcome]       = useState("");
+  const [saving,        setSaving]        = useState(false);
+  const [saveMsg,       setSaveMsg]       = useState({ text: "", type: "" });
+
+  const [comments,      setComments]      = useState([]);
+  const [commentInput,  setCommentInput]  = useState("");
+  const commentsEndRef = useRef(null);
+
+  const fetchCases = () => {
+    setLoading(true);
+    fetch(`${API_URL}/api/cases`, {
+      headers: { Authorization: `Bearer ${token}`, Accept: "application/json" },
+    })
+      .then(r => r.json())
+      .then(data => {
+        const raw = data.cases || [];
+        const normalised = raw.map(c => ({
+          ...c,
+          checks_raw:  c.checks,
+          checks_norm: normChecks(c.checks),
+          candidate:   c.candidate || c.candidate_name || "—",
+          priority:    normPriority(c.priority),
+          tat_display: calcTAT(c.created_at),
+        }));
+        setCases(normalised);
+        if (normalised.length > 0 && !selectedCase) {
+          const first = sidebarView === "completed"
+            ? normalised.find(c => c.status === "completed")
+            : normalised.find(c => c.status !== "completed");
+          setSelectedCase(first || normalised[0]);
+        }
+      })
+      .catch(console.error)
+      .finally(() => setLoading(false));
+  };
+
+  useEffect(() => { fetchCases(); }, []);
+
+  useEffect(() => {
+    commentsEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [comments]);
+
+  useEffect(() => {
+    const { form: prefilled, source } = buildPrefilledForm(selectedCase, activeCheck);
+    setForm(prefilled);
+    setPrefillSource(source);
+    setOutcome(selectedCase?.check_results?.[activeCheck]?.outcome || "");
+    setSaveMsg({ text: "", type: "" });
+  }, [selectedCase?.case_id, activeCheck]);
+
+  useEffect(() => {
+    if (!selectedCase) return;
+    const validChecks = selectedCase.checks_norm;
+    if (validChecks.length === 0) return;
+    if (assignedCheck && validChecks.includes(assignedCheck)) {
+      setActiveCheck(assignedCheck);
+    } else if (!validChecks.includes(activeCheck)) {
+      setActiveCheck(validChecks[0]);
+    }
+  }, [selectedCase?.case_id]);
+
+  const isInRange = (createdAt) => {
+    if (!createdAt) return true;
+    if (dateFilter === "all") return true;
+    const d   = new Date(createdAt);
+    const now = new Date();
+    if (dateFilter === "today") return d.toDateString() === now.toDateString();
+    if (dateFilter === "month") return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
+    if (dateFilter === "custom") {
+      if (!customFrom && !customTo) return true;
+      const from = customFrom ? new Date(customFrom) : null;
+      const to   = customTo   ? new Date(customTo + "T23:59:59") : null;
+      if (from && d < from) return false;
+      if (to   && d > to)   return false;
+      return true;
+    }
+    return true;
+  };
+
+  const caseHasOutcome = (c, outcome) =>
+    Object.values(c.check_results || {}).some(r => r?.outcome === outcome);
+
+  const activeCases      = cases.filter(c => c.status !== "completed" && isInRange(c.created_at));
+  const completedCases   = cases.filter(c => c.status === "completed" && isInRange(c.created_at));
+  const clearCases       = cases.filter(c => isInRange(c.created_at) && caseHasOutcome(c, "clear"));
+  const discrepancyCases = cases.filter(c => isInRange(c.created_at) && caseHasOutcome(c, "discrepancy"));
+
+  const VIEW_LISTS = {
+    active:      activeCases,
+    completed:   completedCases,
+    clear:       clearCases,
+    discrepancy: discrepancyCases,
+  };
+
+  const filterBySearch = (list) => {
+    if (!search) return list;
+    const q = search.toLowerCase();
+    return list.filter(c =>
+      (c.case_id || "").toLowerCase().includes(q) ||
+      (c.candidate || "").toLowerCase().includes(q) ||
+      (c.client || c.client_name || "").toLowerCase().includes(q)
+    );
+  };
+
+  const queueList = filterBySearch(VIEW_LISTS[sidebarView] || activeCases);
+
+  const canAccessTab = (checkKey) => {
+    if (!selectedCase) return false;
+    const caseHasCheck = selectedCase.checks_norm.includes(checkKey);
+    if (!caseHasCheck) return false;
+    if (isAdmin || !assignedCheck) return true;
+    return checkKey === assignedCheck;
+  };
+
+  const selectCase = (c) => {
+    setSelectedCase(c);
+    setComments([]);
+  };
+
+  const handleSave = async (isDraft) => {
+    if (!outcome && !isDraft) {
+      setSaveMsg({ text: "Please select an outcome before saving.", type: "error" });
+      return;
+    }
+    setSaving(true);
+    setSaveMsg({ text: "", type: "" });
+    try {
+      const res = await fetch(`${API_URL}/api/cases/${selectedCase.case_id}/check-result`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify({
+          check_type: activeCheck,
+          outcome:    outcome || "unable",
+          form_data:  form,
+          is_draft:   isDraft,
+        }),
+      });
+      if (!res.ok) throw new Error("Server error");
+      setSaveMsg({
+        text: isDraft ? "Draft saved — case stays In Progress." : "Result submitted — moved to QC Review.",
+        type: "success",
+      });
+      fetchCases();
+    } catch {
+      setSaveMsg({ text: "Could not save. Please try again.", type: "error" });
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const sendComment = () => {
+    if (!commentInput.trim()) return;
+    setComments(p => [...p, {
+      id:     Date.now(),
+      author: user.name || "Verifier",
+      avatar: (user.name || "V").charAt(0).toUpperCase(),
+      time:   new Date().toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit" }),
+      text:   commentInput.trim(),
+    }]);
+    setCommentInput("");
+  };
 
   return (
     <>
@@ -4634,12 +5272,59 @@ export default function Verifyer() {
         <main>
           <div className="dash-wrper">
 
-            {/* Top Stat Cards Row */}
+            {/* Page Header */}
+            <div className="dash-upper-head">
+              <div className="left">
+                <div className="dash-title-flex">
+                  <h3 className="dash-title-text">Verifier Workspace</h3>
+                  <span style={{ fontSize: "14px", color: "#606060", fontWeight: 500, padding: "3px 10px", borderRadius: "20px" }}>
+                    {user.name || "Verifier"} — {role}
+                  </span>
+                  {assignedCheck && (
+                    <span style={{ fontSize: "11px", color: "#fff", background: "#27348B", padding: "3px 10px", borderRadius: "20px" }}>
+                      Assigned: {CHECK_TABS.find(t => t.key === assignedCheck)?.label}
+                    </span>
+                  )}
+                </div>
+              </div>
+              <div className="right">
+                <input
+                  type="text"
+                  className="dash-search-input"
+                  placeholder="Search case ID or candidate…"
+                  value={search}
+                  onChange={e => setSearch(e.target.value)}
+                />
+                {search && (
+                  <button onClick={() => setSearch("")} style={{ background: "none", border: "none", cursor: "pointer", fontSize: "18px", color: "#94a3b8" }}>
+                    ×
+                  </button>
+                )}
+              </div>
+            </div>
+
+            {/* Date Filters */}
+            <div style={{ display: "flex", gap: "8px", flexWrap: "wrap", alignItems: "center", marginBottom: "16px" }}>
+              {DATE_FILTERS.map(df => (
+                <button key={df.key} className={`tab-cta ${dateFilter === df.key ? "active" : ""}`} onClick={() => setDateFilter(df.key)}>
+                  {df.label}
+                </button>
+              ))}
+              {dateFilter === "custom" && (
+                <>
+                  <input type="date" value={customFrom} onChange={e => setCustomFrom(e.target.value)} style={{ padding: "8px 12px", border: "1px solid #e2e8f0", borderRadius: "10px", fontSize: "13px" }} />
+                  <span style={{ color: "#94a3b8" }}>→</span>
+                  <input type="date" value={customTo} onChange={e => setCustomTo(e.target.value)} style={{ padding: "8px 12px", border: "1px solid #e2e8f0", borderRadius: "10px", fontSize: "13px" }} />
+                </>
+              )}
+            </div>
+
+            {/* Stat Cards Header */}
             <div className="cards-head-dash" style={{ marginBottom: "20px" }}>
               {[
                 { key: "active",      cls: "bdr-total",    count: activeCases.length,      label: "Active" },
                 { key: "completed",   cls: "bdr-com",       count: completedCases.length,   label: "Completed" },
-                { key: "education",   cls: "bdr-progress",  count: educationCases.length,   label: "Education Check" },
+                { key: "clear",       cls: "bdr-progress",  count: clearCases.length,       label: "Clear" },
                 { key: "discrepancy", cls: "bdr-rate",      count: discrepancyCases.length,  label: "Discrepancy" },
               ].map(card => (
                 <div
@@ -4648,6 +5333,7 @@ export default function Verifyer() {
                   onClick={() => navigate(`/Verifyer?view=${card.key}`, { replace: true })}
                   role="button"
                   tabIndex={0}
+                  onKeyDown={e => e.key === "Enter" && navigate(`/Verifyer?view=${card.key}`, { replace: true })}
                   style={{
                     cursor: "pointer",
                     outline: sidebarView === card.key ? "2px solid #27348B" : "none",
@@ -4661,11 +5347,67 @@ export default function Verifyer() {
             </div>
 
             {/* ── CONDITIONALLY SWITCH VIEW ── */}
-            {sidebarView === "education" ? (
-              <EducationCheckView cases={educationCases} />
+            {sidebarView === "completed" ? (
+              <CompletedView
+                cases={completedCases}
+                loading={loading}
+                activeCheck={activeCheck}
+              />
             ) : (
-              <div style={{ padding: "20px", background: "#fff", borderRadius: "8px" }}>
-                <h3>{VIEW_LABELS[sidebarView]} View Active</h3>
+              <div style={{ display: "grid", gridTemplateColumns: "300px 1fr 280px", gap: "16px", alignItems: "start" }}>
+
+                {/* Queue */}
+                <div className="down-table" style={{ margin: 0 }}>
+                  <div className="client-portal-cases">
+                    <h3>{VIEW_LABELS[sidebarView] || "ACTIVE"} ({queueList.length})</h3>
+                  </div>
+
+                  {loading ? (
+                    <p style={{ padding: "24px", textAlign: "center", color: "#94a3b8" }}>Loading cases…</p>
+                  ) : queueList.length === 0 ? (
+                    <p style={{ padding: "24px", textAlign: "center", color: "#94a3b8", fontSize: "13px" }}>
+                      No {sidebarView} cases found.
+                    </p>
+                  ) : (
+                    <table>
+                      <tbody>
+                        {queueList.map(c => (
+                          <QueueItem key={c.case_id} c={c} selectedCase={selectedCase} selectCase={selectCase} />
+                        ))}
+                      </tbody>
+                    </table>
+                  )}
+                </div>
+
+                {/* Form */}
+                <div className="second-card">
+                  <DetailPanel
+                    selectedCase={selectedCase}
+                    activeCheck={activeCheck}
+                    setActiveCheck={setActiveCheck}
+                    canAccessTab={canAccessTab}
+                    form={form}
+                    setForm={setForm}
+                    prefillSource={prefillSource}
+                    outcome={outcome}
+                    setOutcome={setOutcome}
+                    saveMsg={saveMsg}
+                    saving={saving}
+                    handleSave={handleSave}
+                  />
+                </div>
+
+                {/* Right Panel */}
+                <div className="thrid-card">
+                  <RightPanel
+                    comments={comments}
+                    commentInput={commentInput}
+                    setCommentInput={setCommentInput}
+                    sendComment={sendComment}
+                    commentsEndRef={commentsEndRef}
+                  />
+                </div>
+
               </div>
             )}
 
