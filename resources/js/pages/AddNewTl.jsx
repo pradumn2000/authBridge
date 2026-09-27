@@ -17,6 +17,28 @@ export default function AddNewTl() {
     status: true,
   });
 
+  // Module Permissions State
+  const [permissions, setPermissions] = useState({
+    education: false,
+    employment: false,
+    address: false,
+    identity: false,
+    criminal: false,
+    drugTest: false,
+    courtroom: false,
+    globalDatabase: false,
+    caseAllocation: false,
+    verifierCases: false,
+    qcReview: false,
+    reportWriting: false,
+    finalReport: false,
+    universitySelection: false,
+    viewPermission: false,
+  });
+
+  // Check if all permissions are selected
+  const isAllSelected = Object.values(permissions).every(Boolean);
+
   // Table Data State (Status toggle ke liye state update hogi)
   const [teamLeads, setTeamLeads] = useState([
     {
@@ -80,6 +102,20 @@ export default function AddNewTl() {
     setFormData((prev) => ({ ...prev, status: !prev.status }));
   };
 
+  // Permission Handlers
+  const handlePermissionChange = (key) => {
+    setPermissions((prev) => ({ ...prev, [key]: !prev[key] }));
+  };
+
+  const handleSelectAll = () => {
+    const nextState = !isAllSelected;
+    const updatedPermissions = {};
+    Object.keys(permissions).forEach((key) => {
+      updatedPermissions[key] = nextState;
+    });
+    setPermissions(updatedPermissions);
+  };
+
   // Table row status toggle logic
   const handleTableStatusToggle = (id) => {
     setTeamLeads((prev) =>
@@ -98,11 +134,16 @@ export default function AddNewTl() {
       role: "TL - Employment",
       status: true,
     });
+    const resetPerms = {};
+    Object.keys(permissions).forEach((key) => {
+      resetPerms[key] = false;
+    });
+    setPermissions(resetPerms);
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log("Saved Data:", formData);
+    console.log("Saved Data:", formData, "Permissions:", permissions);
   };
 
   return (
@@ -116,7 +157,7 @@ export default function AddNewTl() {
         }
 
         .add-tl-main-content {
-          {/* flex: 1; */}
+          flex: 1;
           display: flex;
           flex-direction: column;
         }
@@ -349,6 +390,47 @@ export default function AddNewTl() {
           gap: 8px;
         }
 
+        /* Module Permissions Styling */
+        .perm-card-header {
+          justify-content: space-between;
+        }
+
+        .select-all-label {
+          font-size: 13px;
+          display: flex;
+          align-items: center;
+          gap: 6px;
+          cursor: pointer;
+        }
+
+        .permissions-grid {
+          padding: 20px;
+          display: grid;
+          grid-template-columns: repeat(3, 1fr);
+          gap: 16px;
+        }
+
+        .perm-checkbox-item {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          font-size: 13px;
+          color: #334155;
+          font-weight: 500;
+          cursor: pointer;
+        }
+
+        .perm-info-text {
+          padding: 12px 20px;
+          background-color: #f8fafc;
+          border-top: 1px solid #f1f5f9;
+          font-size: 12px;
+          color: #64748b;
+          display: flex;
+          align-items: center;
+          gap: 6px;
+        }
+
         /* Table Header Controls */
         .table-card-header {
           justify-content: space-between;
@@ -521,7 +603,7 @@ export default function AddNewTl() {
 
       <div className="add-tl-layout">
         <Sidebar />
-        <div className="add-tl-main-content"  id="content">
+        <div className="add-tl-main-content" id="content">
           <Header />
 
           <div className="add-tl-container">
@@ -765,7 +847,7 @@ export default function AddNewTl() {
               </form>
             </div>
 
-              {/* Module Permissions Card */}
+            {/* Module Permissions Card */}
             <div className="add-tl-card">
               <div className="add-tl-card-header perm-card-header">
                 <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
@@ -891,14 +973,6 @@ export default function AddNewTl() {
                   />
                   Final Report Approval
                 </label>
-                {/* <label className="perm-checkbox-item">
-                  <input
-                    type="checkbox"
-                    checked={permissions.screenModule}
-                    onChange={() => handlePermissionChange("screenModule")}
-                  />
-                  Screen / Module Permissions
-                </label> */}
                 <label className="perm-checkbox-item">
                   <input
                     type="checkbox"
@@ -908,7 +982,6 @@ export default function AddNewTl() {
                   University Selection
                 </label>
 
-               
                 <label className="perm-checkbox-item">
                   <input
                     type="checkbox"
