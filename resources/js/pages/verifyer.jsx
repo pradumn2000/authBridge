@@ -4380,7 +4380,6 @@ const CHECK_TABS = [
   { key: "court",      label: "Courtroom"  },
 ];
 
-// ── Which API check key maps to which verifier role ───────────────────────────
 const ROLE_CHECK_MAP = {
   employment_verifier:  "employment",
   education_verifier:   "education",
@@ -4391,7 +4390,6 @@ const ROLE_CHECK_MAP = {
   courtroom_verifier:   "court",
 };
 
-// ── Normalise check keys coming from the API (emp→employment, edu→education…) ─
 const NORMALISE_CHECK = {
   emp:        "employment",
   employment: "employment",
@@ -4409,7 +4407,6 @@ const NORMALISE_CHECK = {
   courtroom:  "court",
 };
 
-// ── Field definitions per check type ──────────────────────────────────────────
 const CHECK_FIELDS = {
   employment: [
     { key: "company_name",       label: "Company Name",         type: "text" },
@@ -4485,39 +4482,12 @@ const CHECK_FIELDS = {
   ],
 };
 
-// ── Maps client-submitted field keys (from CheckDetailForm.jsx /
-//    checkFormsConfig.js, stored in case.check_details[checkKey].fields) onto
-//    the verifier's own field keys below. Only fields that genuinely exist on
-//    both sides are mapped — verifier-only fields (verification mode, HR
-//    contact, remarks, etc.) are intentionally left out so they stay blank
-//    for the verifier to fill in themselves.
 const CLIENT_TO_VERIFIER_FIELD_MAP = {
-  employment: {
-    lastCompanyName: "company_name",
-    dateOfJoining:   "date_of_joining",
-    dateOfLeaving:   "date_of_leaving",
-    salary:          "last_salary",
-  },
-  education: {
-    instituteName:  "institution_name",
-    qualification:  "degree",
-    rollNo:         "roll_number",
-    yearOfPassing:  "year_of_passing",
-  },
-  address: {
-    address: "address_line",
-    city:    "city",
-    state:   "state",
-    pinCode: "pincode",
-  },
-  // database / criminal / drug / court: client collects no fields for these
-  // yet (see checkFormsConfig.js), so there's nothing to prefill — verifiers
-  // fill these entirely from scratch.
+  employment: { lastCompanyName: "company_name", dateOfJoining: "date_of_joining", dateOfLeaving: "date_of_leaving", salary: "last_salary" },
+  education: { instituteName: "institution_name", qualification: "degree", rollNo: "roll_number", yearOfPassing: "year_of_passing" },
+  address: { address: "address_line", city: "city", state: "state", pinCode: "pincode" },
 };
 
-// Builds the verifier's starting form for a given check, preferring a saved
-// verifier draft (check_results[checkKey].form_data) if one exists, and
-// otherwise prefilling whatever overlaps from the client's submitted data.
 function buildPrefilledForm(caseObj, checkKey) {
   const draft = caseObj?.check_results?.[checkKey]?.form_data;
   if (draft && Object.keys(draft).length > 0) return { form: draft, source: "draft" };
@@ -4556,7 +4526,6 @@ const STATUS_META = {
   "on-hold":     { color: "#94a3b8", pct: 30,  label: "On Hold"     },
 };
 
-// ── Date filters — same pattern as Intake.jsx ──────────────────────────────────
 const DATE_FILTERS = [
   { key: "today",  label: "Today"      },
   { key: "month",  label: "This Month" },
@@ -4564,71 +4533,44 @@ const DATE_FILTERS = [
   { key: "all",    label: "All Time"   },
 ];
 
-// ── Valid sidebar/tab views for the queue ───────────────────────────────────────
 const VIEW_KEYS   = ["active", "completed", "clear", "discrepancy"];
 const VIEW_LABELS = { active: "ACTIVE", completed: "COMPLETED", clear: "CLEAR", discrepancy: "DISCREPANCY" };
 
-// ── Helpers ────────────────────────────────────────────────────────────────────
 function getUser() {
   try { return JSON.parse(localStorage.getItem("user")) || {}; } catch { return {}; }
 }
-
 function getToken() { return localStorage.getItem("token"); }
-
 function normChecks(raw) {
   if (!raw) return [];
-  const arr = Array.isArray(raw)
-    ? raw
-    : String(raw).split(/[,·|]/).map(s => s.trim()).filter(Boolean);
+  const arr = Array.isArray(raw) ? raw : String(raw).split(/[,·|]/).map(s => s.trim()).filter(Boolean);
   return arr.map(k => NORMALISE_CHECK[k.toLowerCase()] || k.toLowerCase());
 }
-
 function calcTAT(createdAt) {
   if (!createdAt) return "—";
   const days = Math.floor((Date.now() - new Date(createdAt)) / 86400000);
   return days === 0 ? "Today" : `${days}d`;
 }
-
-function normPriority(p) {
-  if (!p) return "LOW";
-  return String(p).toUpperCase();
-}
-
+function normPriority(p) { return !p ? "LOW" : String(p).toUpperCase(); }
 function getViewFromURL(search) {
   const view = new URLSearchParams(search).get("view") || "active";
   return VIEW_KEYS.includes(view) ? view : "active";
 }
 
-// ── Shared input styles ────────────────────────────────────────────────────────
-const labelSt = {
-  display: "block", fontSize: "11px", fontWeight: 700,
-  color: "#475569", marginBottom: "5px",
-  textTransform: "uppercase", letterSpacing: "0.4px",
-};
-const inputSt = {
-  width: "100%", padding: "9px 12px",
-  border: "1.5px solid #e2e8f0", borderRadius: "8px",
-  fontSize: "13px", color: "#1e293b", background: "#f8fafc",
-  outline: "none", fontFamily: "inherit", boxSizing: "border-box",
-};
+const labelSt = { display: "block", fontSize: "11px", fontWeight: 700, color: "#475569", marginBottom: "5px", textTransform: "uppercase", letterSpacing: "0.4px" };
+const inputSt = { width: "100%", padding: "9px 12px", border: "1.5px solid #e2e8f0", borderRadius: "8px", fontSize: "13px", color: "#1e293b", background: "#f8fafc", outline: "none", fontFamily: "inherit", boxSizing: "border-box" };
 const textareaSt = { ...inputSt, resize: "vertical", minHeight: "72px" };
 
-// ── FormField sub-component ────────────────────────────────────────────────────
 function FormField({ f, value, onChange }) {
   if (f.type === "textarea") return (
     <div style={{ gridColumn: "1 / -1" }}>
       <label style={labelSt}>{f.label}</label>
-      <textarea
-        rows={3} value={value} onChange={e => onChange(e.target.value)}
-        placeholder={`Enter ${f.label.toLowerCase()}…`} style={textareaSt}
-      />
+      <textarea rows={3} value={value} onChange={e => onChange(e.target.value)} placeholder={`Enter ${f.label.toLowerCase()}…`} style={textareaSt} />
     </div>
   );
   if (f.type === "select") return (
     <div>
       <label style={labelSt}>{f.label}</label>
-      <select value={value} onChange={e => onChange(e.target.value)}
-        style={{ ...inputSt, cursor: "pointer" }}>
+      <select value={value} onChange={e => onChange(e.target.value)} style={{ ...inputSt, cursor: "pointer" }}>
         <option value="">— Select —</option>
         {f.options.map(o => <option key={o} value={o}>{o}</option>)}
       </select>
@@ -4637,88 +4579,45 @@ function FormField({ f, value, onChange }) {
   return (
     <div>
       <label style={labelSt}>{f.label}</label>
-      <input type={f.type} value={value} onChange={e => onChange(e.target.value)}
-        placeholder={f.type === "date" ? "" : `Enter ${f.label.toLowerCase()}…`}
-        style={inputSt} />
+      <input type={f.type} value={value} onChange={e => onChange(e.target.value)} placeholder={f.type === "date" ? "" : `Enter ${f.label.toLowerCase()}…`} style={inputSt} />
     </div>
   );
 }
-
-// ── QueueItem / DetailPanel / RightPanel ───────────────────────────────────────
-// These three used to be defined *inside* the Verifyer component body. That's
-// the reason typing in a form field lost focus after one character: every
-// state update (e.g. updating `form` on each keystroke) re-ran Verifyer,
-// which redefined these as brand-new functions each time. React identifies
-// JSX components by function reference, so a new reference for <DetailPanel />
-// every render made React treat it as a totally different component type and
-// unmount + remount the whole subtree — killing the input's focus every time.
-// Defining them here at module scope gives them a stable identity across
-// renders, so React just re-renders in place instead of remounting. All the
-// data they need now comes in as props instead of via closure.
 
 function QueueItem({ c, selectedCase, selectCase }) {
   const pm       = PRIORITY_META[c.priority] || PRIORITY_META.LOW;
   const sm       = STATUS_META[c.status] || STATUS_META["pending"];
   const isActive = selectedCase?.case_id === c.case_id;
-  const checkLabels = c.checks_norm.map(k =>
-    CHECK_TABS.find(t => t.key === k)?.label?.slice(0, 3).toUpperCase() || k.slice(0, 3).toUpperCase()
-  );
+  const checkLabels = c.checks_norm.map(k => CHECK_TABS.find(t => t.key === k)?.label?.slice(0, 3).toUpperCase() || k.slice(0, 3).toUpperCase());
 
   return (
-    <tr
-      className="boder-tbl active"
-      onClick={() => selectCase(c)}
-      style={{
-        cursor: "pointer",
-        background: isActive ? "#eef3ff" : undefined,
-        borderLeft: isActive ? "3px solid #2b3b8c" : "3px solid transparent",
-      }}
-    >
-      {/* Case ID + checks */}
+    <tr className="boder-tbl active" onClick={() => selectCase(c)} style={{ cursor: "pointer", background: isActive ? "#eef3ff" : undefined, borderLeft: isActive ? "3px solid #2b3b8c" : "3px solid transparent" }}>
       <td>
         <div className="criminal-case">
           <p>
             <span style={{ fontWeight: 700, color: "#27348B" }}>{c.case_id}</span>
             <br />
-            <span style={{ fontSize: "11px", color: "#94a3b8" }}>
-              {checkLabels.join(" · ")}
-            </span>
+            <span style={{ fontSize: "11px", color: "#94a3b8" }}>{checkLabels.join(" · ")}</span>
           </p>
         </div>
       </td>
-
-      {/* Candidate name */}
-      <td>
-        <div className="client-names">{c.candidate}</div>
-      </td>
-
-      {/* Progress + TAT */}
+      <td><div className="client-names">{c.candidate}</div></td>
       <td>
         <div className="custom-progress">
           <div className="custom-progress-bar" style={{ width: `${sm.pct}%`, background: sm.color }} />
         </div>
         <p className="progress-client-text" style={{ color: sm.color }}>{c.tat_display}</p>
       </td>
-
-      {/* Priority dot */}
       <td>
         <div className="parent-client-boxes">
-          <span
-            className="client-cases-box"
-            style={{ background: pm.dot }}
-            title={c.priority}
-          />
+          <span className="client-cases-box" style={{ background: pm.dot }} title={c.priority} />
         </div>
       </td>
     </tr>
   );
 }
 
-function DetailPanel({
-  selectedCase, activeCheck, setActiveCheck, canAccessTab,
-  form, setForm, prefillSource, outcome, setOutcome,
-  saveMsg, saving, handleSave,
-}) {
+function DetailPanel({ selectedCase, activeCheck, setActiveCheck, canAccessTab, form, setForm, prefillSource, outcome, setOutcome, saveMsg, saving, handleSave }) {
   if (!selectedCase) return (
     <div style={{ display: "flex", alignItems: "center", justifyContent: "center", height: "340px" }}>
       <p style={{ color: "#94a3b8", fontSize: "14px" }}>Select a case to begin verification</p>
@@ -4731,28 +4630,12 @@ function DetailPanel({
 
   return (
     <>
-      {/* Header */}
-      <div style={{
-        background: "#27348B", color: "#fff", padding: "14px 18px",
-        fontWeight: 700, fontSize: "13px", borderRadius: "6px 6px 0 0",
-        display: "flex", justifyContent: "space-between", alignItems: "center",
-      }}>
-        <span>
-          {selectedCase.case_id} — {selectedCase.candidate}
-        </span>
-        <span style={{
-          background: pm.bg, color: pm.color, fontSize: "11px",
-          fontWeight: 700, padding: "3px 10px", borderRadius: "20px",
-        }}>
-          {selectedCase.priority}
-        </span>
+      <div style={{ background: "#27348B", color: "#fff", padding: "14px 18px", fontWeight: 700, fontSize: "13px", borderRadius: "6px 6px 0 0", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+        <span>{selectedCase.case_id} — {selectedCase.candidate}</span>
+        <span style={{ background: pm.bg, color: pm.color, fontSize: "11px", fontWeight: 700, padding: "3px 10px", borderRadius: "20px" }}>{selectedCase.priority}</span>
       </div>
 
-      {/* Check type tabs — only show checks present in this case */}
-      <div style={{
-        display: "flex", background: "#fff",
-        borderBottom: "1px solid #e2e8f0", overflowX: "auto",
-      }}>
+      <div style={{ display: "flex", background: "#fff", borderBottom: "1px solid #e2e8f0", overflowX: "auto" }}>
         {CHECK_TABS.filter(t => selectedCase.checks_norm.includes(t.key)).map((t, i, arr) => {
           const accessible = canAccessTab(t.key);
           const isActive   = activeCheck === t.key;
@@ -4780,18 +4663,8 @@ function DetailPanel({
         })}
       </div>
 
-      {/* Scrollable form body */}
-      <div style={{
-        border: "1px solid #e2e8f0", borderTop: "none",
-        borderRadius: "0 0 6px 6px", background: "#fff",
-        maxHeight: "520px", overflowY: "auto", padding: "16px",
-      }}>
-
-        {/* Case summary strip */}
-        <div style={{
-          display: "grid", gridTemplateColumns: "repeat(4, 1fr)",
-          gap: "10px", marginBottom: "18px",
-        }}>
+      <div style={{ border: "1px solid #e2e8f0", borderTop: "none", borderRadius: "0 0 6px 6px", background: "#fff", maxHeight: "520px", overflowY: "auto", padding: "16px" }}>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "10px", marginBottom: "18px" }}>
           {[
             { label: "Client",   value: selectedCase.client || selectedCase.client_name || "—" },
             { label: "Status",   value: <span style={{ background: sm.color, color: "#fff", fontSize: "11px", fontWeight: 700, padding: "3px 10px", borderRadius: "4px" }}>{sm.label}</span> },
@@ -4805,25 +4678,19 @@ function DetailPanel({
           ))}
         </div>
 
-        {/* Prefill source banner */}
         {prefillSource === "client" && (
-          <div style={{ background: "#eff6ff", border: "1px solid #bfdbfe", borderRadius: "8px",
-            padding: "10px 14px", fontSize: "12px", color: "#1d4ed8", marginBottom: "16px", fontWeight: 600 }}>
-            ℹ Some fields below were prefilled from what the client/candidate already submitted. Please verify and correct as needed.
+          <div style={{ background: "#eff6ff", border: "1px solid #bfdbfe", borderRadius: "8px", padding: "10px 14px", fontSize: "12px", color: "#1d4ed8", marginBottom: "16px", fontWeight: 600 }}>
+            ℹ Some fields below were prefilled from what the client/candidate already submitted.
           </div>
         )}
         {prefillSource === "draft" && (
-          <div style={{ background: "#f5f3ff", border: "1px solid #ddd6fe", borderRadius: "8px",
-            padding: "10px 14px", fontSize: "12px", color: "#6d28d9", marginBottom: "16px", fontWeight: 600 }}>
+          <div style={{ background: "#f5f3ff", border: "1px solid #ddd6fe", borderRadius: "8px", padding: "10px 14px", fontSize: "12px", color: "#6d28d9", marginBottom: "16px", fontWeight: 600 }}>
             ↻ Resumed your saved draft for this check.
           </div>
         )}
 
-        {/* Outcome toggle */}
         <div style={{ marginBottom: "16px" }}>
-          <p style={{ fontSize: "11px", fontWeight: 700, color: "#475569", marginBottom: "8px", textTransform: "uppercase", letterSpacing: "0.4px" }}>
-            Verification Outcome
-          </p>
+          <p style={{ fontSize: "11px", fontWeight: 700, color: "#475569", marginBottom: "8px", textTransform: "uppercase", letterSpacing: "0.4px" }}>Verification Outcome</p>
           <div style={{ display: "flex", gap: "8px" }}>
             {OUTCOME_OPTS.map(o => (
               <button
@@ -4836,8 +4703,7 @@ function DetailPanel({
                   background: outcome === o.key ? o.bg : "#f8fafc",
                   color: outcome === o.key ? o.color : "#94a3b8",
                   fontWeight: outcome === o.key ? 700 : 500,
-                  fontSize: "12px",
-                  transition: "all 0.15s",
+                  fontSize: "12px", transition: "all 0.15s",
                 }}
               >
                 {o.label}
@@ -4846,7 +4712,6 @@ function DetailPanel({
           </div>
         </div>
 
-        {/* Dynamic fields grid */}
         {!canAccessTab(activeCheck) ? (
           <div style={{ padding: "24px", textAlign: "center", color: "#94a3b8", fontSize: "13px", background: "#f8fafc", borderRadius: "8px" }}>
             Your role does not have access to the <strong>{CHECK_TABS.find(t => t.key === activeCheck)?.label}</strong> check.
@@ -4854,54 +4719,24 @@ function DetailPanel({
         ) : (
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px" }}>
             {fields.map(f => (
-              <FormField
-                key={f.key} f={f}
-                value={form[f.key] || ""}
-                onChange={v => setForm(p => ({ ...p, [f.key]: v }))}
-              />
+              <FormField key={f.key} f={f} value={form[f.key] || ""} onChange={v => setForm(p => ({ ...p, [f.key]: v }))} />
             ))}
           </div>
         )}
 
-        {/* Save message */}
         {saveMsg.text && (
-          <div style={{
-            marginTop: "14px", padding: "10px 14px", borderRadius: "8px",
-            background: saveMsg.type === "success" ? "#f0fdf4" : "#fef2f2",
-            color:      saveMsg.type === "success" ? "#16a34a" : "#dc2626",
-            fontSize: "13px", fontWeight: 600,
-          }}>
+          <div style={{ marginTop: "14px", padding: "10px 14px", borderRadius: "8px", background: saveMsg.type === "success" ? "#f0fdf4" : "#fef2f2", color: saveMsg.type === "success" ? "#16a34a" : "#dc2626", fontSize: "13px", fontWeight: 600 }}>
             {saveMsg.text}
           </div>
         )}
       </div>
 
-      {/* Action buttons */}
       {canAccessTab(activeCheck) && (
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px", marginTop: "12px" }}>
-          <button
-            onClick={() => handleSave(true)}
-            disabled={saving}
-            style={{
-              display: "flex", alignItems: "center", justifyContent: "center", gap: "8px",
-              padding: "13px", background: "#27348B", color: "#fff", border: "none",
-              borderRadius: "6px", fontWeight: 700, fontSize: "13px", cursor: "pointer",
-            }}
-          >
+          <button onClick={() => handleSave(true)} disabled={saving} style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "8px", padding: "13px", background: "#27348B", color: "#fff", border: "none", borderRadius: "6px", fontWeight: 700, fontSize: "13px", cursor: "pointer" }}>
             💾 Save Draft
           </button>
-          <button
-            onClick={() => handleSave(false)}
-            disabled={saving || !outcome}
-            style={{
-              display: "flex", alignItems: "center", justifyContent: "center", gap: "8px",
-              padding: "13px",
-              background: saving || !outcome ? "#94a3b8" : "#10b981",
-              color: "#fff", border: "none", borderRadius: "6px",
-              fontWeight: 700, fontSize: "13px",
-              cursor: saving || !outcome ? "not-allowed" : "pointer",
-            }}
-          >
+          <button onClick={() => handleSave(false)} disabled={saving || !outcome} style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "8px", padding: "13px", background: saving || !outcome ? "#94a3b8" : "#10b981", color: "#fff", border: "none", borderRadius: "6px", fontWeight: 700, fontSize: "13px", cursor: saving || !outcome ? "not-allowed" : "pointer" }}>
             {saving ? "Saving…" : "✔ Save & Mark Done"}
           </button>
         </div>
@@ -4913,28 +4748,17 @@ function DetailPanel({
 function RightPanel({ comments, commentInput, setCommentInput, sendComment, commentsEndRef }) {
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: "14px", height: "100%" }}>
-
-      {/* Comments */}
       <div style={{ borderRadius: "10px", overflow: "hidden", border: "1px solid #e2e8f0", flex: 1, display: "flex", flexDirection: "column" }}>
         <div style={{ background: "#27348B", padding: "13px 16px" }}>
-          <h3 style={{ margin: 0, color: "#fff", fontSize: "12px", fontWeight: 700, letterSpacing: "0.08em" }}>
-            COMMENTS & NOTES
-          </h3>
+          <h3 style={{ margin: 0, color: "#fff", fontSize: "12px", fontWeight: 700, letterSpacing: "0.08em" }}>COMMENTS & NOTES</h3>
         </div>
         <div style={{ flex: 1, maxHeight: "460px", overflowY: "auto", padding: "12px 14px" }}>
           {comments.length === 0 ? (
-            <p style={{ color: "#cbd5e1", fontSize: "13px", textAlign: "center", padding: "16px 0" }}>
-              No comments yet.
-            </p>
+            <p style={{ color: "#cbd5e1", fontSize: "13px", textAlign: "center", padding: "16px 0" }}>No comments yet.</p>
           ) : (
             comments.map((c, i) => (
               <div key={c.id} style={{ display: "flex", gap: "10px", marginBottom: "14px" }}>
-                <div style={{
-                  width: "30px", height: "30px", borderRadius: "50%",
-                  background: i % 2 === 0 ? "#7c3aed" : "#0d9488",
-                  color: "#fff", display: "flex", alignItems: "center", justifyContent: "center",
-                  fontSize: "13px", fontWeight: 700, flexShrink: 0,
-                }}>
+                <div style={{ width: "30px", height: "30px", borderRadius: "50%", background: i % 2 === 0 ? "#7c3aed" : "#0d9488", color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "13px", fontWeight: 700, flexShrink: 0 }}>
                   {c.avatar}
                 </div>
                 <div style={{ flex: 1 }}>
@@ -4951,26 +4775,264 @@ function RightPanel({ comments, commentInput, setCommentInput, sendComment, comm
         </div>
         <div style={{ borderTop: "1px solid #e2e8f0", display: "flex", gap: "0" }}>
           <input
-            type="text"
-            placeholder="Add a comment…"
-            value={commentInput}
-            onChange={e => setCommentInput(e.target.value)}
-            onKeyDown={e => e.key === "Enter" && sendComment()}
-            style={{
-              flex: 1, border: "none", padding: "11px 14px",
-              fontSize: "13px", outline: "none", background: "#fff",
-            }}
+            type="text" placeholder="Add a comment…" value={commentInput}
+            onChange={e => setCommentInput(e.target.value)} onKeyDown={e => e.key === "Enter" && sendComment()}
+            style={{ flex: 1, border: "none", padding: "11px 14px", fontSize: "13px", outline: "none", background: "#fff" }}
           />
-          <button onClick={sendComment} style={{
-            background: "#27348B", border: "none", padding: "0 16px",
-            cursor: "pointer", color: "#fff",
-          }}>
+          <button onClick={sendComment} style={{ background: "#27348B", border: "none", padding: "0 16px", cursor: "pointer", color: "#fff" }}>
             <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
               <line x1="22" y1="2" x2="11" y2="13" />
               <polygon points="22 2 15 22 11 13 2 9 22 2" />
             </svg>
           </button>
         </div>
+      </div>
+    </div>
+  );
+}
+
+// ── COMPLETED CASES DASHBOARD VIEW (IMAGE COMPONENT) ─────────────────────────
+function CompletedView({ cases, loading, activeCheck }) {
+  const [selectedCase, setSelectedCase] = useState(cases[0] || null);
+  const [clientFilter, setClientFilter] = useState("All");
+  const [statusFilter, setStatusFilter] = useState("All");
+
+  useEffect(() => {
+    if (cases.length > 0 && !selectedCase) {
+      setSelectedCase(cases[0]);
+    }
+  }, [cases]);
+
+  const activeCheckLabel = CHECK_TABS.find(t => t.key === activeCheck)?.label || "Education";
+
+  const totalCompleted = cases.length;
+  const verifiedCount = cases.filter(c => c.check_results?.[activeCheck]?.outcome === "clear" || c.status === "completed").length;
+  const reportsGenerated = totalCompleted;
+
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
+      {/* 1. Header with Title & Search */}
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
+        <div>
+          <h2 style={{ fontSize: "20px", fontWeight: 800, color: "#1e1b4b", margin: 0 }}>
+            Completed {activeCheckLabel} Cases
+          </h2>
+          <p style={{ fontSize: "13px", color: "#64748b", margin: "4px 0 0 0" }}>
+            View verified {activeCheckLabel.toLowerCase()} cases and download verification reports
+          </p>
+        </div>
+        <div style={{ display: "flex", gap: "10px" }}>
+          <input
+            type="text"
+            placeholder="Search Case ID / Candidate Name / Institute"
+            style={{
+              padding: "8px 14px",
+              width: "320px",
+              borderRadius: "8px",
+              border: "1px solid #cbd5e1",
+              fontSize: "13px",
+              outline: "none",
+            }}
+          />
+        </div>
+      </div>
+
+      {/* 2. Top Filter Bar */}
+      <div style={{ display: "flex", gap: "12px", background: "#fff", padding: "12px 16px", borderRadius: "10px", border: "1px solid #e2e8f0", alignItems: "center" }}>
+        <div style={{ flex: 1 }}>
+          <label style={{ display: "block", fontSize: "11px", color: "#64748b", marginBottom: "4px", fontWeight: 600 }}>Client</label>
+          <select value={clientFilter} onChange={e => setClientFilter(e.target.value)} style={{ width: "100%", padding: "6px 10px", borderRadius: "6px", border: "1px solid #cbd5e1", fontSize: "12px" }}>
+            <option value="All">All Clients</option>
+          </select>
+        </div>
+        <div style={{ flex: 1 }}>
+          <label style={{ display: "block", fontSize: "11px", color: "#64748b", marginBottom: "4px", fontWeight: 600 }}>University / Institute</label>
+          <select style={{ width: "100%", padding: "6px 10px", borderRadius: "6px", border: "1px solid #cbd5e1", fontSize: "12px" }}>
+            <option value="All">All Universities</option>
+          </select>
+        </div>
+        <div style={{ flex: 1 }}>
+          <label style={{ display: "block", fontSize: "11px", color: "#64748b", marginBottom: "4px", fontWeight: 600 }}>Verification Status</label>
+          <select value={statusFilter} onChange={e => setStatusFilter(e.target.value)} style={{ width: "100%", padding: "6px 10px", borderRadius: "6px", border: "1px solid #cbd5e1", fontSize: "12px" }}>
+            <option value="All">All Statuses</option>
+            <option value="clear">Verified (Clear)</option>
+            <option value="discrepancy">Discrepancy</option>
+          </select>
+        </div>
+        <div style={{ flex: 1 }}>
+          <label style={{ display: "block", fontSize: "11px", color: "#64748b", marginBottom: "4px", fontWeight: 600 }}>Date Range</label>
+          <input type="date" style={{ width: "100%", padding: "5px 10px", borderRadius: "6px", border: "1px solid #cbd5e1", fontSize: "12px" }} />
+        </div>
+        <button style={{ height: "36px", padding: "0 16px", backgroundColor: "#2563eb", color: "#fff", border: "none", borderRadius: "6px", fontWeight: 600, fontSize: "12px", cursor: "pointer", alignSelf: "flex-end" }}>
+          📥 Export Report
+        </button>
+      </div>
+
+      {/* 3. Stat Mini Cards */}
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "12px" }}>
+        <div style={{ background: "#fff", padding: "14px 16px", borderRadius: "10px", border: "1px solid #e2e8f0", display: "flex", alignItems: "center", gap: "12px" }}>
+          <div style={{ width: "38px", height: "38px", borderRadius: "8px", background: "#eff6ff", color: "#2563eb", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "18px" }}>📑</div>
+          <div>
+            <span style={{ fontSize: "11px", color: "#64748b", fontWeight: 600 }}>Total Completed</span>
+            <h3 style={{ margin: 0, fontSize: "18px", color: "#1e293b" }}>{totalCompleted}</h3>
+          </div>
+        </div>
+        <div style={{ background: "#fff", padding: "14px 16px", borderRadius: "10px", border: "1px solid #e2e8f0", display: "flex", alignItems: "center", gap: "12px" }}>
+          <div style={{ width: "38px", height: "38px", borderRadius: "8px", background: "#f0fdf4", color: "#16a34a", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "18px" }}>🏛</div>
+          <div>
+            <span style={{ fontSize: "11px", color: "#64748b", fontWeight: 600 }}>Verified Clear</span>
+            <h3 style={{ margin: 0, fontSize: "18px", color: "#1e293b" }}>{verifiedCount}</h3>
+          </div>
+        </div>
+        <div style={{ background: "#fff", padding: "14px 16px", borderRadius: "10px", border: "1px solid #e2e8f0", display: "flex", alignItems: "center", gap: "12px" }}>
+          <div style={{ width: "38px", height: "38px", borderRadius: "8px", background: "#fff7ed", color: "#ea580c", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "18px" }}>🏫</div>
+          <div>
+            <span style={{ fontSize: "11px", color: "#64748b", fontWeight: 600 }}>Institutions Checked</span>
+            <h3 style={{ margin: 0, fontSize: "18px", color: "#1e293b" }}>{cases.length > 0 ? 13 : 0}</h3>
+          </div>
+        </div>
+        <div style={{ background: "#fff", padding: "14px 16px", borderRadius: "10px", border: "1px solid #e2e8f0", display: "flex", alignItems: "center", gap: "12px" }}>
+          <div style={{ width: "38px", height: "38px", borderRadius: "8px", background: "#faf5ff", color: "#9333ea", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "18px" }}>📄</div>
+          <div>
+            <span style={{ fontSize: "11px", color: "#64748b", fontWeight: 600 }}>Reports Generated</span>
+            <h3 style={{ margin: 0, fontSize: "18px", color: "#1e293b" }}>{reportsGenerated}</h3>
+          </div>
+        </div>
+      </div>
+
+      {/* 4. Main Content: Table + Side Preview Card */}
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 280px", gap: "16px", alignItems: "start" }}>
+        {/* Table Block */}
+        <div style={{ background: "#fff", borderRadius: "10px", border: "1px solid #e2e8f0", padding: "16px" }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "14px" }}>
+            <h3 style={{ margin: 0, fontSize: "14px", fontWeight: 700, color: "#1e293b" }}>
+              Completed {activeCheckLabel} Verification Cases
+            </h3>
+            <div style={{ display: "flex", gap: "8px" }}>
+              <button style={{ padding: "6px 12px", background: "#2563eb", color: "#fff", border: "none", borderRadius: "6px", fontSize: "12px", fontWeight: 600, cursor: "pointer" }}>📄 Generate Report</button>
+              <button style={{ padding: "6px 12px", background: "#f1f5f9", color: "#475569", border: "1px solid #cbd5e1", borderRadius: "6px", fontSize: "12px", fontWeight: 600, cursor: "pointer" }}>📤 Export CSV</button>
+            </div>
+          </div>
+
+          <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "12px" }}>
+            <thead>
+              <tr style={{ background: "#f8fafc", textAlign: "left", color: "#64748b", borderBottom: "1px solid #e2e8f0" }}>
+                <th style={{ padding: "8px" }}><input type="checkbox" /></th>
+                <th style={{ padding: "8px" }}>#</th>
+                <th style={{ padding: "8px" }}>Case ID</th>
+                <th style={{ padding: "8px" }}>Candidate Name</th>
+                <th style={{ padding: "8px" }}>Client</th>
+                <th style={{ padding: "8px" }}>Institute</th>
+                <th style={{ padding: "8px" }}>Qualification</th>
+                <th style={{ padding: "8px" }}>Passing Year</th>
+                <th style={{ padding: "8px" }}>Result</th>
+                <th style={{ padding: "8px" }}>Verified On</th>
+                <th style={{ padding: "8px" }}>Report</th>
+              </tr>
+            </thead>
+            <tbody>
+              {cases.length === 0 ? (
+                <tr>
+                  <td colSpan={11} style={{ textAlign: "center", padding: "24px", color: "#94a3b8" }}>No completed cases found.</td>
+                </tr>
+              ) : (
+                cases.map((c, idx) => {
+                  const checkData = c.check_results?.[activeCheck]?.form_data || {};
+                  const isSelected = selectedCase?.case_id === c.case_id;
+                  const outcome = c.check_results?.[activeCheck]?.outcome || "clear";
+
+                  return (
+                    <tr
+                      key={c.case_id}
+                      onClick={() => setSelectedCase(c)}
+                      style={{
+                        borderBottom: "1px solid #f1f5f9",
+                        cursor: "pointer",
+                        background: isSelected ? "#f0f6ff" : "transparent"
+                      }}
+                    >
+                      <td style={{ padding: "10px 8px" }}><input type="checkbox" checked={isSelected} readOnly /></td>
+                      <td style={{ padding: "10px 8px", color: "#64748b" }}>{idx + 1}</td>
+                      <td style={{ padding: "10px 8px", fontWeight: 700, color: "#1e293b" }}>{c.case_id}</td>
+                      <td style={{ padding: "10px 8px", color: "#334155" }}>{c.candidate}</td>
+                      <td style={{ padding: "10px 8px", color: "#64748b" }}>{c.client || c.client_name || "—"}</td>
+                      <td style={{ padding: "10px 8px", color: "#334155" }}>{checkData.institution_name || checkData.company_name || "—"}</td>
+                      <td style={{ padding: "10px 8px", color: "#64748b" }}>{checkData.degree || checkData.designation || "—"}</td>
+                      <td style={{ padding: "10px 8px", color: "#64748b" }}>{checkData.year_of_passing || "—"}</td>
+                      <td style={{ padding: "10px 8px" }}>
+                        <span style={{
+                          padding: "2px 8px", borderRadius: "12px", fontSize: "11px", fontWeight: 600,
+                          backgroundColor: outcome === "clear" ? "#dcfce7" : "#fee2e2",
+                          color: outcome === "clear" ? "#15803d" : "#b91c1c",
+                          display: "inline-flex", alignItems: "center", gap: "4px"
+                        }}>
+                          {outcome === "clear" ? "✔ Verified" : "✗ Discrepancy"}
+                        </span>
+                      </td>
+                      <td style={{ padding: "10px 8px", color: "#64748b" }}>
+                        {c.updated_at ? new Date(c.updated_at).toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" }) : "—"}
+                      </td>
+                      <td style={{ padding: "10px 8px" }}>
+                        <div style={{ display: "flex", flexDirection: "column", gap: "2px" }}>
+                          <span style={{ color: "#2563eb", fontSize: "11px", fontWeight: 600, cursor: "pointer" }}>👁 View Report</span>
+                          <span style={{ color: "#2563eb", fontSize: "11px", cursor: "pointer" }}>📥 Download PDF</span>
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })
+              )}
+            </tbody>
+          </table>
+        </div>
+
+        {/* Right Preview Card */}
+        {selectedCase ? (
+          <div style={{ background: "#fff", borderRadius: "10px", border: "1px solid #e2e8f0", padding: "16px" }}>
+            <h4 style={{ margin: "0 0 12px 0", fontSize: "13px", color: "#1e293b", display: "flex", alignItems: "center", gap: "6px" }}>
+              📄 Verification Report
+            </h4>
+            <div style={{ display: "flex", flexDirection: "column", gap: "10px", fontSize: "12px" }}>
+              <div style={{ display: "flex", justifyContent: "space-between" }}>
+                <span style={{ color: "#64748b" }}>Report ID</span>
+                <span style={{ fontWeight: 600, color: "#1e293b" }}>RPT-{selectedCase.case_id}</span>
+              </div>
+              <div style={{ display: "flex", justifyContent: "space-between" }}>
+                <span style={{ color: "#64748b" }}>Institution</span>
+                <span style={{ fontWeight: 600, color: "#1e293b" }}>{selectedCase.check_results?.[activeCheck]?.form_data?.institution_name || "—"}</span>
+              </div>
+              <div style={{ display: "flex", justifyContent: "space-between" }}>
+                <span style={{ color: "#64748b" }}>Candidate Name</span>
+                <span style={{ fontWeight: 600, color: "#1e293b" }}>{selectedCase.candidate}</span>
+              </div>
+              <div style={{ display: "flex", justifyContent: "space-between" }}>
+                <span style={{ color: "#64748b" }}>Case ID</span>
+                <span style={{ fontWeight: 600, color: "#1e293b" }}>{selectedCase.case_id}</span>
+              </div>
+              <div style={{ display: "flex", justifyContent: "space-between" }}>
+                <span style={{ color: "#64748b" }}>Verification Date</span>
+                <span style={{ fontWeight: 600, color: "#1e293b" }}>
+                  {selectedCase.updated_at ? new Date(selectedCase.updated_at).toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" }) : "—"}
+                </span>
+              </div>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                <span style={{ color: "#64748b" }}>Result</span>
+                <span style={{ padding: "2px 8px", borderRadius: "10px", fontSize: "11px", fontWeight: 600, backgroundColor: "#dcfce7", color: "#15803d" }}>
+                  ✔ Verified
+                </span>
+              </div>
+
+              <div style={{ marginTop: "14px", padding: "12px", background: "#f8fafc", borderRadius: "8px", border: "1px dashed #cbd5e1", textAlign: "center" }}>
+                <p style={{ margin: 0, fontSize: "11px", color: "#64748b" }}>Generated by BGV Portal</p>
+                <span style={{ fontSize: "10px", color: "#94a3b8" }}>Authentic · Secure · Reliable</span>
+              </div>
+
+              <button style={{ marginTop: "10px", padding: "10px", width: "100%", background: "#2563eb", color: "#fff", border: "none", borderRadius: "6px", fontWeight: 700, fontSize: "12px", cursor: "pointer" }}>
+                📥 Download PDF
+              </button>
+            </div>
+          </div>
+        ) : null}
       </div>
     </div>
   );
@@ -4983,39 +5045,32 @@ export default function Verifyer() {
   const user     = getUser();
   const token    = getToken();
 
-  // Role resolution
   const role           = user.role || "";
   const isAdmin        = role === "admin";
-  const assignedCheck  = ROLE_CHECK_MAP[role] || null; // null = admin / generic verifier sees all
+  const assignedCheck  = ROLE_CHECK_MAP[role] || null;
 
-  // ── Sidebar/tab view: "active" | "completed" | "clear" | "discrepancy"
   const sidebarView = getViewFromURL(location.search);
 
-  // ── State ─────────────────────────────────────────────────────────────────
   const [cases,        setCases]        = useState([]);
   const [loading,      setLoading]      = useState(true);
   const [selectedCase, setSelectedCase] = useState(null);
   const [activeCheck,  setActiveCheck]  = useState(assignedCheck || "employment");
   const [search,       setSearch]       = useState("");
 
-  // Date filter — mirrors Intake.jsx
   const [dateFilter, setDateFilter] = useState("month");
   const [customFrom, setCustomFrom] = useState("");
   const [customTo, setCustomTo]     = useState("");
 
-  // Form
-  const [form,       setForm]       = useState({});
-  const [prefillSource, setPrefillSource] = useState(null); // "client" | "draft" | null
-  const [outcome,    setOutcome]    = useState("");
-  const [saving,     setSaving]     = useState(false);
-  const [saveMsg,    setSaveMsg]    = useState({ text: "", type: "" });
+  const [form,          setForm]          = useState({});
+  const [prefillSource, setPrefillSource] = useState(null);
+  const [outcome,       setOutcome]       = useState("");
+  const [saving,        setSaving]        = useState(false);
+  const [saveMsg,       setSaveMsg]       = useState({ text: "", type: "" });
 
-  // Comments
   const [comments,      setComments]      = useState([]);
   const [commentInput,  setCommentInput]  = useState("");
   const commentsEndRef = useRef(null);
 
-  // ── Fetch real cases from API ──────────────────────────────────────────────
   const fetchCases = () => {
     setLoading(true);
     fetch(`${API_URL}/api/cases`, {
@@ -5046,14 +5101,10 @@ export default function Verifyer() {
 
   useEffect(() => { fetchCases(); }, []);
 
-  // Auto-scroll comments
   useEffect(() => {
     commentsEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [comments]);
 
-  // Reset form when case / check changes — prefill from the client's
-  // submitted details (or a saved verifier draft, if one exists) rather than
-  // always starting blank.
   useEffect(() => {
     const { form: prefilled, source } = buildPrefilledForm(selectedCase, activeCheck);
     setForm(prefilled);
@@ -5062,7 +5113,6 @@ export default function Verifyer() {
     setSaveMsg({ text: "", type: "" });
   }, [selectedCase?.case_id, activeCheck]);
 
-  // Jump active check to first valid tab on case selection
   useEffect(() => {
     if (!selectedCase) return;
     const validChecks = selectedCase.checks_norm;
@@ -5074,7 +5124,6 @@ export default function Verifyer() {
     }
   }, [selectedCase?.case_id]);
 
-  // ── Date range filter — same semantics as Intake.jsx ───────────────────────
   const isInRange = (createdAt) => {
     if (!createdAt) return true;
     if (dateFilter === "all") return true;
@@ -5093,13 +5142,9 @@ export default function Verifyer() {
     return true;
   };
 
-  // ── Does this case have any check whose outcome matches? Used for the
-  //    Clear / Discrepancy counts so they reflect the case as a whole,
-  //    rather than whichever check-type tab happens to be open right now.
   const caseHasOutcome = (c, outcome) =>
     Object.values(c.check_results || {}).some(r => r?.outcome === outcome);
 
-  // ── Filtered lists (status/outcome + date range) ────────────────────────────
   const activeCases      = cases.filter(c => c.status !== "completed" && isInRange(c.created_at));
   const completedCases   = cases.filter(c => c.status === "completed" && isInRange(c.created_at));
   const clearCases       = cases.filter(c => isInRange(c.created_at) && caseHasOutcome(c, "clear"));
@@ -5124,25 +5169,19 @@ export default function Verifyer() {
 
   const queueList = filterBySearch(VIEW_LISTS[sidebarView] || activeCases);
 
-  // ── Tab accessibility ──────────────────────────────────────────────────────
-  // A tab is accessible if:
-  //   1. The case has that check type, AND
-  //   2. The verifier's role allows it (admin / generic verifier: any; specialist: only their type)
   const canAccessTab = (checkKey) => {
     if (!selectedCase) return false;
     const caseHasCheck = selectedCase.checks_norm.includes(checkKey);
     if (!caseHasCheck) return false;
-    if (isAdmin || !assignedCheck) return true;           // admin / generic verifier
-    return checkKey === assignedCheck;                     // specialist verifier
+    if (isAdmin || !assignedCheck) return true;
+    return checkKey === assignedCheck;
   };
 
-  // ── Select a case ──────────────────────────────────────────────────────────
   const selectCase = (c) => {
     setSelectedCase(c);
-    setComments([]);   // TODO: fetch from API  GET /api/cases/{id}/comments
+    setComments([]);
   };
 
-  // ── Save result ────────────────────────────────────────────────────────────
   const handleSave = async (isDraft) => {
     if (!outcome && !isDraft) {
       setSaveMsg({ text: "Please select an outcome before saving.", type: "error" });
@@ -5178,10 +5217,8 @@ export default function Verifyer() {
     }
   };
 
-  // ── Send comment ───────────────────────────────────────────────────────────
   const sendComment = () => {
     if (!commentInput.trim()) return;
-    // TODO: POST /api/cases/{id}/comments
     setComments(p => [...p, {
       id:     Date.now(),
       author: user.name || "Verifier",
@@ -5192,7 +5229,6 @@ export default function Verifyer() {
     setCommentInput("");
   };
 
-  // ── Render ─────────────────────────────────────────────────────────────────
   return (
     <>
       <Sidebar />
@@ -5201,22 +5237,16 @@ export default function Verifyer() {
         <main>
           <div className="dash-wrper">
 
-            {/* Page header */}
+            {/* Page Header */}
             <div className="dash-upper-head">
               <div className="left">
                 <div className="dash-title-flex">
                   <h3 className="dash-title-text">Verifier Workspace</h3>
-                  <span style={{
-                    fontSize: "14px", color: "#606060", fontWeight:500,
-                   padding: "3px 10px", borderRadius: "20px",
-                  }}>
+                  <span style={{ fontSize: "14px", color: "#606060", fontWeight: 500, padding: "3px 10px", borderRadius: "20px" }}>
                     {user.name || "Verifier"} — {role}
                   </span>
                   {assignedCheck && (
-                    <span style={{
-                      fontSize: "11px", color: "#fff",
-                      background: "#27348B", padding: "3px 10px", borderRadius: "20px",
-                    }}>
+                    <span style={{ fontSize: "11px", color: "#fff", background: "#27348B", padding: "3px 10px", borderRadius: "20px" }}>
                       Assigned: {CHECK_TABS.find(t => t.key === assignedCheck)?.label}
                     </span>
                   )}
@@ -5231,42 +5261,31 @@ export default function Verifyer() {
                   onChange={e => setSearch(e.target.value)}
                 />
                 {search && (
-                  <button onClick={() => setSearch("")}
-                    style={{ background: "none", border: "none", cursor: "pointer", fontSize: "18px", color: "#94a3b8" }}>
+                  <button onClick={() => setSearch("")} style={{ background: "none", border: "none", cursor: "pointer", fontSize: "18px", color: "#94a3b8" }}>
                     ×
                   </button>
                 )}
               </div>
             </div>
 
-            {/* Date filters — same pattern as Intake.jsx */}
-            <div style={{ display: "flex", gap: "8px", flexWrap: "wrap", alignItems: "center" }}>
+            {/* Date Filters */}
+            <div style={{ display: "flex", gap: "8px", flexWrap: "wrap", alignItems: "center", marginBottom: "16px" }}>
               {DATE_FILTERS.map(df => (
-                <button
-                  key={df.key}
-                  className={`tab-cta ${dateFilter === df.key ? "active" : ""}`}
-                  onClick={() => setDateFilter(df.key)}
-                >
+                <button key={df.key} className={`tab-cta ${dateFilter === df.key ? "active" : ""}`} onClick={() => setDateFilter(df.key)}>
                   {df.label}
                 </button>
               ))}
               {dateFilter === "custom" && (
                 <>
-                  <input
-                    type="date" value={customFrom} onChange={e => setCustomFrom(e.target.value)}
-                    style={{ padding: "8px 12px", border: "1px solid #e2e8f0", borderRadius: "10px", fontSize: "13px" }}
-                  />
+                  <input type="date" value={customFrom} onChange={e => setCustomFrom(e.target.value)} style={{ padding: "8px 12px", border: "1px solid #e2e8f0", borderRadius: "10px", fontSize: "13px" }} />
                   <span style={{ color: "#94a3b8" }}>→</span>
-                  <input
-                    type="date" value={customTo} onChange={e => setCustomTo(e.target.value)}
-                    style={{ padding: "8px 12px", border: "1px solid #e2e8f0", borderRadius: "10px", fontSize: "13px" }}
-                  />
+                  <input type="date" value={customTo} onChange={e => setCustomTo(e.target.value)} style={{ padding: "8px 12px", border: "1px solid #e2e8f0", borderRadius: "10px", fontSize: "13px" }} />
                 </>
               )}
             </div>
 
-            {/* ── Stat cards — now double as the queue-view selector (replaces the old tab row) ── */}
-            <div className="cards-head-dash">
+            {/* Stat Cards Header */}
+            <div className="cards-head-dash" style={{ marginBottom: "20px" }}>
               {[
                 { key: "active",      cls: "bdr-total",    count: activeCases.length,      label: "Active" },
                 { key: "completed",   cls: "bdr-com",       count: completedCases.length,   label: "Completed" },
@@ -5292,69 +5311,71 @@ export default function Verifyer() {
               ))}
             </div>
 
-            {/* Three-column layout: Queue | Form | Charges+Comments */}
-            <div style={{ display: "grid", gridTemplateColumns: "300px 1fr 280px", gap: "16px", alignItems: "start" }}>
+            {/* ── CONDITIONALLY SWITCH VIEW ── */}
+            {sidebarView === "completed" ? (
+              <CompletedView
+                cases={completedCases}
+                loading={loading}
+                activeCheck={activeCheck}
+              />
+            ) : (
+              <div style={{ display: "grid", gridTemplateColumns: "300px 1fr 280px", gap: "16px", alignItems: "start" }}>
 
-              {/* ── LEFT: Case queue ── */}
-              <div className="down-table" style={{ margin: 0 }}>
-                <div className="client-portal-cases">
-                  <h3>
-                    {VIEW_LABELS[sidebarView] || "ACTIVE"} ({queueList.length})
-                  </h3>
+                {/* Queue */}
+                <div className="down-table" style={{ margin: 0 }}>
+                  <div className="client-portal-cases">
+                    <h3>{VIEW_LABELS[sidebarView] || "ACTIVE"} ({queueList.length})</h3>
+                  </div>
+
+                  {loading ? (
+                    <p style={{ padding: "24px", textAlign: "center", color: "#94a3b8" }}>Loading cases…</p>
+                  ) : queueList.length === 0 ? (
+                    <p style={{ padding: "24px", textAlign: "center", color: "#94a3b8", fontSize: "13px" }}>
+                      No {sidebarView} cases found.
+                    </p>
+                  ) : (
+                    <table>
+                      <tbody>
+                        {queueList.map(c => (
+                          <QueueItem key={c.case_id} c={c} selectedCase={selectedCase} selectCase={selectCase} />
+                        ))}
+                      </tbody>
+                    </table>
+                  )}
                 </div>
 
-                {loading ? (
-                  <p style={{ padding: "24px", textAlign: "center", color: "#94a3b8" }}>Loading cases…</p>
-                ) : queueList.length === 0 ? (
-                  <p style={{ padding: "24px", textAlign: "center", color: "#94a3b8", fontSize: "13px" }}>
-                    No {sidebarView} cases found.
-                  </p>
-                ) : (
-                  <table>
-                    <tbody>
-                      {queueList.map(c => (
-                        <QueueItem
-                          key={c.case_id}
-                          c={c}
-                          selectedCase={selectedCase}
-                          selectCase={selectCase}
-                        />
-                      ))}
-                    </tbody>
-                  </table>
-                )}
-              </div>
+                {/* Form */}
+                <div className="second-card">
+                  <DetailPanel
+                    selectedCase={selectedCase}
+                    activeCheck={activeCheck}
+                    setActiveCheck={setActiveCheck}
+                    canAccessTab={canAccessTab}
+                    form={form}
+                    setForm={setForm}
+                    prefillSource={prefillSource}
+                    outcome={outcome}
+                    setOutcome={setOutcome}
+                    saveMsg={saveMsg}
+                    saving={saving}
+                    handleSave={handleSave}
+                  />
+                </div>
 
-              {/* ── MIDDLE: Detail + form ── */}
-              <div className="second-card">
-                <DetailPanel
-                  selectedCase={selectedCase}
-                  activeCheck={activeCheck}
-                  setActiveCheck={setActiveCheck}
-                  canAccessTab={canAccessTab}
-                  form={form}
-                  setForm={setForm}
-                  prefillSource={prefillSource}
-                  outcome={outcome}
-                  setOutcome={setOutcome}
-                  saveMsg={saveMsg}
-                  saving={saving}
-                  handleSave={handleSave}
-                />
-              </div>
+                {/* Right Panel */}
+                <div className="thrid-card">
+                  <RightPanel
+                    comments={comments}
+                    commentInput={commentInput}
+                    setCommentInput={setCommentInput}
+                    sendComment={sendComment}
+                    commentsEndRef={commentsEndRef}
+                  />
+                </div>
 
-              {/* ── RIGHT: Charges + Comments ── */}
-              <div className="thrid-card">
-                <RightPanel
-                  comments={comments}
-                  commentInput={commentInput}
-                  setCommentInput={setCommentInput}
-                  sendComment={sendComment}
-                  commentsEndRef={commentsEndRef}
-                />
               </div>
+            )}
 
-            </div>
           </div>
         </main>
       </section>
