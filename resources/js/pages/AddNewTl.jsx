@@ -157,7 +157,7 @@ export default function AddNewTl() {
         }
 
         .add-tl-main-content {
-          flex: 1;
+          {/* flex: 1; */}
           display: flex;
           flex-direction: column;
         }
