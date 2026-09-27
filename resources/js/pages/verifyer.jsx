@@ -5103,7 +5103,7 @@ export default function Verifyer() {
   const activeCases      = cases.filter(c => c.status !== "completed" && isInRange(c.created_at));
   const completedCases   = cases.filter(c => c.status === "completed" && isInRange(c.created_at));
   const clearCases       = cases.filter(c => isInRange(c.created_at) && caseHasOutcome(c, "clear"));
-  // const discrepancyCases = cases.filter(c => isInRange(c.created_at) && caseHasOutcome(c, "discrepancy"));
+  const discrepancyCases = cases.filter(c => isInRange(c.created_at) && caseHasOutcome(c, "discrepancy"));
 
   const VIEW_LISTS = {
     active:      activeCases,
