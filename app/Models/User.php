@@ -31,6 +31,8 @@ class User extends Authenticatable
         'agreement_end_date',
         'agreement_url',
         'status',
+        'mobile',
+        'permissions',
     ];
 
     protected $hidden = [
@@ -44,6 +46,7 @@ class User extends Authenticatable
         'agreed_checks' => 'array',
         'check_rates' => 'array',
         'check_tat' => 'array',
+        'permissions' => 'array',
         'agreement_start_date' => 'date',
         'agreement_end_date' => 'date',
     ];

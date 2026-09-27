@@ -1,4 +1,6 @@
-// import { useState } from "react";
+
+// import { useState, useEffect } from "react";
+// import { API_URL } from "../src/config";
 // import {
 //   useNavigate,
 //   useLocation,
@@ -45,6 +47,10 @@
 
 
 //   const roleMap = {
+
+//     tl: "tl",
+//     "team lead": "tl",
+//     "team_lead": "tl",
 
 //     verifier: "verifyer",
 
@@ -147,7 +153,7 @@
 
 //   {
 //     path: `${basePath}?view=clear`,
-//     label: "Clear",
+//     label: "Education Check",
 //     img: "images/sidebar/completed-icon.svg",
 //   },
 
@@ -158,7 +164,29 @@
 //   },
 
 // ];
+// const BUILT_IN_CHECK_ROUTES = {
+//   employment: "/EmploymentCheck",
+//   education: "/EducationCheck",
+//   address: "/AddressCheck",
+//   database: "/DatabaseCheck",
+//   criminal: "/CriminalCheck",
+//   drug: "/DrugtestCheck",
+//   drug_test: "/DrugtestCheck",
+//   court: "/CourtroomCheck",
+//   courtroom: "/CourtroomCheck",
+// };
 
+// function buildDynamicCheckSubmenu(checkTypes) {
+//   const items = checkTypes
+//     .filter((ct) => ct.is_active !== false)
+//     .map((ct) => ({
+//       path: BUILT_IN_CHECK_ROUTES[ct.key] || `/VerificationCheck/${ct.key}`,
+//       label: ct.label,
+//     }));
+
+//   items.push({ path: "/AddCheckType/New", label: "Add New Product" });
+//   return items;
+// }
 
 // /* =========================================================
 //    VERIFICATION SUBMENU
@@ -202,7 +230,7 @@
 //   },
 
 //   {
-//     path: "/AddCheckType/New",
+//     path: "/AddChecktype/New",
 //     label: "Add New Product",
 //   },
 
@@ -228,6 +256,21 @@
 // ];
 
 // /* =========================================================
+//    SUB USER MANAGEMENT SUBMENU
+//    ========================================================= */
+
+// const SUB_USER_MANAGEMENT_SUBMENU = [
+//   {
+//     path: "/SubUsers",
+//     label: "Sub Users",
+//   },
+//   // {
+//   //   path: "/SubUserPermissions",
+//   //   label: "Permissions",
+//   // },
+// ];
+
+// /* =========================================================
 //    TL MANAGEMENT SUBMENU
 //    ========================================================= */
 
@@ -236,10 +279,10 @@
 //     path: "/AddNewTL",
 //     label: "Add New TL",
 //   },
-//   {
-//     path: "/Permissions",
-//     label: "Permissions",
-//   },
+//   // {
+//   //   path: "/Permissions",
+//   //   label: "Permissions",
+//   // },
 //   {
 //     path: "/ViewPermission",
 //     label: "View Permission",
@@ -250,6 +293,43 @@
 //    ========================================================= */
 
 // const ROLE_NAV = {
+
+//   /* =======================================================
+//      TL (TEAM LEAD)
+//      ======================================================= */
+
+//   tl: [
+//     {
+//       path: "/TLDashboard",
+//       label: "Dashboard",
+//       img: "images/sidebar/home-icon.svg",
+//     },
+//     {
+//       path: "/TLEducationCheck",
+//       label: "Education Case",
+//       img: "images/sidebar/report-icon.svg",
+//     },
+//     {
+//       path: "/TLAllocator",
+//       label: "Case Allocation",
+//       img: "images/sidebar/cases-icon.svg",
+//     },
+//     {
+//       path: "/TLIntake",
+//       label: "QA Review",
+//       img: "images/sidebar/wip-icon.svg",
+//     },
+//     {
+//       path: "/TLAddInstitution",
+//       label: "University Selection",
+//       img: "images/sidebar/ad-ins.svg",
+//     },
+//     {
+//       path: "/TLViewPermission",
+//       label: "View Permission",
+//       img: "images/sidebar/setting-icon.svg",
+//     },
+//   ],
 
 
 //   /* =======================================================
@@ -281,7 +361,7 @@
 
 //     {
 //       label: "Verifications",
-//       img: "images/sidebar/setting-icon.svg",
+//       img: "images/sidebar/verifi.svg",
 //       submenu: CHECK_TYPE_SUBMENU,
 //       id: "checkType",
 //     },
@@ -306,7 +386,7 @@
 //     {
 //       path: "/Verifyer",
 //       label: "Verifier Cases",
-//       img: "images/sidebar/setting-icon.svg",
+//       img: "images/sidebar/ver-check.svg",
 //     },
 
 //     {
@@ -324,13 +404,21 @@
 //     {
 //       path: "/UserManagement",
 //       label: "User Management",
-//       img: "images/sidebar/clients-icon.svg",
+//       img: "images/sidebar/user-mana.svg",
+//     },
+
+//     /* SUB USER MANAGEMENT */
+//     {
+//       label: "Sub User Management",
+//       img: "images/sidebar/user-mana.svg", // SVG icon Path
+//       submenu: SUB_USER_MANAGEMENT_SUBMENU,
+//       id: "subUserManagement",
 //     },
 
 //     /* TL MANAGEMENT */
 //     {
 //       label: "TL Management",
-//       img: "images/sidebar/clients-icon.svg",
+//       img: "images/sidebar/tl-mana.svg",
 //       submenu: TL_MANAGEMENT_SUBMENU,
 //       id: "tlManagement",
 //     },
@@ -338,25 +426,25 @@
 //     {
 //       path: "/PendingRegistrations",
 //       label: "Pending Registrations",
-//       img: "images/sidebar/setting-icon.svg",
+//       img: "images/sidebar/spinner-icon.svg",
 //     },
 
 //     {
 //       path: "/AddInstitution",
 //       label: "Add Institution",
-//       img: "images/sidebar/setting-icon.svg",
+//       img: "images/sidebar/ad-ins.svg",
 //     },
 
 //     {
 //       path: "/AddCompany",
 //       label: "Add Company",
-//       img: "images/sidebar/setting-icon.svg",
+//       img: "images/sidebar/add-com.svg",
 //     },
 
 //     {
 //       path: "/Apiintegretion",
 //       label: "API Integration",
-//       img: "images/sidebar/setting-icon.svg",
+//       img: "images/sidebar/api-int.svg",
 //     },
 
 //     {
@@ -403,7 +491,11 @@
 //       label: "Completed Cases",
 //       img: "images/sidebar/completed-icon.svg",
 //     },
-
+// {
+//       path: "/PendingLinks",
+//       label: "Pending Links",
+//       img: "images/sidebar/chart-bar-regular-full.svg",
+//     },
 //     {
 //       path: "/clientportal",
 //       label: "Generate Links",
@@ -810,17 +902,29 @@
 //   const rawRole = user.role || "admin";
 
 //   const role = normalizeRole(rawRole);
+//   const [dynamicCheckTypes, setDynamicCheckTypes] = useState([]);
+
+// useEffect(() => {
+//   if (role !== "admin") return;
+//   const token = localStorage.getItem("token");
+//   fetch(`${API_URL}/api/check-types/all`, {
+//     headers: { Authorization: `Bearer ${token}`, Accept: "application/json" },
+//   })
+//     .then((r) => r.json())
+//     .then((data) => setDynamicCheckTypes(data.checkTypes || []))
+//     .catch(() => {});
+// }, [role]);
 
 
 //   /* -------------------------------------------------------
 //      NAV ITEMS
 //      ------------------------------------------------------- */
 
-//   const navItems =
-//     ROLE_NAV[role] ||
-//     ROLE_NAV.admin;
-
-
+// const navItems = (ROLE_NAV[role] || ROLE_NAV.admin).map((item) =>
+//   item.id === "checkType" && dynamicCheckTypes.length > 0
+//     ? { ...item, submenu: buildDynamicCheckSubmenu(dynamicCheckTypes) }
+//     : item
+// );
 //   /* -------------------------------------------------------
 //      SUBMENU STATE
 //      ------------------------------------------------------- */
@@ -1007,7 +1111,18 @@
 //                       display: "inline-block",
 //                     }}
 //                   >
-//                     ▼
+//                     {/* ▼ */}
+//                     <img
+//   src="images/sidebar/sidebar-drop-dwon.svg"
+//   alt="settings"
+//   style={{
+//     width: "16px",
+//     height: "16px",
+//     transition: "transform 0.2s ease",
+//     marginLeft: "auto",
+//     display: "inline-block",
+//   }}
+// />
 //                   </span>
 
 //                 </a>
@@ -1318,12 +1433,19 @@ const normalizeRole = (role) => {
     .toLowerCase()
     .trim();
 
+  // FIX: AddNewTl.jsx's "Select Role" dropdown saves values like
+  // "TL - Employment", "TL - Education", etc — not the bare "tl" the
+  // roleMap below matches on. Those fell through roleMap[r] || r
+  // unmatched, normalizeRole returned "tl - employment" verbatim, and
+  // ROLE_NAV["tl - employment"] was undefined — so every Team Lead silently
+  // landed on the *admin* nav instead of the TL one. Catching any
+  // "tl"-prefixed or "team lead" role here, before the exact-match map,
+  // routes all TL specializations to the shared `tl` nav below.
+  if (r.startsWith("tl") || r.includes("team lead") || r.includes("team_lead")) {
+    return "tl";
+  }
 
   const roleMap = {
-
-    tl: "tl",
-    "team lead": "tl",
-    "team_lead": "tl",
 
     verifier: "verifyer",
 

@@ -503,30 +503,63 @@ Route::middleware('auth:sanctum')->group(function () {
         ]);
     });
 
-    Route::post('/users/create', function (Request $request) {
+    // Route::post('/users/create', function (Request $request) {
+    //     if ($request->user()->role !== 'admin') return response()->json(['message' => 'Unauthorized'], 403);
+
+    //     $request->validate([
+    //         'name'     => 'required|string|max:255',
+    //         'email'    => 'required|email|unique:users,email',
+    //         'password' => 'required|min:6',
+    //         'role'     => 'required|string',
+    //     ]);
+
+    //     $user = User::create([
+    //         'name'     => $request->name,
+    //         'email'    => $request->email,
+    //         'password' => Hash::make($request->password),
+    //         'role'     => $request->role,
+    //         'status'   => 'active',
+    //     ]);
+
+    //     return response()->json(['message' => 'User created successfully', 'user' => $user], 201);
+    // });
+        Route::post('/users/create', function (Request $request) {
         if ($request->user()->role !== 'admin') return response()->json(['message' => 'Unauthorized'], 403);
 
         $request->validate([
-            'name'     => 'required|string|max:255',
-            'email'    => 'required|email|unique:users,email',
-            'password' => 'required|min:6',
-            'role'     => 'required|string',
+            'name'          => 'required|string|max:255',
+            'mobile'        => 'nullable|string|max:20',
+            'email'         => 'required|email|unique:users,email',
+            'password'      => 'required|min:6',
+            'role'          => 'required|string',
+            'status'        => 'nullable|in:active,inactive',
+            'permissions'   => 'nullable|array',
         ]);
 
         $user = User::create([
-            'name'     => $request->name,
-            'email'    => $request->email,
-            'password' => Hash::make($request->password),
-            'role'     => $request->role,
-            'status'   => 'active',
+            'name'        => $request->name,
+            'mobile'      => $request->mobile,
+            'email'       => $request->email,
+            'password'    => Hash::make($request->password),
+            'role'        => $request->role,
+            'permissions' => $request->permissions ?? [],
+            'status'      => $request->status ?? 'active',
         ]);
 
         return response()->json(['message' => 'User created successfully', 'user' => $user], 201);
     });
 
-    Route::get('/users', function (Request $request) {
+    // Route::get('/users', function (Request $request) {
+    //     if (!in_array($request->user()->role, ['admin', 'allocator'])) return response()->json(['message' => 'Unauthorized'], 403);
+    //     return response()->json(['users' => User::select('id', 'name', 'email', 'role', 'status', 'created_at')->orderByDesc('created_at')->get()]);
+    // });
+        Route::get('/users', function (Request $request) {
         if (!in_array($request->user()->role, ['admin', 'allocator'])) return response()->json(['message' => 'Unauthorized'], 403);
-        return response()->json(['users' => User::select('id', 'name', 'email', 'role', 'status', 'created_at')->orderByDesc('created_at')->get()]);
+        return response()->json([
+            'users' => User::select('id', 'name', 'mobile', 'email', 'role', 'status', 'permissions', 'created_at')
+                ->orderByDesc('created_at')
+                ->get(),
+        ]);
     });
 
     Route::patch('/users/{id}/status', function (Request $request, $id) {
@@ -541,6 +574,19 @@ Route::middleware('auth:sanctum')->group(function () {
         $user->update(['status' => $request->status]);
         return response()->json(['message' => 'User status updated', 'user' => $user]);
     });
+        // Used by ViewPermission.jsx / AddNewTl.jsx to update a TL's saved
+    // module-permission checkboxes after creation.
+    Route::patch('/users/{id}/permissions', function (Request $request, $id) {
+        if ($request->user()->role !== 'admin') return response()->json(['message' => 'Unauthorized'], 403);
+        $request->validate(['permissions' => 'required|array']);
+
+        $user = User::find($id);
+        if (!$user) return response()->json(['message' => 'User not found'], 404);
+
+        $user->update(['permissions' => $request->permissions]);
+        return response()->json(['message' => 'Permissions updated', 'user' => $user]);
+    });
+
 
     Route::delete('/users/{id}', function (Request $request, $id) {
         if ($request->user()->role !== 'admin') return response()->json(['message' => 'Unauthorized'], 403);
