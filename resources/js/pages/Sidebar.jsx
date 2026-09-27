@@ -1537,10 +1537,10 @@ const SUB_USER_MANAGEMENT_SUBMENU = [
     path: "/SubUsers",
     label: "Sub Users",
   },
-  {
-    path: "/SubUserPermissions",
-    label: "Permissions",
-  },
+  // {
+  //   path: "/SubUserPermissions",
+  //   label: "Permissions",
+  // },
 ];
 
 /* =========================================================
@@ -1552,10 +1552,10 @@ const TL_MANAGEMENT_SUBMENU = [
     path: "/AddNewTL",
     label: "Add New TL",
   },
-  {
-    path: "/Permissions",
-    label: "Permissions",
-  },
+  // {
+  //   path: "/Permissions",
+  //   label: "Permissions",
+  // },
   {
     path: "/ViewPermission",
     label: "View Permission",
