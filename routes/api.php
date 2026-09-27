@@ -942,6 +942,23 @@ Route::middleware('auth:sanctum')->group(function () {
                 return [$chk->check_type => ['fields' => $chk->fields, 'documents' => $chk->documents]];
             })->toArray();
 
+            // Added: per-check status (pending/in-progress/completed) and TL
+            // QC decision, keyed by check_type — needed by TLEducationCheck.jsx
+            // (per-row "QC Review" badge) and TLQCReview.jsx (the approve/reject
+            // queue), neither of which can see individual case_checks rows
+            // otherwise. Named 'check_qc' rather than reusing 'qc_status' below,
+            // which is a different, case-level (not per-check) field already
+            // consumed elsewhere.
+            $checkStatus = $caseChecks->pluck('status', 'check_type')->toArray();
+            $checkQc = $caseChecks->mapWithKeys(fn ($chk) => [
+                $chk->check_type => [
+                    'status'       => $chk->qc_status,
+                    'comments'     => $chk->qc_comments,
+                    'reviewed_by'  => $chk->qc_reviewed_by,
+                    'reviewed_at'  => optional($chk->qc_reviewed_at)->toIso8601String(),
+                ],
+            ])->toArray();
+
             return [
                 'id'                 => $c->id,
                 'case_id'            => $c->case_id,
@@ -951,6 +968,8 @@ Route::middleware('auth:sanctum')->group(function () {
                 'client_id'          => $c->client_id,
                 'checks'             => $checks,
                 'check_details'      => $checkDetails,
+                'check_status'       => $checkStatus,
+                'check_qc'           => $checkQc,
                 'check_tat'          => $checkTat,
                 'check_rates'        => $caseChecks->pluck('rate', 'check_type')->toArray(),
                 'overall_tat'        => $c->overall_tat,
@@ -993,6 +1012,17 @@ Route::middleware('auth:sanctum')->group(function () {
         $caseArray['check_details'] = $case->caseChecks->mapWithKeys(function($chk) {
             return [$chk->check_type => ['fields' => $chk->fields, 'documents' => $chk->documents]];
         })->toArray();
+        // Added: same per-check status/QC maps as the list route, for
+        // consistency — see the comment there.
+        $caseArray['check_status'] = $case->caseChecks->pluck('status', 'check_type')->toArray();
+        $caseArray['check_qc'] = $case->caseChecks->mapWithKeys(fn ($chk) => [
+            $chk->check_type => [
+                'status'      => $chk->qc_status,
+                'comments'    => $chk->qc_comments,
+                'reviewed_by' => $chk->qc_reviewed_by,
+                'reviewed_at' => optional($chk->qc_reviewed_at)->toIso8601String(),
+            ],
+        ])->toArray();
 
         return response()->json(['case' => $caseArray]);
     });
@@ -1332,6 +1362,65 @@ Route::middleware('auth:sanctum')->group(function () {
         \App\Models\CaseEvent::log($caseId, 'check_result', ucfirst($request->check_type) . ' result saved', 'Outcome: ' . $request->outcome, [], $request->user());
 
         return response()->json(['message' => 'Result saved']);
+    });
+
+    // ── Added: TL QC REVIEW ACTION — approve/reject a single check.
+    //    Distinct from POST /cases/{caseId}/check-result above, which is the
+    //    *verifier's* clear/discrepancy/unable submission. This is the TL's
+    //    sign-off on that submission, used by TLQCReview.jsx's Approved/
+    //    Rejected buttons.
+    //      - approved: marks the check qc_status=approved; if every check on
+    //        the case is now qc-approved, the case moves to 'completed'.
+    //      - rejected: marks qc_status=rejected and sends the check back to
+    //        the verifier (status → in-progress) so it can be redone; the
+    //        case drops out of 'qc-review' back to 'in-progress'.
+    Route::patch('/cases/{caseId}/checks/{checkKey}/qc-review', function (Request $request, $caseId, $checkKey) {
+        if (!in_array($request->user()->role, ['admin', 'tl'])) {
+            return response()->json(['message' => 'Unauthorized'], 403);
+        }
+
+        $request->validate([
+            'action'   => 'required|in:approved,rejected',
+            'comments' => 'required|string|max:600',
+        ]);
+
+        $check = CaseCheck::where('case_id', $caseId)->where('check_type', $checkKey)->firstOrFail();
+
+        $check->qc_status      = $request->action;
+        $check->qc_comments    = $request->comments;
+        $check->qc_reviewed_by = $request->user()->id;
+        $check->qc_reviewed_at = now();
+
+        if ($request->action === 'rejected') {
+            $check->status = 'in-progress';
+        }
+        $check->save();
+
+        $case = BGVCase::where('case_id', $caseId)->first();
+        if ($case) {
+            if ($request->action === 'rejected') {
+                if ($case->status !== 'completed') {
+                    $case->update(['status' => 'in-progress']);
+                }
+            } else {
+                $allChecks = CaseCheck::where('case_id', $caseId)->get();
+                $allApproved = $allChecks->isNotEmpty() && $allChecks->every(fn ($c) => $c->qc_status === 'approved');
+                if ($allApproved && $case->status !== 'completed') {
+                    $case->update(['status' => 'completed']);
+                }
+            }
+        }
+
+        \App\Models\CaseEvent::log(
+            $caseId,
+            'qc_review',
+            ucfirst($checkKey) . ' QC ' . $request->action,
+            $request->comments,
+            ['check_type' => $checkKey, 'action' => $request->action],
+            $request->user()
+        );
+
+        return response()->json(['message' => 'QC review saved', 'check' => $check]);
     });
 
     // GENERATE SHARE LINK FOR A SINGLE CHECK
