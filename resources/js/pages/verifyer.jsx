@@ -4791,8 +4791,8 @@ function RightPanel({ comments, commentInput, setCommentInput, sendComment, comm
   );
 }
 
-// ── EDUCATION CHECK VIEW (NEW UI MATCHING DESIGN) ──
-function EducationCheckView({ cases, loading }) {
+// ── 1. ACTIVE EDUCATION CHECK VIEW ──
+function EducationCheckView({ cases }) {
   const totalCases = cases.length || 128;
   const linkSent = 42;
   const inProgress = cases.filter(c => String(c.status || "").toLowerCase() !== "completed").length || 31;
@@ -4801,7 +4801,6 @@ function EducationCheckView({ cases, loading }) {
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
-      {/* 1. Header with Title & Search */}
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
         <div>
           <h2 style={{ fontSize: "22px", fontWeight: 800, color: "#1b1e4b", margin: 0 }}>
@@ -4811,23 +4810,15 @@ function EducationCheckView({ cases, loading }) {
             Manage and send education verification links
           </p>
         </div>
-        <div style={{ display: "flex", gap: "12px", alignItems: "center" }}>
+        <div>
           <input
             type="text"
             placeholder="Search Case ID / Candidate Name / University"
-            style={{
-              padding: "9px 14px",
-              width: "320px",
-              borderRadius: "8px",
-              border: "1px solid #cbd5e1",
-              fontSize: "13px",
-              outline: "none",
-            }}
+            style={{ padding: "9px 14px", width: "320px", borderRadius: "8px", border: "1px solid #cbd5e1", fontSize: "13px", outline: "none" }}
           />
         </div>
       </div>
 
-      {/* 2. Top Filter Bar */}
       <div style={{ display: "flex", gap: "12px", background: "#fff", padding: "12px 16px", borderRadius: "10px", border: "1px solid #e2e8f0", alignItems: "flex-end" }}>
         <div style={{ flex: 1 }}>
           <label style={{ display: "block", fontSize: "11px", color: "#64748b", marginBottom: "4px", fontWeight: 600 }}>Client</label>
@@ -4853,68 +4844,40 @@ function EducationCheckView({ cases, loading }) {
             <option>All Modes</option>
           </select>
         </div>
-        <button style={{ padding: "8px 10px", backgroundColor: "#fff", border: "1px solid #cbd5e1", borderRadius: "6px", cursor: "pointer" }}>
-          📅
-        </button>
+        <button style={{ padding: "8px 10px", backgroundColor: "#fff", border: "1px solid #cbd5e1", borderRadius: "6px", cursor: "pointer" }}>📅</button>
         <button style={{ height: "36px", padding: "0 16px", backgroundColor: "#2563eb", color: "#fff", border: "none", borderRadius: "6px", fontWeight: 600, fontSize: "12px", cursor: "pointer" }}>
           + New Education Check
         </button>
       </div>
 
-      {/* 3. Stat Cards Header */}
       <div style={{ display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: "12px" }}>
         <div style={{ background: "#fff", padding: "14px 16px", borderRadius: "10px", border: "1px solid #e2e8f0", display: "flex", alignItems: "center", gap: "12px" }}>
           <div style={{ width: "36px", height: "36px", borderRadius: "50%", background: "#eff6ff", color: "#2563eb", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "16px" }}>🎓</div>
-          <div>
-            <span style={{ fontSize: "11px", color: "#64748b", fontWeight: 600 }}>Total Cases</span>
-            <h3 style={{ margin: 0, fontSize: "18px", color: "#1e293b" }}>{totalCases}</h3>
-          </div>
+          <div><span style={{ fontSize: "11px", color: "#64748b", fontWeight: 600 }}>Total Cases</span><h3 style={{ margin: 0, fontSize: "18px", color: "#1e293b" }}>{totalCases}</h3></div>
         </div>
-
         <div style={{ background: "#fff", padding: "14px 16px", borderRadius: "10px", border: "1px solid #e2e8f0", display: "flex", alignItems: "center", gap: "12px" }}>
           <div style={{ width: "36px", height: "36px", borderRadius: "50%", background: "#f0fdf4", color: "#16a34a", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "16px" }}>🔗</div>
-          <div>
-            <span style={{ fontSize: "11px", color: "#64748b", fontWeight: 600 }}>Link Sent</span>
-            <h3 style={{ margin: 0, fontSize: "18px", color: "#1e293b" }}>{linkSent}</h3>
-          </div>
+          <div><span style={{ fontSize: "11px", color: "#64748b", fontWeight: 600 }}>Link Sent</span><h3 style={{ margin: 0, fontSize: "18px", color: "#1e293b" }}>{linkSent}</h3></div>
         </div>
-
         <div style={{ background: "#fff", padding: "14px 16px", borderRadius: "10px", border: "1px solid #e2e8f0", display: "flex", alignItems: "center", gap: "12px" }}>
           <div style={{ width: "36px", height: "36px", borderRadius: "50%", background: "#fff7ed", color: "#ea580c", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "16px" }}>🕒</div>
-          <div>
-            <span style={{ fontSize: "11px", color: "#64748b", fontWeight: 600 }}>In Progress</span>
-            <h3 style={{ margin: 0, fontSize: "18px", color: "#1e293b" }}>{inProgress}</h3>
-          </div>
+          <div><span style={{ fontSize: "11px", color: "#64748b", fontWeight: 600 }}>In Progress</span><h3 style={{ margin: 0, fontSize: "18px", color: "#1e293b" }}>{inProgress}</h3></div>
         </div>
-
         <div style={{ background: "#fff", padding: "14px 16px", borderRadius: "10px", border: "1px solid #e2e8f0", display: "flex", alignItems: "center", gap: "12px" }}>
           <div style={{ width: "36px", height: "36px", borderRadius: "50%", background: "#f0fdf4", color: "#16a34a", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "16px" }}>✔</div>
-          <div>
-            <span style={{ fontSize: "11px", color: "#64748b", fontWeight: 600 }}>Completed</span>
-            <h3 style={{ margin: 0, fontSize: "18px", color: "#1e293b" }}>{completed}</h3>
-          </div>
+          <div><span style={{ fontSize: "11px", color: "#64748b", fontWeight: 600 }}>Completed</span><h3 style={{ margin: 0, fontSize: "18px", color: "#1e293b" }}>{completed}</h3></div>
         </div>
-
         <div style={{ background: "#fff", padding: "14px 16px", borderRadius: "10px", border: "1px solid #e2e8f0", display: "flex", alignItems: "center", gap: "12px" }}>
           <div style={{ width: "36px", height: "36px", borderRadius: "50%", background: "#fef2f2", color: "#dc2626", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "16px" }}>⚠️</div>
-          <div>
-            <span style={{ fontSize: "11px", color: "#64748b", fontWeight: 600 }}>Discrepancy</span>
-            <h3 style={{ margin: 0, fontSize: "18px", color: "#1e293b" }}>{discrepancy}</h3>
-          </div>
+          <div><span style={{ fontSize: "11px", color: "#64748b", fontWeight: 600 }}>Discrepancy</span><h3 style={{ margin: 0, fontSize: "18px", color: "#1e293b" }}>{discrepancy}</h3></div>
         </div>
       </div>
 
-      {/* 4. Main Table */}
       <div style={{ background: "#fff", borderRadius: "10px", border: "1px solid #e2e8f0", padding: "16px" }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "14px" }}>
-          <h3 style={{ margin: 0, fontSize: "15px", fontWeight: 700, color: "#1b1e4b" }}>
-            Education Verification Cases
-          </h3>
-          <button style={{ padding: "8px 16px", background: "#1e295b", color: "#fff", border: "none", borderRadius: "6px", fontSize: "12px", fontWeight: 600, cursor: "pointer", display: "flex", alignItems: "center", gap: "6px" }}>
-            🛡 QC Review
-          </button>
+          <h3 style={{ margin: 0, fontSize: "15px", fontWeight: 700, color: "#1b1e4b" }}>Education Verification Cases</h3>
+          <button style={{ padding: "8px 16px", background: "#1e295b", color: "#fff", border: "none", borderRadius: "6px", fontSize: "12px", fontWeight: 600, cursor: "pointer" }}>🛡 QC Review</button>
         </div>
-
         <div style={{ overflowX: "auto" }}>
           <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "12px" }}>
             <thead>
@@ -4936,11 +4899,7 @@ function EducationCheckView({ cases, loading }) {
             </thead>
             <tbody>
               {cases.length === 0 ? (
-                <tr>
-                  <td colSpan="13" style={{ textAlign: "center", padding: "24px", color: "#94a3b8" }}>
-                    No Education Check Cases Found
-                  </td>
-                </tr>
+                <tr><td colSpan="13" style={{ textAlign: "center", padding: "24px", color: "#94a3b8" }}>No Education Check Cases Found</td></tr>
               ) : (
                 cases.map((c, idx) => (
                   <tr key={c.case_id || idx} style={{ borderBottom: "1px solid #f1f5f9" }}>
@@ -4976,6 +4935,231 @@ function EducationCheckView({ cases, loading }) {
             </tbody>
           </table>
         </div>
+      </div>
+    </div>
+  );
+}
+
+// ── 2. COMPLETED EDUCATION CASES VIEW (MATCHING IMAGE DESIGN EXACTLY) ──
+function CompletedEducationView({ cases }) {
+  const mockCompleted = cases.length > 0 ? cases : [
+    { case_id: "EDU-1025", candidate: "Rahul Verma", client: "Northstar Ltd", university: "JNTU Hyderabad", degree: "B.Tech", passingYear: "2021", result: "Verified", date: "22 Aug 2025" },
+    { case_id: "EDU-1027", candidate: "Karan Patel", client: "Acme Corp", university: "Pune University", degree: "M.Com", passingYear: "2020", result: "Verified", date: "21 Aug 2025" },
+    { case_id: "EDU-1029", candidate: "Pooja Reddy", client: "Vertex HR", university: "Osmania University", degree: "B.Sc", passingYear: "2022", result: "Verified", date: "20 Aug 2025" },
+    { case_id: "EDU-1031", candidate: "Aditi Sharma", client: "BrightHire", university: "Delhi University", degree: "MBA", passingYear: "2022", result: "Verified", date: "19 Aug 2025" },
+    { case_id: "EDU-1033", candidate: "Neha Singh", client: "Acme Corp", university: "Amity University", degree: "BBA", passingYear: "2023", result: "Verified", date: "18 Aug 2025" },
+  ];
+
+  const [selectedCase, setSelectedCase] = useState(mockCompleted[0]);
+
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
+      {/* 1. Header */}
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+        <div>
+          <h2 style={{ fontSize: "22px", fontWeight: 800, color: "#1b1e4b", margin: 0 }}>
+            Completed Education Cases
+          </h2>
+          <p style={{ fontSize: "13px", color: "#64748b", margin: "4px 0 0 0" }}>
+            View verified education cases and download university verification reports
+          </p>
+        </div>
+        <input
+          type="text"
+          placeholder="Search Case ID / Candidate Name / University"
+          style={{ padding: "9px 14px", width: "320px", borderRadius: "8px", border: "1px solid #cbd5e1", fontSize: "13px", outline: "none" }}
+        />
+      </div>
+
+      {/* 2. Top Filter Bar */}
+      <div style={{ display: "flex", gap: "12px", background: "#fff", padding: "12px 16px", borderRadius: "10px", border: "1px solid #e2e8f0", alignItems: "flex-end" }}>
+        <div style={{ flex: 1 }}>
+          <label style={{ display: "block", fontSize: "11px", color: "#64748b", marginBottom: "4px", fontWeight: 600 }}>Client</label>
+          <select style={{ width: "100%", padding: "7px 10px", borderRadius: "6px", border: "1px solid #cbd5e1", fontSize: "12px" }}>
+            <option>All Clients</option>
+          </select>
+        </div>
+        <div style={{ flex: 1 }}>
+          <label style={{ display: "block", fontSize: "11px", color: "#64748b", marginBottom: "4px", fontWeight: 600 }}>University / Institute</label>
+          <select style={{ width: "100%", padding: "7px 10px", borderRadius: "6px", border: "1px solid #cbd5e1", fontSize: "12px" }}>
+            <option>All Universities</option>
+          </select>
+        </div>
+        <div style={{ flex: 1 }}>
+          <label style={{ display: "block", fontSize: "11px", color: "#64748b", marginBottom: "4px", fontWeight: 600 }}>Verification Status</label>
+          <select style={{ width: "100%", padding: "7px 10px", borderRadius: "6px", border: "1px solid #cbd5e1", fontSize: "12px" }}>
+            <option>All Statuses</option>
+          </select>
+        </div>
+        <div style={{ flex: 1 }}>
+          <label style={{ display: "block", fontSize: "11px", color: "#64748b", marginBottom: "4px", fontWeight: 600 }}>Date Range</label>
+          <select style={{ width: "100%", padding: "7px 10px", borderRadius: "6px", border: "1px solid #cbd5e1", fontSize: "12px" }}>
+            <option>Select Date Range</option>
+          </select>
+        </div>
+        <button style={{ height: "36px", padding: "0 18px", backgroundColor: "#2563eb", color: "#fff", border: "none", borderRadius: "6px", fontWeight: 600, fontSize: "12px", cursor: "pointer", display: "flex", alignItems: "center", gap: "6px" }}>
+          📥 Export Report
+        </button>
+      </div>
+
+      {/* 3. Stat Cards Header */}
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "12px" }}>
+        <div style={{ background: "#fff", padding: "14px 16px", borderRadius: "10px", border: "1px solid #e2e8f0", display: "flex", alignItems: "center", gap: "12px" }}>
+          <div style={{ width: "38px", height: "38px", borderRadius: "50%", background: "#eff6ff", color: "#2563eb", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "18px" }}>📄</div>
+          <div><span style={{ fontSize: "11px", color: "#64748b", fontWeight: 600 }}>Total Completed</span><h3 style={{ margin: 0, fontSize: "20px", color: "#1e293b" }}>45</h3></div>
+        </div>
+
+        <div style={{ background: "#fff", padding: "14px 16px", borderRadius: "10px", border: "1px solid #e2e8f0", display: "flex", alignItems: "center", gap: "12px" }}>
+          <div style={{ width: "38px", height: "38px", borderRadius: "50%", background: "#f0fdf4", color: "#16a34a", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "18px" }}>🏛</div>
+          <div><span style={{ fontSize: "11px", color: "#64748b", fontWeight: 600 }}>University Verified</span><h3 style={{ margin: 0, fontSize: "20px", color: "#1e293b" }}>32</h3></div>
+        </div>
+
+        <div style={{ background: "#fff", padding: "14px 16px", borderRadius: "10px", border: "1px solid #e2e8f0", display: "flex", alignItems: "center", gap: "12px" }}>
+          <div style={{ width: "38px", height: "38px", borderRadius: "50%", background: "#fff7ed", color: "#ea580c", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "18px" }}>🏫</div>
+          <div><span style={{ fontSize: "11px", color: "#64748b", fontWeight: 600 }}>School/College Verified</span><h3 style={{ margin: 0, fontSize: "20px", color: "#1e293b" }}>13</h3></div>
+        </div>
+
+        <div style={{ background: "#fff", padding: "14px 16px", borderRadius: "10px", border: "1px solid #e2e8f0", display: "flex", alignItems: "center", gap: "12px" }}>
+          <div style={{ width: "38px", height: "38px", borderRadius: "50%", background: "#faf5ff", color: "#9333ea", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "18px" }}>📜</div>
+          <div><span style={{ fontSize: "11px", color: "#64748b", fontWeight: 600 }}>Reports Generated</span><h3 style={{ margin: 0, fontSize: "20px", color: "#1e293b" }}>45</h3></div>
+        </div>
+      </div>
+
+      {/* 4. Content Area: Main Table + Right Report Preview Panel */}
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 300px", gap: "16px", alignItems: "start" }}>
+        
+        {/* Table Container */}
+        <div style={{ background: "#fff", borderRadius: "10px", border: "1px solid #e2e8f0", padding: "16px" }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "14px" }}>
+            <h3 style={{ margin: 0, fontSize: "15px", fontWeight: 700, color: "#1b1e4b" }}>
+              Completed Education Verification Cases
+            </h3>
+            <div style={{ display: "flex", gap: "8px" }}>
+              <button style={{ padding: "6px 12px", background: "#2563eb", color: "#fff", border: "none", borderRadius: "6px", fontSize: "12px", fontWeight: 600, cursor: "pointer" }}>
+                Generate Report
+              </button>
+              <button style={{ padding: "6px 12px", background: "#fff", color: "#475569", border: "1px solid #cbd5e1", borderRadius: "6px", fontSize: "12px", fontWeight: 600, cursor: "pointer" }}>
+                📤 Export CSV
+              </button>
+            </div>
+          </div>
+
+          <div style={{ overflowX: "auto" }}>
+            <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "12px" }}>
+              <thead>
+                <tr style={{ background: "#f8fafc", textAlign: "left", color: "#64748b", borderBottom: "1px solid #e2e8f0" }}>
+                  <th style={{ padding: "10px 8px" }}><input type="checkbox" /></th>
+                  <th style={{ padding: "10px 8px" }}>#</th>
+                  <th style={{ padding: "10px 8px" }}>Case ID</th>
+                  <th style={{ padding: "10px 8px" }}>Candidate Name</th>
+                  <th style={{ padding: "10px 8px" }}>Client</th>
+                  <th style={{ padding: "10px 8px" }}>University / Institute</th>
+                  <th style={{ padding: "10px 8px" }}>Qualification</th>
+                  <th style={{ padding: "10px 8px" }}>Passing Year</th>
+                  <th style={{ padding: "10px 8px" }}>Verification Result</th>
+                  <th style={{ padding: "10px 8px" }}>Verified On</th>
+                  <th style={{ padding: "10px 8px" }}>Report</th>
+                  <th style={{ padding: "10px 8px" }}>Action</th>
+                  <th style={{ padding: "10px 8px" }}></th>
+                </tr>
+              </thead>
+              <tbody>
+                {mockCompleted.map((c, idx) => (
+                  <tr 
+                    key={c.case_id || idx} 
+                    onClick={() => setSelectedCase(c)}
+                    style={{ 
+                      borderBottom: "1px solid #f1f5f9", 
+                      cursor: "pointer",
+                      backgroundColor: selectedCase?.case_id === c.case_id ? "#f0f7ff" : "transparent"
+                    }}
+                  >
+                    <td style={{ padding: "12px 8px" }}><input type="checkbox" /></td>
+                    <td style={{ padding: "12px 8px", color: "#64748b" }}>{idx + 1}</td>
+                    <td style={{ padding: "12px 8px", fontWeight: 700, color: "#1e293b" }}>{c.case_id}</td>
+                    <td style={{ padding: "12px 8px", color: "#334155" }}>{c.candidate}</td>
+                    <td style={{ padding: "12px 8px", color: "#64748b" }}>{c.client || c.client_name}</td>
+                    <td style={{ padding: "12px 8px", color: "#334155" }}>{c.university || c.check_details?.education?.fields?.instituteName || "University"}</td>
+                    <td style={{ padding: "12px 8px", color: "#64748b" }}>{c.degree || c.check_details?.education?.fields?.qualification || "Degree"}</td>
+                    <td style={{ padding: "12px 8px", color: "#64748b" }}>{c.passingYear || c.check_details?.education?.fields?.yearOfPassing || "2021"}</td>
+                    <td style={{ padding: "12px 8px" }}>
+                      <span style={{ padding: "3px 8px", borderRadius: "12px", fontSize: "11px", fontWeight: 600, backgroundColor: "#dcfce7", color: "#15803d", display: "inline-flex", alignItems: "center", gap: "4px" }}>
+                        ✔ {c.result || "Verified"}
+                      </span>
+                    </td>
+                    <td style={{ padding: "12px 8px", color: "#64748b" }}>{c.date || "22 Aug 2025"}</td>
+                    <td style={{ padding: "12px 8px" }}>
+                      <div style={{ display: "flex", flexDirection: "column", gap: "2px", fontSize: "11px" }}>
+                        <span style={{ color: "#2563eb", textDecoration: "underline", cursor: "pointer" }}>📄 View Report</span>
+                        <span style={{ color: "#2563eb", textDecoration: "underline", cursor: "pointer" }}>📥 Download PDF</span>
+                      </div>
+                    </td>
+                    <td style={{ padding: "12px 8px" }}>⋮</td>
+                    <td style={{ padding: "12px 8px" }}></td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: "16px", fontSize: "12px", color: "#64748b" }}>
+            <span>Showing 1 - 5 of 45 entries</span>
+            <div style={{ display: "flex", gap: "4px" }}>
+              <button style={{ padding: "4px 8px", border: "1px solid #cbd5e1", background: "#fff", borderRadius: "4px" }}>&lt;</button>
+              <button style={{ padding: "4px 8px", background: "#2563eb", color: "#fff", border: "none", borderRadius: "4px" }}>1</button>
+              <button style={{ padding: "4px 8px", border: "1px solid #cbd5e1", background: "#fff", borderRadius: "4px" }}>2</button>
+              <button style={{ padding: "4px 8px", border: "1px solid #cbd5e1", background: "#fff", borderRadius: "4px" }}>3</button>
+              <button style={{ padding: "4px 8px", border: "1px solid #cbd5e1", background: "#fff", borderRadius: "4px" }}>&gt;</button>
+            </div>
+          </div>
+        </div>
+
+        {/* Right Report Preview Card (Exact UI match) */}
+        <div style={{ background: "#fff", borderRadius: "10px", border: "1px solid #e2e8f0", padding: "16px", display: "flex", flexDirection: "column", gap: "12px" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "8px", borderBottom: "1px solid #f1f5f9", pb: "10px" }}>
+            <span style={{ fontSize: "16px" }}>📄</span>
+            <h4 style={{ margin: 0, fontSize: "14px", fontWeight: 700, color: "#1b1e4b" }}>University Verification Report</h4>
+          </div>
+
+          <div style={{ fontSize: "12px", display: "flex", flexDirection: "column", gap: "10px" }}>
+            <div style={{ display: "flex", justifyContent: "space-between" }}>
+              <span style={{ color: "#64748b" }}>Report ID</span>
+              <span style={{ fontWeight: 600, color: "#1e293b" }}>UVR-2025-0045</span>
+            </div>
+            <div style={{ display: "flex", justifyContent: "space-between" }}>
+              <span style={{ color: "#64748b" }}>Institution</span>
+              <span style={{ fontWeight: 600, color: "#1e293b" }}>{selectedCase?.university || "JNTU Hyderabad"}</span>
+            </div>
+            <div style={{ display: "flex", justifyContent: "space-between" }}>
+              <span style={{ color: "#64748b" }}>Candidate Name</span>
+              <span style={{ fontWeight: 600, color: "#1e293b" }}>{selectedCase?.candidate || "Rahul Verma"}</span>
+            </div>
+            <div style={{ display: "flex", justifyContent: "space-between" }}>
+              <span style={{ color: "#64748b" }}>Case ID</span>
+              <span style={{ fontWeight: 600, color: "#1e293b" }}>{selectedCase?.case_id || "EDU-1025"}</span>
+            </div>
+            <div style={{ display: "flex", justifyContent: "space-between" }}>
+              <span style={{ color: "#64748b" }}>Verification Date</span>
+              <span style={{ fontWeight: 600, color: "#1e293b" }}>{selectedCase?.date || "22 Aug 2025"}</span>
+            </div>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+              <span style={{ color: "#64748b" }}>Result</span>
+              <span style={{ padding: "3px 8px", borderRadius: "12px", fontSize: "11px", fontWeight: 600, backgroundColor: "#dcfce7", color: "#15803d" }}>
+                ✔ {selectedCase?.result || "Verified"}
+              </span>
+            </div>
+          </div>
+
+          <div style={{ background: "#f0f9ff", border: "1px solid #bae6fd", borderRadius: "8px", padding: "10px", marginTop: "10px", fontSize: "11px", color: "#0369a1" }}>
+            <p style={{ margin: 0, fontWeight: 600 }}>📄 Generated by</p>
+            <p style={{ margin: "2px 0 0 0" }}>Satyapan BGV Portal</p>
+            <p style={{ margin: "2px 0 0 0", color: "#0284c7" }}>Authentic | Secure | Reliable</p>
+          </div>
+
+          <button style={{ width: "100%", padding: "10px", background: "#2563eb", color: "#fff", border: "none", borderRadius: "6px", fontWeight: 600, fontSize: "12px", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: "6px" }}>
+            📥 Download PDF
+          </button>
+        </div>
+
       </div>
     </div>
   );
@@ -5090,7 +5274,6 @@ export default function Verifyer() {
       r => String(r?.outcome || "").trim().toLowerCase() === String(targetOutcome).toLowerCase()
     );
 
-  // SAFE LOWERCASE MATCHING FOR STATUS
   const activeCases = cases.filter(c =>
     String(c.status || "").trim().toLowerCase() !== "completed" && isInRange(c.created_at)
   );
@@ -5194,7 +5377,7 @@ export default function Verifyer() {
         <main>
           <div className="dash-wrper">
 
-            {/* Page Header */}
+            {/* Top Workspace Header */}
             <div className="dash-upper-head">
               <div className="left">
                 <div className="dash-title-flex">
@@ -5241,7 +5424,7 @@ export default function Verifyer() {
               )}
             </div>
 
-            {/* Stat Cards Header */}
+            {/* Navigation Cards Header */}
             <div className="cards-head-dash" style={{ marginBottom: "20px" }}>
               {[
                 { key: "active",      cls: "bdr-total",    count: activeCases.length,      label: "Active" },
@@ -5268,16 +5451,16 @@ export default function Verifyer() {
               ))}
             </div>
 
-            {/* ── CONDITIONALLY SWITCH VIEW ── */}
-            {sidebarView === "education" ? (
-              <EducationCheckView
-                cases={clearCases}
-                loading={loading}
-              />
+            {/* ── CONDITIONALLY SWITCH VIEWS ── */}
+            {sidebarView === "completed" ? (
+              <CompletedEducationView cases={completedCases} />
+            ) : sidebarView === "education" ? (
+              <EducationCheckView cases={clearCases} />
             ) : (
+              /* Original 3-Column Workspace for Active / Discrepancy Views */
               <div style={{ display: "grid", gridTemplateColumns: "300px 1fr 280px", gap: "16px", alignItems: "start" }}>
 
-                {/* Queue */}
+                {/* Left Queue Table */}
                 <div className="down-table" style={{ margin: 0 }}>
                   <div className="client-portal-cases">
                     <h3>{VIEW_LABELS[sidebarView] || "ACTIVE"} ({queueList.length})</h3>
@@ -5300,7 +5483,7 @@ export default function Verifyer() {
                   )}
                 </div>
 
-                {/* Form */}
+                {/* Middle Form Panel */}
                 <div className="second-card">
                   <DetailPanel
                     selectedCase={selectedCase}
@@ -5318,7 +5501,7 @@ export default function Verifyer() {
                   />
                 </div>
 
-                {/* Right Panel */}
+                {/* Right Comments Panel */}
                 <div className="thrid-card">
                   <RightPanel
                     comments={comments}
