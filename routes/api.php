@@ -949,6 +949,16 @@ Route::middleware('auth:sanctum')->group(function () {
             // otherwise. Named 'check_qc' rather than reusing 'qc_status' below,
             // which is a different, case-level (not per-check) field already
             // consumed elsewhere.
+            // Added: verifier's own submitted outcome/form_data
++            // (CaseCheck.result), previously never serialized here despite
++            // being written by POST /cases/{caseId}/check-result and read
++            // by Verifyer.jsx's caseHasOutcome() and buildPrefilledForm() —
++            // both of which have been silently working against undefined
++            // this whole time. Same per-check-type shape as check_qc above.
+           $checkResults = $caseChecks->mapWithKeys(fn ($chk) => [
+                $chk->check_type => $chk->result,
+            ])->filter()->toArray();
+
             $checkStatus = $caseChecks->pluck('status', 'check_type')->toArray();
             $checkQc = $caseChecks->mapWithKeys(fn ($chk) => [
                 $chk->check_type => [
@@ -970,6 +980,7 @@ Route::middleware('auth:sanctum')->group(function () {
                 'check_details'      => $checkDetails,
                 'check_status'       => $checkStatus,
                 'check_qc'           => $checkQc,
+                'check_results'      => $checkResults,
                 'check_tat'          => $checkTat,
                 'check_rates'        => $caseChecks->pluck('rate', 'check_type')->toArray(),
                 'overall_tat'        => $c->overall_tat,
@@ -1023,6 +1034,10 @@ Route::middleware('auth:sanctum')->group(function () {
                 'reviewed_at' => optional($chk->qc_reviewed_at)->toIso8601String(),
             ],
         ])->toArray();
+        +        // Same addition as the list route above.
+        $caseArray['check_results'] = $case->caseChecks->mapWithKeys(fn ($chk) => [
+            $chk->check_type => $chk->result,
+        ])->filter()->toArray();
 
         return response()->json(['case' => $caseArray]);
     });

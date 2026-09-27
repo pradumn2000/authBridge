@@ -510,6 +510,7 @@ import { API_URL } from "../src/config";
 const ROLE_ROUTES = {
   admin:          "/dashboard",
   allocator:      "/Allocator",
+  tl:             "/TLDashboard",
   verifier:       "/Verifyer",
   check_manager:  "/AllCases",
   report_writing: "/Specialist",

@@ -133,6 +133,8 @@ function getRoleRoute(role) {
     admin: "/dashboard",
 
     allocator: "/Allocator",
+    
+    tl: "/TLDashboard", 
 
     verifier: "/Verifyer",
 

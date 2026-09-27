@@ -1,854 +1,5 @@
 
 
-// // // // // import { useState, useEffect, useRef } from "react";
-// // // // // import { useNavigate, useLocation } from "react-router-dom";
-// // // // // import Sidebar from "./Sidebar";
-// // // // // import Header from "./Header";
-// // // // // import { API_URL } from "../src/config";
-
-// // // // // // ── Check tab definitions ──────────────────────────────────────────────────────
-// // // // // const CHECK_TABS = [
-// // // // //   { key: "employment", label: "Employment" },
-// // // // //   { key: "education",  label: "Education"  },
-// // // // //   { key: "address",    label: "Address"    },
-// // // // //   { key: "database",   label: "Database"   },
-// // // // //   { key: "criminal",   label: "Criminal"   },
-// // // // //   { key: "drug",       label: "Drug Test"  },
-// // // // //   { key: "court",      label: "Courtroom"  },
-// // // // // ];
-
-// // // // // // ── Which API check key maps to which verifier role ───────────────────────────
-// // // // // const ROLE_CHECK_MAP = {
-// // // // //   employment_verifier:  "employment",
-// // // // //   education_verifier:   "education",
-// // // // //   address_verifier:     "address",
-// // // // //   database_verifier:    "database",
-// // // // //   criminal_verifier:    "criminal",
-// // // // //   drug_test_verifier:   "drug",
-// // // // //   courtroom_verifier:   "court",
-// // // // // };
-
-// // // // // // ── Normalise check keys coming from the API (emp→employment, edu→education…) ─
-// // // // // const NORMALISE_CHECK = {
-// // // // //   emp:        "employment",
-// // // // //   employment: "employment",
-// // // // //   edu:        "education",
-// // // // //   education:  "education",
-// // // // //   addr:       "address",
-// // // // //   address:    "address",
-// // // // //   db:         "database",
-// // // // //   database:   "database",
-// // // // //   criminal:   "criminal",
-// // // // //   cri:        "criminal",
-// // // // //   drug:       "drug",
-// // // // //   drug_test:  "drug",
-// // // // //   court:      "court",
-// // // // //   courtroom:  "court",
-// // // // // };
-
-// // // // // // ── Field definitions per check type ──────────────────────────────────────────
-// // // // // const CHECK_FIELDS = {
-// // // // //   employment: [
-// // // // //     { key: "company_name",       label: "Company Name",         type: "text" },
-// // // // //     { key: "designation",        label: "Designation",          type: "text" },
-// // // // //     { key: "employee_id",        label: "Employee ID",          type: "text" },
-// // // // //     { key: "date_of_joining",    label: "Date of Joining",      type: "date" },
-// // // // //     { key: "date_of_leaving",    label: "Date of Leaving",      type: "date" },
-// // // // //     { key: "last_salary",        label: "Last Salary (₹)",      type: "text" },
-// // // // //     { key: "reason_for_leaving", label: "Reason for Leaving",   type: "text" },
-// // // // //     { key: "reporting_manager",  label: "Reporting Manager",    type: "text" },
-// // // // //     { key: "hr_contact",         label: "HR Contact Email",     type: "text" },
-// // // // //     { key: "hr_phone",           label: "HR Phone",             type: "text" },
-// // // // //     { key: "verification_mode",  label: "Verification Mode",    type: "select", options: ["Email", "Phone", "Email + Phone", "Portal", "Visit"] },
-// // // // //     { key: "remarks",            label: "Remarks",              type: "textarea" },
-// // // // //   ],
-// // // // //   education: [
-// // // // //     { key: "institution_name",   label: "Institution Name",     type: "text" },
-// // // // //     { key: "degree",             label: "Degree / Certificate", type: "text" },
-// // // // //     { key: "course",             label: "Course / Specialization", type: "text" },
-// // // // //     { key: "roll_number",        label: "Roll / Reg. Number",   type: "text" },
-// // // // //     { key: "year_of_passing",    label: "Year of Passing",      type: "text" },
-// // // // //     { key: "percentage",         label: "Percentage / CGPA",    type: "text" },
-// // // // //     { key: "verification_mode",  label: "Verification Mode",    type: "select", options: ["University Portal", "Email", "Phone", "Visit", "Result Link"] },
-// // // // //     { key: "result_link",        label: "Result Link (URL)",    type: "text" },
-// // // // //     { key: "remarks",            label: "Remarks",              type: "textarea" },
-// // // // //   ],
-// // // // //   address: [
-// // // // //     { key: "address_line",       label: "Address",              type: "text" },
-// // // // //     { key: "city",               label: "City",                 type: "text" },
-// // // // //     { key: "state",              label: "State",                type: "text" },
-// // // // //     { key: "pincode",            label: "Pincode",               type: "text" },
-// // // // //     { key: "residency_type",     label: "Residency Type",       type: "select", options: ["Owned", "Rented", "PG / Hostel", "Family Home"] },
-// // // // //     { key: "years_at_address",   label: "Years at Address",     type: "text" },
-// // // // //     { key: "neighbour_name",     label: "Neighbour / Ref Name", type: "text" },
-// // // // //     { key: "neighbour_phone",    label: "Neighbour Phone",      type: "text" },
-// // // // //     { key: "verification_mode",  label: "Verification Mode",    type: "select", options: ["Physical Visit", "Digital", "Phone"] },
-// // // // //     { key: "remarks",            label: "Remarks",              type: "textarea" },
-// // // // //   ],
-// // // // //   database: [
-// // // // //     { key: "db_checked",         label: "Databases Checked",    type: "text" },
-// // // // //     { key: "match_found",        label: "Match Found?",         type: "select", options: ["No Match", "Potential Match", "Confirmed Match"] },
-// // // // //     { key: "match_details",      label: "Match Details",        type: "textarea" },
-// // // // //     { key: "pan_verified",       label: "PAN Verified?",        type: "select", options: ["Yes", "No", "Not Applicable"] },
-// // // // //     { key: "aadhar_verified",    label: "Aadhaar Verified?",    type: "select", options: ["Yes", "No", "Not Applicable"] },
-// // // // //     { key: "remarks",            label: "Remarks",              type: "textarea" },
-// // // // //   ],
-// // // // //   criminal: [
-// // // // //     { key: "court_checked",      label: "Courts Checked",       type: "text" },
-// // // // //     { key: "police_verified",    label: "Police Record Check",  type: "select", options: ["Clear", "Record Found", "Not Accessible"] },
-// // // // //     { key: "case_details",       label: "Case Details (if any)",type: "textarea" },
-// // // // //     { key: "state_checked",      label: "State",                type: "text" },
-// // // // //     { key: "district_checked",   label: "District",             type: "text" },
-// // // // //     { key: "verification_mode",  label: "Verification Mode",    type: "select", options: ["Online Portal", "Physical", "Phone"] },
-// // // // //     { key: "remarks",            label: "Remarks",              type: "textarea" },
-// // // // //   ],
-// // // // //   drug: [
-// // // // //     { key: "test_type",          label: "Test Type",            type: "select", options: ["Urine Test", "Blood Test", "Hair Follicle", "Saliva Test"] },
-// // // // //     { key: "lab_name",           label: "Lab Name",             type: "text" },
-// // // // //     { key: "test_date",          label: "Test Date",            type: "date" },
-// // // // //     { key: "substances_tested",  label: "Substances Tested",    type: "text" },
-// // // // //     { key: "result",             label: "Test Result",          type: "select", options: ["Negative (Clear)", "Positive", "Inconclusive", "Refused"] },
-// // // // //     { key: "lab_report_ref",     label: "Lab Report Ref No.",   type: "text" },
-// // // // //     { key: "remarks",            label: "Remarks",              type: "textarea" },
-// // // // //   ],
-// // // // //   court: [
-// // // // //     { key: "court_name",         label: "Court Name",           type: "text" },
-// // // // //     { key: "case_number",        label: "Case Number",          type: "text" },
-// // // // //     { key: "case_type",          label: "Case Type",            type: "select", options: ["Civil", "Criminal", "Labour", "Consumer", "Other"] },
-// // // // //     { key: "filing_date",        label: "Filing Date",          type: "date" },
-// // // // //     { key: "current_status",     label: "Current Status",       type: "select", options: ["Active", "Disposed", "Appealed", "No Record Found"] },
-// // // // //     { key: "next_date",          label: "Next Hearing Date",    type: "date" },
-// // // // //     { key: "remarks",            label: "Remarks",              type: "textarea" },
-// // // // //   ],
-// // // // // };
-
-// // // // // const VERIFICATION_RATES = {
-// // // // //   employment: 350, education: 280, address: 180,
-// // // // //   database: 120,   criminal: 220,  drug: 400, court: 160,
-// // // // // };
-
-// // // // // const PRIORITY_META = {
-// // // // //   HIGH:   { bg: "#fee2e2", color: "#b91c1c", dot: "#ef4444" },
-// // // // //   MED:    { bg: "#fef9c3", color: "#92400e", dot: "#f59e0b" },
-// // // // //   MEDIUM: { bg: "#fef9c3", color: "#92400e", dot: "#f59e0b" },
-// // // // //   LOW:    { bg: "#dcfce7", color: "#15803d", dot: "#22c55e" },
-// // // // //   normal: { bg: "#f1f5f9", color: "#475569", dot: "#94a3b8" },
-// // // // // };
-
-// // // // // const OUTCOME_OPTS = [
-// // // // //   { key: "clear",       label: "✔  Clear",            bg: "#f0fdf4", color: "#16a34a", border: "#16a34a" },
-// // // // //   { key: "discrepancy", label: "✗  Discrepancy",       bg: "#fef2f2", color: "#dc2626", border: "#dc2626" },
-// // // // //   { key: "unable",      label: "?  Unable to Verify",  bg: "#fffbeb", color: "#b45309", border: "#d97706" },
-// // // // // ];
-
-// // // // // const STATUS_META = {
-// // // // //   "pending":     { color: "#f59e0b", pct: 20,  label: "Pending"     },
-// // // // //   "in-progress": { color: "#028090", pct: 60,  label: "In Progress" },
-// // // // //   "qc-review":   { color: "#7c3aed", pct: 85,  label: "QC Review"   },
-// // // // //   "completed":   { color: "#10b981", pct: 100, label: "Completed"   },
-// // // // //   "on-hold":     { color: "#94a3b8", pct: 30,  label: "On Hold"     },
-// // // // // };
-
-// // // // // // ── Helpers ────────────────────────────────────────────────────────────────────
-// // // // // function getUser() {
-// // // // //   try { return JSON.parse(localStorage.getItem("user")) || {}; } catch { return {}; }
-// // // // // }
-
-// // // // // function getToken() { return localStorage.getItem("token"); }
-
-// // // // // function normChecks(raw) {
-// // // // //   if (!raw) return [];
-// // // // //   const arr = Array.isArray(raw)
-// // // // //     ? raw
-// // // // //     : String(raw).split(/[,·|]/).map(s => s.trim()).filter(Boolean);
-// // // // //   return arr.map(k => NORMALISE_CHECK[k.toLowerCase()] || k.toLowerCase());
-// // // // // }
-
-// // // // // function calcTAT(createdAt) {
-// // // // //   if (!createdAt) return "—";
-// // // // //   const days = Math.floor((Date.now() - new Date(createdAt)) / 86400000);
-// // // // //   return days === 0 ? "Today" : `${days}d`;
-// // // // // }
-
-// // // // // function normPriority(p) {
-// // // // //   if (!p) return "LOW";
-// // // // //   return String(p).toUpperCase();
-// // // // // }
-
-// // // // // // ── Shared input styles ────────────────────────────────────────────────────────
-// // // // // const labelSt = {
-// // // // //   display: "block", fontSize: "11px", fontWeight: 700,
-// // // // //   color: "#475569", marginBottom: "5px",
-// // // // //   textTransform: "uppercase", letterSpacing: "0.4px",
-// // // // // };
-// // // // // const inputSt = {
-// // // // //   width: "100%", padding: "9px 12px",
-// // // // //   border: "1.5px solid #e2e8f0", borderRadius: "8px",
-// // // // //   fontSize: "13px", color: "#1e293b", background: "#f8fafc",
-// // // // //   outline: "none", fontFamily: "inherit", boxSizing: "border-box",
-// // // // // };
-// // // // // const textareaSt = { ...inputSt, resize: "vertical", minHeight: "72px" };
-
-// // // // // // ── FormField sub-component ────────────────────────────────────────────────────
-// // // // // function FormField({ f, value, onChange }) {
-// // // // //   if (f.type === "textarea") return (
-// // // // //     <div style={{ gridColumn: "1 / -1" }}>
-// // // // //       <label style={labelSt}>{f.label}</label>
-// // // // //       <textarea
-// // // // //         rows={3} value={value} onChange={e => onChange(e.target.value)}
-// // // // //         placeholder={`Enter ${f.label.toLowerCase()}…`} style={textareaSt}
-// // // // //       />
-// // // // //     </div>
-// // // // //   );
-// // // // //   if (f.type === "select") return (
-// // // // //     <div>
-// // // // //       <label style={labelSt}>{f.label}</label>
-// // // // //       <select value={value} onChange={e => onChange(e.target.value)}
-// // // // //         style={{ ...inputSt, cursor: "pointer" }}>
-// // // // //         <option value="">— Select —</option>
-// // // // //         {f.options.map(o => <option key={o} value={o}>{o}</option>)}
-// // // // //       </select>
-// // // // //     </div>
-// // // // //   );
-// // // // //   return (
-// // // // //     <div>
-// // // // //       <label style={labelSt}>{f.label}</label>
-// // // // //       <input type={f.type} value={value} onChange={e => onChange(e.target.value)}
-// // // // //         placeholder={f.type === "date" ? "" : `Enter ${f.label.toLowerCase()}…`}
-// // // // //         style={inputSt} />
-// // // // //     </div>
-// // // // //   );
-// // // // // }
-
-// // // // // // ── Main Component ─────────────────────────────────────────────────────────────
-// // // // // export default function Verifyer() {
-// // // // //   const navigate = useNavigate();
-// // // // //   const location = useLocation();
-// // // // //   const user     = getUser();
-// // // // //   const token    = getToken();
-
-// // // // //   // Role resolution
-// // // // //   const role           = user.role || "";
-// // // // //   const isAdmin        = role === "admin";
-// // // // //   const assignedCheck  = ROLE_CHECK_MAP[role] || null; // null = admin / generic verifier sees all
-
-// // // // //   // ── Sidebar view: "active" | "completed"
-// // // // //   const sidebarView = new URLSearchParams(location.search).get("view") || "active";
-
-// // // // //   // ── State ─────────────────────────────────────────────────────────────────
-// // // // //   const [cases,        setCases]        = useState([]);
-// // // // //   const [loading,      setLoading]      = useState(true);
-// // // // //   const [selectedCase, setSelectedCase] = useState(null);
-// // // // //   const [activeCheck,  setActiveCheck]  = useState(assignedCheck || "employment");
-// // // // //   const [search,       setSearch]       = useState("");
-
-// // // // //   // Form
-// // // // //   const [form,       setForm]       = useState({});
-// // // // //   const [outcome,    setOutcome]    = useState("");
-// // // // //   const [saving,     setSaving]     = useState(false);
-// // // // //   const [saveMsg,    setSaveMsg]    = useState({ text: "", type: "" });
-
-// // // // //   // Comments
-// // // // //   const [comments,      setComments]      = useState([]);
-// // // // //   const [commentInput,  setCommentInput]  = useState("");
-// // // // //   const commentsEndRef = useRef(null);
-
-// // // // //   // ── Fetch real cases from API ──────────────────────────────────────────────
-// // // // //   const fetchCases = () => {
-// // // // //     setLoading(true);
-// // // // //     fetch(`${API_URL}/api/cases`, {
-// // // // //       headers: { Authorization: `Bearer ${token}`, Accept: "application/json" },
-// // // // //     })
-// // // // //       .then(r => r.json())
-// // // // //       .then(data => {
-// // // // //         const raw = data.cases || [];
-// // // // //         const normalised = raw.map(c => ({
-// // // // //           ...c,
-// // // // //           checks_raw:  c.checks,
-// // // // //           checks_norm: normChecks(c.checks),
-// // // // //           candidate:   c.candidate || c.candidate_name || "—",
-// // // // //           priority:    normPriority(c.priority),
-// // // // //           tat_display: calcTAT(c.created_at),
-// // // // //         }));
-// // // // //         setCases(normalised);
-// // // // //         if (normalised.length > 0 && !selectedCase) {
-// // // // //           const first = sidebarView === "completed"
-// // // // //             ? normalised.find(c => c.status === "completed")
-// // // // //             : normalised.find(c => c.status !== "completed");
-// // // // //           setSelectedCase(first || normalised[0]);
-// // // // //         }
-// // // // //       })
-// // // // //       .catch(console.error)
-// // // // //       .finally(() => setLoading(false));
-// // // // //   };
-
-// // // // //   useEffect(() => { fetchCases(); }, []);
-
-// // // // //   // Auto-scroll comments
-// // // // //   useEffect(() => {
-// // // // //     commentsEndRef.current?.scrollIntoView({ behavior: "smooth" });
-// // // // //   }, [comments]);
-
-// // // // //   // Reset form when case / check changes
-// // // // //   useEffect(() => {
-// // // // //     setForm({});
-// // // // //     setOutcome("");
-// // // // //     setSaveMsg({ text: "", type: "" });
-// // // // //   }, [selectedCase?.case_id, activeCheck]);
-
-// // // // //   // Jump active check to first valid tab on case selection
-// // // // //   useEffect(() => {
-// // // // //     if (!selectedCase) return;
-// // // // //     const validChecks = selectedCase.checks_norm;
-// // // // //     if (validChecks.length === 0) return;
-// // // // //     if (assignedCheck && validChecks.includes(assignedCheck)) {
-// // // // //       setActiveCheck(assignedCheck);
-// // // // //     } else if (!validChecks.includes(activeCheck)) {
-// // // // //       setActiveCheck(validChecks[0]);
-// // // // //     }
-// // // // //   }, [selectedCase?.case_id]);
-
-// // // // //   // ── Filtered queue lists ───────────────────────────────────────────────────
-// // // // //   const activeCases    = cases.filter(c => c.status !== "completed");
-// // // // //   const completedCases = cases.filter(c => c.status === "completed");
-
-// // // // //   const filterBySearch = (list) => {
-// // // // //     if (!search) return list;
-// // // // //     const q = search.toLowerCase();
-// // // // //     return list.filter(c =>
-// // // // //       (c.case_id || "").toLowerCase().includes(q) ||
-// // // // //       (c.candidate || "").toLowerCase().includes(q) ||
-// // // // //       (c.client || c.client_name || "").toLowerCase().includes(q)
-// // // // //     );
-// // // // //   };
-
-// // // // //   const queueList = filterBySearch(sidebarView === "completed" ? completedCases : activeCases);
-
-// // // // //   // ── Tab accessibility ──────────────────────────────────────────────────────
-// // // // //   // A tab is accessible if:
-// // // // //   //   1. The case has that check type, AND
-// // // // //   //   2. The verifier's role allows it (admin / generic verifier: any; specialist: only their type)
-// // // // //   const canAccessTab = (checkKey) => {
-// // // // //     if (!selectedCase) return false;
-// // // // //     const caseHasCheck = selectedCase.checks_norm.includes(checkKey);
-// // // // //     if (!caseHasCheck) return false;
-// // // // //     if (isAdmin || !assignedCheck) return true;           // admin / generic verifier
-// // // // //     return checkKey === assignedCheck;                     // specialist verifier
-// // // // //   };
-
-// // // // //   // ── Select a case ──────────────────────────────────────────────────────────
-// // // // //   const selectCase = (c) => {
-// // // // //     setSelectedCase(c);
-// // // // //     setComments([]);   // TODO: fetch from API  GET /api/cases/{id}/comments
-// // // // //   };
-
-// // // // //   // ── Save result ────────────────────────────────────────────────────────────
-// // // // //   const handleSave = async (isDraft) => {
-// // // // //     if (!outcome && !isDraft) {
-// // // // //       setSaveMsg({ text: "Please select an outcome before saving.", type: "error" });
-// // // // //       return;
-// // // // //     }
-// // // // //     setSaving(true);
-// // // // //     setSaveMsg({ text: "", type: "" });
-// // // // //     try {
-// // // // //       const res = await fetch(`${API_URL}/api/cases/${selectedCase.case_id}/check-result`, {
-// // // // //         method: "POST",
-// // // // //         headers: {
-// // // // //           Authorization: `Bearer ${token}`,
-// // // // //           "Content-Type": "application/json",
-// // // // //           Accept: "application/json",
-// // // // //         },
-// // // // //         body: JSON.stringify({
-// // // // //           check_type: activeCheck,
-// // // // //           outcome:    outcome || "unable",
-// // // // //           form_data:  form,
-// // // // //           is_draft:   isDraft,
-// // // // //         }),
-// // // // //       });
-// // // // //       if (!res.ok) throw new Error("Server error");
-// // // // //       setSaveMsg({
-// // // // //         text: isDraft ? "Draft saved — case stays In Progress." : "Result submitted — moved to QC Review.",
-// // // // //         type: "success",
-// // // // //       });
-// // // // //       fetchCases();
-// // // // //     } catch {
-// // // // //       setSaveMsg({ text: "Could not save. Please try again.", type: "error" });
-// // // // //     } finally {
-// // // // //       setSaving(false);
-// // // // //     }
-// // // // //   };
-
-// // // // //   // ── Send comment ───────────────────────────────────────────────────────────
-// // // // //   const sendComment = () => {
-// // // // //     if (!commentInput.trim()) return;
-// // // // //     // TODO: POST /api/cases/{id}/comments
-// // // // //     setComments(p => [...p, {
-// // // // //       id:     Date.now(),
-// // // // //       author: user.name || "Verifier",
-// // // // //       avatar: (user.name || "V").charAt(0).toUpperCase(),
-// // // // //       time:   new Date().toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit" }),
-// // // // //       text:   commentInput.trim(),
-// // // // //     }]);
-// // // // //     setCommentInput("");
-// // // // //   };
-
-// // // // //   // ── Charges for selected case ──────────────────────────────────────────────
-// // // // //   const caseCharges = (selectedCase?.checks_norm || []).map(ch => ({
-// // // // //     label:  CHECK_TABS.find(t => t.key === ch)?.label || ch,
-// // // // //     amount: VERIFICATION_RATES[ch] || 0,
-// // // // //     key:    ch,
-// // // // //   }));
-// // // // //   const totalCharge = caseCharges.reduce((s, c) => s + c.amount, 0);
-
-// // // // //   // ── Case list item ─────────────────────────────────────────────────────────
-// // // // //   const QueueItem = ({ c }) => {
-// // // // //     const pm       = PRIORITY_META[c.priority] || PRIORITY_META.LOW;
-// // // // //     const sm       = STATUS_META[c.status] || STATUS_META["pending"];
-// // // // //     const isActive = selectedCase?.case_id === c.case_id;
-// // // // //     const checkLabels = c.checks_norm.map(k =>
-// // // // //       CHECK_TABS.find(t => t.key === k)?.label?.slice(0, 3).toUpperCase() || k.slice(0, 3).toUpperCase()
-// // // // //     );
-
-// // // // //     return (
-// // // // //       <tr
-// // // // //         className="boder-tbl active"
-// // // // //         onClick={() => selectCase(c)}
-// // // // //         style={{
-// // // // //           cursor: "pointer",
-// // // // //           background: isActive ? "#eef3ff" : undefined,
-// // // // //           borderLeft: isActive ? "3px solid #2b3b8c" : "3px solid transparent",
-// // // // //         }}
-// // // // //       >
-// // // // //         {/* Case ID + checks */}
-// // // // //         <td>
-// // // // //           <div className="criminal-case">
-// // // // //             <p>
-// // // // //               <span style={{ fontWeight: 700, color: "#27348B" }}>{c.case_id}</span>
-// // // // //               <br />
-// // // // //               <span style={{ fontSize: "11px", color: "#94a3b8" }}>
-// // // // //                 {checkLabels.join(" · ")}
-// // // // //               </span>
-// // // // //             </p>
-// // // // //           </div>
-// // // // //         </td>
-
-// // // // //         {/* Candidate name */}
-// // // // //         <td>
-// // // // //           <div className="client-names">{c.candidate}</div>
-// // // // //         </td>
-
-// // // // //         {/* Progress + TAT */}
-// // // // //         <td>
-// // // // //           <div className="custom-progress">
-// // // // //             <div className="custom-progress-bar" style={{ width: `${sm.pct}%`, background: sm.color }} />
-// // // // //           </div>
-// // // // //           <p className="progress-client-text" style={{ color: sm.color }}>{c.tat_display}</p>
-// // // // //         </td>
-
-// // // // //         {/* Priority dot */}
-// // // // //         <td>
-// // // // //           <div className="parent-client-boxes">
-// // // // //             <span
-// // // // //               className="client-cases-box"
-// // // // //               style={{ background: pm.dot }}
-// // // // //               title={c.priority}
-// // // // //             />
-// // // // //           </div>
-// // // // //         </td>
-// // // // //       </tr>
-// // // // //     );
-// // // // //   };
-
-// // // // //   // ── Middle panel: full detail of selected case ──────────────────────────────
-// // // // //   const DetailPanel = () => {
-// // // // //     if (!selectedCase) return (
-// // // // //       <div style={{ display: "flex", alignItems: "center", justifyContent: "center", height: "340px" }}>
-// // // // //         <p style={{ color: "#94a3b8", fontSize: "14px" }}>Select a case to begin verification</p>
-// // // // //       </div>
-// // // // //     );
-
-// // // // //     const fields = CHECK_FIELDS[activeCheck] || [];
-// // // // //     const sm     = STATUS_META[selectedCase.status] || STATUS_META["pending"];
-// // // // //     const pm     = PRIORITY_META[selectedCase.priority] || PRIORITY_META.LOW;
-
-// // // // //     return (
-// // // // //       <>
-// // // // //         {/* Header */}
-// // // // //         <div style={{
-// // // // //           background: "#27348B", color: "#fff", padding: "14px 18px",
-// // // // //           fontWeight: 700, fontSize: "13px", borderRadius: "6px 6px 0 0",
-// // // // //           display: "flex", justifyContent: "space-between", alignItems: "center",
-// // // // //         }}>
-// // // // //           <span>
-// // // // //             {selectedCase.case_id} — {selectedCase.candidate}
-// // // // //           </span>
-// // // // //           <span style={{
-// // // // //             background: pm.bg, color: pm.color, fontSize: "11px",
-// // // // //             fontWeight: 700, padding: "3px 10px", borderRadius: "20px",
-// // // // //           }}>
-// // // // //             {selectedCase.priority}
-// // // // //           </span>
-// // // // //         </div>
-
-// // // // //         {/* Check type tabs — only show checks present in this case */}
-// // // // //         <div style={{
-// // // // //           display: "flex", background: "#fff",
-// // // // //           borderBottom: "1px solid #e2e8f0", overflowX: "auto",
-// // // // //         }}>
-// // // // //           {CHECK_TABS.filter(t => selectedCase.checks_norm.includes(t.key)).map((t, i, arr) => {
-// // // // //             const accessible = canAccessTab(t.key);
-// // // // //             const isActive   = activeCheck === t.key;
-// // // // //             return (
-// // // // //               <button
-// // // // //                 key={t.key}
-// // // // //                 onClick={() => accessible && setActiveCheck(t.key)}
-// // // // //                 title={!accessible ? "Your role cannot access this check type" : ""}
-// // // // //                 style={{
-// // // // //                   padding: "11px 18px", border: "none", whiteSpace: "nowrap",
-// // // // //                   borderRight: i < arr.length - 1 ? "1px solid #e2e8f0" : "none",
-// // // // //                   borderBottom: isActive ? "3px solid #27348B" : "3px solid transparent",
-// // // // //                   background: isActive ? "#f0f4ff" : "#fff",
-// // // // //                   color: isActive ? "#27348B" : accessible ? "#64748b" : "#cbd5e1",
-// // // // //                   fontWeight: isActive ? 700 : 400,
-// // // // //                   fontSize: "13px",
-// // // // //                   cursor: accessible ? "pointer" : "not-allowed",
-// // // // //                   opacity: accessible ? 1 : 0.45,
-// // // // //                   transition: "all 0.15s",
-// // // // //                 }}
-// // // // //               >
-// // // // //                 {t.label}
-// // // // //               </button>
-// // // // //             );
-// // // // //           })}
-// // // // //         </div>
-
-// // // // //         {/* Scrollable form body */}
-// // // // //         <div style={{
-// // // // //           border: "1px solid #e2e8f0", borderTop: "none",
-// // // // //           borderRadius: "0 0 6px 6px", background: "#fff",
-// // // // //           maxHeight: "520px", overflowY: "auto", padding: "16px",
-// // // // //         }}>
-
-// // // // //           {/* Case summary strip */}
-// // // // //           <div style={{
-// // // // //             display: "grid", gridTemplateColumns: "repeat(4, 1fr)",
-// // // // //             gap: "10px", marginBottom: "18px",
-// // // // //           }}>
-// // // // //             {[
-// // // // //               { label: "Client",   value: selectedCase.client || selectedCase.client_name || "—" },
-// // // // //               { label: "Status",   value: <span style={{ background: sm.color, color: "#fff", fontSize: "11px", fontWeight: 700, padding: "3px 10px", borderRadius: "4px" }}>{sm.label}</span> },
-// // // // //               { label: "TAT",      value: selectedCase.tat_display },
-// // // // //               { label: "Created",  value: selectedCase.created_at ? new Date(selectedCase.created_at).toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" }) : "—" },
-// // // // //             ].map(r => (
-// // // // //               <div key={r.label} style={{ background: "#f8fafc", borderRadius: "8px", padding: "10px 14px" }}>
-// // // // //                 <div style={{ fontSize: "10px", fontWeight: 700, color: "#94a3b8", textTransform: "uppercase", letterSpacing: "0.5px", marginBottom: "4px" }}>{r.label}</div>
-// // // // //                 <div style={{ fontSize: "13px", fontWeight: 700, color: "#1e293b" }}>{r.value}</div>
-// // // // //               </div>
-// // // // //             ))}
-// // // // //           </div>
-
-// // // // //           {/* Outcome toggle */}
-// // // // //           <div style={{ marginBottom: "16px" }}>
-// // // // //             <p style={{ fontSize: "11px", fontWeight: 700, color: "#475569", marginBottom: "8px", textTransform: "uppercase", letterSpacing: "0.4px" }}>
-// // // // //               Verification Outcome
-// // // // //             </p>
-// // // // //             <div style={{ display: "flex", gap: "8px" }}>
-// // // // //               {OUTCOME_OPTS.map(o => (
-// // // // //                 <button
-// // // // //                   key={o.key}
-// // // // //                   onClick={() => setOutcome(o.key)}
-// // // // //                   style={{
-// // // // //                     flex: 1, padding: "10px 8px", cursor: "pointer",
-// // // // //                     border: `2px solid ${outcome === o.key ? o.border : "#e2e8f0"}`,
-// // // // //                     borderRadius: "8px",
-// // // // //                     background: outcome === o.key ? o.bg : "#f8fafc",
-// // // // //                     color: outcome === o.key ? o.color : "#94a3b8",
-// // // // //                     fontWeight: outcome === o.key ? 700 : 500,
-// // // // //                     fontSize: "12px",
-// // // // //                     transition: "all 0.15s",
-// // // // //                   }}
-// // // // //                 >
-// // // // //                   {o.label}
-// // // // //                 </button>
-// // // // //               ))}
-// // // // //             </div>
-// // // // //           </div>
-
-// // // // //           {/* Dynamic fields grid */}
-// // // // //           {!canAccessTab(activeCheck) ? (
-// // // // //             <div style={{ padding: "24px", textAlign: "center", color: "#94a3b8", fontSize: "13px", background: "#f8fafc", borderRadius: "8px" }}>
-// // // // //               Your role does not have access to the <strong>{CHECK_TABS.find(t => t.key === activeCheck)?.label}</strong> check.
-// // // // //             </div>
-// // // // //           ) : (
-// // // // //             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px" }}>
-// // // // //               {fields.map(f => (
-// // // // //                 <FormField
-// // // // //                   key={f.key} f={f}
-// // // // //                   value={form[f.key] || ""}
-// // // // //                   onChange={v => setForm(p => ({ ...p, [f.key]: v }))}
-// // // // //                 />
-// // // // //               ))}
-// // // // //             </div>
-// // // // //           )}
-
-// // // // //           {/* Save message */}
-// // // // //           {saveMsg.text && (
-// // // // //             <div style={{
-// // // // //               marginTop: "14px", padding: "10px 14px", borderRadius: "8px",
-// // // // //               background: saveMsg.type === "success" ? "#f0fdf4" : "#fef2f2",
-// // // // //               color:      saveMsg.type === "success" ? "#16a34a" : "#dc2626",
-// // // // //               fontSize: "13px", fontWeight: 600,
-// // // // //             }}>
-// // // // //               {saveMsg.text}
-// // // // //             </div>
-// // // // //           )}
-// // // // //         </div>
-
-// // // // //         {/* Action buttons */}
-// // // // //         {canAccessTab(activeCheck) && (
-// // // // //           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px", marginTop: "12px" }}>
-// // // // //             <button
-// // // // //               onClick={() => handleSave(true)}
-// // // // //               disabled={saving}
-// // // // //               style={{
-// // // // //                 display: "flex", alignItems: "center", justifyContent: "center", gap: "8px",
-// // // // //                 padding: "13px", background: "#27348B", color: "#fff", border: "none",
-// // // // //                 borderRadius: "6px", fontWeight: 700, fontSize: "13px", cursor: "pointer",
-// // // // //               }}
-// // // // //             >
-// // // // //               💾 Save Draft
-// // // // //             </button>
-// // // // //             <button
-// // // // //               onClick={() => handleSave(false)}
-// // // // //               disabled={saving || !outcome}
-// // // // //               style={{
-// // // // //                 display: "flex", alignItems: "center", justifyContent: "center", gap: "8px",
-// // // // //                 padding: "13px",
-// // // // //                 background: saving || !outcome ? "#94a3b8" : "#10b981",
-// // // // //                 color: "#fff", border: "none", borderRadius: "6px",
-// // // // //                 fontWeight: 700, fontSize: "13px",
-// // // // //                 cursor: saving || !outcome ? "not-allowed" : "pointer",
-// // // // //               }}
-// // // // //             >
-// // // // //               {saving ? "Saving…" : "✔ Save & Mark Done"}
-// // // // //             </button>
-// // // // //           </div>
-// // // // //         )}
-// // // // //       </>
-// // // // //     );
-// // // // //   };
-
-// // // // //   // ── Right panel: Charges + Comments ─────────────────────────────────────────
-// // // // //   const RightPanel = () => (
-// // // // //     <div style={{ display: "flex", flexDirection: "column", gap: "14px" }}>
-
-// // // // //       {/* Verification Charges */}
-// // // // //       <div style={{ borderRadius: "10px", overflow: "hidden", border: "1px solid #e2e8f0" }}>
-// // // // //         <div style={{ background: "#27348B", padding: "13px 16px" }}>
-// // // // //           <h3 style={{ margin: 0, color: "#fff", fontSize: "12px", fontWeight: 700, letterSpacing: "0.08em" }}>
-// // // // //             VERIFICATION CHARGES
-// // // // //           </h3>
-// // // // //         </div>
-// // // // //         {selectedCase ? (
-// // // // //           <>
-// // // // //             {caseCharges.map((c, i) => (
-// // // // //               <div key={c.key} style={{
-// // // // //                 display: "flex", justifyContent: "space-between", alignItems: "center",
-// // // // //                 padding: "12px 16px",
-// // // // //                 background: i % 2 === 0 ? "#f8fafc" : "#fff",
-// // // // //                 borderBottom: "1px solid #f1f5f9",
-// // // // //                 fontSize: "13px",
-// // // // //               }}>
-// // // // //                 <span style={{ color: "#475569" }}>{c.label} Check</span>
-// // // // //                 <span style={{ fontWeight: 700, color: "#1e293b" }}>₹{c.amount}</span>
-// // // // //               </div>
-// // // // //             ))}
-// // // // //             <div style={{
-// // // // //               display: "flex", justifyContent: "space-between", alignItems: "center",
-// // // // //               padding: "14px 16px", background: "#27348B",
-// // // // //             }}>
-// // // // //               <span style={{ color: "#fff", fontWeight: 700, fontSize: "13px" }}>TOTAL</span>
-// // // // //               <span style={{ color: "#fff", fontWeight: 800, fontSize: "15px" }}>₹{totalCharge}</span>
-// // // // //             </div>
-// // // // //           </>
-// // // // //         ) : (
-// // // // //           <p style={{ padding: "16px", color: "#94a3b8", fontSize: "13px" }}>Select a case to see charges.</p>
-// // // // //         )}
-// // // // //       </div>
-
-// // // // //       {/* Comments */}
-// // // // //       <div style={{ borderRadius: "10px", overflow: "hidden", border: "1px solid #e2e8f0", flex: 1 }}>
-// // // // //         <div style={{ background: "#27348B", padding: "13px 16px" }}>
-// // // // //           <h3 style={{ margin: 0, color: "#fff", fontSize: "12px", fontWeight: 700, letterSpacing: "0.08em" }}>
-// // // // //             COMMENTS & NOTES
-// // // // //           </h3>
-// // // // //         </div>
-// // // // //         <div style={{ maxHeight: "260px", overflowY: "auto", padding: "12px 14px" }}>
-// // // // //           {comments.length === 0 ? (
-// // // // //             <p style={{ color: "#cbd5e1", fontSize: "13px", textAlign: "center", padding: "16px 0" }}>
-// // // // //               No comments yet.
-// // // // //             </p>
-// // // // //           ) : (
-// // // // //             comments.map((c, i) => (
-// // // // //               <div key={c.id} style={{ display: "flex", gap: "10px", marginBottom: "14px" }}>
-// // // // //                 <div style={{
-// // // // //                   width: "30px", height: "30px", borderRadius: "50%",
-// // // // //                   background: i % 2 === 0 ? "#7c3aed" : "#0d9488",
-// // // // //                   color: "#fff", display: "flex", alignItems: "center", justifyContent: "center",
-// // // // //                   fontSize: "13px", fontWeight: 700, flexShrink: 0,
-// // // // //                 }}>
-// // // // //                   {c.avatar}
-// // // // //                 </div>
-// // // // //                 <div style={{ flex: 1 }}>
-// // // // //                   <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "3px" }}>
-// // // // //                     <span style={{ fontSize: "12px", fontWeight: 700, color: "#1e293b" }}>{c.author}</span>
-// // // // //                     <span style={{ fontSize: "11px", color: "#94a3b8" }}>{c.time}</span>
-// // // // //                   </div>
-// // // // //                   <p style={{ fontSize: "12px", color: "#475569", margin: 0, lineHeight: 1.5 }}>{c.text}</p>
-// // // // //                 </div>
-// // // // //               </div>
-// // // // //             ))
-// // // // //           )}
-// // // // //           <div ref={commentsEndRef} />
-// // // // //         </div>
-// // // // //         <div style={{ borderTop: "1px solid #e2e8f0", display: "flex", gap: "0" }}>
-// // // // //           <input
-// // // // //             type="text"
-// // // // //             placeholder="Add a comment…"
-// // // // //             value={commentInput}
-// // // // //             onChange={e => setCommentInput(e.target.value)}
-// // // // //             onKeyDown={e => e.key === "Enter" && sendComment()}
-// // // // //             style={{
-// // // // //               flex: 1, border: "none", padding: "11px 14px",
-// // // // //               fontSize: "13px", outline: "none", background: "#fff",
-// // // // //             }}
-// // // // //           />
-// // // // //           <button onClick={sendComment} style={{
-// // // // //             background: "#27348B", border: "none", padding: "0 16px",
-// // // // //             cursor: "pointer", color: "#fff",
-// // // // //           }}>
-// // // // //             <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-// // // // //               <line x1="22" y1="2" x2="11" y2="13" />
-// // // // //               <polygon points="22 2 15 22 11 13 2 9 22 2" />
-// // // // //             </svg>
-// // // // //           </button>
-// // // // //         </div>
-// // // // //       </div>
-// // // // //     </div>
-// // // // //   );
-
-// // // // //   // ── Render ─────────────────────────────────────────────────────────────────
-// // // // //   return (
-// // // // //     <>
-// // // // //       <Sidebar />
-// // // // //       <section id="content">
-// // // // //         <Header />
-// // // // //         <main>
-// // // // //           <div className="dash-wrper">
-
-// // // // //             {/* Page header */}
-// // // // //             <div className="dash-upper-head">
-// // // // //               <div className="left">
-// // // // //                 <div className="dash-title-flex">
-// // // // //                   <h3 className="dash-title-text">Verifier Workspace</h3>
-// // // // //                   <span style={{
-// // // // //                     fontSize: "12px", color: "#64748b",
-// // // // //                     background: "#eef3ff", padding: "3px 10px", borderRadius: "20px",
-// // // // //                   }}>
-// // // // //                     {user.name || "Verifier"} — {role}
-// // // // //                   </span>
-// // // // //                   {assignedCheck && (
-// // // // //                     <span style={{
-// // // // //                       fontSize: "11px", color: "#fff",
-// // // // //                       background: "#27348B", padding: "3px 10px", borderRadius: "20px",
-// // // // //                     }}>
-// // // // //                       Assigned: {CHECK_TABS.find(t => t.key === assignedCheck)?.label}
-// // // // //                     </span>
-// // // // //                   )}
-// // // // //                 </div>
-// // // // //               </div>
-// // // // //               <div className="right">
-// // // // //                 <input
-// // // // //                   type="text"
-// // // // //                   className="dash-search-input"
-// // // // //                   placeholder="Search case ID or candidate…"
-// // // // //                   value={search}
-// // // // //                   onChange={e => setSearch(e.target.value)}
-// // // // //                 />
-// // // // //                 {search && (
-// // // // //                   <button onClick={() => setSearch("")}
-// // // // //                     style={{ background: "none", border: "none", cursor: "pointer", fontSize: "18px", color: "#94a3b8" }}>
-// // // // //                     ×
-// // // // //                   </button>
-// // // // //                 )}
-// // // // //               </div>
-// // // // //             </div>
-
-// // // // //             {/* View toggle: Active / Completed */}
-// // // // //             <div style={{ display: "flex", gap: "8px", marginBottom: "4px" }}>
-// // // // //               <button
-// // // // //                 className={`tab-cta ${sidebarView === "active" ? "active" : ""}`}
-// // // // //                 onClick={() => navigate("/Verifyer?view=active", { replace: true })}
-// // // // //               >
-// // // // //                 Active Cases
-// // // // //                 <span style={{ marginLeft: "6px", background: "rgba(0,0,0,0.1)", borderRadius: "8px", padding: "1px 6px", fontSize: "11px", fontWeight: 700 }}>
-// // // // //                   {activeCases.length}
-// // // // //                 </span>
-// // // // //               </button>
-// // // // //               <button
-// // // // //                 className={`tab-cta ${sidebarView === "completed" ? "active" : ""}`}
-// // // // //                 onClick={() => navigate("/Verifyer?view=completed", { replace: true })}
-// // // // //               >
-// // // // //                 Completed
-// // // // //                 <span style={{ marginLeft: "6px", background: "rgba(0,0,0,0.1)", borderRadius: "8px", padding: "1px 6px", fontSize: "11px", fontWeight: 700 }}>
-// // // // //                   {completedCases.length}
-// // // // //                 </span>
-// // // // //               </button>
-// // // // //             </div>
-
-// // // // //             {/* Three-column layout: Queue | Form | Charges+Comments */}
-// // // // //             <div style={{ display: "grid", gridTemplateColumns: "300px 1fr 280px", gap: "16px", alignItems: "start" }}>
-
-// // // // //               {/* ── LEFT: Case queue ── */}
-// // // // //               <div className="down-table" style={{ margin: 0 }}>
-// // // // //                 <div className="client-portal-cases">
-// // // // //                   <h3>
-// // // // //                     {sidebarView === "completed" ? "COMPLETED" : "ACTIVE"} ({queueList.length})
-// // // // //                   </h3>
-// // // // //                 </div>
-
-// // // // //                 {loading ? (
-// // // // //                   <p style={{ padding: "24px", textAlign: "center", color: "#94a3b8" }}>Loading cases…</p>
-// // // // //                 ) : queueList.length === 0 ? (
-// // // // //                   <p style={{ padding: "24px", textAlign: "center", color: "#94a3b8", fontSize: "13px" }}>
-// // // // //                     No {sidebarView} cases found.
-// // // // //                   </p>
-// // // // //                 ) : (
-// // // // //                   <table>
-// // // // //                     <tbody>
-// // // // //                       {queueList.map(c => <QueueItem key={c.case_id} c={c} />)}
-// // // // //                     </tbody>
-// // // // //                   </table>
-// // // // //                 )}
-// // // // //               </div>
-
-// // // // //               {/* ── MIDDLE: Detail + form ── */}
-// // // // //               <div className="second-card">
-// // // // //                 <DetailPanel />
-// // // // //               </div>
-
-// // // // //               {/* ── RIGHT: Charges + Comments ── */}
-// // // // //               <div className="thrid-card">
-// // // // //                 <RightPanel />
-// // // // //               </div>
-
-// // // // //             </div>
-// // // // //           </div>
-// // // // //         </main>
-// // // // //       </section>
-// // // // //     </>
-// // // // //   );
-// // // // // }
 // // // // // // import { useState, useEffect, useRef } from "react";
 // // // // // // import { useNavigate, useLocation } from "react-router-dom";
 // // // // // // import Sidebar from "./Sidebar";
@@ -901,33 +52,23 @@
 // // // // // //     { key: "company_name",       label: "Company Name",         type: "text" },
 // // // // // //     { key: "designation",        label: "Designation",          type: "text" },
 // // // // // //     { key: "employee_id",        label: "Employee ID",          type: "text" },
-// // // // // //     { key: "employment_type",    label: "Employment Type",      type: "select", options: ["Permanent", "FTE", "Contractual"] },
 // // // // // //     { key: "date_of_joining",    label: "Date of Joining",      type: "date" },
 // // // // // //     { key: "date_of_leaving",    label: "Date of Leaving",      type: "date" },
-// // // // // //     { key: "epfo_number",        label: "EPFO Number",          type: "text" },
 // // // // // //     { key: "last_salary",        label: "Last Salary (₹)",      type: "text" },
-// // // // // //     { key: "company_country",    label: "Company Country",      type: "text" },
-// // // // // //     { key: "company_state",      label: "Company State",        type: "text" },
-// // // // // //     { key: "company_pincode",    label: "Company Pincode",      type: "text" },
 // // // // // //     { key: "reason_for_leaving", label: "Reason for Leaving",   type: "text" },
 // // // // // //     { key: "reporting_manager",  label: "Reporting Manager",    type: "text" },
 // // // // // //     { key: "hr_contact",         label: "HR Contact Email",     type: "text" },
 // // // // // //     { key: "hr_phone",           label: "HR Phone",             type: "text" },
-// // // // // //     { key: "document_type",      label: "Document Upload Type", type: "select", options: ["Relieving Letter", "Experience Slip", "Salary Slip", "ARN Letter", "Aadhar Card", "Voter ID", "PAN Card"] },
 // // // // // //     { key: "verification_mode",  label: "Verification Mode",    type: "select", options: ["Email", "Phone", "Email + Phone", "Portal", "Visit"] },
 // // // // // //     { key: "remarks",            label: "Remarks",              type: "textarea" },
 // // // // // //   ],
 // // // // // //   education: [
-// // // // // //     { key: "education_scope",    label: "Education Scope",      type: "radio", options: ["National", "International"] },
-// // // // // //     { key: "qualification",      label: "Qualification",        type: "select", options: ["UG", "PG", "Secondary Education", "Senior Secondary", "Certification", "Diploma", "ITI"] },
-// // // // // //     { key: "institution_name",   label: "Institute / University Name", type: "text" },
+// // // // // //     { key: "institution_name",   label: "Institution Name",     type: "text" },
 // // // // // //     { key: "degree",             label: "Degree / Certificate", type: "text" },
 // // // // // //     { key: "course",             label: "Course / Specialization", type: "text" },
 // // // // // //     { key: "roll_number",        label: "Roll / Reg. Number",   type: "text" },
 // // // // // //     { key: "year_of_passing",    label: "Year of Passing",      type: "text" },
 // // // // // //     { key: "percentage",         label: "Percentage / CGPA",    type: "text" },
-// // // // // //     { key: "mode_of_study",      label: "Mode of Study",        type: "select", options: ["Full Time", "Part Time", "Distance / Correspondence", "Online"] },
-// // // // // //     { key: "document_type",      label: "Document Upload Type", type: "select", options: ["Marksheet", "Degree Certificate", "Provisional Certificate", "Consolidated Marksheet"] },
 // // // // // //     { key: "verification_mode",  label: "Verification Mode",    type: "select", options: ["University Portal", "Email", "Phone", "Visit", "Result Link"] },
 // // // // // //     { key: "result_link",        label: "Result Link (URL)",    type: "text" },
 // // // // // //     { key: "remarks",            label: "Remarks",              type: "textarea" },
@@ -1050,32 +191,6 @@
 
 // // // // // // // ── FormField sub-component ────────────────────────────────────────────────────
 // // // // // // function FormField({ f, value, onChange }) {
-// // // // // //   if (f.type === "radio") return (
-// // // // // //     <div style={{
-// // // // // //       gridColumn: "1 / -1", background: "#f0f4ff", border: "1.5px solid #c7d2fe",
-// // // // // //       borderRadius: "8px", padding: "12px 14px", marginBottom: "4px",
-// // // // // //     }}>
-// // // // // //       <label style={labelSt}>{f.label}</label>
-// // // // // //       <div style={{ display: "flex", gap: "20px" }}>
-// // // // // //         {f.options.map(o => (
-// // // // // //           <label key={o} style={{
-// // // // // //             display: "flex", alignItems: "center", gap: "7px",
-// // // // // //             fontSize: "13px", fontWeight: 600, color: "#27348B", cursor: "pointer",
-// // // // // //           }}>
-// // // // // //             <input
-// // // // // //               type="radio"
-// // // // // //               name={f.key}
-// // // // // //               value={o}
-// // // // // //               checked={value === o}
-// // // // // //               onChange={() => onChange(o)}
-// // // // // //               style={{ width: "15px", height: "15px", accentColor: "#27348B", cursor: "pointer" }}
-// // // // // //             />
-// // // // // //             {o}
-// // // // // //           </label>
-// // // // // //         ))}
-// // // // // //       </div>
-// // // // // //     </div>
-// // // // // //   );
 // // // // // //   if (f.type === "textarea") return (
 // // // // // //     <div style={{ gridColumn: "1 / -1" }}>
 // // // // // //       <label style={labelSt}>{f.label}</label>
@@ -1734,6 +849,1693 @@
 // // // // // //     </>
 // // // // // //   );
 // // // // // // }
+// // // // // // // import { useState, useEffect, useRef } from "react";
+// // // // // // // import { useNavigate, useLocation } from "react-router-dom";
+// // // // // // // import Sidebar from "./Sidebar";
+// // // // // // // import Header from "./Header";
+// // // // // // // import { API_URL } from "../src/config";
+
+// // // // // // // // ── Check tab definitions ──────────────────────────────────────────────────────
+// // // // // // // const CHECK_TABS = [
+// // // // // // //   { key: "employment", label: "Employment" },
+// // // // // // //   { key: "education",  label: "Education"  },
+// // // // // // //   { key: "address",    label: "Address"    },
+// // // // // // //   { key: "database",   label: "Database"   },
+// // // // // // //   { key: "criminal",   label: "Criminal"   },
+// // // // // // //   { key: "drug",       label: "Drug Test"  },
+// // // // // // //   { key: "court",      label: "Courtroom"  },
+// // // // // // // ];
+
+// // // // // // // // ── Which API check key maps to which verifier role ───────────────────────────
+// // // // // // // const ROLE_CHECK_MAP = {
+// // // // // // //   employment_verifier:  "employment",
+// // // // // // //   education_verifier:   "education",
+// // // // // // //   address_verifier:     "address",
+// // // // // // //   database_verifier:    "database",
+// // // // // // //   criminal_verifier:    "criminal",
+// // // // // // //   drug_test_verifier:   "drug",
+// // // // // // //   courtroom_verifier:   "court",
+// // // // // // // };
+
+// // // // // // // // ── Normalise check keys coming from the API (emp→employment, edu→education…) ─
+// // // // // // // const NORMALISE_CHECK = {
+// // // // // // //   emp:        "employment",
+// // // // // // //   employment: "employment",
+// // // // // // //   edu:        "education",
+// // // // // // //   education:  "education",
+// // // // // // //   addr:       "address",
+// // // // // // //   address:    "address",
+// // // // // // //   db:         "database",
+// // // // // // //   database:   "database",
+// // // // // // //   criminal:   "criminal",
+// // // // // // //   cri:        "criminal",
+// // // // // // //   drug:       "drug",
+// // // // // // //   drug_test:  "drug",
+// // // // // // //   court:      "court",
+// // // // // // //   courtroom:  "court",
+// // // // // // // };
+
+// // // // // // // // ── Field definitions per check type ──────────────────────────────────────────
+// // // // // // // const CHECK_FIELDS = {
+// // // // // // //   employment: [
+// // // // // // //     { key: "company_name",       label: "Company Name",         type: "text" },
+// // // // // // //     { key: "designation",        label: "Designation",          type: "text" },
+// // // // // // //     { key: "employee_id",        label: "Employee ID",          type: "text" },
+// // // // // // //     { key: "employment_type",    label: "Employment Type",      type: "select", options: ["Permanent", "FTE", "Contractual"] },
+// // // // // // //     { key: "date_of_joining",    label: "Date of Joining",      type: "date" },
+// // // // // // //     { key: "date_of_leaving",    label: "Date of Leaving",      type: "date" },
+// // // // // // //     { key: "epfo_number",        label: "EPFO Number",          type: "text" },
+// // // // // // //     { key: "last_salary",        label: "Last Salary (₹)",      type: "text" },
+// // // // // // //     { key: "company_country",    label: "Company Country",      type: "text" },
+// // // // // // //     { key: "company_state",      label: "Company State",        type: "text" },
+// // // // // // //     { key: "company_pincode",    label: "Company Pincode",      type: "text" },
+// // // // // // //     { key: "reason_for_leaving", label: "Reason for Leaving",   type: "text" },
+// // // // // // //     { key: "reporting_manager",  label: "Reporting Manager",    type: "text" },
+// // // // // // //     { key: "hr_contact",         label: "HR Contact Email",     type: "text" },
+// // // // // // //     { key: "hr_phone",           label: "HR Phone",             type: "text" },
+// // // // // // //     { key: "document_type",      label: "Document Upload Type", type: "select", options: ["Relieving Letter", "Experience Slip", "Salary Slip", "ARN Letter", "Aadhar Card", "Voter ID", "PAN Card"] },
+// // // // // // //     { key: "verification_mode",  label: "Verification Mode",    type: "select", options: ["Email", "Phone", "Email + Phone", "Portal", "Visit"] },
+// // // // // // //     { key: "remarks",            label: "Remarks",              type: "textarea" },
+// // // // // // //   ],
+// // // // // // //   education: [
+// // // // // // //     { key: "education_scope",    label: "Education Scope",      type: "radio", options: ["National", "International"] },
+// // // // // // //     { key: "qualification",      label: "Qualification",        type: "select", options: ["UG", "PG", "Secondary Education", "Senior Secondary", "Certification", "Diploma", "ITI"] },
+// // // // // // //     { key: "institution_name",   label: "Institute / University Name", type: "text" },
+// // // // // // //     { key: "degree",             label: "Degree / Certificate", type: "text" },
+// // // // // // //     { key: "course",             label: "Course / Specialization", type: "text" },
+// // // // // // //     { key: "roll_number",        label: "Roll / Reg. Number",   type: "text" },
+// // // // // // //     { key: "year_of_passing",    label: "Year of Passing",      type: "text" },
+// // // // // // //     { key: "percentage",         label: "Percentage / CGPA",    type: "text" },
+// // // // // // //     { key: "mode_of_study",      label: "Mode of Study",        type: "select", options: ["Full Time", "Part Time", "Distance / Correspondence", "Online"] },
+// // // // // // //     { key: "document_type",      label: "Document Upload Type", type: "select", options: ["Marksheet", "Degree Certificate", "Provisional Certificate", "Consolidated Marksheet"] },
+// // // // // // //     { key: "verification_mode",  label: "Verification Mode",    type: "select", options: ["University Portal", "Email", "Phone", "Visit", "Result Link"] },
+// // // // // // //     { key: "result_link",        label: "Result Link (URL)",    type: "text" },
+// // // // // // //     { key: "remarks",            label: "Remarks",              type: "textarea" },
+// // // // // // //   ],
+// // // // // // //   address: [
+// // // // // // //     { key: "address_line",       label: "Address",              type: "text" },
+// // // // // // //     { key: "city",               label: "City",                 type: "text" },
+// // // // // // //     { key: "state",              label: "State",                type: "text" },
+// // // // // // //     { key: "pincode",            label: "Pincode",               type: "text" },
+// // // // // // //     { key: "residency_type",     label: "Residency Type",       type: "select", options: ["Owned", "Rented", "PG / Hostel", "Family Home"] },
+// // // // // // //     { key: "years_at_address",   label: "Years at Address",     type: "text" },
+// // // // // // //     { key: "neighbour_name",     label: "Neighbour / Ref Name", type: "text" },
+// // // // // // //     { key: "neighbour_phone",    label: "Neighbour Phone",      type: "text" },
+// // // // // // //     { key: "verification_mode",  label: "Verification Mode",    type: "select", options: ["Physical Visit", "Digital", "Phone"] },
+// // // // // // //     { key: "remarks",            label: "Remarks",              type: "textarea" },
+// // // // // // //   ],
+// // // // // // //   database: [
+// // // // // // //     { key: "db_checked",         label: "Databases Checked",    type: "text" },
+// // // // // // //     { key: "match_found",        label: "Match Found?",         type: "select", options: ["No Match", "Potential Match", "Confirmed Match"] },
+// // // // // // //     { key: "match_details",      label: "Match Details",        type: "textarea" },
+// // // // // // //     { key: "pan_verified",       label: "PAN Verified?",        type: "select", options: ["Yes", "No", "Not Applicable"] },
+// // // // // // //     { key: "aadhar_verified",    label: "Aadhaar Verified?",    type: "select", options: ["Yes", "No", "Not Applicable"] },
+// // // // // // //     { key: "remarks",            label: "Remarks",              type: "textarea" },
+// // // // // // //   ],
+// // // // // // //   criminal: [
+// // // // // // //     { key: "court_checked",      label: "Courts Checked",       type: "text" },
+// // // // // // //     { key: "police_verified",    label: "Police Record Check",  type: "select", options: ["Clear", "Record Found", "Not Accessible"] },
+// // // // // // //     { key: "case_details",       label: "Case Details (if any)",type: "textarea" },
+// // // // // // //     { key: "state_checked",      label: "State",                type: "text" },
+// // // // // // //     { key: "district_checked",   label: "District",             type: "text" },
+// // // // // // //     { key: "verification_mode",  label: "Verification Mode",    type: "select", options: ["Online Portal", "Physical", "Phone"] },
+// // // // // // //     { key: "remarks",            label: "Remarks",              type: "textarea" },
+// // // // // // //   ],
+// // // // // // //   drug: [
+// // // // // // //     { key: "test_type",          label: "Test Type",            type: "select", options: ["Urine Test", "Blood Test", "Hair Follicle", "Saliva Test"] },
+// // // // // // //     { key: "lab_name",           label: "Lab Name",             type: "text" },
+// // // // // // //     { key: "test_date",          label: "Test Date",            type: "date" },
+// // // // // // //     { key: "substances_tested",  label: "Substances Tested",    type: "text" },
+// // // // // // //     { key: "result",             label: "Test Result",          type: "select", options: ["Negative (Clear)", "Positive", "Inconclusive", "Refused"] },
+// // // // // // //     { key: "lab_report_ref",     label: "Lab Report Ref No.",   type: "text" },
+// // // // // // //     { key: "remarks",            label: "Remarks",              type: "textarea" },
+// // // // // // //   ],
+// // // // // // //   court: [
+// // // // // // //     { key: "court_name",         label: "Court Name",           type: "text" },
+// // // // // // //     { key: "case_number",        label: "Case Number",          type: "text" },
+// // // // // // //     { key: "case_type",          label: "Case Type",            type: "select", options: ["Civil", "Criminal", "Labour", "Consumer", "Other"] },
+// // // // // // //     { key: "filing_date",        label: "Filing Date",          type: "date" },
+// // // // // // //     { key: "current_status",     label: "Current Status",       type: "select", options: ["Active", "Disposed", "Appealed", "No Record Found"] },
+// // // // // // //     { key: "next_date",          label: "Next Hearing Date",    type: "date" },
+// // // // // // //     { key: "remarks",            label: "Remarks",              type: "textarea" },
+// // // // // // //   ],
+// // // // // // // };
+
+// // // // // // // const VERIFICATION_RATES = {
+// // // // // // //   employment: 350, education: 280, address: 180,
+// // // // // // //   database: 120,   criminal: 220,  drug: 400, court: 160,
+// // // // // // // };
+
+// // // // // // // const PRIORITY_META = {
+// // // // // // //   HIGH:   { bg: "#fee2e2", color: "#b91c1c", dot: "#ef4444" },
+// // // // // // //   MED:    { bg: "#fef9c3", color: "#92400e", dot: "#f59e0b" },
+// // // // // // //   MEDIUM: { bg: "#fef9c3", color: "#92400e", dot: "#f59e0b" },
+// // // // // // //   LOW:    { bg: "#dcfce7", color: "#15803d", dot: "#22c55e" },
+// // // // // // //   normal: { bg: "#f1f5f9", color: "#475569", dot: "#94a3b8" },
+// // // // // // // };
+
+// // // // // // // const OUTCOME_OPTS = [
+// // // // // // //   { key: "clear",       label: "✔  Clear",            bg: "#f0fdf4", color: "#16a34a", border: "#16a34a" },
+// // // // // // //   { key: "discrepancy", label: "✗  Discrepancy",       bg: "#fef2f2", color: "#dc2626", border: "#dc2626" },
+// // // // // // //   { key: "unable",      label: "?  Unable to Verify",  bg: "#fffbeb", color: "#b45309", border: "#d97706" },
+// // // // // // // ];
+
+// // // // // // // const STATUS_META = {
+// // // // // // //   "pending":     { color: "#f59e0b", pct: 20,  label: "Pending"     },
+// // // // // // //   "in-progress": { color: "#028090", pct: 60,  label: "In Progress" },
+// // // // // // //   "qc-review":   { color: "#7c3aed", pct: 85,  label: "QC Review"   },
+// // // // // // //   "completed":   { color: "#10b981", pct: 100, label: "Completed"   },
+// // // // // // //   "on-hold":     { color: "#94a3b8", pct: 30,  label: "On Hold"     },
+// // // // // // // };
+
+// // // // // // // // ── Helpers ────────────────────────────────────────────────────────────────────
+// // // // // // // function getUser() {
+// // // // // // //   try { return JSON.parse(localStorage.getItem("user")) || {}; } catch { return {}; }
+// // // // // // // }
+
+// // // // // // // function getToken() { return localStorage.getItem("token"); }
+
+// // // // // // // function normChecks(raw) {
+// // // // // // //   if (!raw) return [];
+// // // // // // //   const arr = Array.isArray(raw)
+// // // // // // //     ? raw
+// // // // // // //     : String(raw).split(/[,·|]/).map(s => s.trim()).filter(Boolean);
+// // // // // // //   return arr.map(k => NORMALISE_CHECK[k.toLowerCase()] || k.toLowerCase());
+// // // // // // // }
+
+// // // // // // // function calcTAT(createdAt) {
+// // // // // // //   if (!createdAt) return "—";
+// // // // // // //   const days = Math.floor((Date.now() - new Date(createdAt)) / 86400000);
+// // // // // // //   return days === 0 ? "Today" : `${days}d`;
+// // // // // // // }
+
+// // // // // // // function normPriority(p) {
+// // // // // // //   if (!p) return "LOW";
+// // // // // // //   return String(p).toUpperCase();
+// // // // // // // }
+
+// // // // // // // // ── Shared input styles ────────────────────────────────────────────────────────
+// // // // // // // const labelSt = {
+// // // // // // //   display: "block", fontSize: "11px", fontWeight: 700,
+// // // // // // //   color: "#475569", marginBottom: "5px",
+// // // // // // //   textTransform: "uppercase", letterSpacing: "0.4px",
+// // // // // // // };
+// // // // // // // const inputSt = {
+// // // // // // //   width: "100%", padding: "9px 12px",
+// // // // // // //   border: "1.5px solid #e2e8f0", borderRadius: "8px",
+// // // // // // //   fontSize: "13px", color: "#1e293b", background: "#f8fafc",
+// // // // // // //   outline: "none", fontFamily: "inherit", boxSizing: "border-box",
+// // // // // // // };
+// // // // // // // const textareaSt = { ...inputSt, resize: "vertical", minHeight: "72px" };
+
+// // // // // // // // ── FormField sub-component ────────────────────────────────────────────────────
+// // // // // // // function FormField({ f, value, onChange }) {
+// // // // // // //   if (f.type === "radio") return (
+// // // // // // //     <div style={{
+// // // // // // //       gridColumn: "1 / -1", background: "#f0f4ff", border: "1.5px solid #c7d2fe",
+// // // // // // //       borderRadius: "8px", padding: "12px 14px", marginBottom: "4px",
+// // // // // // //     }}>
+// // // // // // //       <label style={labelSt}>{f.label}</label>
+// // // // // // //       <div style={{ display: "flex", gap: "20px" }}>
+// // // // // // //         {f.options.map(o => (
+// // // // // // //           <label key={o} style={{
+// // // // // // //             display: "flex", alignItems: "center", gap: "7px",
+// // // // // // //             fontSize: "13px", fontWeight: 600, color: "#27348B", cursor: "pointer",
+// // // // // // //           }}>
+// // // // // // //             <input
+// // // // // // //               type="radio"
+// // // // // // //               name={f.key}
+// // // // // // //               value={o}
+// // // // // // //               checked={value === o}
+// // // // // // //               onChange={() => onChange(o)}
+// // // // // // //               style={{ width: "15px", height: "15px", accentColor: "#27348B", cursor: "pointer" }}
+// // // // // // //             />
+// // // // // // //             {o}
+// // // // // // //           </label>
+// // // // // // //         ))}
+// // // // // // //       </div>
+// // // // // // //     </div>
+// // // // // // //   );
+// // // // // // //   if (f.type === "textarea") return (
+// // // // // // //     <div style={{ gridColumn: "1 / -1" }}>
+// // // // // // //       <label style={labelSt}>{f.label}</label>
+// // // // // // //       <textarea
+// // // // // // //         rows={3} value={value} onChange={e => onChange(e.target.value)}
+// // // // // // //         placeholder={`Enter ${f.label.toLowerCase()}…`} style={textareaSt}
+// // // // // // //       />
+// // // // // // //     </div>
+// // // // // // //   );
+// // // // // // //   if (f.type === "select") return (
+// // // // // // //     <div>
+// // // // // // //       <label style={labelSt}>{f.label}</label>
+// // // // // // //       <select value={value} onChange={e => onChange(e.target.value)}
+// // // // // // //         style={{ ...inputSt, cursor: "pointer" }}>
+// // // // // // //         <option value="">— Select —</option>
+// // // // // // //         {f.options.map(o => <option key={o} value={o}>{o}</option>)}
+// // // // // // //       </select>
+// // // // // // //     </div>
+// // // // // // //   );
+// // // // // // //   return (
+// // // // // // //     <div>
+// // // // // // //       <label style={labelSt}>{f.label}</label>
+// // // // // // //       <input type={f.type} value={value} onChange={e => onChange(e.target.value)}
+// // // // // // //         placeholder={f.type === "date" ? "" : `Enter ${f.label.toLowerCase()}…`}
+// // // // // // //         style={inputSt} />
+// // // // // // //     </div>
+// // // // // // //   );
+// // // // // // // }
+
+// // // // // // // // ── Main Component ─────────────────────────────────────────────────────────────
+// // // // // // // export default function Verifyer() {
+// // // // // // //   const navigate = useNavigate();
+// // // // // // //   const location = useLocation();
+// // // // // // //   const user     = getUser();
+// // // // // // //   const token    = getToken();
+
+// // // // // // //   // Role resolution
+// // // // // // //   const role           = user.role || "";
+// // // // // // //   const isAdmin        = role === "admin";
+// // // // // // //   const assignedCheck  = ROLE_CHECK_MAP[role] || null; // null = admin / generic verifier sees all
+
+// // // // // // //   // ── Sidebar view: "active" | "completed"
+// // // // // // //   const sidebarView = new URLSearchParams(location.search).get("view") || "active";
+
+// // // // // // //   // ── State ─────────────────────────────────────────────────────────────────
+// // // // // // //   const [cases,        setCases]        = useState([]);
+// // // // // // //   const [loading,      setLoading]      = useState(true);
+// // // // // // //   const [selectedCase, setSelectedCase] = useState(null);
+// // // // // // //   const [activeCheck,  setActiveCheck]  = useState(assignedCheck || "employment");
+// // // // // // //   const [search,       setSearch]       = useState("");
+
+// // // // // // //   // Form
+// // // // // // //   const [form,       setForm]       = useState({});
+// // // // // // //   const [outcome,    setOutcome]    = useState("");
+// // // // // // //   const [saving,     setSaving]     = useState(false);
+// // // // // // //   const [saveMsg,    setSaveMsg]    = useState({ text: "", type: "" });
+
+// // // // // // //   // Comments
+// // // // // // //   const [comments,      setComments]      = useState([]);
+// // // // // // //   const [commentInput,  setCommentInput]  = useState("");
+// // // // // // //   const commentsEndRef = useRef(null);
+
+// // // // // // //   // ── Fetch real cases from API ──────────────────────────────────────────────
+// // // // // // //   const fetchCases = () => {
+// // // // // // //     setLoading(true);
+// // // // // // //     fetch(`${API_URL}/api/cases`, {
+// // // // // // //       headers: { Authorization: `Bearer ${token}`, Accept: "application/json" },
+// // // // // // //     })
+// // // // // // //       .then(r => r.json())
+// // // // // // //       .then(data => {
+// // // // // // //         const raw = data.cases || [];
+// // // // // // //         const normalised = raw.map(c => ({
+// // // // // // //           ...c,
+// // // // // // //           checks_raw:  c.checks,
+// // // // // // //           checks_norm: normChecks(c.checks),
+// // // // // // //           candidate:   c.candidate || c.candidate_name || "—",
+// // // // // // //           priority:    normPriority(c.priority),
+// // // // // // //           tat_display: calcTAT(c.created_at),
+// // // // // // //         }));
+// // // // // // //         setCases(normalised);
+// // // // // // //         if (normalised.length > 0 && !selectedCase) {
+// // // // // // //           const first = sidebarView === "completed"
+// // // // // // //             ? normalised.find(c => c.status === "completed")
+// // // // // // //             : normalised.find(c => c.status !== "completed");
+// // // // // // //           setSelectedCase(first || normalised[0]);
+// // // // // // //         }
+// // // // // // //       })
+// // // // // // //       .catch(console.error)
+// // // // // // //       .finally(() => setLoading(false));
+// // // // // // //   };
+
+// // // // // // //   useEffect(() => { fetchCases(); }, []);
+
+// // // // // // //   // Auto-scroll comments
+// // // // // // //   useEffect(() => {
+// // // // // // //     commentsEndRef.current?.scrollIntoView({ behavior: "smooth" });
+// // // // // // //   }, [comments]);
+
+// // // // // // //   // Reset form when case / check changes
+// // // // // // //   useEffect(() => {
+// // // // // // //     setForm({});
+// // // // // // //     setOutcome("");
+// // // // // // //     setSaveMsg({ text: "", type: "" });
+// // // // // // //   }, [selectedCase?.case_id, activeCheck]);
+
+// // // // // // //   // Jump active check to first valid tab on case selection
+// // // // // // //   useEffect(() => {
+// // // // // // //     if (!selectedCase) return;
+// // // // // // //     const validChecks = selectedCase.checks_norm;
+// // // // // // //     if (validChecks.length === 0) return;
+// // // // // // //     if (assignedCheck && validChecks.includes(assignedCheck)) {
+// // // // // // //       setActiveCheck(assignedCheck);
+// // // // // // //     } else if (!validChecks.includes(activeCheck)) {
+// // // // // // //       setActiveCheck(validChecks[0]);
+// // // // // // //     }
+// // // // // // //   }, [selectedCase?.case_id]);
+
+// // // // // // //   // ── Filtered queue lists ───────────────────────────────────────────────────
+// // // // // // //   const activeCases    = cases.filter(c => c.status !== "completed");
+// // // // // // //   const completedCases = cases.filter(c => c.status === "completed");
+
+// // // // // // //   const filterBySearch = (list) => {
+// // // // // // //     if (!search) return list;
+// // // // // // //     const q = search.toLowerCase();
+// // // // // // //     return list.filter(c =>
+// // // // // // //       (c.case_id || "").toLowerCase().includes(q) ||
+// // // // // // //       (c.candidate || "").toLowerCase().includes(q) ||
+// // // // // // //       (c.client || c.client_name || "").toLowerCase().includes(q)
+// // // // // // //     );
+// // // // // // //   };
+
+// // // // // // //   const queueList = filterBySearch(sidebarView === "completed" ? completedCases : activeCases);
+
+// // // // // // //   // ── Tab accessibility ──────────────────────────────────────────────────────
+// // // // // // //   // A tab is accessible if:
+// // // // // // //   //   1. The case has that check type, AND
+// // // // // // //   //   2. The verifier's role allows it (admin / generic verifier: any; specialist: only their type)
+// // // // // // //   const canAccessTab = (checkKey) => {
+// // // // // // //     if (!selectedCase) return false;
+// // // // // // //     const caseHasCheck = selectedCase.checks_norm.includes(checkKey);
+// // // // // // //     if (!caseHasCheck) return false;
+// // // // // // //     if (isAdmin || !assignedCheck) return true;           // admin / generic verifier
+// // // // // // //     return checkKey === assignedCheck;                     // specialist verifier
+// // // // // // //   };
+
+// // // // // // //   // ── Select a case ──────────────────────────────────────────────────────────
+// // // // // // //   const selectCase = (c) => {
+// // // // // // //     setSelectedCase(c);
+// // // // // // //     setComments([]);   // TODO: fetch from API  GET /api/cases/{id}/comments
+// // // // // // //   };
+
+// // // // // // //   // ── Save result ────────────────────────────────────────────────────────────
+// // // // // // //   const handleSave = async (isDraft) => {
+// // // // // // //     if (!outcome && !isDraft) {
+// // // // // // //       setSaveMsg({ text: "Please select an outcome before saving.", type: "error" });
+// // // // // // //       return;
+// // // // // // //     }
+// // // // // // //     setSaving(true);
+// // // // // // //     setSaveMsg({ text: "", type: "" });
+// // // // // // //     try {
+// // // // // // //       const res = await fetch(`${API_URL}/api/cases/${selectedCase.case_id}/check-result`, {
+// // // // // // //         method: "POST",
+// // // // // // //         headers: {
+// // // // // // //           Authorization: `Bearer ${token}`,
+// // // // // // //           "Content-Type": "application/json",
+// // // // // // //           Accept: "application/json",
+// // // // // // //         },
+// // // // // // //         body: JSON.stringify({
+// // // // // // //           check_type: activeCheck,
+// // // // // // //           outcome:    outcome || "unable",
+// // // // // // //           form_data:  form,
+// // // // // // //           is_draft:   isDraft,
+// // // // // // //         }),
+// // // // // // //       });
+// // // // // // //       if (!res.ok) throw new Error("Server error");
+// // // // // // //       setSaveMsg({
+// // // // // // //         text: isDraft ? "Draft saved — case stays In Progress." : "Result submitted — moved to QC Review.",
+// // // // // // //         type: "success",
+// // // // // // //       });
+// // // // // // //       fetchCases();
+// // // // // // //     } catch {
+// // // // // // //       setSaveMsg({ text: "Could not save. Please try again.", type: "error" });
+// // // // // // //     } finally {
+// // // // // // //       setSaving(false);
+// // // // // // //     }
+// // // // // // //   };
+
+// // // // // // //   // ── Send comment ───────────────────────────────────────────────────────────
+// // // // // // //   const sendComment = () => {
+// // // // // // //     if (!commentInput.trim()) return;
+// // // // // // //     // TODO: POST /api/cases/{id}/comments
+// // // // // // //     setComments(p => [...p, {
+// // // // // // //       id:     Date.now(),
+// // // // // // //       author: user.name || "Verifier",
+// // // // // // //       avatar: (user.name || "V").charAt(0).toUpperCase(),
+// // // // // // //       time:   new Date().toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit" }),
+// // // // // // //       text:   commentInput.trim(),
+// // // // // // //     }]);
+// // // // // // //     setCommentInput("");
+// // // // // // //   };
+
+// // // // // // //   // ── Charges for selected case ──────────────────────────────────────────────
+// // // // // // //   const caseCharges = (selectedCase?.checks_norm || []).map(ch => ({
+// // // // // // //     label:  CHECK_TABS.find(t => t.key === ch)?.label || ch,
+// // // // // // //     amount: VERIFICATION_RATES[ch] || 0,
+// // // // // // //     key:    ch,
+// // // // // // //   }));
+// // // // // // //   const totalCharge = caseCharges.reduce((s, c) => s + c.amount, 0);
+
+// // // // // // //   // ── Case list item ─────────────────────────────────────────────────────────
+// // // // // // //   const QueueItem = ({ c }) => {
+// // // // // // //     const pm       = PRIORITY_META[c.priority] || PRIORITY_META.LOW;
+// // // // // // //     const sm       = STATUS_META[c.status] || STATUS_META["pending"];
+// // // // // // //     const isActive = selectedCase?.case_id === c.case_id;
+// // // // // // //     const checkLabels = c.checks_norm.map(k =>
+// // // // // // //       CHECK_TABS.find(t => t.key === k)?.label?.slice(0, 3).toUpperCase() || k.slice(0, 3).toUpperCase()
+// // // // // // //     );
+
+// // // // // // //     return (
+// // // // // // //       <tr
+// // // // // // //         className="boder-tbl active"
+// // // // // // //         onClick={() => selectCase(c)}
+// // // // // // //         style={{
+// // // // // // //           cursor: "pointer",
+// // // // // // //           background: isActive ? "#eef3ff" : undefined,
+// // // // // // //           borderLeft: isActive ? "3px solid #2b3b8c" : "3px solid transparent",
+// // // // // // //         }}
+// // // // // // //       >
+// // // // // // //         {/* Case ID + checks */}
+// // // // // // //         <td>
+// // // // // // //           <div className="criminal-case">
+// // // // // // //             <p>
+// // // // // // //               <span style={{ fontWeight: 700, color: "#27348B" }}>{c.case_id}</span>
+// // // // // // //               <br />
+// // // // // // //               <span style={{ fontSize: "11px", color: "#94a3b8" }}>
+// // // // // // //                 {checkLabels.join(" · ")}
+// // // // // // //               </span>
+// // // // // // //             </p>
+// // // // // // //           </div>
+// // // // // // //         </td>
+
+// // // // // // //         {/* Candidate name */}
+// // // // // // //         <td>
+// // // // // // //           <div className="client-names">{c.candidate}</div>
+// // // // // // //         </td>
+
+// // // // // // //         {/* Progress + TAT */}
+// // // // // // //         <td>
+// // // // // // //           <div className="custom-progress">
+// // // // // // //             <div className="custom-progress-bar" style={{ width: `${sm.pct}%`, background: sm.color }} />
+// // // // // // //           </div>
+// // // // // // //           <p className="progress-client-text" style={{ color: sm.color }}>{c.tat_display}</p>
+// // // // // // //         </td>
+
+// // // // // // //         {/* Priority dot */}
+// // // // // // //         <td>
+// // // // // // //           <div className="parent-client-boxes">
+// // // // // // //             <span
+// // // // // // //               className="client-cases-box"
+// // // // // // //               style={{ background: pm.dot }}
+// // // // // // //               title={c.priority}
+// // // // // // //             />
+// // // // // // //           </div>
+// // // // // // //         </td>
+// // // // // // //       </tr>
+// // // // // // //     );
+// // // // // // //   };
+
+// // // // // // //   // ── Middle panel: full detail of selected case ──────────────────────────────
+// // // // // // //   const DetailPanel = () => {
+// // // // // // //     if (!selectedCase) return (
+// // // // // // //       <div style={{ display: "flex", alignItems: "center", justifyContent: "center", height: "340px" }}>
+// // // // // // //         <p style={{ color: "#94a3b8", fontSize: "14px" }}>Select a case to begin verification</p>
+// // // // // // //       </div>
+// // // // // // //     );
+
+// // // // // // //     const fields = CHECK_FIELDS[activeCheck] || [];
+// // // // // // //     const sm     = STATUS_META[selectedCase.status] || STATUS_META["pending"];
+// // // // // // //     const pm     = PRIORITY_META[selectedCase.priority] || PRIORITY_META.LOW;
+
+// // // // // // //     return (
+// // // // // // //       <>
+// // // // // // //         {/* Header */}
+// // // // // // //         <div style={{
+// // // // // // //           background: "#27348B", color: "#fff", padding: "14px 18px",
+// // // // // // //           fontWeight: 700, fontSize: "13px", borderRadius: "6px 6px 0 0",
+// // // // // // //           display: "flex", justifyContent: "space-between", alignItems: "center",
+// // // // // // //         }}>
+// // // // // // //           <span>
+// // // // // // //             {selectedCase.case_id} — {selectedCase.candidate}
+// // // // // // //           </span>
+// // // // // // //           <span style={{
+// // // // // // //             background: pm.bg, color: pm.color, fontSize: "11px",
+// // // // // // //             fontWeight: 700, padding: "3px 10px", borderRadius: "20px",
+// // // // // // //           }}>
+// // // // // // //             {selectedCase.priority}
+// // // // // // //           </span>
+// // // // // // //         </div>
+
+// // // // // // //         {/* Check type tabs — only show checks present in this case */}
+// // // // // // //         <div style={{
+// // // // // // //           display: "flex", background: "#fff",
+// // // // // // //           borderBottom: "1px solid #e2e8f0", overflowX: "auto",
+// // // // // // //         }}>
+// // // // // // //           {CHECK_TABS.filter(t => selectedCase.checks_norm.includes(t.key)).map((t, i, arr) => {
+// // // // // // //             const accessible = canAccessTab(t.key);
+// // // // // // //             const isActive   = activeCheck === t.key;
+// // // // // // //             return (
+// // // // // // //               <button
+// // // // // // //                 key={t.key}
+// // // // // // //                 onClick={() => accessible && setActiveCheck(t.key)}
+// // // // // // //                 title={!accessible ? "Your role cannot access this check type" : ""}
+// // // // // // //                 style={{
+// // // // // // //                   padding: "11px 18px", border: "none", whiteSpace: "nowrap",
+// // // // // // //                   borderRight: i < arr.length - 1 ? "1px solid #e2e8f0" : "none",
+// // // // // // //                   borderBottom: isActive ? "3px solid #27348B" : "3px solid transparent",
+// // // // // // //                   background: isActive ? "#f0f4ff" : "#fff",
+// // // // // // //                   color: isActive ? "#27348B" : accessible ? "#64748b" : "#cbd5e1",
+// // // // // // //                   fontWeight: isActive ? 700 : 400,
+// // // // // // //                   fontSize: "13px",
+// // // // // // //                   cursor: accessible ? "pointer" : "not-allowed",
+// // // // // // //                   opacity: accessible ? 1 : 0.45,
+// // // // // // //                   transition: "all 0.15s",
+// // // // // // //                 }}
+// // // // // // //               >
+// // // // // // //                 {t.label}
+// // // // // // //               </button>
+// // // // // // //             );
+// // // // // // //           })}
+// // // // // // //         </div>
+
+// // // // // // //         {/* Scrollable form body */}
+// // // // // // //         <div style={{
+// // // // // // //           border: "1px solid #e2e8f0", borderTop: "none",
+// // // // // // //           borderRadius: "0 0 6px 6px", background: "#fff",
+// // // // // // //           maxHeight: "520px", overflowY: "auto", padding: "16px",
+// // // // // // //         }}>
+
+// // // // // // //           {/* Case summary strip */}
+// // // // // // //           <div style={{
+// // // // // // //             display: "grid", gridTemplateColumns: "repeat(4, 1fr)",
+// // // // // // //             gap: "10px", marginBottom: "18px",
+// // // // // // //           }}>
+// // // // // // //             {[
+// // // // // // //               { label: "Client",   value: selectedCase.client || selectedCase.client_name || "—" },
+// // // // // // //               { label: "Status",   value: <span style={{ background: sm.color, color: "#fff", fontSize: "11px", fontWeight: 700, padding: "3px 10px", borderRadius: "4px" }}>{sm.label}</span> },
+// // // // // // //               { label: "TAT",      value: selectedCase.tat_display },
+// // // // // // //               { label: "Created",  value: selectedCase.created_at ? new Date(selectedCase.created_at).toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" }) : "—" },
+// // // // // // //             ].map(r => (
+// // // // // // //               <div key={r.label} style={{ background: "#f8fafc", borderRadius: "8px", padding: "10px 14px" }}>
+// // // // // // //                 <div style={{ fontSize: "10px", fontWeight: 700, color: "#94a3b8", textTransform: "uppercase", letterSpacing: "0.5px", marginBottom: "4px" }}>{r.label}</div>
+// // // // // // //                 <div style={{ fontSize: "13px", fontWeight: 700, color: "#1e293b" }}>{r.value}</div>
+// // // // // // //               </div>
+// // // // // // //             ))}
+// // // // // // //           </div>
+
+// // // // // // //           {/* Outcome toggle */}
+// // // // // // //           <div style={{ marginBottom: "16px" }}>
+// // // // // // //             <p style={{ fontSize: "11px", fontWeight: 700, color: "#475569", marginBottom: "8px", textTransform: "uppercase", letterSpacing: "0.4px" }}>
+// // // // // // //               Verification Outcome
+// // // // // // //             </p>
+// // // // // // //             <div style={{ display: "flex", gap: "8px" }}>
+// // // // // // //               {OUTCOME_OPTS.map(o => (
+// // // // // // //                 <button
+// // // // // // //                   key={o.key}
+// // // // // // //                   onClick={() => setOutcome(o.key)}
+// // // // // // //                   style={{
+// // // // // // //                     flex: 1, padding: "10px 8px", cursor: "pointer",
+// // // // // // //                     border: `2px solid ${outcome === o.key ? o.border : "#e2e8f0"}`,
+// // // // // // //                     borderRadius: "8px",
+// // // // // // //                     background: outcome === o.key ? o.bg : "#f8fafc",
+// // // // // // //                     color: outcome === o.key ? o.color : "#94a3b8",
+// // // // // // //                     fontWeight: outcome === o.key ? 700 : 500,
+// // // // // // //                     fontSize: "12px",
+// // // // // // //                     transition: "all 0.15s",
+// // // // // // //                   }}
+// // // // // // //                 >
+// // // // // // //                   {o.label}
+// // // // // // //                 </button>
+// // // // // // //               ))}
+// // // // // // //             </div>
+// // // // // // //           </div>
+
+// // // // // // //           {/* Dynamic fields grid */}
+// // // // // // //           {!canAccessTab(activeCheck) ? (
+// // // // // // //             <div style={{ padding: "24px", textAlign: "center", color: "#94a3b8", fontSize: "13px", background: "#f8fafc", borderRadius: "8px" }}>
+// // // // // // //               Your role does not have access to the <strong>{CHECK_TABS.find(t => t.key === activeCheck)?.label}</strong> check.
+// // // // // // //             </div>
+// // // // // // //           ) : (
+// // // // // // //             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px" }}>
+// // // // // // //               {fields.map(f => (
+// // // // // // //                 <FormField
+// // // // // // //                   key={f.key} f={f}
+// // // // // // //                   value={form[f.key] || ""}
+// // // // // // //                   onChange={v => setForm(p => ({ ...p, [f.key]: v }))}
+// // // // // // //                 />
+// // // // // // //               ))}
+// // // // // // //             </div>
+// // // // // // //           )}
+
+// // // // // // //           {/* Save message */}
+// // // // // // //           {saveMsg.text && (
+// // // // // // //             <div style={{
+// // // // // // //               marginTop: "14px", padding: "10px 14px", borderRadius: "8px",
+// // // // // // //               background: saveMsg.type === "success" ? "#f0fdf4" : "#fef2f2",
+// // // // // // //               color:      saveMsg.type === "success" ? "#16a34a" : "#dc2626",
+// // // // // // //               fontSize: "13px", fontWeight: 600,
+// // // // // // //             }}>
+// // // // // // //               {saveMsg.text}
+// // // // // // //             </div>
+// // // // // // //           )}
+// // // // // // //         </div>
+
+// // // // // // //         {/* Action buttons */}
+// // // // // // //         {canAccessTab(activeCheck) && (
+// // // // // // //           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px", marginTop: "12px" }}>
+// // // // // // //             <button
+// // // // // // //               onClick={() => handleSave(true)}
+// // // // // // //               disabled={saving}
+// // // // // // //               style={{
+// // // // // // //                 display: "flex", alignItems: "center", justifyContent: "center", gap: "8px",
+// // // // // // //                 padding: "13px", background: "#27348B", color: "#fff", border: "none",
+// // // // // // //                 borderRadius: "6px", fontWeight: 700, fontSize: "13px", cursor: "pointer",
+// // // // // // //               }}
+// // // // // // //             >
+// // // // // // //               💾 Save Draft
+// // // // // // //             </button>
+// // // // // // //             <button
+// // // // // // //               onClick={() => handleSave(false)}
+// // // // // // //               disabled={saving || !outcome}
+// // // // // // //               style={{
+// // // // // // //                 display: "flex", alignItems: "center", justifyContent: "center", gap: "8px",
+// // // // // // //                 padding: "13px",
+// // // // // // //                 background: saving || !outcome ? "#94a3b8" : "#10b981",
+// // // // // // //                 color: "#fff", border: "none", borderRadius: "6px",
+// // // // // // //                 fontWeight: 700, fontSize: "13px",
+// // // // // // //                 cursor: saving || !outcome ? "not-allowed" : "pointer",
+// // // // // // //               }}
+// // // // // // //             >
+// // // // // // //               {saving ? "Saving…" : "✔ Save & Mark Done"}
+// // // // // // //             </button>
+// // // // // // //           </div>
+// // // // // // //         )}
+// // // // // // //       </>
+// // // // // // //     );
+// // // // // // //   };
+
+// // // // // // //   // ── Right panel: Charges + Comments ─────────────────────────────────────────
+// // // // // // //   const RightPanel = () => (
+// // // // // // //     <div style={{ display: "flex", flexDirection: "column", gap: "14px" }}>
+
+// // // // // // //       {/* Verification Charges */}
+// // // // // // //       <div style={{ borderRadius: "10px", overflow: "hidden", border: "1px solid #e2e8f0" }}>
+// // // // // // //         <div style={{ background: "#27348B", padding: "13px 16px" }}>
+// // // // // // //           <h3 style={{ margin: 0, color: "#fff", fontSize: "12px", fontWeight: 700, letterSpacing: "0.08em" }}>
+// // // // // // //             VERIFICATION CHARGES
+// // // // // // //           </h3>
+// // // // // // //         </div>
+// // // // // // //         {selectedCase ? (
+// // // // // // //           <>
+// // // // // // //             {caseCharges.map((c, i) => (
+// // // // // // //               <div key={c.key} style={{
+// // // // // // //                 display: "flex", justifyContent: "space-between", alignItems: "center",
+// // // // // // //                 padding: "12px 16px",
+// // // // // // //                 background: i % 2 === 0 ? "#f8fafc" : "#fff",
+// // // // // // //                 borderBottom: "1px solid #f1f5f9",
+// // // // // // //                 fontSize: "13px",
+// // // // // // //               }}>
+// // // // // // //                 <span style={{ color: "#475569" }}>{c.label} Check</span>
+// // // // // // //                 <span style={{ fontWeight: 700, color: "#1e293b" }}>₹{c.amount}</span>
+// // // // // // //               </div>
+// // // // // // //             ))}
+// // // // // // //             <div style={{
+// // // // // // //               display: "flex", justifyContent: "space-between", alignItems: "center",
+// // // // // // //               padding: "14px 16px", background: "#27348B",
+// // // // // // //             }}>
+// // // // // // //               <span style={{ color: "#fff", fontWeight: 700, fontSize: "13px" }}>TOTAL</span>
+// // // // // // //               <span style={{ color: "#fff", fontWeight: 800, fontSize: "15px" }}>₹{totalCharge}</span>
+// // // // // // //             </div>
+// // // // // // //           </>
+// // // // // // //         ) : (
+// // // // // // //           <p style={{ padding: "16px", color: "#94a3b8", fontSize: "13px" }}>Select a case to see charges.</p>
+// // // // // // //         )}
+// // // // // // //       </div>
+
+// // // // // // //       {/* Comments */}
+// // // // // // //       <div style={{ borderRadius: "10px", overflow: "hidden", border: "1px solid #e2e8f0", flex: 1 }}>
+// // // // // // //         <div style={{ background: "#27348B", padding: "13px 16px" }}>
+// // // // // // //           <h3 style={{ margin: 0, color: "#fff", fontSize: "12px", fontWeight: 700, letterSpacing: "0.08em" }}>
+// // // // // // //             COMMENTS & NOTES
+// // // // // // //           </h3>
+// // // // // // //         </div>
+// // // // // // //         <div style={{ maxHeight: "260px", overflowY: "auto", padding: "12px 14px" }}>
+// // // // // // //           {comments.length === 0 ? (
+// // // // // // //             <p style={{ color: "#cbd5e1", fontSize: "13px", textAlign: "center", padding: "16px 0" }}>
+// // // // // // //               No comments yet.
+// // // // // // //             </p>
+// // // // // // //           ) : (
+// // // // // // //             comments.map((c, i) => (
+// // // // // // //               <div key={c.id} style={{ display: "flex", gap: "10px", marginBottom: "14px" }}>
+// // // // // // //                 <div style={{
+// // // // // // //                   width: "30px", height: "30px", borderRadius: "50%",
+// // // // // // //                   background: i % 2 === 0 ? "#7c3aed" : "#0d9488",
+// // // // // // //                   color: "#fff", display: "flex", alignItems: "center", justifyContent: "center",
+// // // // // // //                   fontSize: "13px", fontWeight: 700, flexShrink: 0,
+// // // // // // //                 }}>
+// // // // // // //                   {c.avatar}
+// // // // // // //                 </div>
+// // // // // // //                 <div style={{ flex: 1 }}>
+// // // // // // //                   <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "3px" }}>
+// // // // // // //                     <span style={{ fontSize: "12px", fontWeight: 700, color: "#1e293b" }}>{c.author}</span>
+// // // // // // //                     <span style={{ fontSize: "11px", color: "#94a3b8" }}>{c.time}</span>
+// // // // // // //                   </div>
+// // // // // // //                   <p style={{ fontSize: "12px", color: "#475569", margin: 0, lineHeight: 1.5 }}>{c.text}</p>
+// // // // // // //                 </div>
+// // // // // // //               </div>
+// // // // // // //             ))
+// // // // // // //           )}
+// // // // // // //           <div ref={commentsEndRef} />
+// // // // // // //         </div>
+// // // // // // //         <div style={{ borderTop: "1px solid #e2e8f0", display: "flex", gap: "0" }}>
+// // // // // // //           <input
+// // // // // // //             type="text"
+// // // // // // //             placeholder="Add a comment…"
+// // // // // // //             value={commentInput}
+// // // // // // //             onChange={e => setCommentInput(e.target.value)}
+// // // // // // //             onKeyDown={e => e.key === "Enter" && sendComment()}
+// // // // // // //             style={{
+// // // // // // //               flex: 1, border: "none", padding: "11px 14px",
+// // // // // // //               fontSize: "13px", outline: "none", background: "#fff",
+// // // // // // //             }}
+// // // // // // //           />
+// // // // // // //           <button onClick={sendComment} style={{
+// // // // // // //             background: "#27348B", border: "none", padding: "0 16px",
+// // // // // // //             cursor: "pointer", color: "#fff",
+// // // // // // //           }}>
+// // // // // // //             <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+// // // // // // //               <line x1="22" y1="2" x2="11" y2="13" />
+// // // // // // //               <polygon points="22 2 15 22 11 13 2 9 22 2" />
+// // // // // // //             </svg>
+// // // // // // //           </button>
+// // // // // // //         </div>
+// // // // // // //       </div>
+// // // // // // //     </div>
+// // // // // // //   );
+
+// // // // // // //   // ── Render ─────────────────────────────────────────────────────────────────
+// // // // // // //   return (
+// // // // // // //     <>
+// // // // // // //       <Sidebar />
+// // // // // // //       <section id="content">
+// // // // // // //         <Header />
+// // // // // // //         <main>
+// // // // // // //           <div className="dash-wrper">
+
+// // // // // // //             {/* Page header */}
+// // // // // // //             <div className="dash-upper-head">
+// // // // // // //               <div className="left">
+// // // // // // //                 <div className="dash-title-flex">
+// // // // // // //                   <h3 className="dash-title-text">Verifier Workspace</h3>
+// // // // // // //                   <span style={{
+// // // // // // //                     fontSize: "12px", color: "#64748b",
+// // // // // // //                     background: "#eef3ff", padding: "3px 10px", borderRadius: "20px",
+// // // // // // //                   }}>
+// // // // // // //                     {user.name || "Verifier"} — {role}
+// // // // // // //                   </span>
+// // // // // // //                   {assignedCheck && (
+// // // // // // //                     <span style={{
+// // // // // // //                       fontSize: "11px", color: "#fff",
+// // // // // // //                       background: "#27348B", padding: "3px 10px", borderRadius: "20px",
+// // // // // // //                     }}>
+// // // // // // //                       Assigned: {CHECK_TABS.find(t => t.key === assignedCheck)?.label}
+// // // // // // //                     </span>
+// // // // // // //                   )}
+// // // // // // //                 </div>
+// // // // // // //               </div>
+// // // // // // //               <div className="right">
+// // // // // // //                 <input
+// // // // // // //                   type="text"
+// // // // // // //                   className="dash-search-input"
+// // // // // // //                   placeholder="Search case ID or candidate…"
+// // // // // // //                   value={search}
+// // // // // // //                   onChange={e => setSearch(e.target.value)}
+// // // // // // //                 />
+// // // // // // //                 {search && (
+// // // // // // //                   <button onClick={() => setSearch("")}
+// // // // // // //                     style={{ background: "none", border: "none", cursor: "pointer", fontSize: "18px", color: "#94a3b8" }}>
+// // // // // // //                     ×
+// // // // // // //                   </button>
+// // // // // // //                 )}
+// // // // // // //               </div>
+// // // // // // //             </div>
+
+// // // // // // //             {/* View toggle: Active / Completed */}
+// // // // // // //             <div style={{ display: "flex", gap: "8px", marginBottom: "4px" }}>
+// // // // // // //               <button
+// // // // // // //                 className={`tab-cta ${sidebarView === "active" ? "active" : ""}`}
+// // // // // // //                 onClick={() => navigate("/Verifyer?view=active", { replace: true })}
+// // // // // // //               >
+// // // // // // //                 Active Cases
+// // // // // // //                 <span style={{ marginLeft: "6px", background: "rgba(0,0,0,0.1)", borderRadius: "8px", padding: "1px 6px", fontSize: "11px", fontWeight: 700 }}>
+// // // // // // //                   {activeCases.length}
+// // // // // // //                 </span>
+// // // // // // //               </button>
+// // // // // // //               <button
+// // // // // // //                 className={`tab-cta ${sidebarView === "completed" ? "active" : ""}`}
+// // // // // // //                 onClick={() => navigate("/Verifyer?view=completed", { replace: true })}
+// // // // // // //               >
+// // // // // // //                 Completed
+// // // // // // //                 <span style={{ marginLeft: "6px", background: "rgba(0,0,0,0.1)", borderRadius: "8px", padding: "1px 6px", fontSize: "11px", fontWeight: 700 }}>
+// // // // // // //                   {completedCases.length}
+// // // // // // //                 </span>
+// // // // // // //               </button>
+// // // // // // //             </div>
+
+// // // // // // //             {/* Three-column layout: Queue | Form | Charges+Comments */}
+// // // // // // //             <div style={{ display: "grid", gridTemplateColumns: "300px 1fr 280px", gap: "16px", alignItems: "start" }}>
+
+// // // // // // //               {/* ── LEFT: Case queue ── */}
+// // // // // // //               <div className="down-table" style={{ margin: 0 }}>
+// // // // // // //                 <div className="client-portal-cases">
+// // // // // // //                   <h3>
+// // // // // // //                     {sidebarView === "completed" ? "COMPLETED" : "ACTIVE"} ({queueList.length})
+// // // // // // //                   </h3>
+// // // // // // //                 </div>
+
+// // // // // // //                 {loading ? (
+// // // // // // //                   <p style={{ padding: "24px", textAlign: "center", color: "#94a3b8" }}>Loading cases…</p>
+// // // // // // //                 ) : queueList.length === 0 ? (
+// // // // // // //                   <p style={{ padding: "24px", textAlign: "center", color: "#94a3b8", fontSize: "13px" }}>
+// // // // // // //                     No {sidebarView} cases found.
+// // // // // // //                   </p>
+// // // // // // //                 ) : (
+// // // // // // //                   <table>
+// // // // // // //                     <tbody>
+// // // // // // //                       {queueList.map(c => <QueueItem key={c.case_id} c={c} />)}
+// // // // // // //                     </tbody>
+// // // // // // //                   </table>
+// // // // // // //                 )}
+// // // // // // //               </div>
+
+// // // // // // //               {/* ── MIDDLE: Detail + form ── */}
+// // // // // // //               <div className="second-card">
+// // // // // // //                 <DetailPanel />
+// // // // // // //               </div>
+
+// // // // // // //               {/* ── RIGHT: Charges + Comments ── */}
+// // // // // // //               <div className="thrid-card">
+// // // // // // //                 <RightPanel />
+// // // // // // //               </div>
+
+// // // // // // //             </div>
+// // // // // // //           </div>
+// // // // // // //         </main>
+// // // // // // //       </section>
+// // // // // // //     </>
+// // // // // // //   );
+// // // // // // // }
+// // // // // import { useState, useEffect, useRef } from "react";
+// // // // // import { useNavigate, useLocation } from "react-router-dom";
+// // // // // import Sidebar from "./Sidebar";
+// // // // // import Header from "./Header";
+// // // // // import { API_URL } from "../src/config";
+
+// // // // // // ── Check tab definitions ──────────────────────────────────────────────────────
+// // // // // const CHECK_TABS = [
+// // // // //   { key: "employment", label: "Employment" },
+// // // // //   { key: "education",  label: "Education"  },
+// // // // //   { key: "address",    label: "Address"    },
+// // // // //   { key: "database",   label: "Database"   },
+// // // // //   { key: "criminal",   label: "Criminal"   },
+// // // // //   { key: "drug",       label: "Drug Test"  },
+// // // // //   { key: "court",      label: "Courtroom"  },
+// // // // // ];
+
+// // // // // // ── Which API check key maps to which verifier role ───────────────────────────
+// // // // // const ROLE_CHECK_MAP = {
+// // // // //   employment_verifier:  "employment",
+// // // // //   education_verifier:   "education",
+// // // // //   address_verifier:     "address",
+// // // // //   database_verifier:    "database",
+// // // // //   criminal_verifier:    "criminal",
+// // // // //   drug_test_verifier:   "drug",
+// // // // //   courtroom_verifier:   "court",
+// // // // // };
+
+// // // // // // ── Normalise check keys coming from the API (emp→employment, edu→education…) ─
+// // // // // const NORMALISE_CHECK = {
+// // // // //   emp:        "employment",
+// // // // //   employment: "employment",
+// // // // //   edu:        "education",
+// // // // //   education:  "education",
+// // // // //   addr:       "address",
+// // // // //   address:    "address",
+// // // // //   db:         "database",
+// // // // //   database:   "database",
+// // // // //   criminal:   "criminal",
+// // // // //   cri:        "criminal",
+// // // // //   drug:       "drug",
+// // // // //   drug_test:  "drug",
+// // // // //   court:      "court",
+// // // // //   courtroom:  "court",
+// // // // // };
+
+// // // // // // ── Field definitions per check type ──────────────────────────────────────────
+// // // // // const CHECK_FIELDS = {
+// // // // //   employment: [
+// // // // //     { key: "company_name",       label: "Company Name",         type: "text" },
+// // // // //     { key: "designation",        label: "Designation",          type: "text" },
+// // // // //     { key: "employee_id",        label: "Employee ID",          type: "text" },
+// // // // //     { key: "date_of_joining",    label: "Date of Joining",      type: "date" },
+// // // // //     { key: "date_of_leaving",    label: "Date of Leaving",      type: "date" },
+// // // // //     { key: "last_salary",        label: "Last Salary (₹)",      type: "text" },
+// // // // //     { key: "reason_for_leaving", label: "Reason for Leaving",   type: "text" },
+// // // // //     { key: "reporting_manager",  label: "Reporting Manager",    type: "text" },
+// // // // //     { key: "hr_contact",         label: "HR Contact Email",     type: "text" },
+// // // // //     { key: "hr_phone",           label: "HR Phone",             type: "text" },
+// // // // //     { key: "verification_mode",  label: "Verification Mode",    type: "select", options: ["Email", "Phone", "Email + Phone", "Portal", "Visit"] },
+// // // // //     { key: "remarks",            label: "Remarks",              type: "textarea" },
+// // // // //   ],
+// // // // //   education: [
+// // // // //     { key: "institution_name",   label: "Institution Name",     type: "text" },
+// // // // //     { key: "degree",             label: "Degree / Certificate", type: "text" },
+// // // // //     { key: "course",             label: "Course / Specialization", type: "text" },
+// // // // //     { key: "roll_number",        label: "Roll / Reg. Number",   type: "text" },
+// // // // //     { key: "year_of_passing",    label: "Year of Passing",      type: "text" },
+// // // // //     { key: "percentage",         label: "Percentage / CGPA",    type: "text" },
+// // // // //     { key: "verification_mode",  label: "Verification Mode",    type: "select", options: ["University Portal", "Email", "Phone", "Visit", "Result Link"] },
+// // // // //     { key: "result_link",        label: "Result Link (URL)",    type: "text" },
+// // // // //     { key: "remarks",            label: "Remarks",              type: "textarea" },
+// // // // //   ],
+// // // // //   address: [
+// // // // //     { key: "address_line",       label: "Address",              type: "text" },
+// // // // //     { key: "city",               label: "City",                 type: "text" },
+// // // // //     { key: "state",              label: "State",                type: "text" },
+// // // // //     { key: "pincode",            label: "Pincode",               type: "text" },
+// // // // //     { key: "residency_type",     label: "Residency Type",       type: "select", options: ["Owned", "Rented", "PG / Hostel", "Family Home"] },
+// // // // //     { key: "years_at_address",   label: "Years at Address",     type: "text" },
+// // // // //     { key: "neighbour_name",     label: "Neighbour / Ref Name", type: "text" },
+// // // // //     { key: "neighbour_phone",    label: "Neighbour Phone",      type: "text" },
+// // // // //     { key: "verification_mode",  label: "Verification Mode",    type: "select", options: ["Physical Visit", "Digital", "Phone"] },
+// // // // //     { key: "remarks",            label: "Remarks",              type: "textarea" },
+// // // // //   ],
+// // // // //   database: [
+// // // // //     { key: "db_checked",         label: "Databases Checked",    type: "text" },
+// // // // //     { key: "match_found",        label: "Match Found?",         type: "select", options: ["No Match", "Potential Match", "Confirmed Match"] },
+// // // // //     { key: "match_details",      label: "Match Details",        type: "textarea" },
+// // // // //     { key: "pan_verified",       label: "PAN Verified?",        type: "select", options: ["Yes", "No", "Not Applicable"] },
+// // // // //     { key: "aadhar_verified",    label: "Aadhaar Verified?",    type: "select", options: ["Yes", "No", "Not Applicable"] },
+// // // // //     { key: "remarks",            label: "Remarks",              type: "textarea" },
+// // // // //   ],
+// // // // //   criminal: [
+// // // // //     { key: "court_checked",      label: "Courts Checked",       type: "text" },
+// // // // //     { key: "police_verified",    label: "Police Record Check",  type: "select", options: ["Clear", "Record Found", "Not Accessible"] },
+// // // // //     { key: "case_details",       label: "Case Details (if any)",type: "textarea" },
+// // // // //     { key: "state_checked",      label: "State",                type: "text" },
+// // // // //     { key: "district_checked",   label: "District",             type: "text" },
+// // // // //     { key: "verification_mode",  label: "Verification Mode",    type: "select", options: ["Online Portal", "Physical", "Phone"] },
+// // // // //     { key: "remarks",            label: "Remarks",              type: "textarea" },
+// // // // //   ],
+// // // // //   drug: [
+// // // // //     { key: "test_type",          label: "Test Type",            type: "select", options: ["Urine Test", "Blood Test", "Hair Follicle", "Saliva Test"] },
+// // // // //     { key: "lab_name",           label: "Lab Name",             type: "text" },
+// // // // //     { key: "test_date",          label: "Test Date",            type: "date" },
+// // // // //     { key: "substances_tested",  label: "Substances Tested",    type: "text" },
+// // // // //     { key: "result",             label: "Test Result",          type: "select", options: ["Negative (Clear)", "Positive", "Inconclusive", "Refused"] },
+// // // // //     { key: "lab_report_ref",     label: "Lab Report Ref No.",   type: "text" },
+// // // // //     { key: "remarks",            label: "Remarks",              type: "textarea" },
+// // // // //   ],
+// // // // //   court: [
+// // // // //     { key: "court_name",         label: "Court Name",           type: "text" },
+// // // // //     { key: "case_number",        label: "Case Number",          type: "text" },
+// // // // //     { key: "case_type",          label: "Case Type",            type: "select", options: ["Civil", "Criminal", "Labour", "Consumer", "Other"] },
+// // // // //     { key: "filing_date",        label: "Filing Date",          type: "date" },
+// // // // //     { key: "current_status",     label: "Current Status",       type: "select", options: ["Active", "Disposed", "Appealed", "No Record Found"] },
+// // // // //     { key: "next_date",          label: "Next Hearing Date",    type: "date" },
+// // // // //     { key: "remarks",            label: "Remarks",              type: "textarea" },
+// // // // //   ],
+// // // // // };
+
+// // // // // const PRIORITY_META = {
+// // // // //   HIGH:   { bg: "#fee2e2", color: "#b91c1c", dot: "#ef4444" },
+// // // // //   MED:    { bg: "#fef9c3", color: "#92400e", dot: "#f59e0b" },
+// // // // //   MEDIUM: { bg: "#fef9c3", color: "#92400e", dot: "#f59e0b" },
+// // // // //   LOW:    { bg: "#dcfce7", color: "#15803d", dot: "#22c55e" },
+// // // // //   normal: { bg: "#f1f5f9", color: "#475569", dot: "#94a3b8" },
+// // // // // };
+
+// // // // // const OUTCOME_OPTS = [
+// // // // //   { key: "clear",       label: "✔  Clear",            bg: "#f0fdf4", color: "#16a34a", border: "#16a34a" },
+// // // // //   { key: "discrepancy", label: "✗  Discrepancy",       bg: "#fef2f2", color: "#dc2626", border: "#dc2626" },
+// // // // //   { key: "unable",      label: "?  Unable to Verify",  bg: "#fffbeb", color: "#b45309", border: "#d97706" },
+// // // // // ];
+
+// // // // // const STATUS_META = {
+// // // // //   "pending":     { color: "#f59e0b", pct: 20,  label: "Pending"     },
+// // // // //   "in-progress": { color: "#028090", pct: 60,  label: "In Progress" },
+// // // // //   "qc-review":   { color: "#7c3aed", pct: 85,  label: "QC Review"   },
+// // // // //   "completed":   { color: "#10b981", pct: 100, label: "Completed"   },
+// // // // //   "on-hold":     { color: "#94a3b8", pct: 30,  label: "On Hold"     },
+// // // // // };
+
+// // // // // // ── Helpers ────────────────────────────────────────────────────────────────────
+// // // // // function getUser() {
+// // // // //   try { return JSON.parse(localStorage.getItem("user")) || {}; } catch { return {}; }
+// // // // // }
+
+// // // // // function getToken() { return localStorage.getItem("token"); }
+
+// // // // // function normChecks(raw) {
+// // // // //   if (!raw) return [];
+// // // // //   const arr = Array.isArray(raw)
+// // // // //     ? raw
+// // // // //     : String(raw).split(/[,·|]/).map(s => s.trim()).filter(Boolean);
+// // // // //   return arr.map(k => NORMALISE_CHECK[k.toLowerCase()] || k.toLowerCase());
+// // // // // }
+
+// // // // // function calcTAT(createdAt) {
+// // // // //   if (!createdAt) return "—";
+// // // // //   const days = Math.floor((Date.now() - new Date(createdAt)) / 86400000);
+// // // // //   return days === 0 ? "Today" : `${days}d`;
+// // // // // }
+
+// // // // // function normPriority(p) {
+// // // // //   if (!p) return "LOW";
+// // // // //   return String(p).toUpperCase();
+// // // // // }
+
+// // // // // // ── Shared input styles ────────────────────────────────────────────────────────
+// // // // // const labelSt = {
+// // // // //   display: "block", fontSize: "11px", fontWeight: 700,
+// // // // //   color: "#475569", marginBottom: "5px",
+// // // // //   textTransform: "uppercase", letterSpacing: "0.4px",
+// // // // // };
+// // // // // const inputSt = {
+// // // // //   width: "100%", padding: "9px 12px",
+// // // // //   border: "1.5px solid #e2e8f0", borderRadius: "8px",
+// // // // //   fontSize: "13px", color: "#1e293b", background: "#f8fafc",
+// // // // //   outline: "none", fontFamily: "inherit", boxSizing: "border-box",
+// // // // // };
+// // // // // const textareaSt = { ...inputSt, resize: "vertical", minHeight: "72px" };
+
+// // // // // // ── FormField sub-component ────────────────────────────────────────────────────
+// // // // // function FormField({ f, value, onChange }) {
+// // // // //   if (f.type === "textarea") return (
+// // // // //     <div style={{ gridColumn: "1 / -1" }}>
+// // // // //       <label style={labelSt}>{f.label}</label>
+// // // // //       <textarea
+// // // // //         rows={3} value={value} onChange={e => onChange(e.target.value)}
+// // // // //         placeholder={`Enter ${f.label.toLowerCase()}…`} style={textareaSt}
+// // // // //       />
+// // // // //     </div>
+// // // // //   );
+// // // // //   if (f.type === "select") return (
+// // // // //     <div>
+// // // // //       <label style={labelSt}>{f.label}</label>
+// // // // //       <select value={value} onChange={e => onChange(e.target.value)}
+// // // // //         style={{ ...inputSt, cursor: "pointer" }}>
+// // // // //         <option value="">— Select —</option>
+// // // // //         {f.options.map(o => <option key={o} value={o}>{o}</option>)}
+// // // // //       </select>
+// // // // //     </div>
+// // // // //   );
+// // // // //   return (
+// // // // //     <div>
+// // // // //       <label style={labelSt}>{f.label}</label>
+// // // // //       <input type={f.type} value={value} onChange={e => onChange(e.target.value)}
+// // // // //         placeholder={f.type === "date" ? "" : `Enter ${f.label.toLowerCase()}…`}
+// // // // //         style={inputSt} />
+// // // // //     </div>
+// // // // //   );
+// // // // // }
+
+// // // // // // ── Main Component ─────────────────────────────────────────────────────────────
+// // // // // export default function Verifyer() {
+// // // // //   const navigate = useNavigate();
+// // // // //   const location = useLocation();
+// // // // //   const user     = getUser();
+// // // // //   const token    = getToken();
+
+// // // // //   // Role resolution
+// // // // //   const role           = user.role || "";
+// // // // //   const isAdmin        = role === "admin";
+// // // // //   const assignedCheck  = ROLE_CHECK_MAP[role] || null; // null = admin / generic verifier sees all
+
+// // // // //   // ── Sidebar view: "active" | "completed"
+// // // // //   const sidebarView = new URLSearchParams(location.search).get("view") || "active";
+
+// // // // //   // ── State ─────────────────────────────────────────────────────────────────
+// // // // //   const [cases,        setCases]        = useState([]);
+// // // // //   const [loading,      setLoading]      = useState(true);
+// // // // //   const [selectedCase, setSelectedCase] = useState(null);
+// // // // //   const [activeCheck,  setActiveCheck]  = useState(assignedCheck || "employment");
+// // // // //   const [search,       setSearch]       = useState("");
+
+// // // // //   // Form
+// // // // //   const [form,       setForm]       = useState({});
+// // // // //   const [outcome,    setOutcome]    = useState("");
+// // // // //   const [saving,     setSaving]     = useState(false);
+// // // // //   const [saveMsg,    setSaveMsg]    = useState({ text: "", type: "" });
+
+// // // // //   // Comments
+// // // // //   const [comments,      setComments]      = useState([]);
+// // // // //   const [commentInput,  setCommentInput]  = useState("");
+// // // // //   const commentsEndRef = useRef(null);
+
+// // // // //   // ── Fetch real cases from API ──────────────────────────────────────────────
+// // // // //   const fetchCases = () => {
+// // // // //     setLoading(true);
+// // // // //     fetch(`${API_URL}/api/cases`, {
+// // // // //       headers: { Authorization: `Bearer ${token}`, Accept: "application/json" },
+// // // // //     })
+// // // // //       .then(r => r.json())
+// // // // //       .then(data => {
+// // // // //         const raw = data.cases || [];
+// // // // //         const normalised = raw.map(c => ({
+// // // // //           ...c,
+// // // // //           checks_raw:  c.checks,
+// // // // //           checks_norm: normChecks(c.checks),
+// // // // //           candidate:   c.candidate || c.candidate_name || "—",
+// // // // //           priority:    normPriority(c.priority),
+// // // // //           tat_display: calcTAT(c.created_at),
+// // // // //         }));
+// // // // //         setCases(normalised);
+// // // // //         if (normalised.length > 0 && !selectedCase) {
+// // // // //           const first = sidebarView === "completed"
+// // // // //             ? normalised.find(c => c.status === "completed")
+// // // // //             : normalised.find(c => c.status !== "completed");
+// // // // //           setSelectedCase(first || normalised[0]);
+// // // // //         }
+// // // // //       })
+// // // // //       .catch(console.error)
+// // // // //       .finally(() => setLoading(false));
+// // // // //   };
+
+// // // // //   useEffect(() => { fetchCases(); }, []);
+
+// // // // //   // Auto-scroll comments
+// // // // //   useEffect(() => {
+// // // // //     commentsEndRef.current?.scrollIntoView({ behavior: "smooth" });
+// // // // //   }, [comments]);
+
+// // // // //   // Reset form when case / check changes
+// // // // //   useEffect(() => {
+// // // // //     setForm({});
+// // // // //     setOutcome("");
+// // // // //     setSaveMsg({ text: "", type: "" });
+// // // // //   }, [selectedCase?.case_id, activeCheck]);
+
+// // // // //   // Jump active check to first valid tab on case selection
+// // // // //   useEffect(() => {
+// // // // //     if (!selectedCase) return;
+// // // // //     const validChecks = selectedCase.checks_norm;
+// // // // //     if (validChecks.length === 0) return;
+// // // // //     if (assignedCheck && validChecks.includes(assignedCheck)) {
+// // // // //       setActiveCheck(assignedCheck);
+// // // // //     } else if (!validChecks.includes(activeCheck)) {
+// // // // //       setActiveCheck(validChecks[0]);
+// // // // //     }
+// // // // //   }, [selectedCase?.case_id]);
+
+// // // // //   // ── Filtered queue lists ───────────────────────────────────────────────────
+// // // // //   const activeCases    = cases.filter(c => c.status !== "completed");
+// // // // //   const completedCases = cases.filter(c => c.status === "completed");
+
+// // // // //   const filterBySearch = (list) => {
+// // // // //     if (!search) return list;
+// // // // //     const q = search.toLowerCase();
+// // // // //     return list.filter(c =>
+// // // // //       (c.case_id || "").toLowerCase().includes(q) ||
+// // // // //       (c.candidate || "").toLowerCase().includes(q) ||
+// // // // //       (c.client || c.client_name || "").toLowerCase().includes(q)
+// // // // //     );
+// // // // //   };
+
+// // // // //   const queueList = filterBySearch(sidebarView === "completed" ? completedCases : activeCases);
+
+// // // // //   // ── Tab accessibility ──────────────────────────────────────────────────────
+// // // // //   // A tab is accessible if:
+// // // // //   //   1. The case has that check type, AND
+// // // // //   //   2. The verifier's role allows it (admin / generic verifier: any; specialist: only their type)
+// // // // //   const canAccessTab = (checkKey) => {
+// // // // //     if (!selectedCase) return false;
+// // // // //     const caseHasCheck = selectedCase.checks_norm.includes(checkKey);
+// // // // //     if (!caseHasCheck) return false;
+// // // // //     if (isAdmin || !assignedCheck) return true;           // admin / generic verifier
+// // // // //     return checkKey === assignedCheck;                     // specialist verifier
+// // // // //   };
+
+// // // // //   // ── Select a case ──────────────────────────────────────────────────────────
+// // // // //   const selectCase = (c) => {
+// // // // //     setSelectedCase(c);
+// // // // //     setComments([]);   // TODO: fetch from API  GET /api/cases/{id}/comments
+// // // // //   };
+
+// // // // //   // ── Save result ────────────────────────────────────────────────────────────
+// // // // //   const handleSave = async (isDraft) => {
+// // // // //     if (!outcome && !isDraft) {
+// // // // //       setSaveMsg({ text: "Please select an outcome before saving.", type: "error" });
+// // // // //       return;
+// // // // //     }
+// // // // //     setSaving(true);
+// // // // //     setSaveMsg({ text: "", type: "" });
+// // // // //     try {
+// // // // //       const res = await fetch(`${API_URL}/api/cases/${selectedCase.case_id}/check-result`, {
+// // // // //         method: "POST",
+// // // // //         headers: {
+// // // // //           Authorization: `Bearer ${token}`,
+// // // // //           "Content-Type": "application/json",
+// // // // //           Accept: "application/json",
+// // // // //         },
+// // // // //         body: JSON.stringify({
+// // // // //           check_type: activeCheck,
+// // // // //           outcome:    outcome || "unable",
+// // // // //           form_data:  form,
+// // // // //           is_draft:   isDraft,
+// // // // //         }),
+// // // // //       });
+// // // // //       if (!res.ok) throw new Error("Server error");
+// // // // //       setSaveMsg({
+// // // // //         text: isDraft ? "Draft saved — case stays In Progress." : "Result submitted — moved to QC Review.",
+// // // // //         type: "success",
+// // // // //       });
+// // // // //       fetchCases();
+// // // // //     } catch {
+// // // // //       setSaveMsg({ text: "Could not save. Please try again.", type: "error" });
+// // // // //     } finally {
+// // // // //       setSaving(false);
+// // // // //     }
+// // // // //   };
+
+// // // // //   // ── Send comment ───────────────────────────────────────────────────────────
+// // // // //   const sendComment = () => {
+// // // // //     if (!commentInput.trim()) return;
+// // // // //     // TODO: POST /api/cases/{id}/comments
+// // // // //     setComments(p => [...p, {
+// // // // //       id:     Date.now(),
+// // // // //       author: user.name || "Verifier",
+// // // // //       avatar: (user.name || "V").charAt(0).toUpperCase(),
+// // // // //       time:   new Date().toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit" }),
+// // // // //       text:   commentInput.trim(),
+// // // // //     }]);
+// // // // //     setCommentInput("");
+// // // // //   };
+
+// // // // //   // ── Case list item ─────────────────────────────────────────────────────────
+// // // // //   const QueueItem = ({ c }) => {
+// // // // //     const pm       = PRIORITY_META[c.priority] || PRIORITY_META.LOW;
+// // // // //     const sm       = STATUS_META[c.status] || STATUS_META["pending"];
+// // // // //     const isActive = selectedCase?.case_id === c.case_id;
+// // // // //     const checkLabels = c.checks_norm.map(k =>
+// // // // //       CHECK_TABS.find(t => t.key === k)?.label?.slice(0, 3).toUpperCase() || k.slice(0, 3).toUpperCase()
+// // // // //     );
+
+// // // // //     return (
+// // // // //       <tr
+// // // // //         className="boder-tbl active"
+// // // // //         onClick={() => selectCase(c)}
+// // // // //         style={{
+// // // // //           cursor: "pointer",
+// // // // //           background: isActive ? "#eef3ff" : undefined,
+// // // // //           borderLeft: isActive ? "3px solid #2b3b8c" : "3px solid transparent",
+// // // // //         }}
+// // // // //       >
+// // // // //         {/* Case ID + checks */}
+// // // // //         <td>
+// // // // //           <div className="criminal-case">
+// // // // //             <p>
+// // // // //               <span style={{ fontWeight: 700, color: "#27348B" }}>{c.case_id}</span>
+// // // // //               <br />
+// // // // //               <span style={{ fontSize: "11px", color: "#94a3b8" }}>
+// // // // //                 {checkLabels.join(" · ")}
+// // // // //               </span>
+// // // // //             </p>
+// // // // //           </div>
+// // // // //         </td>
+
+// // // // //         {/* Candidate name */}
+// // // // //         <td>
+// // // // //           <div className="client-names">{c.candidate}</div>
+// // // // //         </td>
+
+// // // // //         {/* Progress + TAT */}
+// // // // //         <td>
+// // // // //           <div className="custom-progress">
+// // // // //             <div className="custom-progress-bar" style={{ width: `${sm.pct}%`, background: sm.color }} />
+// // // // //           </div>
+// // // // //           <p className="progress-client-text" style={{ color: sm.color }}>{c.tat_display}</p>
+// // // // //         </td>
+
+// // // // //         {/* Priority dot */}
+// // // // //         <td>
+// // // // //           <div className="parent-client-boxes">
+// // // // //             <span
+// // // // //               className="client-cases-box"
+// // // // //               style={{ background: pm.dot }}
+// // // // //               title={c.priority}
+// // // // //             />
+// // // // //           </div>
+// // // // //         </td>
+// // // // //       </tr>
+// // // // //     );
+// // // // //   };
+
+// // // // //   // ── Middle panel: full detail of selected case ──────────────────────────────
+// // // // //   const DetailPanel = () => {
+// // // // //     if (!selectedCase) return (
+// // // // //       <div style={{ display: "flex", alignItems: "center", justifyContent: "center", height: "340px" }}>
+// // // // //         <p style={{ color: "#94a3b8", fontSize: "14px" }}>Select a case to begin verification</p>
+// // // // //       </div>
+// // // // //     );
+
+// // // // //     const fields = CHECK_FIELDS[activeCheck] || [];
+// // // // //     const sm     = STATUS_META[selectedCase.status] || STATUS_META["pending"];
+// // // // //     const pm     = PRIORITY_META[selectedCase.priority] || PRIORITY_META.LOW;
+
+// // // // //     return (
+// // // // //       <>
+// // // // //         {/* Header */}
+// // // // //         <div style={{
+// // // // //           background: "#27348B", color: "#fff", padding: "14px 18px",
+// // // // //           fontWeight: 700, fontSize: "13px", borderRadius: "6px 6px 0 0",
+// // // // //           display: "flex", justifyContent: "space-between", alignItems: "center",
+// // // // //         }}>
+// // // // //           <span>
+// // // // //             {selectedCase.case_id} — {selectedCase.candidate}
+// // // // //           </span>
+// // // // //           <span style={{
+// // // // //             background: pm.bg, color: pm.color, fontSize: "11px",
+// // // // //             fontWeight: 700, padding: "3px 10px", borderRadius: "20px",
+// // // // //           }}>
+// // // // //             {selectedCase.priority}
+// // // // //           </span>
+// // // // //         </div>
+
+// // // // //         {/* Check type tabs — only show checks present in this case */}
+// // // // //         <div style={{
+// // // // //           display: "flex", background: "#fff",
+// // // // //           borderBottom: "1px solid #e2e8f0", overflowX: "auto",
+// // // // //         }}>
+// // // // //           {CHECK_TABS.filter(t => selectedCase.checks_norm.includes(t.key)).map((t, i, arr) => {
+// // // // //             const accessible = canAccessTab(t.key);
+// // // // //             const isActive   = activeCheck === t.key;
+// // // // //             return (
+// // // // //               <button
+// // // // //                 key={t.key}
+// // // // //                 onClick={() => accessible && setActiveCheck(t.key)}
+// // // // //                 title={!accessible ? "Your role cannot access this check type" : ""}
+// // // // //                 style={{
+// // // // //                   padding: "11px 18px", border: "none", whiteSpace: "nowrap",
+// // // // //                   borderRight: i < arr.length - 1 ? "1px solid #e2e8f0" : "none",
+// // // // //                   borderBottom: isActive ? "3px solid #27348B" : "3px solid transparent",
+// // // // //                   background: isActive ? "#f0f4ff" : "#fff",
+// // // // //                   color: isActive ? "#27348B" : accessible ? "#64748b" : "#cbd5e1",
+// // // // //                   fontWeight: isActive ? 700 : 400,
+// // // // //                   fontSize: "13px",
+// // // // //                   cursor: accessible ? "pointer" : "not-allowed",
+// // // // //                   opacity: accessible ? 1 : 0.45,
+// // // // //                   transition: "all 0.15s",
+// // // // //                 }}
+// // // // //               >
+// // // // //                 {t.label}
+// // // // //               </button>
+// // // // //             );
+// // // // //           })}
+// // // // //         </div>
+
+// // // // //         {/* Scrollable form body */}
+// // // // //         <div style={{
+// // // // //           border: "1px solid #e2e8f0", borderTop: "none",
+// // // // //           borderRadius: "0 0 6px 6px", background: "#fff",
+// // // // //           maxHeight: "520px", overflowY: "auto", padding: "16px",
+// // // // //         }}>
+
+// // // // //           {/* Case summary strip */}
+// // // // //           <div style={{
+// // // // //             display: "grid", gridTemplateColumns: "repeat(4, 1fr)",
+// // // // //             gap: "10px", marginBottom: "18px",
+// // // // //           }}>
+// // // // //             {[
+// // // // //               { label: "Client",   value: selectedCase.client || selectedCase.client_name || "—" },
+// // // // //               { label: "Status",   value: <span style={{ background: sm.color, color: "#fff", fontSize: "11px", fontWeight: 700, padding: "3px 10px", borderRadius: "4px" }}>{sm.label}</span> },
+// // // // //               { label: "TAT",      value: selectedCase.tat_display },
+// // // // //               { label: "Created",  value: selectedCase.created_at ? new Date(selectedCase.created_at).toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" }) : "—" },
+// // // // //             ].map(r => (
+// // // // //               <div key={r.label} style={{ background: "#f8fafc", borderRadius: "8px", padding: "10px 14px" }}>
+// // // // //                 <div style={{ fontSize: "10px", fontWeight: 700, color: "#94a3b8", textTransform: "uppercase", letterSpacing: "0.5px", marginBottom: "4px" }}>{r.label}</div>
+// // // // //                 <div style={{ fontSize: "13px", fontWeight: 700, color: "#1e293b" }}>{r.value}</div>
+// // // // //               </div>
+// // // // //             ))}
+// // // // //           </div>
+
+// // // // //           {/* Outcome toggle */}
+// // // // //           <div style={{ marginBottom: "16px" }}>
+// // // // //             <p style={{ fontSize: "11px", fontWeight: 700, color: "#475569", marginBottom: "8px", textTransform: "uppercase", letterSpacing: "0.4px" }}>
+// // // // //               Verification Outcome
+// // // // //             </p>
+// // // // //             <div style={{ display: "flex", gap: "8px" }}>
+// // // // //               {OUTCOME_OPTS.map(o => (
+// // // // //                 <button
+// // // // //                   key={o.key}
+// // // // //                   onClick={() => setOutcome(o.key)}
+// // // // //                   style={{
+// // // // //                     flex: 1, padding: "10px 8px", cursor: "pointer",
+// // // // //                     border: `2px solid ${outcome === o.key ? o.border : "#e2e8f0"}`,
+// // // // //                     borderRadius: "8px",
+// // // // //                     background: outcome === o.key ? o.bg : "#f8fafc",
+// // // // //                     color: outcome === o.key ? o.color : "#94a3b8",
+// // // // //                     fontWeight: outcome === o.key ? 700 : 500,
+// // // // //                     fontSize: "12px",
+// // // // //                     transition: "all 0.15s",
+// // // // //                   }}
+// // // // //                 >
+// // // // //                   {o.label}
+// // // // //                 </button>
+// // // // //               ))}
+// // // // //             </div>
+// // // // //           </div>
+
+// // // // //           {/* Dynamic fields grid */}
+// // // // //           {!canAccessTab(activeCheck) ? (
+// // // // //             <div style={{ padding: "24px", textAlign: "center", color: "#94a3b8", fontSize: "13px", background: "#f8fafc", borderRadius: "8px" }}>
+// // // // //               Your role does not have access to the <strong>{CHECK_TABS.find(t => t.key === activeCheck)?.label}</strong> check.
+// // // // //             </div>
+// // // // //           ) : (
+// // // // //             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px" }}>
+// // // // //               {fields.map(f => (
+// // // // //                 <FormField
+// // // // //                   key={f.key} f={f}
+// // // // //                   value={form[f.key] || ""}
+// // // // //                   onChange={v => setForm(p => ({ ...p, [f.key]: v }))}
+// // // // //                 />
+// // // // //               ))}
+// // // // //             </div>
+// // // // //           )}
+
+// // // // //           {/* Save message */}
+// // // // //           {saveMsg.text && (
+// // // // //             <div style={{
+// // // // //               marginTop: "14px", padding: "10px 14px", borderRadius: "8px",
+// // // // //               background: saveMsg.type === "success" ? "#f0fdf4" : "#fef2f2",
+// // // // //               color:      saveMsg.type === "success" ? "#16a34a" : "#dc2626",
+// // // // //               fontSize: "13px", fontWeight: 600,
+// // // // //             }}>
+// // // // //               {saveMsg.text}
+// // // // //             </div>
+// // // // //           )}
+// // // // //         </div>
+
+// // // // //         {/* Action buttons */}
+// // // // //         {canAccessTab(activeCheck) && (
+// // // // //           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px", marginTop: "12px" }}>
+// // // // //             <button
+// // // // //               onClick={() => handleSave(true)}
+// // // // //               disabled={saving}
+// // // // //               style={{
+// // // // //                 display: "flex", alignItems: "center", justifyContent: "center", gap: "8px",
+// // // // //                 padding: "13px", background: "#27348B", color: "#fff", border: "none",
+// // // // //                 borderRadius: "6px", fontWeight: 700, fontSize: "13px", cursor: "pointer",
+// // // // //               }}
+// // // // //             >
+// // // // //               💾 Save Draft
+// // // // //             </button>
+// // // // //             <button
+// // // // //               onClick={() => handleSave(false)}
+// // // // //               disabled={saving || !outcome}
+// // // // //               style={{
+// // // // //                 display: "flex", alignItems: "center", justifyContent: "center", gap: "8px",
+// // // // //                 padding: "13px",
+// // // // //                 background: saving || !outcome ? "#94a3b8" : "#10b981",
+// // // // //                 color: "#fff", border: "none", borderRadius: "6px",
+// // // // //                 fontWeight: 700, fontSize: "13px",
+// // // // //                 cursor: saving || !outcome ? "not-allowed" : "pointer",
+// // // // //               }}
+// // // // //             >
+// // // // //               {saving ? "Saving…" : "✔ Save & Mark Done"}
+// // // // //             </button>
+// // // // //           </div>
+// // // // //         )}
+// // // // //       </>
+// // // // //     );
+// // // // //   };
+
+// // // // //   // ── Right panel: Comments ────────────────────────────────────────────────
+// // // // //   const RightPanel = () => (
+// // // // //     <div style={{ display: "flex", flexDirection: "column", gap: "14px", height: "100%" }}>
+
+// // // // //       {/* Comments */}
+// // // // //       <div style={{ borderRadius: "10px", overflow: "hidden", border: "1px solid #e2e8f0", flex: 1, display: "flex", flexDirection: "column" }}>
+// // // // //         <div style={{ background: "#27348B", padding: "13px 16px" }}>
+// // // // //           <h3 style={{ margin: 0, color: "#fff", fontSize: "12px", fontWeight: 700, letterSpacing: "0.08em" }}>
+// // // // //             COMMENTS & NOTES
+// // // // //           </h3>
+// // // // //         </div>
+// // // // //         <div style={{ flex: 1, maxHeight: "460px", overflowY: "auto", padding: "12px 14px" }}>
+// // // // //           {comments.length === 0 ? (
+// // // // //             <p style={{ color: "#cbd5e1", fontSize: "13px", textAlign: "center", padding: "16px 0" }}>
+// // // // //               No comments yet.
+// // // // //             </p>
+// // // // //           ) : (
+// // // // //             comments.map((c, i) => (
+// // // // //               <div key={c.id} style={{ display: "flex", gap: "10px", marginBottom: "14px" }}>
+// // // // //                 <div style={{
+// // // // //                   width: "30px", height: "30px", borderRadius: "50%",
+// // // // //                   background: i % 2 === 0 ? "#7c3aed" : "#0d9488",
+// // // // //                   color: "#fff", display: "flex", alignItems: "center", justifyContent: "center",
+// // // // //                   fontSize: "13px", fontWeight: 700, flexShrink: 0,
+// // // // //                 }}>
+// // // // //                   {c.avatar}
+// // // // //                 </div>
+// // // // //                 <div style={{ flex: 1 }}>
+// // // // //                   <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "3px" }}>
+// // // // //                     <span style={{ fontSize: "12px", fontWeight: 700, color: "#1e293b" }}>{c.author}</span>
+// // // // //                     <span style={{ fontSize: "11px", color: "#94a3b8" }}>{c.time}</span>
+// // // // //                   </div>
+// // // // //                   <p style={{ fontSize: "12px", color: "#475569", margin: 0, lineHeight: 1.5 }}>{c.text}</p>
+// // // // //                 </div>
+// // // // //               </div>
+// // // // //             ))
+// // // // //           )}
+// // // // //           <div ref={commentsEndRef} />
+// // // // //         </div>
+// // // // //         <div style={{ borderTop: "1px solid #e2e8f0", display: "flex", gap: "0" }}>
+// // // // //           <input
+// // // // //             type="text"
+// // // // //             placeholder="Add a comment…"
+// // // // //             value={commentInput}
+// // // // //             onChange={e => setCommentInput(e.target.value)}
+// // // // //             onKeyDown={e => e.key === "Enter" && sendComment()}
+// // // // //             style={{
+// // // // //               flex: 1, border: "none", padding: "11px 14px",
+// // // // //               fontSize: "13px", outline: "none", background: "#fff",
+// // // // //             }}
+// // // // //           />
+// // // // //           <button onClick={sendComment} style={{
+// // // // //             background: "#27348B", border: "none", padding: "0 16px",
+// // // // //             cursor: "pointer", color: "#fff",
+// // // // //           }}>
+// // // // //             <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+// // // // //               <line x1="22" y1="2" x2="11" y2="13" />
+// // // // //               <polygon points="22 2 15 22 11 13 2 9 22 2" />
+// // // // //             </svg>
+// // // // //           </button>
+// // // // //         </div>
+// // // // //       </div>
+// // // // //     </div>
+// // // // //   );
+
+// // // // //   // ── Render ─────────────────────────────────────────────────────────────────
+// // // // //   return (
+// // // // //     <>
+// // // // //       <Sidebar />
+// // // // //       <section id="content">
+// // // // //         <Header />
+// // // // //         <main>
+// // // // //           <div className="dash-wrper">
+
+// // // // //             {/* Page header */}
+// // // // //             <div className="dash-upper-head">
+// // // // //               <div className="left">
+// // // // //                 <div className="dash-title-flex">
+// // // // //                   <h3 className="dash-title-text">Verifier Workspace</h3>
+// // // // //                   <span style={{
+// // // // //                     fontSize: "12px", color: "#64748b",
+// // // // //                     background: "#eef3ff", padding: "3px 10px", borderRadius: "20px",
+// // // // //                   }}>
+// // // // //                     {user.name || "Verifier"} — {role}
+// // // // //                   </span>
+// // // // //                   {assignedCheck && (
+// // // // //                     <span style={{
+// // // // //                       fontSize: "11px", color: "#fff",
+// // // // //                       background: "#27348B", padding: "3px 10px", borderRadius: "20px",
+// // // // //                     }}>
+// // // // //                       Assigned: {CHECK_TABS.find(t => t.key === assignedCheck)?.label}
+// // // // //                     </span>
+// // // // //                   )}
+// // // // //                 </div>
+// // // // //               </div>
+// // // // //               <div className="right">
+// // // // //                 <input
+// // // // //                   type="text"
+// // // // //                   className="dash-search-input"
+// // // // //                   placeholder="Search case ID or candidate…"
+// // // // //                   value={search}
+// // // // //                   onChange={e => setSearch(e.target.value)}
+// // // // //                 />
+// // // // //                 {search && (
+// // // // //                   <button onClick={() => setSearch("")}
+// // // // //                     style={{ background: "none", border: "none", cursor: "pointer", fontSize: "18px", color: "#94a3b8" }}>
+// // // // //                     ×
+// // // // //                   </button>
+// // // // //                 )}
+// // // // //               </div>
+// // // // //             </div>
+
+// // // // //             {/* View toggle: Active / Completed */}
+// // // // //             <div style={{ display: "flex", gap: "8px", marginBottom: "4px" }}>
+// // // // //               <button
+// // // // //                 className={`tab-cta ${sidebarView === "active" ? "active" : ""}`}
+// // // // //                 onClick={() => navigate("/Verifyer?view=active", { replace: true })}
+// // // // //               >
+// // // // //                 Active Cases
+// // // // //                 <span style={{ marginLeft: "6px", background: "rgba(0,0,0,0.1)", borderRadius: "8px", padding: "1px 6px", fontSize: "11px", fontWeight: 700 }}>
+// // // // //                   {activeCases.length}
+// // // // //                 </span>
+// // // // //               </button>
+// // // // //               <button
+// // // // //                 className={`tab-cta ${sidebarView === "completed" ? "active" : ""}`}
+// // // // //                 onClick={() => navigate("/Verifyer?view=completed", { replace: true })}
+// // // // //               >
+// // // // //                 Completed
+// // // // //                 <span style={{ marginLeft: "6px", background: "rgba(0,0,0,0.1)", borderRadius: "8px", padding: "1px 6px", fontSize: "11px", fontWeight: 700 }}>
+// // // // //                   {completedCases.length}
+// // // // //                 </span>
+// // // // //               </button>
+// // // // //             </div>
+
+// // // // //             {/* Three-column layout: Queue | Form | Charges+Comments */}
+// // // // //             <div style={{ display: "grid", gridTemplateColumns: "300px 1fr 280px", gap: "16px", alignItems: "start" }}>
+
+// // // // //               {/* ── LEFT: Case queue ── */}
+// // // // //               <div className="down-table" style={{ margin: 0 }}>
+// // // // //                 <div className="client-portal-cases">
+// // // // //                   <h3>
+// // // // //                     {sidebarView === "completed" ? "COMPLETED" : "ACTIVE"} ({queueList.length})
+// // // // //                   </h3>
+// // // // //                 </div>
+
+// // // // //                 {loading ? (
+// // // // //                   <p style={{ padding: "24px", textAlign: "center", color: "#94a3b8" }}>Loading cases…</p>
+// // // // //                 ) : queueList.length === 0 ? (
+// // // // //                   <p style={{ padding: "24px", textAlign: "center", color: "#94a3b8", fontSize: "13px" }}>
+// // // // //                     No {sidebarView} cases found.
+// // // // //                   </p>
+// // // // //                 ) : (
+// // // // //                   <table>
+// // // // //                     <tbody>
+// // // // //                       {queueList.map(c => <QueueItem key={c.case_id} c={c} />)}
+// // // // //                     </tbody>
+// // // // //                   </table>
+// // // // //                 )}
+// // // // //               </div>
+
+// // // // //               {/* ── MIDDLE: Detail + form ── */}
+// // // // //               <div className="second-card">
+// // // // //                 <DetailPanel />
+// // // // //               </div>
+
+// // // // //               {/* ── RIGHT: Charges + Comments ── */}
+// // // // //               <div className="thrid-card">
+// // // // //                 <RightPanel />
+// // // // //               </div>
+
+// // // // //             </div>
+// // // // //           </div>
+// // // // //         </main>
+// // // // //       </section>
+// // // // //     </>
+// // // // //   );
+// // // // // }
 // // // // import { useState, useEffect, useRef } from "react";
 // // // // import { useNavigate, useLocation } from "react-router-dom";
 // // // // import Sidebar from "./Sidebar";
@@ -1856,6 +2658,55 @@
 // // // //   ],
 // // // // };
 
+// // // // // ── Maps client-submitted field keys (from CheckDetailForm.jsx /
+// // // // //    checkFormsConfig.js, stored in case.check_details[checkKey].fields) onto
+// // // // //    the verifier's own field keys below. Only fields that genuinely exist on
+// // // // //    both sides are mapped — verifier-only fields (verification mode, HR
+// // // // //    contact, remarks, etc.) are intentionally left out so they stay blank
+// // // // //    for the verifier to fill in themselves.
+// // // // const CLIENT_TO_VERIFIER_FIELD_MAP = {
+// // // //   employment: {
+// // // //     lastCompanyName: "company_name",
+// // // //     dateOfJoining:   "date_of_joining",
+// // // //     dateOfLeaving:   "date_of_leaving",
+// // // //     salary:          "last_salary",
+// // // //   },
+// // // //   education: {
+// // // //     instituteName:  "institution_name",
+// // // //     qualification:  "degree",
+// // // //     rollNo:         "roll_number",
+// // // //     yearOfPassing:  "year_of_passing",
+// // // //   },
+// // // //   address: {
+// // // //     address: "address_line",
+// // // //     city:    "city",
+// // // //     state:   "state",
+// // // //     pinCode: "pincode",
+// // // //   },
+// // // //   // database / criminal / drug / court: client collects no fields for these
+// // // //   // yet (see checkFormsConfig.js), so there's nothing to prefill — verifiers
+// // // //   // fill these entirely from scratch.
+// // // // };
+
+// // // // // Builds the verifier's starting form for a given check, preferring a saved
+// // // // // verifier draft (check_results[checkKey].form_data) if one exists, and
+// // // // // otherwise prefilling whatever overlaps from the client's submitted data.
+// // // // function buildPrefilledForm(caseObj, checkKey) {
+// // // //   const draft = caseObj?.check_results?.[checkKey]?.form_data;
+// // // //   if (draft && Object.keys(draft).length > 0) return { form: draft, source: "draft" };
+
+// // // //   const clientFields = caseObj?.check_details?.[checkKey]?.fields;
+// // // //   const map = CLIENT_TO_VERIFIER_FIELD_MAP[checkKey];
+// // // //   if (!clientFields || !map) return { form: {}, source: null };
+
+// // // //   const prefilled = {};
+// // // //   Object.entries(map).forEach(([clientKey, verifierKey]) => {
+// // // //     const val = clientFields[clientKey];
+// // // //     if (val && String(val).trim() !== "") prefilled[verifierKey] = val;
+// // // //   });
+// // // //   return { form: prefilled, source: Object.keys(prefilled).length > 0 ? "client" : null };
+// // // // }
+
 // // // // const PRIORITY_META = {
 // // // //   HIGH:   { bg: "#fee2e2", color: "#b91c1c", dot: "#ef4444" },
 // // // //   MED:    { bg: "#fef9c3", color: "#92400e", dot: "#f59e0b" },
@@ -1973,6 +2824,7 @@
 
 // // // //   // Form
 // // // //   const [form,       setForm]       = useState({});
+// // // //   const [prefillSource, setPrefillSource] = useState(null); // "client" | "draft" | null
 // // // //   const [outcome,    setOutcome]    = useState("");
 // // // //   const [saving,     setSaving]     = useState(false);
 // // // //   const [saveMsg,    setSaveMsg]    = useState({ text: "", type: "" });
@@ -2018,10 +2870,14 @@
 // // // //     commentsEndRef.current?.scrollIntoView({ behavior: "smooth" });
 // // // //   }, [comments]);
 
-// // // //   // Reset form when case / check changes
+// // // //   // Reset form when case / check changes — prefill from the client's
+// // // //   // submitted details (or a saved verifier draft, if one exists) rather than
+// // // //   // always starting blank.
 // // // //   useEffect(() => {
-// // // //     setForm({});
-// // // //     setOutcome("");
+// // // //     const { form: prefilled, source } = buildPrefilledForm(selectedCase, activeCheck);
+// // // //     setForm(prefilled);
+// // // //     setPrefillSource(source);
+// // // //     setOutcome(selectedCase?.check_results?.[activeCheck]?.outcome || "");
 // // // //     setSaveMsg({ text: "", type: "" });
 // // // //   }, [selectedCase?.case_id, activeCheck]);
 
@@ -2267,6 +3123,20 @@
 // // // //               </div>
 // // // //             ))}
 // // // //           </div>
+
+// // // //           {/* Prefill source banner */}
+// // // //           {prefillSource === "client" && (
+// // // //             <div style={{ background: "#eff6ff", border: "1px solid #bfdbfe", borderRadius: "8px",
+// // // //               padding: "10px 14px", fontSize: "12px", color: "#1d4ed8", marginBottom: "16px", fontWeight: 600 }}>
+// // // //               ℹ Some fields below were prefilled from what the client/candidate already submitted. Please verify and correct as needed.
+// // // //             </div>
+// // // //           )}
+// // // //           {prefillSource === "draft" && (
+// // // //             <div style={{ background: "#f5f3ff", border: "1px solid #ddd6fe", borderRadius: "8px",
+// // // //               padding: "10px 14px", fontSize: "12px", color: "#6d28d9", marginBottom: "16px", fontWeight: 600 }}>
+// // // //               ↻ Resumed your saved draft for this check.
+// // // //             </div>
+// // // //           )}
 
 // // // //           {/* Outcome toggle */}
 // // // //           <div style={{ marginBottom: "16px" }}>
@@ -2536,876 +3406,963 @@
 // // // //     </>
 // // // //   );
 // // // // }
-// // // import { useState, useEffect, useRef } from "react";
-// // // import { useNavigate, useLocation } from "react-router-dom";
-// // // import Sidebar from "./Sidebar";
-// // // import Header from "./Header";
-// // // import { API_URL } from "../src/config";
+// // import { useState, useEffect, useRef } from "react";
+// // import { useNavigate, useLocation } from "react-router-dom";
+// // import Sidebar from "./Sidebar";
+// // import Header from "./Header";
+// // import { API_URL } from "../src/config";
 
-// // // // ── Check tab definitions ──────────────────────────────────────────────────────
-// // // const CHECK_TABS = [
-// // //   { key: "employment", label: "Employment" },
-// // //   { key: "education",  label: "Education"  },
-// // //   { key: "address",    label: "Address"    },
-// // //   { key: "database",   label: "Database"   },
-// // //   { key: "criminal",   label: "Criminal"   },
-// // //   { key: "drug",       label: "Drug Test"  },
-// // //   { key: "court",      label: "Courtroom"  },
-// // // ];
+// // // ── Check tab definitions ──────────────────────────────────────────────────────
+// // const CHECK_TABS = [
+// //   { key: "employment", label: "Employment" },
+// //   { key: "education",  label: "Education"  },
+// //   { key: "address",    label: "Address"    },
+// //   { key: "database",   label: "Database"   },
+// //   { key: "criminal",   label: "Criminal"   },
+// //   { key: "drug",       label: "Drug Test"  },
+// //   { key: "court",      label: "Courtroom"  },
+// // ];
 
-// // // // ── Which API check key maps to which verifier role ───────────────────────────
-// // // const ROLE_CHECK_MAP = {
-// // //   employment_verifier:  "employment",
-// // //   education_verifier:   "education",
-// // //   address_verifier:     "address",
-// // //   database_verifier:    "database",
-// // //   criminal_verifier:    "criminal",
-// // //   drug_test_verifier:   "drug",
-// // //   courtroom_verifier:   "court",
-// // // };
+// // // ── Which API check key maps to which verifier role ───────────────────────────
+// // const ROLE_CHECK_MAP = {
+// //   employment_verifier:  "employment",
+// //   education_verifier:   "education",
+// //   address_verifier:     "address",
+// //   database_verifier:    "database",
+// //   criminal_verifier:    "criminal",
+// //   drug_test_verifier:   "drug",
+// //   courtroom_verifier:   "court",
+// // };
 
-// // // // ── Normalise check keys coming from the API (emp→employment, edu→education…) ─
-// // // const NORMALISE_CHECK = {
-// // //   emp:        "employment",
-// // //   employment: "employment",
-// // //   edu:        "education",
-// // //   education:  "education",
-// // //   addr:       "address",
-// // //   address:    "address",
-// // //   db:         "database",
-// // //   database:   "database",
-// // //   criminal:   "criminal",
-// // //   cri:        "criminal",
-// // //   drug:       "drug",
-// // //   drug_test:  "drug",
-// // //   court:      "court",
-// // //   courtroom:  "court",
-// // // };
+// // // ── Normalise check keys coming from the API (emp→employment, edu→education…) ─
+// // const NORMALISE_CHECK = {
+// //   emp:        "employment",
+// //   employment: "employment",
+// //   edu:        "education",
+// //   education:  "education",
+// //   addr:       "address",
+// //   address:    "address",
+// //   db:         "database",
+// //   database:   "database",
+// //   criminal:   "criminal",
+// //   cri:        "criminal",
+// //   drug:       "drug",
+// //   drug_test:  "drug",
+// //   court:      "court",
+// //   courtroom:  "court",
+// // };
 
-// // // // ── Field definitions per check type ──────────────────────────────────────────
-// // // const CHECK_FIELDS = {
-// // //   employment: [
-// // //     { key: "company_name",       label: "Company Name",         type: "text" },
-// // //     { key: "designation",        label: "Designation",          type: "text" },
-// // //     { key: "employee_id",        label: "Employee ID",          type: "text" },
-// // //     { key: "date_of_joining",    label: "Date of Joining",      type: "date" },
-// // //     { key: "date_of_leaving",    label: "Date of Leaving",      type: "date" },
-// // //     { key: "last_salary",        label: "Last Salary (₹)",      type: "text" },
-// // //     { key: "reason_for_leaving", label: "Reason for Leaving",   type: "text" },
-// // //     { key: "reporting_manager",  label: "Reporting Manager",    type: "text" },
-// // //     { key: "hr_contact",         label: "HR Contact Email",     type: "text" },
-// // //     { key: "hr_phone",           label: "HR Phone",             type: "text" },
-// // //     { key: "verification_mode",  label: "Verification Mode",    type: "select", options: ["Email", "Phone", "Email + Phone", "Portal", "Visit"] },
-// // //     { key: "remarks",            label: "Remarks",              type: "textarea" },
-// // //   ],
-// // //   education: [
-// // //     { key: "institution_name",   label: "Institution Name",     type: "text" },
-// // //     { key: "degree",             label: "Degree / Certificate", type: "text" },
-// // //     { key: "course",             label: "Course / Specialization", type: "text" },
-// // //     { key: "roll_number",        label: "Roll / Reg. Number",   type: "text" },
-// // //     { key: "year_of_passing",    label: "Year of Passing",      type: "text" },
-// // //     { key: "percentage",         label: "Percentage / CGPA",    type: "text" },
-// // //     { key: "verification_mode",  label: "Verification Mode",    type: "select", options: ["University Portal", "Email", "Phone", "Visit", "Result Link"] },
-// // //     { key: "result_link",        label: "Result Link (URL)",    type: "text" },
-// // //     { key: "remarks",            label: "Remarks",              type: "textarea" },
-// // //   ],
-// // //   address: [
-// // //     { key: "address_line",       label: "Address",              type: "text" },
-// // //     { key: "city",               label: "City",                 type: "text" },
-// // //     { key: "state",              label: "State",                type: "text" },
-// // //     { key: "pincode",            label: "Pincode",               type: "text" },
-// // //     { key: "residency_type",     label: "Residency Type",       type: "select", options: ["Owned", "Rented", "PG / Hostel", "Family Home"] },
-// // //     { key: "years_at_address",   label: "Years at Address",     type: "text" },
-// // //     { key: "neighbour_name",     label: "Neighbour / Ref Name", type: "text" },
-// // //     { key: "neighbour_phone",    label: "Neighbour Phone",      type: "text" },
-// // //     { key: "verification_mode",  label: "Verification Mode",    type: "select", options: ["Physical Visit", "Digital", "Phone"] },
-// // //     { key: "remarks",            label: "Remarks",              type: "textarea" },
-// // //   ],
-// // //   database: [
-// // //     { key: "db_checked",         label: "Databases Checked",    type: "text" },
-// // //     { key: "match_found",        label: "Match Found?",         type: "select", options: ["No Match", "Potential Match", "Confirmed Match"] },
-// // //     { key: "match_details",      label: "Match Details",        type: "textarea" },
-// // //     { key: "pan_verified",       label: "PAN Verified?",        type: "select", options: ["Yes", "No", "Not Applicable"] },
-// // //     { key: "aadhar_verified",    label: "Aadhaar Verified?",    type: "select", options: ["Yes", "No", "Not Applicable"] },
-// // //     { key: "remarks",            label: "Remarks",              type: "textarea" },
-// // //   ],
-// // //   criminal: [
-// // //     { key: "court_checked",      label: "Courts Checked",       type: "text" },
-// // //     { key: "police_verified",    label: "Police Record Check",  type: "select", options: ["Clear", "Record Found", "Not Accessible"] },
-// // //     { key: "case_details",       label: "Case Details (if any)",type: "textarea" },
-// // //     { key: "state_checked",      label: "State",                type: "text" },
-// // //     { key: "district_checked",   label: "District",             type: "text" },
-// // //     { key: "verification_mode",  label: "Verification Mode",    type: "select", options: ["Online Portal", "Physical", "Phone"] },
-// // //     { key: "remarks",            label: "Remarks",              type: "textarea" },
-// // //   ],
-// // //   drug: [
-// // //     { key: "test_type",          label: "Test Type",            type: "select", options: ["Urine Test", "Blood Test", "Hair Follicle", "Saliva Test"] },
-// // //     { key: "lab_name",           label: "Lab Name",             type: "text" },
-// // //     { key: "test_date",          label: "Test Date",            type: "date" },
-// // //     { key: "substances_tested",  label: "Substances Tested",    type: "text" },
-// // //     { key: "result",             label: "Test Result",          type: "select", options: ["Negative (Clear)", "Positive", "Inconclusive", "Refused"] },
-// // //     { key: "lab_report_ref",     label: "Lab Report Ref No.",   type: "text" },
-// // //     { key: "remarks",            label: "Remarks",              type: "textarea" },
-// // //   ],
-// // //   court: [
-// // //     { key: "court_name",         label: "Court Name",           type: "text" },
-// // //     { key: "case_number",        label: "Case Number",          type: "text" },
-// // //     { key: "case_type",          label: "Case Type",            type: "select", options: ["Civil", "Criminal", "Labour", "Consumer", "Other"] },
-// // //     { key: "filing_date",        label: "Filing Date",          type: "date" },
-// // //     { key: "current_status",     label: "Current Status",       type: "select", options: ["Active", "Disposed", "Appealed", "No Record Found"] },
-// // //     { key: "next_date",          label: "Next Hearing Date",    type: "date" },
-// // //     { key: "remarks",            label: "Remarks",              type: "textarea" },
-// // //   ],
-// // // };
+// // // ── Field definitions per check type ──────────────────────────────────────────
+// // const CHECK_FIELDS = {
+// //   employment: [
+// //     { key: "company_name",       label: "Company Name",         type: "text" },
+// //     { key: "designation",        label: "Designation",          type: "text" },
+// //     { key: "employee_id",        label: "Employee ID",          type: "text" },
+// //     { key: "date_of_joining",    label: "Date of Joining",      type: "date" },
+// //     { key: "date_of_leaving",    label: "Date of Leaving",      type: "date" },
+// //     { key: "last_salary",        label: "Last Salary (₹)",      type: "text" },
+// //     { key: "reason_for_leaving", label: "Reason for Leaving",   type: "text" },
+// //     { key: "reporting_manager",  label: "Reporting Manager",    type: "text" },
+// //     { key: "hr_contact",         label: "HR Contact Email",     type: "text" },
+// //     { key: "hr_phone",           label: "HR Phone",             type: "text" },
+// //     { key: "verification_mode",  label: "Verification Mode",    type: "select", options: ["Email", "Phone", "Email + Phone", "Portal", "Visit"] },
+// //     { key: "remarks",            label: "Remarks",              type: "textarea" },
+// //   ],
+// //   education: [
+// //     { key: "institution_name",   label: "Institution Name",     type: "text" },
+// //     { key: "degree",             label: "Degree / Certificate", type: "text" },
+// //     { key: "course",             label: "Course / Specialization", type: "text" },
+// //     { key: "roll_number",        label: "Roll / Reg. Number",   type: "text" },
+// //     { key: "year_of_passing",    label: "Year of Passing",      type: "text" },
+// //     { key: "percentage",         label: "Percentage / CGPA",    type: "text" },
+// //     { key: "verification_mode",  label: "Verification Mode",    type: "select", options: ["University Portal", "Email", "Phone", "Visit", "Result Link"] },
+// //     { key: "result_link",        label: "Result Link (URL)",    type: "text" },
+// //     { key: "remarks",            label: "Remarks",              type: "textarea" },
+// //   ],
+// //   address: [
+// //     { key: "address_line",       label: "Address",              type: "text" },
+// //     { key: "city",               label: "City",                 type: "text" },
+// //     { key: "state",              label: "State",                type: "text" },
+// //     { key: "pincode",            label: "Pincode",               type: "text" },
+// //     { key: "residency_type",     label: "Residency Type",       type: "select", options: ["Owned", "Rented", "PG / Hostel", "Family Home"] },
+// //     { key: "years_at_address",   label: "Years at Address",     type: "text" },
+// //     { key: "neighbour_name",     label: "Neighbour / Ref Name", type: "text" },
+// //     { key: "neighbour_phone",    label: "Neighbour Phone",      type: "text" },
+// //     { key: "verification_mode",  label: "Verification Mode",    type: "select", options: ["Physical Visit", "Digital", "Phone"] },
+// //     { key: "remarks",            label: "Remarks",              type: "textarea" },
+// //   ],
+// //   database: [
+// //     { key: "db_checked",         label: "Databases Checked",    type: "text" },
+// //     { key: "match_found",        label: "Match Found?",         type: "select", options: ["No Match", "Potential Match", "Confirmed Match"] },
+// //     { key: "match_details",      label: "Match Details",        type: "textarea" },
+// //     { key: "pan_verified",       label: "PAN Verified?",        type: "select", options: ["Yes", "No", "Not Applicable"] },
+// //     { key: "aadhar_verified",    label: "Aadhaar Verified?",    type: "select", options: ["Yes", "No", "Not Applicable"] },
+// //     { key: "remarks",            label: "Remarks",              type: "textarea" },
+// //   ],
+// //   criminal: [
+// //     { key: "court_checked",      label: "Courts Checked",       type: "text" },
+// //     { key: "police_verified",    label: "Police Record Check",  type: "select", options: ["Clear", "Record Found", "Not Accessible"] },
+// //     { key: "case_details",       label: "Case Details (if any)",type: "textarea" },
+// //     { key: "state_checked",      label: "State",                type: "text" },
+// //     { key: "district_checked",   label: "District",             type: "text" },
+// //     { key: "verification_mode",  label: "Verification Mode",    type: "select", options: ["Online Portal", "Physical", "Phone"] },
+// //     { key: "remarks",            label: "Remarks",              type: "textarea" },
+// //   ],
+// //   drug: [
+// //     { key: "test_type",          label: "Test Type",            type: "select", options: ["Urine Test", "Blood Test", "Hair Follicle", "Saliva Test"] },
+// //     { key: "lab_name",           label: "Lab Name",             type: "text" },
+// //     { key: "test_date",          label: "Test Date",            type: "date" },
+// //     { key: "substances_tested",  label: "Substances Tested",    type: "text" },
+// //     { key: "result",             label: "Test Result",          type: "select", options: ["Negative (Clear)", "Positive", "Inconclusive", "Refused"] },
+// //     { key: "lab_report_ref",     label: "Lab Report Ref No.",   type: "text" },
+// //     { key: "remarks",            label: "Remarks",              type: "textarea" },
+// //   ],
+// //   court: [
+// //     { key: "court_name",         label: "Court Name",           type: "text" },
+// //     { key: "case_number",        label: "Case Number",          type: "text" },
+// //     { key: "case_type",          label: "Case Type",            type: "select", options: ["Civil", "Criminal", "Labour", "Consumer", "Other"] },
+// //     { key: "filing_date",        label: "Filing Date",          type: "date" },
+// //     { key: "current_status",     label: "Current Status",       type: "select", options: ["Active", "Disposed", "Appealed", "No Record Found"] },
+// //     { key: "next_date",          label: "Next Hearing Date",    type: "date" },
+// //     { key: "remarks",            label: "Remarks",              type: "textarea" },
+// //   ],
+// // };
 
-// // // // ── Maps client-submitted field keys (from CheckDetailForm.jsx /
-// // // //    checkFormsConfig.js, stored in case.check_details[checkKey].fields) onto
-// // // //    the verifier's own field keys below. Only fields that genuinely exist on
-// // // //    both sides are mapped — verifier-only fields (verification mode, HR
-// // // //    contact, remarks, etc.) are intentionally left out so they stay blank
-// // // //    for the verifier to fill in themselves.
-// // // const CLIENT_TO_VERIFIER_FIELD_MAP = {
-// // //   employment: {
-// // //     lastCompanyName: "company_name",
-// // //     dateOfJoining:   "date_of_joining",
-// // //     dateOfLeaving:   "date_of_leaving",
-// // //     salary:          "last_salary",
-// // //   },
-// // //   education: {
-// // //     instituteName:  "institution_name",
-// // //     qualification:  "degree",
-// // //     rollNo:         "roll_number",
-// // //     yearOfPassing:  "year_of_passing",
-// // //   },
-// // //   address: {
-// // //     address: "address_line",
-// // //     city:    "city",
-// // //     state:   "state",
-// // //     pinCode: "pincode",
-// // //   },
-// // //   // database / criminal / drug / court: client collects no fields for these
-// // //   // yet (see checkFormsConfig.js), so there's nothing to prefill — verifiers
-// // //   // fill these entirely from scratch.
-// // // };
+// // // ── Maps client-submitted field keys (from CheckDetailForm.jsx /
+// // //    checkFormsConfig.js, stored in case.check_details[checkKey].fields) onto
+// // //    the verifier's own field keys below. Only fields that genuinely exist on
+// // //    both sides are mapped — verifier-only fields (verification mode, HR
+// // //    contact, remarks, etc.) are intentionally left out so they stay blank
+// // //    for the verifier to fill in themselves.
+// // const CLIENT_TO_VERIFIER_FIELD_MAP = {
+// //   employment: {
+// //     lastCompanyName: "company_name",
+// //     dateOfJoining:   "date_of_joining",
+// //     dateOfLeaving:   "date_of_leaving",
+// //     salary:          "last_salary",
+// //   },
+// //   education: {
+// //     instituteName:  "institution_name",
+// //     qualification:  "degree",
+// //     rollNo:         "roll_number",
+// //     yearOfPassing:  "year_of_passing",
+// //   },
+// //   address: {
+// //     address: "address_line",
+// //     city:    "city",
+// //     state:   "state",
+// //     pinCode: "pincode",
+// //   },
+// //   // database / criminal / drug / court: client collects no fields for these
+// //   // yet (see checkFormsConfig.js), so there's nothing to prefill — verifiers
+// //   // fill these entirely from scratch.
+// // };
 
-// // // // Builds the verifier's starting form for a given check, preferring a saved
-// // // // verifier draft (check_results[checkKey].form_data) if one exists, and
-// // // // otherwise prefilling whatever overlaps from the client's submitted data.
-// // // function buildPrefilledForm(caseObj, checkKey) {
-// // //   const draft = caseObj?.check_results?.[checkKey]?.form_data;
-// // //   if (draft && Object.keys(draft).length > 0) return { form: draft, source: "draft" };
+// // // Builds the verifier's starting form for a given check, preferring a saved
+// // // verifier draft (check_results[checkKey].form_data) if one exists, and
+// // // otherwise prefilling whatever overlaps from the client's submitted data.
+// // function buildPrefilledForm(caseObj, checkKey) {
+// //   const draft = caseObj?.check_results?.[checkKey]?.form_data;
+// //   if (draft && Object.keys(draft).length > 0) return { form: draft, source: "draft" };
 
-// // //   const clientFields = caseObj?.check_details?.[checkKey]?.fields;
-// // //   const map = CLIENT_TO_VERIFIER_FIELD_MAP[checkKey];
-// // //   if (!clientFields || !map) return { form: {}, source: null };
+// //   const clientFields = caseObj?.check_details?.[checkKey]?.fields;
+// //   const map = CLIENT_TO_VERIFIER_FIELD_MAP[checkKey];
+// //   if (!clientFields || !map) return { form: {}, source: null };
 
-// // //   const prefilled = {};
-// // //   Object.entries(map).forEach(([clientKey, verifierKey]) => {
-// // //     const val = clientFields[clientKey];
-// // //     if (val && String(val).trim() !== "") prefilled[verifierKey] = val;
-// // //   });
-// // //   return { form: prefilled, source: Object.keys(prefilled).length > 0 ? "client" : null };
-// // // }
+// //   const prefilled = {};
+// //   Object.entries(map).forEach(([clientKey, verifierKey]) => {
+// //     const val = clientFields[clientKey];
+// //     if (val && String(val).trim() !== "") prefilled[verifierKey] = val;
+// //   });
+// //   return { form: prefilled, source: Object.keys(prefilled).length > 0 ? "client" : null };
+// // }
 
-// // // const PRIORITY_META = {
-// // //   HIGH:   { bg: "#fee2e2", color: "#b91c1c", dot: "#ef4444" },
-// // //   MED:    { bg: "#fef9c3", color: "#92400e", dot: "#f59e0b" },
-// // //   MEDIUM: { bg: "#fef9c3", color: "#92400e", dot: "#f59e0b" },
-// // //   LOW:    { bg: "#dcfce7", color: "#15803d", dot: "#22c55e" },
-// // //   normal: { bg: "#f1f5f9", color: "#475569", dot: "#94a3b8" },
-// // // };
+// // const PRIORITY_META = {
+// //   HIGH:   { bg: "#fee2e2", color: "#b91c1c", dot: "#ef4444" },
+// //   MED:    { bg: "#fef9c3", color: "#92400e", dot: "#f59e0b" },
+// //   MEDIUM: { bg: "#fef9c3", color: "#92400e", dot: "#f59e0b" },
+// //   LOW:    { bg: "#dcfce7", color: "#15803d", dot: "#22c55e" },
+// //   normal: { bg: "#f1f5f9", color: "#475569", dot: "#94a3b8" },
+// // };
 
-// // // const OUTCOME_OPTS = [
-// // //   { key: "clear",       label: "✔  Clear",            bg: "#f0fdf4", color: "#16a34a", border: "#16a34a" },
-// // //   { key: "discrepancy", label: "✗  Discrepancy",       bg: "#fef2f2", color: "#dc2626", border: "#dc2626" },
-// // //   { key: "unable",      label: "?  Unable to Verify",  bg: "#fffbeb", color: "#b45309", border: "#d97706" },
-// // // ];
+// // const OUTCOME_OPTS = [
+// //   { key: "clear",       label: "✔  Clear",            bg: "#f0fdf4", color: "#16a34a", border: "#16a34a" },
+// //   { key: "discrepancy", label: "✗  Discrepancy",       bg: "#fef2f2", color: "#dc2626", border: "#dc2626" },
+// //   { key: "unable",      label: "?  Unable to Verify",  bg: "#fffbeb", color: "#b45309", border: "#d97706" },
+// // ];
 
-// // // const STATUS_META = {
-// // //   "pending":     { color: "#f59e0b", pct: 20,  label: "Pending"     },
-// // //   "in-progress": { color: "#028090", pct: 60,  label: "In Progress" },
-// // //   "qc-review":   { color: "#7c3aed", pct: 85,  label: "QC Review"   },
-// // //   "completed":   { color: "#10b981", pct: 100, label: "Completed"   },
-// // //   "on-hold":     { color: "#94a3b8", pct: 30,  label: "On Hold"     },
-// // // };
+// // const STATUS_META = {
+// //   "pending":     { color: "#f59e0b", pct: 20,  label: "Pending"     },
+// //   "in-progress": { color: "#028090", pct: 60,  label: "In Progress" },
+// //   "qc-review":   { color: "#7c3aed", pct: 85,  label: "QC Review"   },
+// //   "completed":   { color: "#10b981", pct: 100, label: "Completed"   },
+// //   "on-hold":     { color: "#94a3b8", pct: 30,  label: "On Hold"     },
+// // };
 
-// // // // ── Helpers ────────────────────────────────────────────────────────────────────
-// // // function getUser() {
-// // //   try { return JSON.parse(localStorage.getItem("user")) || {}; } catch { return {}; }
-// // // }
+// // // ── Date filters — same pattern as Intake.jsx ──────────────────────────────────
+// // const DATE_FILTERS = [
+// //   { key: "today",  label: "Today"      },
+// //   { key: "month",  label: "This Month" },
+// //   { key: "custom", label: "Custom"     },
+// //   { key: "all",    label: "All Time"   },
+// // ];
 
-// // // function getToken() { return localStorage.getItem("token"); }
+// // // ── Valid sidebar/tab views for the queue ───────────────────────────────────────
+// // const VIEW_KEYS   = ["active", "completed", "clear", "discrepancy"];
+// // const VIEW_LABELS = { active: "ACTIVE", completed: "COMPLETED", clear: "CLEAR", discrepancy: "DISCREPANCY" };
 
-// // // function normChecks(raw) {
-// // //   if (!raw) return [];
-// // //   const arr = Array.isArray(raw)
-// // //     ? raw
-// // //     : String(raw).split(/[,·|]/).map(s => s.trim()).filter(Boolean);
-// // //   return arr.map(k => NORMALISE_CHECK[k.toLowerCase()] || k.toLowerCase());
-// // // }
+// // // ── Helpers ────────────────────────────────────────────────────────────────────
+// // function getUser() {
+// //   try { return JSON.parse(localStorage.getItem("user")) || {}; } catch { return {}; }
+// // }
 
-// // // function calcTAT(createdAt) {
-// // //   if (!createdAt) return "—";
-// // //   const days = Math.floor((Date.now() - new Date(createdAt)) / 86400000);
-// // //   return days === 0 ? "Today" : `${days}d`;
-// // // }
+// // function getToken() { return localStorage.getItem("token"); }
 
-// // // function normPriority(p) {
-// // //   if (!p) return "LOW";
-// // //   return String(p).toUpperCase();
-// // // }
+// // function normChecks(raw) {
+// //   if (!raw) return [];
+// //   const arr = Array.isArray(raw)
+// //     ? raw
+// //     : String(raw).split(/[,·|]/).map(s => s.trim()).filter(Boolean);
+// //   return arr.map(k => NORMALISE_CHECK[k.toLowerCase()] || k.toLowerCase());
+// // }
 
-// // // // ── Shared input styles ────────────────────────────────────────────────────────
-// // // const labelSt = {
-// // //   display: "block", fontSize: "11px", fontWeight: 700,
-// // //   color: "#475569", marginBottom: "5px",
-// // //   textTransform: "uppercase", letterSpacing: "0.4px",
-// // // };
-// // // const inputSt = {
-// // //   width: "100%", padding: "9px 12px",
-// // //   border: "1.5px solid #e2e8f0", borderRadius: "8px",
-// // //   fontSize: "13px", color: "#1e293b", background: "#f8fafc",
-// // //   outline: "none", fontFamily: "inherit", boxSizing: "border-box",
-// // // };
-// // // const textareaSt = { ...inputSt, resize: "vertical", minHeight: "72px" };
+// // function calcTAT(createdAt) {
+// //   if (!createdAt) return "—";
+// //   const days = Math.floor((Date.now() - new Date(createdAt)) / 86400000);
+// //   return days === 0 ? "Today" : `${days}d`;
+// // }
 
-// // // // ── FormField sub-component ────────────────────────────────────────────────────
-// // // function FormField({ f, value, onChange }) {
-// // //   if (f.type === "textarea") return (
-// // //     <div style={{ gridColumn: "1 / -1" }}>
-// // //       <label style={labelSt}>{f.label}</label>
-// // //       <textarea
-// // //         rows={3} value={value} onChange={e => onChange(e.target.value)}
-// // //         placeholder={`Enter ${f.label.toLowerCase()}…`} style={textareaSt}
-// // //       />
-// // //     </div>
-// // //   );
-// // //   if (f.type === "select") return (
-// // //     <div>
-// // //       <label style={labelSt}>{f.label}</label>
-// // //       <select value={value} onChange={e => onChange(e.target.value)}
-// // //         style={{ ...inputSt, cursor: "pointer" }}>
-// // //         <option value="">— Select —</option>
-// // //         {f.options.map(o => <option key={o} value={o}>{o}</option>)}
-// // //       </select>
-// // //     </div>
-// // //   );
-// // //   return (
-// // //     <div>
-// // //       <label style={labelSt}>{f.label}</label>
-// // //       <input type={f.type} value={value} onChange={e => onChange(e.target.value)}
-// // //         placeholder={f.type === "date" ? "" : `Enter ${f.label.toLowerCase()}…`}
-// // //         style={inputSt} />
-// // //     </div>
-// // //   );
-// // // }
+// // function normPriority(p) {
+// //   if (!p) return "LOW";
+// //   return String(p).toUpperCase();
+// // }
 
-// // // // ── Main Component ─────────────────────────────────────────────────────────────
-// // // export default function Verifyer() {
-// // //   const navigate = useNavigate();
-// // //   const location = useLocation();
-// // //   const user     = getUser();
-// // //   const token    = getToken();
+// // function getViewFromURL(search) {
+// //   const view = new URLSearchParams(search).get("view") || "active";
+// //   return VIEW_KEYS.includes(view) ? view : "active";
+// // }
 
-// // //   // Role resolution
-// // //   const role           = user.role || "";
-// // //   const isAdmin        = role === "admin";
-// // //   const assignedCheck  = ROLE_CHECK_MAP[role] || null; // null = admin / generic verifier sees all
+// // // ── Shared input styles ────────────────────────────────────────────────────────
+// // const labelSt = {
+// //   display: "block", fontSize: "11px", fontWeight: 700,
+// //   color: "#475569", marginBottom: "5px",
+// //   textTransform: "uppercase", letterSpacing: "0.4px",
+// // };
+// // const inputSt = {
+// //   width: "100%", padding: "9px 12px",
+// //   border: "1.5px solid #e2e8f0", borderRadius: "8px",
+// //   fontSize: "13px", color: "#1e293b", background: "#f8fafc",
+// //   outline: "none", fontFamily: "inherit", boxSizing: "border-box",
+// // };
+// // const textareaSt = { ...inputSt, resize: "vertical", minHeight: "72px" };
 
-// // //   // ── Sidebar view: "active" | "completed"
-// // //   const sidebarView = new URLSearchParams(location.search).get("view") || "active";
+// // // ── FormField sub-component ────────────────────────────────────────────────────
+// // function FormField({ f, value, onChange }) {
+// //   if (f.type === "textarea") return (
+// //     <div style={{ gridColumn: "1 / -1" }}>
+// //       <label style={labelSt}>{f.label}</label>
+// //       <textarea
+// //         rows={3} value={value} onChange={e => onChange(e.target.value)}
+// //         placeholder={`Enter ${f.label.toLowerCase()}…`} style={textareaSt}
+// //       />
+// //     </div>
+// //   );
+// //   if (f.type === "select") return (
+// //     <div>
+// //       <label style={labelSt}>{f.label}</label>
+// //       <select value={value} onChange={e => onChange(e.target.value)}
+// //         style={{ ...inputSt, cursor: "pointer" }}>
+// //         <option value="">— Select —</option>
+// //         {f.options.map(o => <option key={o} value={o}>{o}</option>)}
+// //       </select>
+// //     </div>
+// //   );
+// //   return (
+// //     <div>
+// //       <label style={labelSt}>{f.label}</label>
+// //       <input type={f.type} value={value} onChange={e => onChange(e.target.value)}
+// //         placeholder={f.type === "date" ? "" : `Enter ${f.label.toLowerCase()}…`}
+// //         style={inputSt} />
+// //     </div>
+// //   );
+// // }
 
-// // //   // ── State ─────────────────────────────────────────────────────────────────
-// // //   const [cases,        setCases]        = useState([]);
-// // //   const [loading,      setLoading]      = useState(true);
-// // //   const [selectedCase, setSelectedCase] = useState(null);
-// // //   const [activeCheck,  setActiveCheck]  = useState(assignedCheck || "employment");
-// // //   const [search,       setSearch]       = useState("");
+// // // ── Main Component ─────────────────────────────────────────────────────────────
+// // export default function Verifyer() {
+// //   const navigate = useNavigate();
+// //   const location = useLocation();
+// //   const user     = getUser();
+// //   const token    = getToken();
 
-// // //   // Form
-// // //   const [form,       setForm]       = useState({});
-// // //   const [prefillSource, setPrefillSource] = useState(null); // "client" | "draft" | null
-// // //   const [outcome,    setOutcome]    = useState("");
-// // //   const [saving,     setSaving]     = useState(false);
-// // //   const [saveMsg,    setSaveMsg]    = useState({ text: "", type: "" });
+// //   // Role resolution
+// //   const role           = user.role || "";
+// //   const isAdmin        = role === "admin";
+// //   const assignedCheck  = ROLE_CHECK_MAP[role] || null; // null = admin / generic verifier sees all
 
-// // //   // Comments
-// // //   const [comments,      setComments]      = useState([]);
-// // //   const [commentInput,  setCommentInput]  = useState("");
-// // //   const commentsEndRef = useRef(null);
+// //   // ── Sidebar/tab view: "active" | "completed" | "clear" | "discrepancy"
+// //   const sidebarView = getViewFromURL(location.search);
 
-// // //   // ── Fetch real cases from API ──────────────────────────────────────────────
-// // //   const fetchCases = () => {
-// // //     setLoading(true);
-// // //     fetch(`${API_URL}/api/cases`, {
-// // //       headers: { Authorization: `Bearer ${token}`, Accept: "application/json" },
-// // //     })
-// // //       .then(r => r.json())
-// // //       .then(data => {
-// // //         const raw = data.cases || [];
-// // //         const normalised = raw.map(c => ({
-// // //           ...c,
-// // //           checks_raw:  c.checks,
-// // //           checks_norm: normChecks(c.checks),
-// // //           candidate:   c.candidate || c.candidate_name || "—",
-// // //           priority:    normPriority(c.priority),
-// // //           tat_display: calcTAT(c.created_at),
-// // //         }));
-// // //         setCases(normalised);
-// // //         if (normalised.length > 0 && !selectedCase) {
-// // //           const first = sidebarView === "completed"
-// // //             ? normalised.find(c => c.status === "completed")
-// // //             : normalised.find(c => c.status !== "completed");
-// // //           setSelectedCase(first || normalised[0]);
-// // //         }
-// // //       })
-// // //       .catch(console.error)
-// // //       .finally(() => setLoading(false));
-// // //   };
+// //   // ── State ─────────────────────────────────────────────────────────────────
+// //   const [cases,        setCases]        = useState([]);
+// //   const [loading,      setLoading]      = useState(true);
+// //   const [selectedCase, setSelectedCase] = useState(null);
+// //   const [activeCheck,  setActiveCheck]  = useState(assignedCheck || "employment");
+// //   const [search,       setSearch]       = useState("");
 
-// // //   useEffect(() => { fetchCases(); }, []);
+// //   // Date filter — mirrors Intake.jsx
+// //   const [dateFilter, setDateFilter] = useState("month");
+// //   const [customFrom, setCustomFrom] = useState("");
+// //   const [customTo, setCustomTo]     = useState("");
 
-// // //   // Auto-scroll comments
-// // //   useEffect(() => {
-// // //     commentsEndRef.current?.scrollIntoView({ behavior: "smooth" });
-// // //   }, [comments]);
+// //   // Form
+// //   const [form,       setForm]       = useState({});
+// //   const [prefillSource, setPrefillSource] = useState(null); // "client" | "draft" | null
+// //   const [outcome,    setOutcome]    = useState("");
+// //   const [saving,     setSaving]     = useState(false);
+// //   const [saveMsg,    setSaveMsg]    = useState({ text: "", type: "" });
 
-// // //   // Reset form when case / check changes — prefill from the client's
-// // //   // submitted details (or a saved verifier draft, if one exists) rather than
-// // //   // always starting blank.
-// // //   useEffect(() => {
-// // //     const { form: prefilled, source } = buildPrefilledForm(selectedCase, activeCheck);
-// // //     setForm(prefilled);
-// // //     setPrefillSource(source);
-// // //     setOutcome(selectedCase?.check_results?.[activeCheck]?.outcome || "");
-// // //     setSaveMsg({ text: "", type: "" });
-// // //   }, [selectedCase?.case_id, activeCheck]);
+// //   // Comments
+// //   const [comments,      setComments]      = useState([]);
+// //   const [commentInput,  setCommentInput]  = useState("");
+// //   const commentsEndRef = useRef(null);
 
-// // //   // Jump active check to first valid tab on case selection
-// // //   useEffect(() => {
-// // //     if (!selectedCase) return;
-// // //     const validChecks = selectedCase.checks_norm;
-// // //     if (validChecks.length === 0) return;
-// // //     if (assignedCheck && validChecks.includes(assignedCheck)) {
-// // //       setActiveCheck(assignedCheck);
-// // //     } else if (!validChecks.includes(activeCheck)) {
-// // //       setActiveCheck(validChecks[0]);
-// // //     }
-// // //   }, [selectedCase?.case_id]);
+// //   // ── Fetch real cases from API ──────────────────────────────────────────────
+// //   const fetchCases = () => {
+// //     setLoading(true);
+// //     fetch(`${API_URL}/api/cases`, {
+// //       headers: { Authorization: `Bearer ${token}`, Accept: "application/json" },
+// //     })
+// //       .then(r => r.json())
+// //       .then(data => {
+// //         const raw = data.cases || [];
+// //         const normalised = raw.map(c => ({
+// //           ...c,
+// //           checks_raw:  c.checks,
+// //           checks_norm: normChecks(c.checks),
+// //           candidate:   c.candidate || c.candidate_name || "—",
+// //           priority:    normPriority(c.priority),
+// //           tat_display: calcTAT(c.created_at),
+// //         }));
+// //         setCases(normalised);
+// //         if (normalised.length > 0 && !selectedCase) {
+// //           const first = sidebarView === "completed"
+// //             ? normalised.find(c => c.status === "completed")
+// //             : normalised.find(c => c.status !== "completed");
+// //           setSelectedCase(first || normalised[0]);
+// //         }
+// //       })
+// //       .catch(console.error)
+// //       .finally(() => setLoading(false));
+// //   };
 
-// // //   // ── Filtered queue lists ───────────────────────────────────────────────────
-// // //   const activeCases    = cases.filter(c => c.status !== "completed");
-// // //   const completedCases = cases.filter(c => c.status === "completed");
+// //   useEffect(() => { fetchCases(); }, []);
 
-// // //   const filterBySearch = (list) => {
-// // //     if (!search) return list;
-// // //     const q = search.toLowerCase();
-// // //     return list.filter(c =>
-// // //       (c.case_id || "").toLowerCase().includes(q) ||
-// // //       (c.candidate || "").toLowerCase().includes(q) ||
-// // //       (c.client || c.client_name || "").toLowerCase().includes(q)
-// // //     );
-// // //   };
+// //   // Auto-scroll comments
+// //   useEffect(() => {
+// //     commentsEndRef.current?.scrollIntoView({ behavior: "smooth" });
+// //   }, [comments]);
 
-// // //   const queueList = filterBySearch(sidebarView === "completed" ? completedCases : activeCases);
+// //   // Reset form when case / check changes — prefill from the client's
+// //   // submitted details (or a saved verifier draft, if one exists) rather than
+// //   // always starting blank.
+// //   useEffect(() => {
+// //     const { form: prefilled, source } = buildPrefilledForm(selectedCase, activeCheck);
+// //     setForm(prefilled);
+// //     setPrefillSource(source);
+// //     setOutcome(selectedCase?.check_results?.[activeCheck]?.outcome || "");
+// //     setSaveMsg({ text: "", type: "" });
+// //   }, [selectedCase?.case_id, activeCheck]);
 
-// // //   // ── Tab accessibility ──────────────────────────────────────────────────────
-// // //   // A tab is accessible if:
-// // //   //   1. The case has that check type, AND
-// // //   //   2. The verifier's role allows it (admin / generic verifier: any; specialist: only their type)
-// // //   const canAccessTab = (checkKey) => {
-// // //     if (!selectedCase) return false;
-// // //     const caseHasCheck = selectedCase.checks_norm.includes(checkKey);
-// // //     if (!caseHasCheck) return false;
-// // //     if (isAdmin || !assignedCheck) return true;           // admin / generic verifier
-// // //     return checkKey === assignedCheck;                     // specialist verifier
-// // //   };
+// //   // Jump active check to first valid tab on case selection
+// //   useEffect(() => {
+// //     if (!selectedCase) return;
+// //     const validChecks = selectedCase.checks_norm;
+// //     if (validChecks.length === 0) return;
+// //     if (assignedCheck && validChecks.includes(assignedCheck)) {
+// //       setActiveCheck(assignedCheck);
+// //     } else if (!validChecks.includes(activeCheck)) {
+// //       setActiveCheck(validChecks[0]);
+// //     }
+// //   }, [selectedCase?.case_id]);
 
-// // //   // ── Select a case ──────────────────────────────────────────────────────────
-// // //   const selectCase = (c) => {
-// // //     setSelectedCase(c);
-// // //     setComments([]);   // TODO: fetch from API  GET /api/cases/{id}/comments
-// // //   };
+// //   // ── Date range filter — same semantics as Intake.jsx ───────────────────────
+// //   const isInRange = (createdAt) => {
+// //     if (!createdAt) return true;
+// //     if (dateFilter === "all") return true;
+// //     const d   = new Date(createdAt);
+// //     const now = new Date();
+// //     if (dateFilter === "today") return d.toDateString() === now.toDateString();
+// //     if (dateFilter === "month") return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
+// //     if (dateFilter === "custom") {
+// //       if (!customFrom && !customTo) return true;
+// //       const from = customFrom ? new Date(customFrom) : null;
+// //       const to   = customTo   ? new Date(customTo + "T23:59:59") : null;
+// //       if (from && d < from) return false;
+// //       if (to   && d > to)   return false;
+// //       return true;
+// //     }
+// //     return true;
+// //   };
 
-// // //   // ── Save result ────────────────────────────────────────────────────────────
-// // //   const handleSave = async (isDraft) => {
-// // //     if (!outcome && !isDraft) {
-// // //       setSaveMsg({ text: "Please select an outcome before saving.", type: "error" });
-// // //       return;
-// // //     }
-// // //     setSaving(true);
-// // //     setSaveMsg({ text: "", type: "" });
-// // //     try {
-// // //       const res = await fetch(`${API_URL}/api/cases/${selectedCase.case_id}/check-result`, {
-// // //         method: "POST",
-// // //         headers: {
-// // //           Authorization: `Bearer ${token}`,
-// // //           "Content-Type": "application/json",
-// // //           Accept: "application/json",
-// // //         },
-// // //         body: JSON.stringify({
-// // //           check_type: activeCheck,
-// // //           outcome:    outcome || "unable",
-// // //           form_data:  form,
-// // //           is_draft:   isDraft,
-// // //         }),
-// // //       });
-// // //       if (!res.ok) throw new Error("Server error");
-// // //       setSaveMsg({
-// // //         text: isDraft ? "Draft saved — case stays In Progress." : "Result submitted — moved to QC Review.",
-// // //         type: "success",
-// // //       });
-// // //       fetchCases();
-// // //     } catch {
-// // //       setSaveMsg({ text: "Could not save. Please try again.", type: "error" });
-// // //     } finally {
-// // //       setSaving(false);
-// // //     }
-// // //   };
+// //   // ── Does this case have any check whose outcome matches? Used for the
+// //   //    Clear / Discrepancy counts so they reflect the case as a whole,
+// //   //    rather than whichever check-type tab happens to be open right now.
+// //   const caseHasOutcome = (c, outcome) =>
+// //     Object.values(c.check_results || {}).some(r => r?.outcome === outcome);
 
-// // //   // ── Send comment ───────────────────────────────────────────────────────────
-// // //   const sendComment = () => {
-// // //     if (!commentInput.trim()) return;
-// // //     // TODO: POST /api/cases/{id}/comments
-// // //     setComments(p => [...p, {
-// // //       id:     Date.now(),
-// // //       author: user.name || "Verifier",
-// // //       avatar: (user.name || "V").charAt(0).toUpperCase(),
-// // //       time:   new Date().toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit" }),
-// // //       text:   commentInput.trim(),
-// // //     }]);
-// // //     setCommentInput("");
-// // //   };
+// //   // ── Filtered lists (status/outcome + date range) ────────────────────────────
+// //   const activeCases      = cases.filter(c => c.status !== "completed" && isInRange(c.created_at));
+// //   const completedCases   = cases.filter(c => c.status === "completed" && isInRange(c.created_at));
+// //   const clearCases       = cases.filter(c => isInRange(c.created_at) && caseHasOutcome(c, "clear"));
+// //   const discrepancyCases = cases.filter(c => isInRange(c.created_at) && caseHasOutcome(c, "discrepancy"));
 
-// // //   // ── Case list item ─────────────────────────────────────────────────────────
-// // //   const QueueItem = ({ c }) => {
-// // //     const pm       = PRIORITY_META[c.priority] || PRIORITY_META.LOW;
-// // //     const sm       = STATUS_META[c.status] || STATUS_META["pending"];
-// // //     const isActive = selectedCase?.case_id === c.case_id;
-// // //     const checkLabels = c.checks_norm.map(k =>
-// // //       CHECK_TABS.find(t => t.key === k)?.label?.slice(0, 3).toUpperCase() || k.slice(0, 3).toUpperCase()
-// // //     );
+// //   const VIEW_LISTS = {
+// //     active:      activeCases,
+// //     completed:   completedCases,
+// //     clear:       clearCases,
+// //     discrepancy: discrepancyCases,
+// //   };
 
-// // //     return (
-// // //       <tr
-// // //         className="boder-tbl active"
-// // //         onClick={() => selectCase(c)}
-// // //         style={{
-// // //           cursor: "pointer",
-// // //           background: isActive ? "#eef3ff" : undefined,
-// // //           borderLeft: isActive ? "3px solid #2b3b8c" : "3px solid transparent",
-// // //         }}
-// // //       >
-// // //         {/* Case ID + checks */}
-// // //         <td>
-// // //           <div className="criminal-case">
-// // //             <p>
-// // //               <span style={{ fontWeight: 700, color: "#27348B" }}>{c.case_id}</span>
-// // //               <br />
-// // //               <span style={{ fontSize: "11px", color: "#94a3b8" }}>
-// // //                 {checkLabels.join(" · ")}
-// // //               </span>
-// // //             </p>
-// // //           </div>
-// // //         </td>
+// //   const filterBySearch = (list) => {
+// //     if (!search) return list;
+// //     const q = search.toLowerCase();
+// //     return list.filter(c =>
+// //       (c.case_id || "").toLowerCase().includes(q) ||
+// //       (c.candidate || "").toLowerCase().includes(q) ||
+// //       (c.client || c.client_name || "").toLowerCase().includes(q)
+// //     );
+// //   };
 
-// // //         {/* Candidate name */}
-// // //         <td>
-// // //           <div className="client-names">{c.candidate}</div>
-// // //         </td>
+// //   const queueList = filterBySearch(VIEW_LISTS[sidebarView] || activeCases);
 
-// // //         {/* Progress + TAT */}
-// // //         <td>
-// // //           <div className="custom-progress">
-// // //             <div className="custom-progress-bar" style={{ width: `${sm.pct}%`, background: sm.color }} />
-// // //           </div>
-// // //           <p className="progress-client-text" style={{ color: sm.color }}>{c.tat_display}</p>
-// // //         </td>
+// //   // ── Tab accessibility ──────────────────────────────────────────────────────
+// //   // A tab is accessible if:
+// //   //   1. The case has that check type, AND
+// //   //   2. The verifier's role allows it (admin / generic verifier: any; specialist: only their type)
+// //   const canAccessTab = (checkKey) => {
+// //     if (!selectedCase) return false;
+// //     const caseHasCheck = selectedCase.checks_norm.includes(checkKey);
+// //     if (!caseHasCheck) return false;
+// //     if (isAdmin || !assignedCheck) return true;           // admin / generic verifier
+// //     return checkKey === assignedCheck;                     // specialist verifier
+// //   };
 
-// // //         {/* Priority dot */}
-// // //         <td>
-// // //           <div className="parent-client-boxes">
-// // //             <span
-// // //               className="client-cases-box"
-// // //               style={{ background: pm.dot }}
-// // //               title={c.priority}
-// // //             />
-// // //           </div>
-// // //         </td>
-// // //       </tr>
-// // //     );
-// // //   };
+// //   // ── Select a case ──────────────────────────────────────────────────────────
+// //   const selectCase = (c) => {
+// //     setSelectedCase(c);
+// //     setComments([]);   // TODO: fetch from API  GET /api/cases/{id}/comments
+// //   };
 
-// // //   // ── Middle panel: full detail of selected case ──────────────────────────────
-// // //   const DetailPanel = () => {
-// // //     if (!selectedCase) return (
-// // //       <div style={{ display: "flex", alignItems: "center", justifyContent: "center", height: "340px" }}>
-// // //         <p style={{ color: "#94a3b8", fontSize: "14px" }}>Select a case to begin verification</p>
-// // //       </div>
-// // //     );
+// //   // ── Save result ────────────────────────────────────────────────────────────
+// //   const handleSave = async (isDraft) => {
+// //     if (!outcome && !isDraft) {
+// //       setSaveMsg({ text: "Please select an outcome before saving.", type: "error" });
+// //       return;
+// //     }
+// //     setSaving(true);
+// //     setSaveMsg({ text: "", type: "" });
+// //     try {
+// //       const res = await fetch(`${API_URL}/api/cases/${selectedCase.case_id}/check-result`, {
+// //         method: "POST",
+// //         headers: {
+// //           Authorization: `Bearer ${token}`,
+// //           "Content-Type": "application/json",
+// //           Accept: "application/json",
+// //         },
+// //         body: JSON.stringify({
+// //           check_type: activeCheck,
+// //           outcome:    outcome || "unable",
+// //           form_data:  form,
+// //           is_draft:   isDraft,
+// //         }),
+// //       });
+// //       if (!res.ok) throw new Error("Server error");
+// //       setSaveMsg({
+// //         text: isDraft ? "Draft saved — case stays In Progress." : "Result submitted — moved to QC Review.",
+// //         type: "success",
+// //       });
+// //       fetchCases();
+// //     } catch {
+// //       setSaveMsg({ text: "Could not save. Please try again.", type: "error" });
+// //     } finally {
+// //       setSaving(false);
+// //     }
+// //   };
 
-// // //     const fields = CHECK_FIELDS[activeCheck] || [];
-// // //     const sm     = STATUS_META[selectedCase.status] || STATUS_META["pending"];
-// // //     const pm     = PRIORITY_META[selectedCase.priority] || PRIORITY_META.LOW;
+// //   // ── Send comment ───────────────────────────────────────────────────────────
+// //   const sendComment = () => {
+// //     if (!commentInput.trim()) return;
+// //     // TODO: POST /api/cases/{id}/comments
+// //     setComments(p => [...p, {
+// //       id:     Date.now(),
+// //       author: user.name || "Verifier",
+// //       avatar: (user.name || "V").charAt(0).toUpperCase(),
+// //       time:   new Date().toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit" }),
+// //       text:   commentInput.trim(),
+// //     }]);
+// //     setCommentInput("");
+// //   };
 
-// // //     return (
-// // //       <>
-// // //         {/* Header */}
-// // //         <div style={{
-// // //           background: "#27348B", color: "#fff", padding: "14px 18px",
-// // //           fontWeight: 700, fontSize: "13px", borderRadius: "6px 6px 0 0",
-// // //           display: "flex", justifyContent: "space-between", alignItems: "center",
-// // //         }}>
-// // //           <span>
-// // //             {selectedCase.case_id} — {selectedCase.candidate}
-// // //           </span>
-// // //           <span style={{
-// // //             background: pm.bg, color: pm.color, fontSize: "11px",
-// // //             fontWeight: 700, padding: "3px 10px", borderRadius: "20px",
-// // //           }}>
-// // //             {selectedCase.priority}
-// // //           </span>
-// // //         </div>
+// //   // ── Case list item ─────────────────────────────────────────────────────────
+// //   const QueueItem = ({ c }) => {
+// //     const pm       = PRIORITY_META[c.priority] || PRIORITY_META.LOW;
+// //     const sm       = STATUS_META[c.status] || STATUS_META["pending"];
+// //     const isActive = selectedCase?.case_id === c.case_id;
+// //     const checkLabels = c.checks_norm.map(k =>
+// //       CHECK_TABS.find(t => t.key === k)?.label?.slice(0, 3).toUpperCase() || k.slice(0, 3).toUpperCase()
+// //     );
 
-// // //         {/* Check type tabs — only show checks present in this case */}
-// // //         <div style={{
-// // //           display: "flex", background: "#fff",
-// // //           borderBottom: "1px solid #e2e8f0", overflowX: "auto",
-// // //         }}>
-// // //           {CHECK_TABS.filter(t => selectedCase.checks_norm.includes(t.key)).map((t, i, arr) => {
-// // //             const accessible = canAccessTab(t.key);
-// // //             const isActive   = activeCheck === t.key;
-// // //             return (
-// // //               <button
-// // //                 key={t.key}
-// // //                 onClick={() => accessible && setActiveCheck(t.key)}
-// // //                 title={!accessible ? "Your role cannot access this check type" : ""}
-// // //                 style={{
-// // //                   padding: "11px 18px", border: "none", whiteSpace: "nowrap",
-// // //                   borderRight: i < arr.length - 1 ? "1px solid #e2e8f0" : "none",
-// // //                   borderBottom: isActive ? "3px solid #27348B" : "3px solid transparent",
-// // //                   background: isActive ? "#f0f4ff" : "#fff",
-// // //                   color: isActive ? "#27348B" : accessible ? "#64748b" : "#cbd5e1",
-// // //                   fontWeight: isActive ? 700 : 400,
-// // //                   fontSize: "13px",
-// // //                   cursor: accessible ? "pointer" : "not-allowed",
-// // //                   opacity: accessible ? 1 : 0.45,
-// // //                   transition: "all 0.15s",
-// // //                 }}
-// // //               >
-// // //                 {t.label}
-// // //               </button>
-// // //             );
-// // //           })}
-// // //         </div>
+// //     return (
+// //       <tr
+// //         className="boder-tbl active"
+// //         onClick={() => selectCase(c)}
+// //         style={{
+// //           cursor: "pointer",
+// //           background: isActive ? "#eef3ff" : undefined,
+// //           borderLeft: isActive ? "3px solid #2b3b8c" : "3px solid transparent",
+// //         }}
+// //       >
+// //         {/* Case ID + checks */}
+// //         <td>
+// //           <div className="criminal-case">
+// //             <p>
+// //               <span style={{ fontWeight: 700, color: "#27348B" }}>{c.case_id}</span>
+// //               <br />
+// //               <span style={{ fontSize: "11px", color: "#94a3b8" }}>
+// //                 {checkLabels.join(" · ")}
+// //               </span>
+// //             </p>
+// //           </div>
+// //         </td>
 
-// // //         {/* Scrollable form body */}
-// // //         <div style={{
-// // //           border: "1px solid #e2e8f0", borderTop: "none",
-// // //           borderRadius: "0 0 6px 6px", background: "#fff",
-// // //           maxHeight: "520px", overflowY: "auto", padding: "16px",
-// // //         }}>
+// //         {/* Candidate name */}
+// //         <td>
+// //           <div className="client-names">{c.candidate}</div>
+// //         </td>
 
-// // //           {/* Case summary strip */}
-// // //           <div style={{
-// // //             display: "grid", gridTemplateColumns: "repeat(4, 1fr)",
-// // //             gap: "10px", marginBottom: "18px",
-// // //           }}>
-// // //             {[
-// // //               { label: "Client",   value: selectedCase.client || selectedCase.client_name || "—" },
-// // //               { label: "Status",   value: <span style={{ background: sm.color, color: "#fff", fontSize: "11px", fontWeight: 700, padding: "3px 10px", borderRadius: "4px" }}>{sm.label}</span> },
-// // //               { label: "TAT",      value: selectedCase.tat_display },
-// // //               { label: "Created",  value: selectedCase.created_at ? new Date(selectedCase.created_at).toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" }) : "—" },
-// // //             ].map(r => (
-// // //               <div key={r.label} style={{ background: "#f8fafc", borderRadius: "8px", padding: "10px 14px" }}>
-// // //                 <div style={{ fontSize: "10px", fontWeight: 700, color: "#94a3b8", textTransform: "uppercase", letterSpacing: "0.5px", marginBottom: "4px" }}>{r.label}</div>
-// // //                 <div style={{ fontSize: "13px", fontWeight: 700, color: "#1e293b" }}>{r.value}</div>
-// // //               </div>
-// // //             ))}
-// // //           </div>
+// //         {/* Progress + TAT */}
+// //         <td>
+// //           <div className="custom-progress">
+// //             <div className="custom-progress-bar" style={{ width: `${sm.pct}%`, background: sm.color }} />
+// //           </div>
+// //           <p className="progress-client-text" style={{ color: sm.color }}>{c.tat_display}</p>
+// //         </td>
 
-// // //           {/* Prefill source banner */}
-// // //           {prefillSource === "client" && (
-// // //             <div style={{ background: "#eff6ff", border: "1px solid #bfdbfe", borderRadius: "8px",
-// // //               padding: "10px 14px", fontSize: "12px", color: "#1d4ed8", marginBottom: "16px", fontWeight: 600 }}>
-// // //               ℹ Some fields below were prefilled from what the client/candidate already submitted. Please verify and correct as needed.
-// // //             </div>
-// // //           )}
-// // //           {prefillSource === "draft" && (
-// // //             <div style={{ background: "#f5f3ff", border: "1px solid #ddd6fe", borderRadius: "8px",
-// // //               padding: "10px 14px", fontSize: "12px", color: "#6d28d9", marginBottom: "16px", fontWeight: 600 }}>
-// // //               ↻ Resumed your saved draft for this check.
-// // //             </div>
-// // //           )}
+// //         {/* Priority dot */}
+// //         <td>
+// //           <div className="parent-client-boxes">
+// //             <span
+// //               className="client-cases-box"
+// //               style={{ background: pm.dot }}
+// //               title={c.priority}
+// //             />
+// //           </div>
+// //         </td>
+// //       </tr>
+// //     );
+// //   };
 
-// // //           {/* Outcome toggle */}
-// // //           <div style={{ marginBottom: "16px" }}>
-// // //             <p style={{ fontSize: "11px", fontWeight: 700, color: "#475569", marginBottom: "8px", textTransform: "uppercase", letterSpacing: "0.4px" }}>
-// // //               Verification Outcome
-// // //             </p>
-// // //             <div style={{ display: "flex", gap: "8px" }}>
-// // //               {OUTCOME_OPTS.map(o => (
-// // //                 <button
-// // //                   key={o.key}
-// // //                   onClick={() => setOutcome(o.key)}
-// // //                   style={{
-// // //                     flex: 1, padding: "10px 8px", cursor: "pointer",
-// // //                     border: `2px solid ${outcome === o.key ? o.border : "#e2e8f0"}`,
-// // //                     borderRadius: "8px",
-// // //                     background: outcome === o.key ? o.bg : "#f8fafc",
-// // //                     color: outcome === o.key ? o.color : "#94a3b8",
-// // //                     fontWeight: outcome === o.key ? 700 : 500,
-// // //                     fontSize: "12px",
-// // //                     transition: "all 0.15s",
-// // //                   }}
-// // //                 >
-// // //                   {o.label}
-// // //                 </button>
-// // //               ))}
-// // //             </div>
-// // //           </div>
+// //   // ── Middle panel: full detail of selected case ──────────────────────────────
+// //   const DetailPanel = () => {
+// //     if (!selectedCase) return (
+// //       <div style={{ display: "flex", alignItems: "center", justifyContent: "center", height: "340px" }}>
+// //         <p style={{ color: "#94a3b8", fontSize: "14px" }}>Select a case to begin verification</p>
+// //       </div>
+// //     );
 
-// // //           {/* Dynamic fields grid */}
-// // //           {!canAccessTab(activeCheck) ? (
-// // //             <div style={{ padding: "24px", textAlign: "center", color: "#94a3b8", fontSize: "13px", background: "#f8fafc", borderRadius: "8px" }}>
-// // //               Your role does not have access to the <strong>{CHECK_TABS.find(t => t.key === activeCheck)?.label}</strong> check.
-// // //             </div>
-// // //           ) : (
-// // //             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px" }}>
-// // //               {fields.map(f => (
-// // //                 <FormField
-// // //                   key={f.key} f={f}
-// // //                   value={form[f.key] || ""}
-// // //                   onChange={v => setForm(p => ({ ...p, [f.key]: v }))}
-// // //                 />
-// // //               ))}
-// // //             </div>
-// // //           )}
+// //     const fields = CHECK_FIELDS[activeCheck] || [];
+// //     const sm     = STATUS_META[selectedCase.status] || STATUS_META["pending"];
+// //     const pm     = PRIORITY_META[selectedCase.priority] || PRIORITY_META.LOW;
 
-// // //           {/* Save message */}
-// // //           {saveMsg.text && (
-// // //             <div style={{
-// // //               marginTop: "14px", padding: "10px 14px", borderRadius: "8px",
-// // //               background: saveMsg.type === "success" ? "#f0fdf4" : "#fef2f2",
-// // //               color:      saveMsg.type === "success" ? "#16a34a" : "#dc2626",
-// // //               fontSize: "13px", fontWeight: 600,
-// // //             }}>
-// // //               {saveMsg.text}
-// // //             </div>
-// // //           )}
-// // //         </div>
+// //     return (
+// //       <>
+// //         {/* Header */}
+// //         <div style={{
+// //           background: "#27348B", color: "#fff", padding: "14px 18px",
+// //           fontWeight: 700, fontSize: "13px", borderRadius: "6px 6px 0 0",
+// //           display: "flex", justifyContent: "space-between", alignItems: "center",
+// //         }}>
+// //           <span>
+// //             {selectedCase.case_id} — {selectedCase.candidate}
+// //           </span>
+// //           <span style={{
+// //             background: pm.bg, color: pm.color, fontSize: "11px",
+// //             fontWeight: 700, padding: "3px 10px", borderRadius: "20px",
+// //           }}>
+// //             {selectedCase.priority}
+// //           </span>
+// //         </div>
 
-// // //         {/* Action buttons */}
-// // //         {canAccessTab(activeCheck) && (
-// // //           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px", marginTop: "12px" }}>
-// // //             <button
-// // //               onClick={() => handleSave(true)}
-// // //               disabled={saving}
-// // //               style={{
-// // //                 display: "flex", alignItems: "center", justifyContent: "center", gap: "8px",
-// // //                 padding: "13px", background: "#27348B", color: "#fff", border: "none",
-// // //                 borderRadius: "6px", fontWeight: 700, fontSize: "13px", cursor: "pointer",
-// // //               }}
-// // //             >
-// // //               💾 Save Draft
-// // //             </button>
-// // //             <button
-// // //               onClick={() => handleSave(false)}
-// // //               disabled={saving || !outcome}
-// // //               style={{
-// // //                 display: "flex", alignItems: "center", justifyContent: "center", gap: "8px",
-// // //                 padding: "13px",
-// // //                 background: saving || !outcome ? "#94a3b8" : "#10b981",
-// // //                 color: "#fff", border: "none", borderRadius: "6px",
-// // //                 fontWeight: 700, fontSize: "13px",
-// // //                 cursor: saving || !outcome ? "not-allowed" : "pointer",
-// // //               }}
-// // //             >
-// // //               {saving ? "Saving…" : "✔ Save & Mark Done"}
-// // //             </button>
-// // //           </div>
-// // //         )}
-// // //       </>
-// // //     );
-// // //   };
+// //         {/* Check type tabs — only show checks present in this case */}
+// //         <div style={{
+// //           display: "flex", background: "#fff",
+// //           borderBottom: "1px solid #e2e8f0", overflowX: "auto",
+// //         }}>
+// //           {CHECK_TABS.filter(t => selectedCase.checks_norm.includes(t.key)).map((t, i, arr) => {
+// //             const accessible = canAccessTab(t.key);
+// //             const isActive   = activeCheck === t.key;
+// //             return (
+// //               <button
+// //                 key={t.key}
+// //                 onClick={() => accessible && setActiveCheck(t.key)}
+// //                 title={!accessible ? "Your role cannot access this check type" : ""}
+// //                 style={{
+// //                   padding: "11px 18px", border: "none", whiteSpace: "nowrap",
+// //                   borderRight: i < arr.length - 1 ? "1px solid #e2e8f0" : "none",
+// //                   borderBottom: isActive ? "3px solid #27348B" : "3px solid transparent",
+// //                   background: isActive ? "#f0f4ff" : "#fff",
+// //                   color: isActive ? "#27348B" : accessible ? "#64748b" : "#cbd5e1",
+// //                   fontWeight: isActive ? 700 : 400,
+// //                   fontSize: "13px",
+// //                   cursor: accessible ? "pointer" : "not-allowed",
+// //                   opacity: accessible ? 1 : 0.45,
+// //                   transition: "all 0.15s",
+// //                 }}
+// //               >
+// //                 {t.label}
+// //               </button>
+// //             );
+// //           })}
+// //         </div>
 
-// // //   // ── Right panel: Comments ────────────────────────────────────────────────
-// // //   const RightPanel = () => (
-// // //     <div style={{ display: "flex", flexDirection: "column", gap: "14px", height: "100%" }}>
+// //         {/* Scrollable form body */}
+// //         <div style={{
+// //           border: "1px solid #e2e8f0", borderTop: "none",
+// //           borderRadius: "0 0 6px 6px", background: "#fff",
+// //           maxHeight: "520px", overflowY: "auto", padding: "16px",
+// //         }}>
 
-// // //       {/* Comments */}
-// // //       <div style={{ borderRadius: "10px", overflow: "hidden", border: "1px solid #e2e8f0", flex: 1, display: "flex", flexDirection: "column" }}>
-// // //         <div style={{ background: "#27348B", padding: "13px 16px" }}>
-// // //           <h3 style={{ margin: 0, color: "#fff", fontSize: "12px", fontWeight: 700, letterSpacing: "0.08em" }}>
-// // //             COMMENTS & NOTES
-// // //           </h3>
-// // //         </div>
-// // //         <div style={{ flex: 1, maxHeight: "460px", overflowY: "auto", padding: "12px 14px" }}>
-// // //           {comments.length === 0 ? (
-// // //             <p style={{ color: "#cbd5e1", fontSize: "13px", textAlign: "center", padding: "16px 0" }}>
-// // //               No comments yet.
-// // //             </p>
-// // //           ) : (
-// // //             comments.map((c, i) => (
-// // //               <div key={c.id} style={{ display: "flex", gap: "10px", marginBottom: "14px" }}>
-// // //                 <div style={{
-// // //                   width: "30px", height: "30px", borderRadius: "50%",
-// // //                   background: i % 2 === 0 ? "#7c3aed" : "#0d9488",
-// // //                   color: "#fff", display: "flex", alignItems: "center", justifyContent: "center",
-// // //                   fontSize: "13px", fontWeight: 700, flexShrink: 0,
-// // //                 }}>
-// // //                   {c.avatar}
-// // //                 </div>
-// // //                 <div style={{ flex: 1 }}>
-// // //                   <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "3px" }}>
-// // //                     <span style={{ fontSize: "12px", fontWeight: 700, color: "#1e293b" }}>{c.author}</span>
-// // //                     <span style={{ fontSize: "11px", color: "#94a3b8" }}>{c.time}</span>
-// // //                   </div>
-// // //                   <p style={{ fontSize: "12px", color: "#475569", margin: 0, lineHeight: 1.5 }}>{c.text}</p>
-// // //                 </div>
-// // //               </div>
-// // //             ))
-// // //           )}
-// // //           <div ref={commentsEndRef} />
-// // //         </div>
-// // //         <div style={{ borderTop: "1px solid #e2e8f0", display: "flex", gap: "0" }}>
-// // //           <input
-// // //             type="text"
-// // //             placeholder="Add a comment…"
-// // //             value={commentInput}
-// // //             onChange={e => setCommentInput(e.target.value)}
-// // //             onKeyDown={e => e.key === "Enter" && sendComment()}
-// // //             style={{
-// // //               flex: 1, border: "none", padding: "11px 14px",
-// // //               fontSize: "13px", outline: "none", background: "#fff",
-// // //             }}
-// // //           />
-// // //           <button onClick={sendComment} style={{
-// // //             background: "#27348B", border: "none", padding: "0 16px",
-// // //             cursor: "pointer", color: "#fff",
-// // //           }}>
-// // //             <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-// // //               <line x1="22" y1="2" x2="11" y2="13" />
-// // //               <polygon points="22 2 15 22 11 13 2 9 22 2" />
-// // //             </svg>
-// // //           </button>
-// // //         </div>
-// // //       </div>
-// // //     </div>
-// // //   );
+// //           {/* Case summary strip */}
+// //           <div style={{
+// //             display: "grid", gridTemplateColumns: "repeat(4, 1fr)",
+// //             gap: "10px", marginBottom: "18px",
+// //           }}>
+// //             {[
+// //               { label: "Client",   value: selectedCase.client || selectedCase.client_name || "—" },
+// //               { label: "Status",   value: <span style={{ background: sm.color, color: "#fff", fontSize: "11px", fontWeight: 700, padding: "3px 10px", borderRadius: "4px" }}>{sm.label}</span> },
+// //               { label: "TAT",      value: selectedCase.tat_display },
+// //               { label: "Created",  value: selectedCase.created_at ? new Date(selectedCase.created_at).toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" }) : "—" },
+// //             ].map(r => (
+// //               <div key={r.label} style={{ background: "#f8fafc", borderRadius: "8px", padding: "10px 14px" }}>
+// //                 <div style={{ fontSize: "10px", fontWeight: 700, color: "#94a3b8", textTransform: "uppercase", letterSpacing: "0.5px", marginBottom: "4px" }}>{r.label}</div>
+// //                 <div style={{ fontSize: "13px", fontWeight: 700, color: "#1e293b" }}>{r.value}</div>
+// //               </div>
+// //             ))}
+// //           </div>
 
-// // //   // ── Render ─────────────────────────────────────────────────────────────────
-// // //   return (
-// // //     <>
-// // //       <Sidebar />
-// // //       <section id="content">
-// // //         <Header />
-// // //         <main>
-// // //           <div className="dash-wrper">
+// //           {/* Prefill source banner */}
+// //           {prefillSource === "client" && (
+// //             <div style={{ background: "#eff6ff", border: "1px solid #bfdbfe", borderRadius: "8px",
+// //               padding: "10px 14px", fontSize: "12px", color: "#1d4ed8", marginBottom: "16px", fontWeight: 600 }}>
+// //               ℹ Some fields below were prefilled from what the client/candidate already submitted. Please verify and correct as needed.
+// //             </div>
+// //           )}
+// //           {prefillSource === "draft" && (
+// //             <div style={{ background: "#f5f3ff", border: "1px solid #ddd6fe", borderRadius: "8px",
+// //               padding: "10px 14px", fontSize: "12px", color: "#6d28d9", marginBottom: "16px", fontWeight: 600 }}>
+// //               ↻ Resumed your saved draft for this check.
+// //             </div>
+// //           )}
 
-// // //             {/* Page header */}
-// // //             <div className="dash-upper-head">
-// // //               <div className="left">
-// // //                 <div className="dash-title-flex">
-// // //                   <h3 className="dash-title-text">Verifier Workspace</h3>
-// // //                   <span style={{
-// // //                     fontSize: "12px", color: "#64748b",
-// // //                     background: "#eef3ff", padding: "3px 10px", borderRadius: "20px",
-// // //                   }}>
-// // //                     {user.name || "Verifier"} — {role}
-// // //                   </span>
-// // //                   {assignedCheck && (
-// // //                     <span style={{
-// // //                       fontSize: "11px", color: "#fff",
-// // //                       background: "#27348B", padding: "3px 10px", borderRadius: "20px",
-// // //                     }}>
-// // //                       Assigned: {CHECK_TABS.find(t => t.key === assignedCheck)?.label}
-// // //                     </span>
-// // //                   )}
-// // //                 </div>
-// // //               </div>
-// // //               <div className="right">
-// // //                 <input
-// // //                   type="text"
-// // //                   className="dash-search-input"
-// // //                   placeholder="Search case ID or candidate…"
-// // //                   value={search}
-// // //                   onChange={e => setSearch(e.target.value)}
-// // //                 />
-// // //                 {search && (
-// // //                   <button onClick={() => setSearch("")}
-// // //                     style={{ background: "none", border: "none", cursor: "pointer", fontSize: "18px", color: "#94a3b8" }}>
-// // //                     ×
-// // //                   </button>
-// // //                 )}
-// // //               </div>
-// // //             </div>
+// //           {/* Outcome toggle */}
+// //           <div style={{ marginBottom: "16px" }}>
+// //             <p style={{ fontSize: "11px", fontWeight: 700, color: "#475569", marginBottom: "8px", textTransform: "uppercase", letterSpacing: "0.4px" }}>
+// //               Verification Outcome
+// //             </p>
+// //             <div style={{ display: "flex", gap: "8px" }}>
+// //               {OUTCOME_OPTS.map(o => (
+// //                 <button
+// //                   key={o.key}
+// //                   onClick={() => setOutcome(o.key)}
+// //                   style={{
+// //                     flex: 1, padding: "10px 8px", cursor: "pointer",
+// //                     border: `2px solid ${outcome === o.key ? o.border : "#e2e8f0"}`,
+// //                     borderRadius: "8px",
+// //                     background: outcome === o.key ? o.bg : "#f8fafc",
+// //                     color: outcome === o.key ? o.color : "#94a3b8",
+// //                     fontWeight: outcome === o.key ? 700 : 500,
+// //                     fontSize: "12px",
+// //                     transition: "all 0.15s",
+// //                   }}
+// //                 >
+// //                   {o.label}
+// //                 </button>
+// //               ))}
+// //             </div>
+// //           </div>
 
-// // //             {/* View toggle: Active / Completed */}
-// // //             <div style={{ display: "flex", gap: "8px", marginBottom: "4px" }}>
-// // //               <button
-// // //                 className={`tab-cta ${sidebarView === "active" ? "active" : ""}`}
-// // //                 onClick={() => navigate("/Verifyer?view=active", { replace: true })}
-// // //               >
-// // //                 Active Cases
-// // //                 <span style={{ marginLeft: "6px", background: "rgba(0,0,0,0.1)", borderRadius: "8px", padding: "1px 6px", fontSize: "11px", fontWeight: 700 }}>
-// // //                   {activeCases.length}
-// // //                 </span>
-// // //               </button>
-// // //               <button
-// // //                 className={`tab-cta ${sidebarView === "completed" ? "active" : ""}`}
-// // //                 onClick={() => navigate("/Verifyer?view=completed", { replace: true })}
-// // //               >
-// // //                 Completed
-// // //                 <span style={{ marginLeft: "6px", background: "rgba(0,0,0,0.1)", borderRadius: "8px", padding: "1px 6px", fontSize: "11px", fontWeight: 700 }}>
-// // //                   {completedCases.length}
-// // //                 </span>
-// // //               </button>
-// // //             </div>
+// //           {/* Dynamic fields grid */}
+// //           {!canAccessTab(activeCheck) ? (
+// //             <div style={{ padding: "24px", textAlign: "center", color: "#94a3b8", fontSize: "13px", background: "#f8fafc", borderRadius: "8px" }}>
+// //               Your role does not have access to the <strong>{CHECK_TABS.find(t => t.key === activeCheck)?.label}</strong> check.
+// //             </div>
+// //           ) : (
+// //             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px" }}>
+// //               {fields.map(f => (
+// //                 <FormField
+// //                   key={f.key} f={f}
+// //                   value={form[f.key] || ""}
+// //                   onChange={v => setForm(p => ({ ...p, [f.key]: v }))}
+// //                 />
+// //               ))}
+// //             </div>
+// //           )}
 
-// // //             {/* Three-column layout: Queue | Form | Charges+Comments */}
-// // //             <div style={{ display: "grid", gridTemplateColumns: "300px 1fr 280px", gap: "16px", alignItems: "start" }}>
+// //           {/* Save message */}
+// //           {saveMsg.text && (
+// //             <div style={{
+// //               marginTop: "14px", padding: "10px 14px", borderRadius: "8px",
+// //               background: saveMsg.type === "success" ? "#f0fdf4" : "#fef2f2",
+// //               color:      saveMsg.type === "success" ? "#16a34a" : "#dc2626",
+// //               fontSize: "13px", fontWeight: 600,
+// //             }}>
+// //               {saveMsg.text}
+// //             </div>
+// //           )}
+// //         </div>
 
-// // //               {/* ── LEFT: Case queue ── */}
-// // //               <div className="down-table" style={{ margin: 0 }}>
-// // //                 <div className="client-portal-cases">
-// // //                   <h3>
-// // //                     {sidebarView === "completed" ? "COMPLETED" : "ACTIVE"} ({queueList.length})
-// // //                   </h3>
-// // //                 </div>
+// //         {/* Action buttons */}
+// //         {canAccessTab(activeCheck) && (
+// //           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px", marginTop: "12px" }}>
+// //             <button
+// //               onClick={() => handleSave(true)}
+// //               disabled={saving}
+// //               style={{
+// //                 display: "flex", alignItems: "center", justifyContent: "center", gap: "8px",
+// //                 padding: "13px", background: "#27348B", color: "#fff", border: "none",
+// //                 borderRadius: "6px", fontWeight: 700, fontSize: "13px", cursor: "pointer",
+// //               }}
+// //             >
+// //               💾 Save Draft
+// //             </button>
+// //             <button
+// //               onClick={() => handleSave(false)}
+// //               disabled={saving || !outcome}
+// //               style={{
+// //                 display: "flex", alignItems: "center", justifyContent: "center", gap: "8px",
+// //                 padding: "13px",
+// //                 background: saving || !outcome ? "#94a3b8" : "#10b981",
+// //                 color: "#fff", border: "none", borderRadius: "6px",
+// //                 fontWeight: 700, fontSize: "13px",
+// //                 cursor: saving || !outcome ? "not-allowed" : "pointer",
+// //               }}
+// //             >
+// //               {saving ? "Saving…" : "✔ Save & Mark Done"}
+// //             </button>
+// //           </div>
+// //         )}
+// //       </>
+// //     );
+// //   };
 
-// // //                 {loading ? (
-// // //                   <p style={{ padding: "24px", textAlign: "center", color: "#94a3b8" }}>Loading cases…</p>
-// // //                 ) : queueList.length === 0 ? (
-// // //                   <p style={{ padding: "24px", textAlign: "center", color: "#94a3b8", fontSize: "13px" }}>
-// // //                     No {sidebarView} cases found.
-// // //                   </p>
-// // //                 ) : (
-// // //                   <table>
-// // //                     <tbody>
-// // //                       {queueList.map(c => <QueueItem key={c.case_id} c={c} />)}
-// // //                     </tbody>
-// // //                   </table>
-// // //                 )}
-// // //               </div>
+// //   // ── Right panel: Comments ────────────────────────────────────────────────
+// //   const RightPanel = () => (
+// //     <div style={{ display: "flex", flexDirection: "column", gap: "14px", height: "100%" }}>
 
-// // //               {/* ── MIDDLE: Detail + form ── */}
-// // //               <div className="second-card">
-// // //                 <DetailPanel />
-// // //               </div>
+// //       {/* Comments */}
+// //       <div style={{ borderRadius: "10px", overflow: "hidden", border: "1px solid #e2e8f0", flex: 1, display: "flex", flexDirection: "column" }}>
+// //         <div style={{ background: "#27348B", padding: "13px 16px" }}>
+// //           <h3 style={{ margin: 0, color: "#fff", fontSize: "12px", fontWeight: 700, letterSpacing: "0.08em" }}>
+// //             COMMENTS & NOTES
+// //           </h3>
+// //         </div>
+// //         <div style={{ flex: 1, maxHeight: "460px", overflowY: "auto", padding: "12px 14px" }}>
+// //           {comments.length === 0 ? (
+// //             <p style={{ color: "#cbd5e1", fontSize: "13px", textAlign: "center", padding: "16px 0" }}>
+// //               No comments yet.
+// //             </p>
+// //           ) : (
+// //             comments.map((c, i) => (
+// //               <div key={c.id} style={{ display: "flex", gap: "10px", marginBottom: "14px" }}>
+// //                 <div style={{
+// //                   width: "30px", height: "30px", borderRadius: "50%",
+// //                   background: i % 2 === 0 ? "#7c3aed" : "#0d9488",
+// //                   color: "#fff", display: "flex", alignItems: "center", justifyContent: "center",
+// //                   fontSize: "13px", fontWeight: 700, flexShrink: 0,
+// //                 }}>
+// //                   {c.avatar}
+// //                 </div>
+// //                 <div style={{ flex: 1 }}>
+// //                   <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "3px" }}>
+// //                     <span style={{ fontSize: "12px", fontWeight: 700, color: "#1e293b" }}>{c.author}</span>
+// //                     <span style={{ fontSize: "11px", color: "#94a3b8" }}>{c.time}</span>
+// //                   </div>
+// //                   <p style={{ fontSize: "12px", color: "#475569", margin: 0, lineHeight: 1.5 }}>{c.text}</p>
+// //                 </div>
+// //               </div>
+// //             ))
+// //           )}
+// //           <div ref={commentsEndRef} />
+// //         </div>
+// //         <div style={{ borderTop: "1px solid #e2e8f0", display: "flex", gap: "0" }}>
+// //           <input
+// //             type="text"
+// //             placeholder="Add a comment…"
+// //             value={commentInput}
+// //             onChange={e => setCommentInput(e.target.value)}
+// //             onKeyDown={e => e.key === "Enter" && sendComment()}
+// //             style={{
+// //               flex: 1, border: "none", padding: "11px 14px",
+// //               fontSize: "13px", outline: "none", background: "#fff",
+// //             }}
+// //           />
+// //           <button onClick={sendComment} style={{
+// //             background: "#27348B", border: "none", padding: "0 16px",
+// //             cursor: "pointer", color: "#fff",
+// //           }}>
+// //             <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+// //               <line x1="22" y1="2" x2="11" y2="13" />
+// //               <polygon points="22 2 15 22 11 13 2 9 22 2" />
+// //             </svg>
+// //           </button>
+// //         </div>
+// //       </div>
+// //     </div>
+// //   );
 
-// // //               {/* ── RIGHT: Charges + Comments ── */}
-// // //               <div className="thrid-card">
-// // //                 <RightPanel />
-// // //               </div>
+// //   // ── Render ─────────────────────────────────────────────────────────────────
+// //   return (
+// //     <>
+// //       <Sidebar />
+// //       <section id="content">
+// //         <Header />
+// //         <main>
+// //           <div className="dash-wrper">
 
-// // //             </div>
-// // //           </div>
-// // //         </main>
-// // //       </section>
-// // //     </>
-// // //   );
-// // // }
+// //             {/* Page header */}
+// //             <div className="dash-upper-head">
+// //               <div className="left">
+// //                 <div className="dash-title-flex">
+// //                   <h3 className="dash-title-text">Verifier Workspace</h3>
+// //                   <span style={{
+// //                     fontSize: "12px", color: "#64748b",
+// //                     background: "#eef3ff", padding: "3px 10px", borderRadius: "20px",
+// //                   }}>
+// //                     {user.name || "Verifier"} — {role}
+// //                   </span>
+// //                   {assignedCheck && (
+// //                     <span style={{
+// //                       fontSize: "11px", color: "#fff",
+// //                       background: "#27348B", padding: "3px 10px", borderRadius: "20px",
+// //                     }}>
+// //                       Assigned: {CHECK_TABS.find(t => t.key === assignedCheck)?.label}
+// //                     </span>
+// //                   )}
+// //                 </div>
+// //               </div>
+// //               <div className="right">
+// //                 <input
+// //                   type="text"
+// //                   className="dash-search-input"
+// //                   placeholder="Search case ID or candidate…"
+// //                   value={search}
+// //                   onChange={e => setSearch(e.target.value)}
+// //                 />
+// //                 {search && (
+// //                   <button onClick={() => setSearch("")}
+// //                     style={{ background: "none", border: "none", cursor: "pointer", fontSize: "18px", color: "#94a3b8" }}>
+// //                     ×
+// //                   </button>
+// //                 )}
+// //               </div>
+// //             </div>
+
+// //             {/* Date filters — same pattern as Intake.jsx */}
+// //             <div style={{ display: "flex", gap: "8px", flexWrap: "wrap", alignItems: "center" }}>
+// //               {DATE_FILTERS.map(df => (
+// //                 <button
+// //                   key={df.key}
+// //                   className={`tab-cta ${dateFilter === df.key ? "active" : ""}`}
+// //                   onClick={() => setDateFilter(df.key)}
+// //                 >
+// //                   {df.label}
+// //                 </button>
+// //               ))}
+// //               {dateFilter === "custom" && (
+// //                 <>
+// //                   <input
+// //                     type="date" value={customFrom} onChange={e => setCustomFrom(e.target.value)}
+// //                     style={{ padding: "8px 12px", border: "1px solid #e2e8f0", borderRadius: "10px", fontSize: "13px" }}
+// //                   />
+// //                   <span style={{ color: "#94a3b8" }}>→</span>
+// //                   <input
+// //                     type="date" value={customTo} onChange={e => setCustomTo(e.target.value)}
+// //                     style={{ padding: "8px 12px", border: "1px solid #e2e8f0", borderRadius: "10px", fontSize: "13px" }}
+// //                   />
+// //                 </>
+// //               )}
+// //             </div>
+
+// //             {/* ── Stat cards — now double as the queue-view selector (replaces the old tab row) ── */}
+// //             <div className="cards-head-dash">
+// //               {[
+// //                 { key: "active",      cls: "bdr-total",    count: activeCases.length,      label: "Active" },
+// //                 { key: "completed",   cls: "bdr-com",       count: completedCases.length,   label: "Completed" },
+// //                 { key: "clear",       cls: "bdr-progress",  count: clearCases.length,       label: "Clear" },
+// //                 { key: "discrepancy", cls: "bdr-rate",      count: discrepancyCases.length,  label: "Discrepancy" },
+// //               ].map(card => (
+// //                 <div
+// //                   key={card.key}
+// //                   className={`card-inner-dash ${card.cls}`}
+// //                   onClick={() => navigate(`/Verifyer?view=${card.key}`, { replace: true })}
+// //                   role="button"
+// //                   tabIndex={0}
+// //                   onKeyDown={e => e.key === "Enter" && navigate(`/Verifyer?view=${card.key}`, { replace: true })}
+// //                   style={{
+// //                     cursor: "pointer",
+// //                     outline: sidebarView === card.key ? "2px solid #27348B" : "none",
+// //                     outlineOffset: "-2px",
+// //                   }}
+// //                 >
+// //                   <h4>{loading ? "—" : card.count}</h4>
+// //                   <p>{card.label}</p>
+// //                 </div>
+// //               ))}
+// //             </div>
+
+// //             {/* Three-column layout: Queue | Form | Charges+Comments */}
+// //             <div style={{ display: "grid", gridTemplateColumns: "300px 1fr 280px", gap: "16px", alignItems: "start" }}>
+
+// //               {/* ── LEFT: Case queue ── */}
+// //               <div className="down-table" style={{ margin: 0 }}>
+// //                 <div className="client-portal-cases">
+// //                   <h3>
+// //                     {VIEW_LABELS[sidebarView] || "ACTIVE"} ({queueList.length})
+// //                   </h3>
+// //                 </div>
+
+// //                 {loading ? (
+// //                   <p style={{ padding: "24px", textAlign: "center", color: "#94a3b8" }}>Loading cases…</p>
+// //                 ) : queueList.length === 0 ? (
+// //                   <p style={{ padding: "24px", textAlign: "center", color: "#94a3b8", fontSize: "13px" }}>
+// //                     No {sidebarView} cases found.
+// //                   </p>
+// //                 ) : (
+// //                   <table>
+// //                     <tbody>
+// //                       {queueList.map(c => <QueueItem key={c.case_id} c={c} />)}
+// //                     </tbody>
+// //                   </table>
+// //                 )}
+// //               </div>
+
+// //               {/* ── MIDDLE: Detail + form ── */}
+// //               <div className="second-card">
+// //                 <DetailPanel />
+// //               </div>
+
+// //               {/* ── RIGHT: Charges + Comments ── */}
+// //               <div className="thrid-card">
+// //                 <RightPanel />
+// //               </div>
+
+// //             </div>
+// //           </div>
+// //         </main>
+// //       </section>
+// //     </>
+// //   );
+// // }
 // import { useState, useEffect, useRef } from "react";
 // import { useNavigate, useLocation } from "react-router-dom";
 // import Sidebar from "./Sidebar";
@@ -3423,7 +4380,6 @@
 //   { key: "court",      label: "Courtroom"  },
 // ];
 
-// // ── Which API check key maps to which verifier role ───────────────────────────
 // const ROLE_CHECK_MAP = {
 //   employment_verifier:  "employment",
 //   education_verifier:   "education",
@@ -3434,7 +4390,6 @@
 //   courtroom_verifier:   "court",
 // };
 
-// // ── Normalise check keys coming from the API (emp→employment, edu→education…) ─
 // const NORMALISE_CHECK = {
 //   emp:        "employment",
 //   employment: "employment",
@@ -3452,7 +4407,6 @@
 //   courtroom:  "court",
 // };
 
-// // ── Field definitions per check type ──────────────────────────────────────────
 // const CHECK_FIELDS = {
 //   employment: [
 //     { key: "company_name",       label: "Company Name",         type: "text" },
@@ -3528,39 +4482,12 @@
 //   ],
 // };
 
-// // ── Maps client-submitted field keys (from CheckDetailForm.jsx /
-// //    checkFormsConfig.js, stored in case.check_details[checkKey].fields) onto
-// //    the verifier's own field keys below. Only fields that genuinely exist on
-// //    both sides are mapped — verifier-only fields (verification mode, HR
-// //    contact, remarks, etc.) are intentionally left out so they stay blank
-// //    for the verifier to fill in themselves.
 // const CLIENT_TO_VERIFIER_FIELD_MAP = {
-//   employment: {
-//     lastCompanyName: "company_name",
-//     dateOfJoining:   "date_of_joining",
-//     dateOfLeaving:   "date_of_leaving",
-//     salary:          "last_salary",
-//   },
-//   education: {
-//     instituteName:  "institution_name",
-//     qualification:  "degree",
-//     rollNo:         "roll_number",
-//     yearOfPassing:  "year_of_passing",
-//   },
-//   address: {
-//     address: "address_line",
-//     city:    "city",
-//     state:   "state",
-//     pinCode: "pincode",
-//   },
-//   // database / criminal / drug / court: client collects no fields for these
-//   // yet (see checkFormsConfig.js), so there's nothing to prefill — verifiers
-//   // fill these entirely from scratch.
+//   employment: { lastCompanyName: "company_name", dateOfJoining: "date_of_joining", dateOfLeaving: "date_of_leaving", salary: "last_salary" },
+//   education: { instituteName: "institution_name", qualification: "degree", rollNo: "roll_number", yearOfPassing: "year_of_passing" },
+//   address: { address: "address_line", city: "city", state: "state", pinCode: "pincode" },
 // };
 
-// // Builds the verifier's starting form for a given check, preferring a saved
-// // verifier draft (check_results[checkKey].form_data) if one exists, and
-// // otherwise prefilling whatever overlaps from the client's submitted data.
 // function buildPrefilledForm(caseObj, checkKey) {
 //   const draft = caseObj?.check_results?.[checkKey]?.form_data;
 //   if (draft && Object.keys(draft).length > 0) return { form: draft, source: "draft" };
@@ -3599,7 +4526,6 @@
 //   "on-hold":     { color: "#94a3b8", pct: 30,  label: "On Hold"     },
 // };
 
-// // ── Date filters — same pattern as Intake.jsx ──────────────────────────────────
 // const DATE_FILTERS = [
 //   { key: "today",  label: "Today"      },
 //   { key: "month",  label: "This Month" },
@@ -3607,71 +4533,44 @@
 //   { key: "all",    label: "All Time"   },
 // ];
 
-// // ── Valid sidebar/tab views for the queue ───────────────────────────────────────
-// const VIEW_KEYS   = ["active", "completed", "clear", "discrepancy"];
-// const VIEW_LABELS = { active: "ACTIVE", completed: "COMPLETED", clear: "CLEAR", discrepancy: "DISCREPANCY" };
+// const VIEW_KEYS   = ["active", "completed", "education", "discrepancy"];
+// const VIEW_LABELS = { active: "ACTIVE", completed: "COMPLETED", education: "EDUCATION CHECK", discrepancy: "DISCREPANCY" };
 
-// // ── Helpers ────────────────────────────────────────────────────────────────────
 // function getUser() {
 //   try { return JSON.parse(localStorage.getItem("user")) || {}; } catch { return {}; }
 // }
-
 // function getToken() { return localStorage.getItem("token"); }
-
 // function normChecks(raw) {
 //   if (!raw) return [];
-//   const arr = Array.isArray(raw)
-//     ? raw
-//     : String(raw).split(/[,·|]/).map(s => s.trim()).filter(Boolean);
+//   const arr = Array.isArray(raw) ? raw : String(raw).split(/[,·|]/).map(s => s.trim()).filter(Boolean);
 //   return arr.map(k => NORMALISE_CHECK[k.toLowerCase()] || k.toLowerCase());
 // }
-
 // function calcTAT(createdAt) {
 //   if (!createdAt) return "—";
 //   const days = Math.floor((Date.now() - new Date(createdAt)) / 86400000);
 //   return days === 0 ? "Today" : `${days}d`;
 // }
-
-// function normPriority(p) {
-//   if (!p) return "LOW";
-//   return String(p).toUpperCase();
-// }
-
+// function normPriority(p) { return !p ? "LOW" : String(p).toUpperCase(); }
 // function getViewFromURL(search) {
 //   const view = new URLSearchParams(search).get("view") || "active";
 //   return VIEW_KEYS.includes(view) ? view : "active";
 // }
 
-// // ── Shared input styles ────────────────────────────────────────────────────────
-// const labelSt = {
-//   display: "block", fontSize: "11px", fontWeight: 700,
-//   color: "#475569", marginBottom: "5px",
-//   textTransform: "uppercase", letterSpacing: "0.4px",
-// };
-// const inputSt = {
-//   width: "100%", padding: "9px 12px",
-//   border: "1.5px solid #e2e8f0", borderRadius: "8px",
-//   fontSize: "13px", color: "#1e293b", background: "#f8fafc",
-//   outline: "none", fontFamily: "inherit", boxSizing: "border-box",
-// };
+// const labelSt = { display: "block", fontSize: "11px", fontWeight: 700, color: "#475569", marginBottom: "5px", textTransform: "uppercase", letterSpacing: "0.4px" };
+// const inputSt = { width: "100%", padding: "9px 12px", border: "1.5px solid #e2e8f0", borderRadius: "8px", fontSize: "13px", color: "#1e293b", background: "#f8fafc", outline: "none", fontFamily: "inherit", boxSizing: "border-box" };
 // const textareaSt = { ...inputSt, resize: "vertical", minHeight: "72px" };
 
-// // ── FormField sub-component ────────────────────────────────────────────────────
 // function FormField({ f, value, onChange }) {
 //   if (f.type === "textarea") return (
 //     <div style={{ gridColumn: "1 / -1" }}>
 //       <label style={labelSt}>{f.label}</label>
-//       <textarea
-//         rows={3} value={value} onChange={e => onChange(e.target.value)}
-//         placeholder={`Enter ${f.label.toLowerCase()}…`} style={textareaSt}
-//       />
+//       <textarea rows={3} value={value} onChange={e => onChange(e.target.value)} placeholder={`Enter ${f.label.toLowerCase()}…`} style={textareaSt} />
 //     </div>
 //   );
 //   if (f.type === "select") return (
 //     <div>
 //       <label style={labelSt}>{f.label}</label>
-//       <select value={value} onChange={e => onChange(e.target.value)}
-//         style={{ ...inputSt, cursor: "pointer" }}>
+//       <select value={value} onChange={e => onChange(e.target.value)} style={{ ...inputSt, cursor: "pointer" }}>
 //         <option value="">— Select —</option>
 //         {f.options.map(o => <option key={o} value={o}>{o}</option>)}
 //       </select>
@@ -3680,9 +4579,586 @@
 //   return (
 //     <div>
 //       <label style={labelSt}>{f.label}</label>
-//       <input type={f.type} value={value} onChange={e => onChange(e.target.value)}
-//         placeholder={f.type === "date" ? "" : `Enter ${f.label.toLowerCase()}…`}
-//         style={inputSt} />
+//       <input type={f.type} value={value} onChange={e => onChange(e.target.value)} placeholder={f.type === "date" ? "" : `Enter ${f.label.toLowerCase()}…`} style={inputSt} />
+//     </div>
+//   );
+// }
+
+// function QueueItem({ c, selectedCase, selectCase }) {
+//   const pm       = PRIORITY_META[c.priority] || PRIORITY_META.LOW;
+//   const sm       = STATUS_META[String(c.status || "").toLowerCase()] || STATUS_META["pending"];
+//   const isActive = selectedCase?.case_id === c.case_id;
+//   const checkLabels = c.checks_norm.map(k => CHECK_TABS.find(t => t.key === k)?.label?.slice(0, 3).toUpperCase() || k.slice(0, 3).toUpperCase());
+
+//   return (
+//     <tr className="boder-tbl active" onClick={() => selectCase(c)} style={{ cursor: "pointer", background: isActive ? "#eef3ff" : undefined, borderLeft: isActive ? "3px solid #2b3b8c" : "3px solid transparent" }}>
+//       <td>
+//         <div className="criminal-case">
+//           <p>
+//             <span style={{ fontWeight: 700, color: "#27348B" }}>{c.case_id}</span>
+//             <br />
+//             <span style={{ fontSize: "11px", color: "#94a3b8" }}>{checkLabels.join(" · ")}</span>
+//           </p>
+//         </div>
+//       </td>
+//       <td><div className="client-names">{c.candidate}</div></td>
+//       <td>
+//         <div className="custom-progress">
+//           <div className="custom-progress-bar" style={{ width: `${sm.pct}%`, background: sm.color }} />
+//         </div>
+//         <p className="progress-client-text" style={{ color: sm.color }}>{c.tat_display}</p>
+//       </td>
+//       <td>
+//         <div className="parent-client-boxes">
+//           <span className="client-cases-box" style={{ background: pm.dot }} title={c.priority} />
+//         </div>
+//       </td>
+//     </tr>
+//   );
+// }
+
+// function DetailPanel({ selectedCase, activeCheck, setActiveCheck, canAccessTab, form, setForm, prefillSource, outcome, setOutcome, saveMsg, saving, handleSave }) {
+//   if (!selectedCase) return (
+//     <div style={{ display: "flex", alignItems: "center", justifyContent: "center", height: "340px" }}>
+//       <p style={{ color: "#94a3b8", fontSize: "14px" }}>Select a case to begin verification</p>
+//     </div>
+//   );
+
+//   const fields = CHECK_FIELDS[activeCheck] || [];
+//   const sm     = STATUS_META[String(selectedCase.status || "").toLowerCase()] || STATUS_META["pending"];
+//   const pm     = PRIORITY_META[selectedCase.priority] || PRIORITY_META.LOW;
+
+//   return (
+//     <>
+//       <div style={{ background: "#27348B", color: "#fff", padding: "14px 18px", fontWeight: 700, fontSize: "13px", borderRadius: "6px 6px 0 0", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+//         <span>{selectedCase.case_id} — {selectedCase.candidate}</span>
+//         <span style={{ background: pm.bg, color: pm.color, fontSize: "11px", fontWeight: 700, padding: "3px 10px", borderRadius: "20px" }}>{selectedCase.priority}</span>
+//       </div>
+
+//       <div style={{ display: "flex", background: "#fff", borderBottom: "1px solid #e2e8f0", overflowX: "auto" }}>
+//         {CHECK_TABS.filter(t => selectedCase.checks_norm.includes(t.key)).map((t, i, arr) => {
+//           const accessible = canAccessTab(t.key);
+//           const isActive   = activeCheck === t.key;
+//           return (
+//             <button
+//               key={t.key}
+//               onClick={() => accessible && setActiveCheck(t.key)}
+//               title={!accessible ? "Your role cannot access this check type" : ""}
+//               style={{
+//                 padding: "11px 18px", border: "none", whiteSpace: "nowrap",
+//                 borderRight: i < arr.length - 1 ? "1px solid #e2e8f0" : "none",
+//                 borderBottom: isActive ? "3px solid #27348B" : "3px solid transparent",
+//                 background: isActive ? "#f0f4ff" : "#fff",
+//                 color: isActive ? "#27348B" : accessible ? "#64748b" : "#cbd5e1",
+//                 fontWeight: isActive ? 700 : 400,
+//                 fontSize: "13px",
+//                 cursor: accessible ? "pointer" : "not-allowed",
+//                 opacity: accessible ? 1 : 0.45,
+//                 transition: "all 0.15s",
+//               }}
+//             >
+//               {t.label}
+//             </button>
+//           );
+//         })}
+//       </div>
+
+//       <div style={{ border: "1px solid #e2e8f0", borderTop: "none", borderRadius: "0 0 6px 6px", background: "#fff", maxHeight: "520px", overflowY: "auto", padding: "16px" }}>
+//         <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "10px", marginBottom: "18px" }}>
+//           {[
+//             { label: "Client",   value: selectedCase.client || selectedCase.client_name || "—" },
+//             { label: "Status",   value: <span style={{ background: sm.color, color: "#fff", fontSize: "11px", fontWeight: 700, padding: "3px 10px", borderRadius: "4px" }}>{sm.label}</span> },
+//             { label: "TAT",      value: selectedCase.tat_display },
+//             { label: "Created",  value: selectedCase.created_at ? new Date(selectedCase.created_at).toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" }) : "—" },
+//           ].map(r => (
+//             <div key={r.label} style={{ background: "#f8fafc", borderRadius: "8px", padding: "10px 14px" }}>
+//               <div style={{ fontSize: "10px", fontWeight: 700, color: "#94a3b8", textTransform: "uppercase", letterSpacing: "0.5px", marginBottom: "4px" }}>{r.label}</div>
+//               <div style={{ fontSize: "13px", fontWeight: 700, color: "#1e293b" }}>{r.value}</div>
+//             </div>
+//           ))}
+//         </div>
+
+//         {prefillSource === "client" && (
+//           <div style={{ background: "#eff6ff", border: "1px solid #bfdbfe", borderRadius: "8px", padding: "10px 14px", fontSize: "12px", color: "#1d4ed8", marginBottom: "16px", fontWeight: 600 }}>
+//             ℹ Some fields below were prefilled from what the client/candidate already submitted.
+//           </div>
+//         )}
+//         {prefillSource === "draft" && (
+//           <div style={{ background: "#f5f3ff", border: "1px solid #ddd6fe", borderRadius: "8px", padding: "10px 14px", fontSize: "12px", color: "#6d28d9", marginBottom: "16px", fontWeight: 600 }}>
+//             ↻ Resumed your saved draft for this check.
+//           </div>
+//         )}
+
+//         <div style={{ marginBottom: "16px" }}>
+//           <p style={{ fontSize: "11px", fontWeight: 700, color: "#475569", marginBottom: "8px", textTransform: "uppercase", letterSpacing: "0.4px" }}>Verification Outcome</p>
+//           <div style={{ display: "flex", gap: "8px" }}>
+//             {OUTCOME_OPTS.map(o => (
+//               <button
+//                 key={o.key}
+//                 onClick={() => setOutcome(o.key)}
+//                 style={{
+//                   flex: 1, padding: "10px 8px", cursor: "pointer",
+//                   border: `2px solid ${outcome === o.key ? o.border : "#e2e8f0"}`,
+//                   borderRadius: "8px",
+//                   background: outcome === o.key ? o.bg : "#f8fafc",
+//                   color: outcome === o.key ? o.color : "#94a3b8",
+//                   fontWeight: outcome === o.key ? 700 : 500,
+//                   fontSize: "12px", transition: "all 0.15s",
+//                 }}
+//               >
+//                 {o.label}
+//               </button>
+//             ))}
+//           </div>
+//         </div>
+
+//         {!canAccessTab(activeCheck) ? (
+//           <div style={{ padding: "24px", textAlign: "center", color: "#94a3b8", fontSize: "13px", background: "#f8fafc", borderRadius: "8px" }}>
+//             Your role does not have access to the <strong>{CHECK_TABS.find(t => t.key === activeCheck)?.label}</strong> check.
+//           </div>
+//         ) : (
+//           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px" }}>
+//             {fields.map(f => (
+//               <FormField key={f.key} f={f} value={form[f.key] || ""} onChange={v => setForm(p => ({ ...p, [f.key]: v }))} />
+//             ))}
+//           </div>
+//         )}
+
+//         {saveMsg.text && (
+//           <div style={{ marginTop: "14px", padding: "10px 14px", borderRadius: "8px", background: saveMsg.type === "success" ? "#f0fdf4" : "#fef2f2", color: saveMsg.type === "success" ? "#16a34a" : "#dc2626", fontSize: "13px", fontWeight: 600 }}>
+//             {saveMsg.text}
+//           </div>
+//         )}
+//       </div>
+
+//       {canAccessTab(activeCheck) && (
+//         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px", marginTop: "12px" }}>
+//           <button onClick={() => handleSave(true)} disabled={saving} style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "8px", padding: "13px", background: "#27348B", color: "#fff", border: "none", borderRadius: "6px", fontWeight: 700, fontSize: "13px", cursor: "pointer" }}>
+//             💾 Save Draft
+//           </button>
+//           <button onClick={() => handleSave(false)} disabled={saving || !outcome} style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "8px", padding: "13px", background: saving || !outcome ? "#94a3b8" : "#10b981", color: "#fff", border: "none", borderRadius: "6px", fontWeight: 700, fontSize: "13px", cursor: saving || !outcome ? "not-allowed" : "pointer" }}>
+//             {saving ? "Saving…" : "✔ Save & Mark Done"}
+//           </button>
+//         </div>
+//       )}
+//     </>
+//   );
+// }
+
+// function RightPanel({ comments, commentInput, setCommentInput, sendComment, commentsEndRef }) {
+//   return (
+//     <div style={{ display: "flex", flexDirection: "column", gap: "14px", height: "100%" }}>
+//       <div style={{ borderRadius: "10px", overflow: "hidden", border: "1px solid #e2e8f0", flex: 1, display: "flex", flexDirection: "column" }}>
+//         <div style={{ background: "#27348B", padding: "13px 16px" }}>
+//           <h3 style={{ margin: 0, color: "#fff", fontSize: "12px", fontWeight: 700, letterSpacing: "0.08em" }}>COMMENTS & NOTES</h3>
+//         </div>
+//         <div style={{ flex: 1, maxHeight: "460px", overflowY: "auto", padding: "12px 14px" }}>
+//           {comments.length === 0 ? (
+//             <p style={{ color: "#cbd5e1", fontSize: "13px", textAlign: "center", padding: "16px 0" }}>No comments yet.</p>
+//           ) : (
+//             comments.map((c, i) => (
+//               <div key={c.id} style={{ display: "flex", gap: "10px", marginBottom: "14px" }}>
+//                 <div style={{ width: "30px", height: "30px", borderRadius: "50%", background: i % 2 === 0 ? "#7c3aed" : "#0d9488", color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "13px", fontWeight: 700, flexShrink: 0 }}>
+//                   {c.avatar}
+//                 </div>
+//                 <div style={{ flex: 1 }}>
+//                   <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "3px" }}>
+//                     <span style={{ fontSize: "12px", fontWeight: 700, color: "#1e293b" }}>{c.author}</span>
+//                     <span style={{ fontSize: "11px", color: "#94a3b8" }}>{c.time}</span>
+//                   </div>
+//                   <p style={{ fontSize: "12px", color: "#475569", margin: 0, lineHeight: 1.5 }}>{c.text}</p>
+//                 </div>
+//               </div>
+//             ))
+//           )}
+//           <div ref={commentsEndRef} />
+//         </div>
+//         <div style={{ borderTop: "1px solid #e2e8f0", display: "flex", gap: "0" }}>
+//           <input
+//             type="text" placeholder="Add a comment…" value={commentInput}
+//             onChange={e => setCommentInput(e.target.value)} onKeyDown={e => e.key === "Enter" && sendComment()}
+//             style={{ flex: 1, border: "none", padding: "11px 14px", fontSize: "13px", outline: "none", background: "#fff" }}
+//           />
+//           <button onClick={sendComment} style={{ background: "#27348B", border: "none", padding: "0 16px", cursor: "pointer", color: "#fff" }}>
+//             <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+//               <line x1="22" y1="2" x2="11" y2="13" />
+//               <polygon points="22 2 15 22 11 13 2 9 22 2" />
+//             </svg>
+//           </button>
+//         </div>
+//       </div>
+//     </div>
+//   );
+// }
+
+// // ── 1. ACTIVE EDUCATION CHECK VIEW ──
+// function EducationCheckView({ cases }) {
+//   const totalCases = cases.length || 128;
+//   const linkSent = 42;
+//   const inProgress = cases.filter(c => String(c.status || "").toLowerCase() !== "completed").length || 31;
+//   const completed = cases.filter(c => String(c.status || "").toLowerCase() === "completed").length || 45;
+//   const discrepancy = 10;
+
+//   return (
+//     <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
+//       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+//         <div>
+//           <h2 style={{ fontSize: "22px", fontWeight: 800, color: "#1b1e4b", margin: 0 }}>
+//             Education Check
+//           </h2>
+//           <p style={{ fontSize: "13px", color: "#64748b", margin: "4px 0 0 0" }}>
+//             Manage and send education verification links
+//           </p>
+//         </div>
+//         <div>
+//           <input
+//             type="text"
+//             placeholder="Search Case ID / Candidate Name / University"
+//             style={{ padding: "9px 14px", width: "320px", borderRadius: "8px", border: "1px solid #cbd5e1", fontSize: "13px", outline: "none" }}
+//           />
+//         </div>
+//       </div>
+
+//       <div style={{ display: "flex", gap: "12px", background: "#fff", padding: "12px 16px", borderRadius: "10px", border: "1px solid #e2e8f0", alignItems: "flex-end" }}>
+//         <div style={{ flex: 1 }}>
+//           <label style={{ display: "block", fontSize: "11px", color: "#64748b", marginBottom: "4px", fontWeight: 600 }}>Client</label>
+//           <select style={{ width: "100%", padding: "7px 10px", borderRadius: "6px", border: "1px solid #cbd5e1", fontSize: "12px" }}>
+//             <option>All Clients</option>
+//           </select>
+//         </div>
+//         <div style={{ flex: 1 }}>
+//           <label style={{ display: "block", fontSize: "11px", color: "#64748b", marginBottom: "4px", fontWeight: 600 }}>University / Institute</label>
+//           <select style={{ width: "100%", padding: "7px 10px", borderRadius: "6px", border: "1px solid #cbd5e1", fontSize: "12px" }}>
+//             <option>All Universities</option>
+//           </select>
+//         </div>
+//         <div style={{ flex: 1 }}>
+//           <label style={{ display: "block", fontSize: "11px", color: "#64748b", marginBottom: "4px", fontWeight: 600 }}>Status</label>
+//           <select style={{ width: "100%", padding: "7px 10px", borderRadius: "6px", border: "1px solid #cbd5e1", fontSize: "12px" }}>
+//             <option>All Status</option>
+//           </select>
+//         </div>
+//         <div style={{ flex: 1 }}>
+//           <label style={{ display: "block", fontSize: "11px", color: "#64748b", marginBottom: "4px", fontWeight: 600 }}>Verification Mode</label>
+//           <select style={{ width: "100%", padding: "7px 10px", borderRadius: "6px", border: "1px solid #cbd5e1", fontSize: "12px" }}>
+//             <option>All Modes</option>
+//           </select>
+//         </div>
+//         <button style={{ padding: "8px 10px", backgroundColor: "#fff", border: "1px solid #cbd5e1", borderRadius: "6px", cursor: "pointer" }}>📅</button>
+//         {/* <button style={{ height: "36px", padding: "0 16px", backgroundColor: "#2563eb", color: "#fff", border: "none", borderRadius: "6px", fontWeight: 600, fontSize: "12px", cursor: "pointer" }}>
+//           + New Education Check
+//         </button> */}
+//       </div>
+
+//       <div style={{ display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: "12px" }}>
+//         <div style={{ background: "#fff", padding: "14px 16px", borderRadius: "10px", border: "1px solid #e2e8f0", display: "flex", alignItems: "center", gap: "12px" }}>
+//           <div style={{ width: "36px", height: "36px", borderRadius: "50%", background: "#eff6ff", color: "#2563eb", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "16px" }}>🎓</div>
+//           <div><span style={{ fontSize: "11px", color: "#64748b", fontWeight: 600 }}>Total Cases</span><h3 style={{ margin: 0, fontSize: "18px", color: "#1e293b" }}>{totalCases}</h3></div>
+//         </div>
+//         <div style={{ background: "#fff", padding: "14px 16px", borderRadius: "10px", border: "1px solid #e2e8f0", display: "flex", alignItems: "center", gap: "12px" }}>
+//           <div style={{ width: "36px", height: "36px", borderRadius: "50%", background: "#f0fdf4", color: "#16a34a", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "16px" }}>🔗</div>
+//           <div><span style={{ fontSize: "11px", color: "#64748b", fontWeight: 600 }}>Link Sent</span><h3 style={{ margin: 0, fontSize: "18px", color: "#1e293b" }}>{linkSent}</h3></div>
+//         </div>
+//         <div style={{ background: "#fff", padding: "14px 16px", borderRadius: "10px", border: "1px solid #e2e8f0", display: "flex", alignItems: "center", gap: "12px" }}>
+//           <div style={{ width: "36px", height: "36px", borderRadius: "50%", background: "#fff7ed", color: "#ea580c", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "16px" }}>🕒</div>
+//           <div><span style={{ fontSize: "11px", color: "#64748b", fontWeight: 600 }}>In Progress</span><h3 style={{ margin: 0, fontSize: "18px", color: "#1e293b" }}>{inProgress}</h3></div>
+//         </div>
+//         <div style={{ background: "#fff", padding: "14px 16px", borderRadius: "10px", border: "1px solid #e2e8f0", display: "flex", alignItems: "center", gap: "12px" }}>
+//           <div style={{ width: "36px", height: "36px", borderRadius: "50%", background: "#f0fdf4", color: "#16a34a", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "16px" }}>✔</div>
+//           <div><span style={{ fontSize: "11px", color: "#64748b", fontWeight: 600 }}>Completed</span><h3 style={{ margin: 0, fontSize: "18px", color: "#1e293b" }}>{completed}</h3></div>
+//         </div>
+//         <div style={{ background: "#fff", padding: "14px 16px", borderRadius: "10px", border: "1px solid #e2e8f0", display: "flex", alignItems: "center", gap: "12px" }}>
+//           <div style={{ width: "36px", height: "36px", borderRadius: "50%", background: "#fef2f2", color: "#dc2626", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "16px" }}>⚠️</div>
+//           <div><span style={{ fontSize: "11px", color: "#64748b", fontWeight: 600 }}>Discrepancy</span><h3 style={{ margin: 0, fontSize: "18px", color: "#1e293b" }}>{discrepancy}</h3></div>
+//         </div>
+//       </div>
+
+//       <div style={{ background: "#fff", borderRadius: "10px", border: "1px solid #e2e8f0", padding: "16px" }}>
+//         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "14px" }}>
+//           <h3 style={{ margin: 0, fontSize: "15px", fontWeight: 700, color: "#1b1e4b" }}>Education Verification Cases</h3>
+//           <button style={{ padding: "8px 16px", background: "#1e295b", color: "#fff", border: "none", borderRadius: "6px", fontSize: "12px", fontWeight: 600, cursor: "pointer" }}>🛡 QC Review</button>
+//         </div>
+//         <div style={{ overflowX: "auto" }}>
+//           <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "12px" }}>
+//             <thead>
+//               <tr style={{ background: "#f8fafc", textAlign: "left", color: "#64748b", borderBottom: "1px solid #e2e8f0" }}>
+//                 <th style={{ padding: "10px 8px" }}><input type="checkbox" /></th>
+//                 <th style={{ padding: "10px 8px" }}>#</th>
+//                 <th style={{ padding: "10px 8px" }}>Case ID</th>
+//                 <th style={{ padding: "10px 8px" }}>Candidate Name</th>
+//                 <th style={{ padding: "10px 8px" }}>Client</th>
+//                 <th style={{ padding: "10px 8px" }}>University / Institute</th>
+//                 <th style={{ padding: "10px 8px" }}>Qualification</th>
+//                 <th style={{ padding: "10px 8px" }}>Passing Year</th>
+//                 <th style={{ padding: "10px 8px" }}>Link Sent On</th>
+//                 <th style={{ padding: "10px 8px" }}>Documents</th>
+//                 <th style={{ padding: "10px 8px" }}>Action</th>
+//                 <th style={{ padding: "10px 8px" }}></th>
+//               </tr>
+//             </thead>
+//             <tbody>
+//               {cases.length === 0 ? (
+//                 <tr><td colSpan="13" style={{ textAlign: "center", padding: "24px", color: "#94a3b8" }}>No Education Check Cases Found</td></tr>
+//               ) : (
+//                 cases.map((c, idx) => (
+//                   <tr key={c.case_id || idx} style={{ borderBottom: "1px solid #f1f5f9" }}>
+//                     <td style={{ padding: "12px 8px" }}><input type="checkbox" /></td>
+//                     <td style={{ padding: "12px 8px", color: "#64748b" }}>{idx + 1}</td>
+//                     <td style={{ padding: "12px 8px", fontWeight: 700, color: "#1e293b" }}>{c.case_id || `EDU-102${idx + 4}`}</td>
+//                     <td style={{ padding: "12px 8px", color: "#334155" }}>{c.candidate || "Candidate Name"}</td>
+//                     <td style={{ padding: "12px 8px", color: "#64748b" }}>{c.client || c.client_name || "Client"}</td>
+//                     <td style={{ padding: "12px 8px", color: "#334155" }}>{c.check_details?.education?.fields?.instituteName || "University"}</td>
+//                     <td style={{ padding: "12px 8px", color: "#64748b" }}>{c.check_details?.education?.fields?.qualification || "Degree"}</td>
+//                     <td style={{ padding: "12px 8px" }}>
+//                       <span style={{ padding: "4px 10px", borderRadius: "12px", fontSize: "11px", fontWeight: 600, backgroundColor: "#fff7ed", color: "#c2410c" }}>
+//                         {c.status || "In Progress"}
+//                       </span>
+//                     </td>
+//                     <td style={{ padding: "12px 8px", color: "#64748b" }}>—</td>
+//                     <td style={{ padding: "12px 8px" }}>
+//                       <div style={{ display: "flex", gap: "6px" }}>
+//                         <button style={{ padding: "4px 8px", border: "1px solid #cbd5e1", background: "#fff", borderRadius: "4px", fontSize: "11px", cursor: "pointer" }}>📄 Upload</button>
+//                         <button style={{ padding: "4px 8px", border: "1px solid #cbd5e1", background: "#fff", borderRadius: "4px", fontSize: "11px", cursor: "pointer" }}>👁 View</button>
+//                       </div>
+//                     </td>
+//                     <td style={{ padding: "12px 8px" }}>
+//                       <button style={{ padding: "5px 10px", border: "1px solid #bfdbfe", background: "#eff6ff", color: "#2563eb", borderRadius: "4px", fontSize: "11px", fontWeight: 600, cursor: "pointer" }}>
+//                         📩 Send Verification Link
+//                       </button>
+//                     </td>
+//                     <td style={{ padding: "12px 8px", textAlign: "center", color: "#94a3b8", cursor: "pointer" }}>⋮</td>
+//                   </tr>
+//                 ))
+//               )}
+//             </tbody>
+//           </table>
+//         </div>
+//       </div>
+//     </div>
+//   );
+// }
+
+// // ── 2. COMPLETED EDUCATION CASES VIEW (MATCHING IMAGE DESIGN EXACTLY) ──
+// function CompletedEducationView({ cases }) {
+//   const mockCompleted = cases.length > 0 ? cases : [
+//     { case_id: "EDU-1025", candidate: "Rahul Verma", client: "Northstar Ltd", university: "JNTU Hyderabad", degree: "B.Tech", passingYear: "2021", result: "Verified", date: "22 Aug 2025" },
+//     { case_id: "EDU-1027", candidate: "Karan Patel", client: "Acme Corp", university: "Pune University", degree: "M.Com", passingYear: "2020", result: "Verified", date: "21 Aug 2025" },
+//     { case_id: "EDU-1029", candidate: "Pooja Reddy", client: "Vertex HR", university: "Osmania University", degree: "B.Sc", passingYear: "2022", result: "Verified", date: "20 Aug 2025" },
+//     { case_id: "EDU-1031", candidate: "Aditi Sharma", client: "BrightHire", university: "Delhi University", degree: "MBA", passingYear: "2022", result: "Verified", date: "19 Aug 2025" },
+//     { case_id: "EDU-1033", candidate: "Neha Singh", client: "Acme Corp", university: "Amity University", degree: "BBA", passingYear: "2023", result: "Verified", date: "18 Aug 2025" },
+//   ];
+
+//   const [selectedCase, setSelectedCase] = useState(mockCompleted[0]);
+
+//   return (
+//     <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
+//       {/* 1. Header */}
+//       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+//         <div>
+//           <h2 style={{ fontSize: "22px", fontWeight: 800, color: "#1b1e4b", margin: 0 }}>
+//             Completed Education Cases
+//           </h2>
+//           <p style={{ fontSize: "13px", color: "#64748b", margin: "4px 0 0 0" }}>
+//             View verified education cases and download university verification reports
+//           </p>
+//         </div>
+//         <input
+//           type="text"
+//           placeholder="Search Case ID / Candidate Name / University"
+//           style={{ padding: "9px 14px", width: "320px", borderRadius: "8px", border: "1px solid #cbd5e1", fontSize: "13px", outline: "none" }}
+//         />
+//       </div>
+
+//       {/* 2. Top Filter Bar */}
+//       <div style={{ display: "flex", gap: "12px", background: "#fff", padding: "12px 16px", borderRadius: "10px", border: "1px solid #e2e8f0", alignItems: "flex-end" }}>
+//         <div style={{ flex: 1 }}>
+//           <label style={{ display: "block", fontSize: "11px", color: "#64748b", marginBottom: "4px", fontWeight: 600 }}>Client</label>
+//           <select style={{ width: "100%", padding: "7px 10px", borderRadius: "6px", border: "1px solid #cbd5e1", fontSize: "12px" }}>
+//             <option>All Clients</option>
+//           </select>
+//         </div>
+//         <div style={{ flex: 1 }}>
+//           <label style={{ display: "block", fontSize: "11px", color: "#64748b", marginBottom: "4px", fontWeight: 600 }}>University / Institute</label>
+//           <select style={{ width: "100%", padding: "7px 10px", borderRadius: "6px", border: "1px solid #cbd5e1", fontSize: "12px" }}>
+//             <option>All Universities</option>
+//           </select>
+//         </div>
+//         <div style={{ flex: 1 }}>
+//           <label style={{ display: "block", fontSize: "11px", color: "#64748b", marginBottom: "4px", fontWeight: 600 }}>Verification Status</label>
+//           <select style={{ width: "100%", padding: "7px 10px", borderRadius: "6px", border: "1px solid #cbd5e1", fontSize: "12px" }}>
+//             <option>All Statuses</option>
+//           </select>
+//         </div>
+//         <div style={{ flex: 1 }}>
+//           <label style={{ display: "block", fontSize: "11px", color: "#64748b", marginBottom: "4px", fontWeight: 600 }}>Date Range</label>
+//           <select style={{ width: "100%", padding: "7px 10px", borderRadius: "6px", border: "1px solid #cbd5e1", fontSize: "12px" }}>
+//             <option>Select Date Range</option>
+//           </select>
+//         </div>
+//         <button style={{ height: "36px", padding: "0 18px", backgroundColor: "#2563eb", color: "#fff", border: "none", borderRadius: "6px", fontWeight: 600, fontSize: "12px", cursor: "pointer", display: "flex", alignItems: "center", gap: "6px" }}>
+//           📥 Export Report
+//         </button>
+//       </div>
+
+//       {/* 3. Stat Cards Header */}
+//       <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "12px" }}>
+//         <div style={{ background: "#fff", padding: "14px 16px", borderRadius: "10px", border: "1px solid #e2e8f0", display: "flex", alignItems: "center", gap: "12px" }}>
+//           <div style={{ width: "38px", height: "38px", borderRadius: "50%", background: "#eff6ff", color: "#2563eb", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "18px" }}>📄</div>
+//           <div><span style={{ fontSize: "11px", color: "#64748b", fontWeight: 600 }}>Total Completed</span><h3 style={{ margin: 0, fontSize: "20px", color: "#1e293b" }}>45</h3></div>
+//         </div>
+
+//         <div style={{ background: "#fff", padding: "14px 16px", borderRadius: "10px", border: "1px solid #e2e8f0", display: "flex", alignItems: "center", gap: "12px" }}>
+//           <div style={{ width: "38px", height: "38px", borderRadius: "50%", background: "#f0fdf4", color: "#16a34a", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "18px" }}>🏛</div>
+//           <div><span style={{ fontSize: "11px", color: "#64748b", fontWeight: 600 }}>University Verified</span><h3 style={{ margin: 0, fontSize: "20px", color: "#1e293b" }}>32</h3></div>
+//         </div>
+
+//         <div style={{ background: "#fff", padding: "14px 16px", borderRadius: "10px", border: "1px solid #e2e8f0", display: "flex", alignItems: "center", gap: "12px" }}>
+//           <div style={{ width: "38px", height: "38px", borderRadius: "50%", background: "#fff7ed", color: "#ea580c", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "18px" }}>🏫</div>
+//           <div><span style={{ fontSize: "11px", color: "#64748b", fontWeight: 600 }}>School/College Verified</span><h3 style={{ margin: 0, fontSize: "20px", color: "#1e293b" }}>13</h3></div>
+//         </div>
+
+//         <div style={{ background: "#fff", padding: "14px 16px", borderRadius: "10px", border: "1px solid #e2e8f0", display: "flex", alignItems: "center", gap: "12px" }}>
+//           <div style={{ width: "38px", height: "38px", borderRadius: "50%", background: "#faf5ff", color: "#9333ea", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "18px" }}>📜</div>
+//           <div><span style={{ fontSize: "11px", color: "#64748b", fontWeight: 600 }}>Reports Generated</span><h3 style={{ margin: 0, fontSize: "20px", color: "#1e293b" }}>45</h3></div>
+//         </div>
+//       </div>
+
+//       {/* 4. Content Area: Main Table + Right Report Preview Panel */}
+//       <div style={{ display: "grid", gridTemplateColumns: "1fr 300px", gap: "16px", alignItems: "start" }}>
+        
+//         {/* Table Container */}
+//         <div style={{ background: "#fff", borderRadius: "10px", border: "1px solid #e2e8f0", padding: "16px" }}>
+//           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "14px" }}>
+//             <h3 style={{ margin: 0, fontSize: "15px", fontWeight: 700, color: "#1b1e4b" }}>
+//               Completed Education Verification Cases
+//             </h3>
+//             <div style={{ display: "flex", gap: "8px" }}>
+//               <button style={{ padding: "6px 12px", background: "#2563eb", color: "#fff", border: "none", borderRadius: "6px", fontSize: "12px", fontWeight: 600, cursor: "pointer" }}>
+//                 Generate Report
+//               </button>
+//               <button style={{ padding: "6px 12px", background: "#fff", color: "#475569", border: "1px solid #cbd5e1", borderRadius: "6px", fontSize: "12px", fontWeight: 600, cursor: "pointer" }}>
+//                 📤 Export CSV
+//               </button>
+//             </div>
+//           </div>
+
+//           <div style={{ overflowX: "auto" }}>
+//             <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "12px" }}>
+//               <thead>
+//                 <tr style={{ background: "#f8fafc", textAlign: "left", color: "#64748b", borderBottom: "1px solid #e2e8f0" }}>
+//                   <th style={{ padding: "10px 8px" }}><input type="checkbox" /></th>
+//                   <th style={{ padding: "10px 8px" }}>#</th>
+//                   <th style={{ padding: "10px 8px" }}>Case ID</th>
+//                   <th style={{ padding: "10px 8px" }}>Candidate Name</th>
+//                   <th style={{ padding: "10px 8px" }}>Client</th>
+//                   <th style={{ padding: "10px 8px" }}>University / Institute</th>
+//                   <th style={{ padding: "10px 8px" }}>Qualification</th>
+//                   <th style={{ padding: "10px 8px" }}>Passing Year</th>
+//                   <th style={{ padding: "10px 8px" }}>Verification Result</th>
+//                   <th style={{ padding: "10px 8px" }}>Verified On</th>
+//                   <th style={{ padding: "10px 8px" }}>Report</th>
+//                   <th style={{ padding: "10px 8px" }}>Action</th>
+//                   <th style={{ padding: "10px 8px" }}></th>
+//                 </tr>
+//               </thead>
+//               <tbody>
+//                 {mockCompleted.map((c, idx) => (
+//                   <tr 
+//                     key={c.case_id || idx} 
+//                     onClick={() => setSelectedCase(c)}
+//                     style={{ 
+//                       borderBottom: "1px solid #f1f5f9", 
+//                       cursor: "pointer",
+//                       backgroundColor: selectedCase?.case_id === c.case_id ? "#f0f7ff" : "transparent"
+//                     }}
+//                   >
+//                     <td style={{ padding: "12px 8px" }}><input type="checkbox" /></td>
+//                     <td style={{ padding: "12px 8px", color: "#64748b" }}>{idx + 1}</td>
+//                     <td style={{ padding: "12px 8px", fontWeight: 700, color: "#1e293b" }}>{c.case_id}</td>
+//                     <td style={{ padding: "12px 8px", color: "#334155" }}>{c.candidate}</td>
+//                     <td style={{ padding: "12px 8px", color: "#64748b" }}>{c.client || c.client_name}</td>
+//                     <td style={{ padding: "12px 8px", color: "#334155" }}>{c.university || c.check_details?.education?.fields?.instituteName || "University"}</td>
+//                     <td style={{ padding: "12px 8px", color: "#64748b" }}>{c.degree || c.check_details?.education?.fields?.qualification || "Degree"}</td>
+//                     <td style={{ padding: "12px 8px", color: "#64748b" }}>{c.passingYear || c.check_details?.education?.fields?.yearOfPassing || "2021"}</td>
+//                     <td style={{ padding: "12px 8px" }}>
+//                       <span style={{ padding: "3px 8px", borderRadius: "12px", fontSize: "11px", fontWeight: 600, backgroundColor: "#dcfce7", color: "#15803d", display: "inline-flex", alignItems: "center", gap: "4px" }}>
+//                         ✔ {c.result || "Verified"}
+//                       </span>
+//                     </td>
+//                     <td style={{ padding: "12px 8px", color: "#64748b" }}>{c.date || "22 Aug 2025"}</td>
+//                     <td style={{ padding: "12px 8px" }}>
+//                       <div style={{ display: "flex", flexDirection: "column", gap: "2px", fontSize: "11px" }}>
+//                         <span style={{ color: "#2563eb", textDecoration: "underline", cursor: "pointer" }}>📄 View Report</span>
+//                         <span style={{ color: "#2563eb", textDecoration: "underline", cursor: "pointer" }}>📥 Download PDF</span>
+//                       </div>
+//                     </td>
+//                     <td style={{ padding: "12px 8px" }}>⋮</td>
+//                     <td style={{ padding: "12px 8px" }}></td>
+//                   </tr>
+//                 ))}
+//               </tbody>
+//             </table>
+//           </div>
+//           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: "16px", fontSize: "12px", color: "#64748b" }}>
+//             <span>Showing 1 - 5 of 45 entries</span>
+//             <div style={{ display: "flex", gap: "4px" }}>
+//               <button style={{ padding: "4px 8px", border: "1px solid #cbd5e1", background: "#fff", borderRadius: "4px" }}>&lt;</button>
+//               <button style={{ padding: "4px 8px", background: "#2563eb", color: "#fff", border: "none", borderRadius: "4px" }}>1</button>
+//               <button style={{ padding: "4px 8px", border: "1px solid #cbd5e1", background: "#fff", borderRadius: "4px" }}>2</button>
+//               <button style={{ padding: "4px 8px", border: "1px solid #cbd5e1", background: "#fff", borderRadius: "4px" }}>3</button>
+//               <button style={{ padding: "4px 8px", border: "1px solid #cbd5e1", background: "#fff", borderRadius: "4px" }}>&gt;</button>
+//             </div>
+//           </div>
+//         </div>
+
+//         {/* Right Report Preview Card (Exact UI match) */}
+//         <div style={{ background: "#fff", borderRadius: "10px", border: "1px solid #e2e8f0", padding: "16px", display: "flex", flexDirection: "column", gap: "12px" }}>
+//           <div style={{ display: "flex", alignItems: "center", gap: "8px", borderBottom: "1px solid #f1f5f9", pb: "10px" }}>
+//             <span style={{ fontSize: "16px" }}>📄</span>
+//             <h4 style={{ margin: 0, fontSize: "14px", fontWeight: 700, color: "#1b1e4b" }}>University Verification Report</h4>
+//           </div>
+
+//           <div style={{ fontSize: "12px", display: "flex", flexDirection: "column", gap: "10px" }}>
+//             <div style={{ display: "flex", justifyContent: "space-between" }}>
+//               <span style={{ color: "#64748b" }}>Report ID</span>
+//               <span style={{ fontWeight: 600, color: "#1e293b" }}>UVR-2025-0045</span>
+//             </div>
+//             <div style={{ display: "flex", justifyContent: "space-between" }}>
+//               <span style={{ color: "#64748b" }}>Institution</span>
+//               <span style={{ fontWeight: 600, color: "#1e293b" }}>{selectedCase?.university || "JNTU Hyderabad"}</span>
+//             </div>
+//             <div style={{ display: "flex", justifyContent: "space-between" }}>
+//               <span style={{ color: "#64748b" }}>Candidate Name</span>
+//               <span style={{ fontWeight: 600, color: "#1e293b" }}>{selectedCase?.candidate || "Rahul Verma"}</span>
+//             </div>
+//             <div style={{ display: "flex", justifyContent: "space-between" }}>
+//               <span style={{ color: "#64748b" }}>Case ID</span>
+//               <span style={{ fontWeight: 600, color: "#1e293b" }}>{selectedCase?.case_id || "EDU-1025"}</span>
+//             </div>
+//             <div style={{ display: "flex", justifyContent: "space-between" }}>
+//               <span style={{ color: "#64748b" }}>Verification Date</span>
+//               <span style={{ fontWeight: 600, color: "#1e293b" }}>{selectedCase?.date || "22 Aug 2025"}</span>
+//             </div>
+//             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+//               <span style={{ color: "#64748b" }}>Result</span>
+//               <span style={{ padding: "3px 8px", borderRadius: "12px", fontSize: "11px", fontWeight: 600, backgroundColor: "#dcfce7", color: "#15803d" }}>
+//                 ✔ {selectedCase?.result || "Verified"}
+//               </span>
+//             </div>
+//           </div>
+
+//           <div style={{ background: "#f0f9ff", border: "1px solid #bae6fd", borderRadius: "8px", padding: "10px", marginTop: "10px", fontSize: "11px", color: "#0369a1" }}>
+//             <p style={{ margin: 0, fontWeight: 600 }}>📄 Generated by</p>
+//             <p style={{ margin: "2px 0 0 0" }}>Satyapan BGV Portal</p>
+//             <p style={{ margin: "2px 0 0 0", color: "#0284c7" }}>Authentic | Secure | Reliable</p>
+//           </div>
+
+//           <button style={{ width: "100%", padding: "10px", background: "#2563eb", color: "#fff", border: "none", borderRadius: "6px", fontWeight: 600, fontSize: "12px", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: "6px" }}>
+//             📥 Download PDF
+//           </button>
+//         </div>
+
+//       </div>
 //     </div>
 //   );
 // }
@@ -3694,39 +5170,32 @@
 //   const user     = getUser();
 //   const token    = getToken();
 
-//   // Role resolution
 //   const role           = user.role || "";
 //   const isAdmin        = role === "admin";
-//   const assignedCheck  = ROLE_CHECK_MAP[role] || null; // null = admin / generic verifier sees all
+//   const assignedCheck  = ROLE_CHECK_MAP[role] || null;
 
-//   // ── Sidebar/tab view: "active" | "completed" | "clear" | "discrepancy"
 //   const sidebarView = getViewFromURL(location.search);
 
-//   // ── State ─────────────────────────────────────────────────────────────────
 //   const [cases,        setCases]        = useState([]);
 //   const [loading,      setLoading]      = useState(true);
 //   const [selectedCase, setSelectedCase] = useState(null);
 //   const [activeCheck,  setActiveCheck]  = useState(assignedCheck || "employment");
 //   const [search,       setSearch]       = useState("");
 
-//   // Date filter — mirrors Intake.jsx
-//   const [dateFilter, setDateFilter] = useState("month");
+//   const [dateFilter, setDateFilter] = useState("all");
 //   const [customFrom, setCustomFrom] = useState("");
 //   const [customTo, setCustomTo]     = useState("");
 
-//   // Form
-//   const [form,       setForm]       = useState({});
-//   const [prefillSource, setPrefillSource] = useState(null); // "client" | "draft" | null
-//   const [outcome,    setOutcome]    = useState("");
-//   const [saving,     setSaving]     = useState(false);
-//   const [saveMsg,    setSaveMsg]    = useState({ text: "", type: "" });
+//   const [form,          setForm]          = useState({});
+//   const [prefillSource, setPrefillSource] = useState(null);
+//   const [outcome,       setOutcome]       = useState("");
+//   const [saving,        setSaving]        = useState(false);
+//   const [saveMsg,       setSaveMsg]       = useState({ text: "", type: "" });
 
-//   // Comments
 //   const [comments,      setComments]      = useState([]);
 //   const [commentInput,  setCommentInput]  = useState("");
 //   const commentsEndRef = useRef(null);
 
-//   // ── Fetch real cases from API ──────────────────────────────────────────────
 //   const fetchCases = () => {
 //     setLoading(true);
 //     fetch(`${API_URL}/api/cases`, {
@@ -3746,8 +5215,8 @@
 //         setCases(normalised);
 //         if (normalised.length > 0 && !selectedCase) {
 //           const first = sidebarView === "completed"
-//             ? normalised.find(c => c.status === "completed")
-//             : normalised.find(c => c.status !== "completed");
+//             ? normalised.find(c => String(c.status || "").toLowerCase() === "completed")
+//             : normalised.find(c => String(c.status || "").toLowerCase() !== "completed");
 //           setSelectedCase(first || normalised[0]);
 //         }
 //       })
@@ -3757,14 +5226,10 @@
 
 //   useEffect(() => { fetchCases(); }, []);
 
-//   // Auto-scroll comments
 //   useEffect(() => {
 //     commentsEndRef.current?.scrollIntoView({ behavior: "smooth" });
 //   }, [comments]);
 
-//   // Reset form when case / check changes — prefill from the client's
-//   // submitted details (or a saved verifier draft, if one exists) rather than
-//   // always starting blank.
 //   useEffect(() => {
 //     const { form: prefilled, source } = buildPrefilledForm(selectedCase, activeCheck);
 //     setForm(prefilled);
@@ -3773,7 +5238,6 @@
 //     setSaveMsg({ text: "", type: "" });
 //   }, [selectedCase?.case_id, activeCheck]);
 
-//   // Jump active check to first valid tab on case selection
 //   useEffect(() => {
 //     if (!selectedCase) return;
 //     const validChecks = selectedCase.checks_norm;
@@ -3785,7 +5249,6 @@
 //     }
 //   }, [selectedCase?.case_id]);
 
-//   // ── Date range filter — same semantics as Intake.jsx ───────────────────────
 //   const isInRange = (createdAt) => {
 //     if (!createdAt) return true;
 //     if (dateFilter === "all") return true;
@@ -3804,22 +5267,31 @@
 //     return true;
 //   };
 
-//   // ── Does this case have any check whose outcome matches? Used for the
-//   //    Clear / Discrepancy counts so they reflect the case as a whole,
-//   //    rather than whichever check-type tab happens to be open right now.
-//   const caseHasOutcome = (c, outcome) =>
-//     Object.values(c.check_results || {}).some(r => r?.outcome === outcome);
+//   const caseHasOutcome = (c, targetOutcome) =>
+//     Object.values(c.check_results || {}).some(
+//       r => String(r?.outcome || "").trim().toLowerCase() === String(targetOutcome).toLowerCase()
+//     );
 
-//   // ── Filtered lists (status/outcome + date range) ────────────────────────────
-//   const activeCases      = cases.filter(c => c.status !== "completed" && isInRange(c.created_at));
-//   const completedCases   = cases.filter(c => c.status === "completed" && isInRange(c.created_at));
-//   const clearCases       = cases.filter(c => isInRange(c.created_at) && caseHasOutcome(c, "clear"));
-//   const discrepancyCases = cases.filter(c => isInRange(c.created_at) && caseHasOutcome(c, "discrepancy"));
+//   const activeCases = cases.filter(c =>
+//     String(c.status || "").trim().toLowerCase() !== "completed" && isInRange(c.created_at)
+//   );
+
+//   const completedCases = cases.filter(c =>
+//     String(c.status || "").trim().toLowerCase() === "completed" && isInRange(c.created_at)
+//   );
+
+//   const clearCases = cases.filter(c =>
+//     isInRange(c.created_at) && (caseHasOutcome(c, "clear") || c.checks_norm.includes("education"))
+//   );
+
+//   const discrepancyCases = cases.filter(c =>
+//     isInRange(c.created_at) && caseHasOutcome(c, "discrepancy")
+//   );
 
 //   const VIEW_LISTS = {
 //     active:      activeCases,
 //     completed:   completedCases,
-//     clear:       clearCases,
+//     education:   clearCases,
 //     discrepancy: discrepancyCases,
 //   };
 
@@ -3835,25 +5307,19 @@
 
 //   const queueList = filterBySearch(VIEW_LISTS[sidebarView] || activeCases);
 
-//   // ── Tab accessibility ──────────────────────────────────────────────────────
-//   // A tab is accessible if:
-//   //   1. The case has that check type, AND
-//   //   2. The verifier's role allows it (admin / generic verifier: any; specialist: only their type)
 //   const canAccessTab = (checkKey) => {
 //     if (!selectedCase) return false;
 //     const caseHasCheck = selectedCase.checks_norm.includes(checkKey);
 //     if (!caseHasCheck) return false;
-//     if (isAdmin || !assignedCheck) return true;           // admin / generic verifier
-//     return checkKey === assignedCheck;                     // specialist verifier
+//     if (isAdmin || !assignedCheck) return true;
+//     return checkKey === assignedCheck;
 //   };
 
-//   // ── Select a case ──────────────────────────────────────────────────────────
 //   const selectCase = (c) => {
 //     setSelectedCase(c);
-//     setComments([]);   // TODO: fetch from API  GET /api/cases/{id}/comments
+//     setComments([]);
 //   };
 
-//   // ── Save result ────────────────────────────────────────────────────────────
 //   const handleSave = async (isDraft) => {
 //     if (!outcome && !isDraft) {
 //       setSaveMsg({ text: "Please select an outcome before saving.", type: "error" });
@@ -3889,10 +5355,8 @@
 //     }
 //   };
 
-//   // ── Send comment ───────────────────────────────────────────────────────────
 //   const sendComment = () => {
 //     if (!commentInput.trim()) return;
-//     // TODO: POST /api/cases/{id}/comments
 //     setComments(p => [...p, {
 //       id:     Date.now(),
 //       author: user.name || "Verifier",
@@ -3903,324 +5367,6 @@
 //     setCommentInput("");
 //   };
 
-//   // ── Case list item ─────────────────────────────────────────────────────────
-//   const QueueItem = ({ c }) => {
-//     const pm       = PRIORITY_META[c.priority] || PRIORITY_META.LOW;
-//     const sm       = STATUS_META[c.status] || STATUS_META["pending"];
-//     const isActive = selectedCase?.case_id === c.case_id;
-//     const checkLabels = c.checks_norm.map(k =>
-//       CHECK_TABS.find(t => t.key === k)?.label?.slice(0, 3).toUpperCase() || k.slice(0, 3).toUpperCase()
-//     );
-
-//     return (
-//       <tr
-//         className="boder-tbl active"
-//         onClick={() => selectCase(c)}
-//         style={{
-//           cursor: "pointer",
-//           background: isActive ? "#eef3ff" : undefined,
-//           borderLeft: isActive ? "3px solid #2b3b8c" : "3px solid transparent",
-//         }}
-//       >
-//         {/* Case ID + checks */}
-//         <td>
-//           <div className="criminal-case">
-//             <p>
-//               <span style={{ fontWeight: 700, color: "#27348B" }}>{c.case_id}</span>
-//               <br />
-//               <span style={{ fontSize: "11px", color: "#94a3b8" }}>
-//                 {checkLabels.join(" · ")}
-//               </span>
-//             </p>
-//           </div>
-//         </td>
-
-//         {/* Candidate name */}
-//         <td>
-//           <div className="client-names">{c.candidate}</div>
-//         </td>
-
-//         {/* Progress + TAT */}
-//         <td>
-//           <div className="custom-progress">
-//             <div className="custom-progress-bar" style={{ width: `${sm.pct}%`, background: sm.color }} />
-//           </div>
-//           <p className="progress-client-text" style={{ color: sm.color }}>{c.tat_display}</p>
-//         </td>
-
-//         {/* Priority dot */}
-//         <td>
-//           <div className="parent-client-boxes">
-//             <span
-//               className="client-cases-box"
-//               style={{ background: pm.dot }}
-//               title={c.priority}
-//             />
-//           </div>
-//         </td>
-//       </tr>
-//     );
-//   };
-
-//   // ── Middle panel: full detail of selected case ──────────────────────────────
-//   const DetailPanel = () => {
-//     if (!selectedCase) return (
-//       <div style={{ display: "flex", alignItems: "center", justifyContent: "center", height: "340px" }}>
-//         <p style={{ color: "#94a3b8", fontSize: "14px" }}>Select a case to begin verification</p>
-//       </div>
-//     );
-
-//     const fields = CHECK_FIELDS[activeCheck] || [];
-//     const sm     = STATUS_META[selectedCase.status] || STATUS_META["pending"];
-//     const pm     = PRIORITY_META[selectedCase.priority] || PRIORITY_META.LOW;
-
-//     return (
-//       <>
-//         {/* Header */}
-//         <div style={{
-//           background: "#27348B", color: "#fff", padding: "14px 18px",
-//           fontWeight: 700, fontSize: "13px", borderRadius: "6px 6px 0 0",
-//           display: "flex", justifyContent: "space-between", alignItems: "center",
-//         }}>
-//           <span>
-//             {selectedCase.case_id} — {selectedCase.candidate}
-//           </span>
-//           <span style={{
-//             background: pm.bg, color: pm.color, fontSize: "11px",
-//             fontWeight: 700, padding: "3px 10px", borderRadius: "20px",
-//           }}>
-//             {selectedCase.priority}
-//           </span>
-//         </div>
-
-//         {/* Check type tabs — only show checks present in this case */}
-//         <div style={{
-//           display: "flex", background: "#fff",
-//           borderBottom: "1px solid #e2e8f0", overflowX: "auto",
-//         }}>
-//           {CHECK_TABS.filter(t => selectedCase.checks_norm.includes(t.key)).map((t, i, arr) => {
-//             const accessible = canAccessTab(t.key);
-//             const isActive   = activeCheck === t.key;
-//             return (
-//               <button
-//                 key={t.key}
-//                 onClick={() => accessible && setActiveCheck(t.key)}
-//                 title={!accessible ? "Your role cannot access this check type" : ""}
-//                 style={{
-//                   padding: "11px 18px", border: "none", whiteSpace: "nowrap",
-//                   borderRight: i < arr.length - 1 ? "1px solid #e2e8f0" : "none",
-//                   borderBottom: isActive ? "3px solid #27348B" : "3px solid transparent",
-//                   background: isActive ? "#f0f4ff" : "#fff",
-//                   color: isActive ? "#27348B" : accessible ? "#64748b" : "#cbd5e1",
-//                   fontWeight: isActive ? 700 : 400,
-//                   fontSize: "13px",
-//                   cursor: accessible ? "pointer" : "not-allowed",
-//                   opacity: accessible ? 1 : 0.45,
-//                   transition: "all 0.15s",
-//                 }}
-//               >
-//                 {t.label}
-//               </button>
-//             );
-//           })}
-//         </div>
-
-//         {/* Scrollable form body */}
-//         <div style={{
-//           border: "1px solid #e2e8f0", borderTop: "none",
-//           borderRadius: "0 0 6px 6px", background: "#fff",
-//           maxHeight: "520px", overflowY: "auto", padding: "16px",
-//         }}>
-
-//           {/* Case summary strip */}
-//           <div style={{
-//             display: "grid", gridTemplateColumns: "repeat(4, 1fr)",
-//             gap: "10px", marginBottom: "18px",
-//           }}>
-//             {[
-//               { label: "Client",   value: selectedCase.client || selectedCase.client_name || "—" },
-//               { label: "Status",   value: <span style={{ background: sm.color, color: "#fff", fontSize: "11px", fontWeight: 700, padding: "3px 10px", borderRadius: "4px" }}>{sm.label}</span> },
-//               { label: "TAT",      value: selectedCase.tat_display },
-//               { label: "Created",  value: selectedCase.created_at ? new Date(selectedCase.created_at).toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" }) : "—" },
-//             ].map(r => (
-//               <div key={r.label} style={{ background: "#f8fafc", borderRadius: "8px", padding: "10px 14px" }}>
-//                 <div style={{ fontSize: "10px", fontWeight: 700, color: "#94a3b8", textTransform: "uppercase", letterSpacing: "0.5px", marginBottom: "4px" }}>{r.label}</div>
-//                 <div style={{ fontSize: "13px", fontWeight: 700, color: "#1e293b" }}>{r.value}</div>
-//               </div>
-//             ))}
-//           </div>
-
-//           {/* Prefill source banner */}
-//           {prefillSource === "client" && (
-//             <div style={{ background: "#eff6ff", border: "1px solid #bfdbfe", borderRadius: "8px",
-//               padding: "10px 14px", fontSize: "12px", color: "#1d4ed8", marginBottom: "16px", fontWeight: 600 }}>
-//               ℹ Some fields below were prefilled from what the client/candidate already submitted. Please verify and correct as needed.
-//             </div>
-//           )}
-//           {prefillSource === "draft" && (
-//             <div style={{ background: "#f5f3ff", border: "1px solid #ddd6fe", borderRadius: "8px",
-//               padding: "10px 14px", fontSize: "12px", color: "#6d28d9", marginBottom: "16px", fontWeight: 600 }}>
-//               ↻ Resumed your saved draft for this check.
-//             </div>
-//           )}
-
-//           {/* Outcome toggle */}
-//           <div style={{ marginBottom: "16px" }}>
-//             <p style={{ fontSize: "11px", fontWeight: 700, color: "#475569", marginBottom: "8px", textTransform: "uppercase", letterSpacing: "0.4px" }}>
-//               Verification Outcome
-//             </p>
-//             <div style={{ display: "flex", gap: "8px" }}>
-//               {OUTCOME_OPTS.map(o => (
-//                 <button
-//                   key={o.key}
-//                   onClick={() => setOutcome(o.key)}
-//                   style={{
-//                     flex: 1, padding: "10px 8px", cursor: "pointer",
-//                     border: `2px solid ${outcome === o.key ? o.border : "#e2e8f0"}`,
-//                     borderRadius: "8px",
-//                     background: outcome === o.key ? o.bg : "#f8fafc",
-//                     color: outcome === o.key ? o.color : "#94a3b8",
-//                     fontWeight: outcome === o.key ? 700 : 500,
-//                     fontSize: "12px",
-//                     transition: "all 0.15s",
-//                   }}
-//                 >
-//                   {o.label}
-//                 </button>
-//               ))}
-//             </div>
-//           </div>
-
-//           {/* Dynamic fields grid */}
-//           {!canAccessTab(activeCheck) ? (
-//             <div style={{ padding: "24px", textAlign: "center", color: "#94a3b8", fontSize: "13px", background: "#f8fafc", borderRadius: "8px" }}>
-//               Your role does not have access to the <strong>{CHECK_TABS.find(t => t.key === activeCheck)?.label}</strong> check.
-//             </div>
-//           ) : (
-//             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px" }}>
-//               {fields.map(f => (
-//                 <FormField
-//                   key={f.key} f={f}
-//                   value={form[f.key] || ""}
-//                   onChange={v => setForm(p => ({ ...p, [f.key]: v }))}
-//                 />
-//               ))}
-//             </div>
-//           )}
-
-//           {/* Save message */}
-//           {saveMsg.text && (
-//             <div style={{
-//               marginTop: "14px", padding: "10px 14px", borderRadius: "8px",
-//               background: saveMsg.type === "success" ? "#f0fdf4" : "#fef2f2",
-//               color:      saveMsg.type === "success" ? "#16a34a" : "#dc2626",
-//               fontSize: "13px", fontWeight: 600,
-//             }}>
-//               {saveMsg.text}
-//             </div>
-//           )}
-//         </div>
-
-//         {/* Action buttons */}
-//         {canAccessTab(activeCheck) && (
-//           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px", marginTop: "12px" }}>
-//             <button
-//               onClick={() => handleSave(true)}
-//               disabled={saving}
-//               style={{
-//                 display: "flex", alignItems: "center", justifyContent: "center", gap: "8px",
-//                 padding: "13px", background: "#27348B", color: "#fff", border: "none",
-//                 borderRadius: "6px", fontWeight: 700, fontSize: "13px", cursor: "pointer",
-//               }}
-//             >
-//               💾 Save Draft
-//             </button>
-//             <button
-//               onClick={() => handleSave(false)}
-//               disabled={saving || !outcome}
-//               style={{
-//                 display: "flex", alignItems: "center", justifyContent: "center", gap: "8px",
-//                 padding: "13px",
-//                 background: saving || !outcome ? "#94a3b8" : "#10b981",
-//                 color: "#fff", border: "none", borderRadius: "6px",
-//                 fontWeight: 700, fontSize: "13px",
-//                 cursor: saving || !outcome ? "not-allowed" : "pointer",
-//               }}
-//             >
-//               {saving ? "Saving…" : "✔ Save & Mark Done"}
-//             </button>
-//           </div>
-//         )}
-//       </>
-//     );
-//   };
-
-//   // ── Right panel: Comments ────────────────────────────────────────────────
-//   const RightPanel = () => (
-//     <div style={{ display: "flex", flexDirection: "column", gap: "14px", height: "100%" }}>
-
-//       {/* Comments */}
-//       <div style={{ borderRadius: "10px", overflow: "hidden", border: "1px solid #e2e8f0", flex: 1, display: "flex", flexDirection: "column" }}>
-//         <div style={{ background: "#27348B", padding: "13px 16px" }}>
-//           <h3 style={{ margin: 0, color: "#fff", fontSize: "12px", fontWeight: 700, letterSpacing: "0.08em" }}>
-//             COMMENTS & NOTES
-//           </h3>
-//         </div>
-//         <div style={{ flex: 1, maxHeight: "460px", overflowY: "auto", padding: "12px 14px" }}>
-//           {comments.length === 0 ? (
-//             <p style={{ color: "#cbd5e1", fontSize: "13px", textAlign: "center", padding: "16px 0" }}>
-//               No comments yet.
-//             </p>
-//           ) : (
-//             comments.map((c, i) => (
-//               <div key={c.id} style={{ display: "flex", gap: "10px", marginBottom: "14px" }}>
-//                 <div style={{
-//                   width: "30px", height: "30px", borderRadius: "50%",
-//                   background: i % 2 === 0 ? "#7c3aed" : "#0d9488",
-//                   color: "#fff", display: "flex", alignItems: "center", justifyContent: "center",
-//                   fontSize: "13px", fontWeight: 700, flexShrink: 0,
-//                 }}>
-//                   {c.avatar}
-//                 </div>
-//                 <div style={{ flex: 1 }}>
-//                   <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "3px" }}>
-//                     <span style={{ fontSize: "12px", fontWeight: 700, color: "#1e293b" }}>{c.author}</span>
-//                     <span style={{ fontSize: "11px", color: "#94a3b8" }}>{c.time}</span>
-//                   </div>
-//                   <p style={{ fontSize: "12px", color: "#475569", margin: 0, lineHeight: 1.5 }}>{c.text}</p>
-//                 </div>
-//               </div>
-//             ))
-//           )}
-//           <div ref={commentsEndRef} />
-//         </div>
-//         <div style={{ borderTop: "1px solid #e2e8f0", display: "flex", gap: "0" }}>
-//           <input
-//             type="text"
-//             placeholder="Add a comment…"
-//             value={commentInput}
-//             onChange={e => setCommentInput(e.target.value)}
-//             onKeyDown={e => e.key === "Enter" && sendComment()}
-//             style={{
-//               flex: 1, border: "none", padding: "11px 14px",
-//               fontSize: "13px", outline: "none", background: "#fff",
-//             }}
-//           />
-//           <button onClick={sendComment} style={{
-//             background: "#27348B", border: "none", padding: "0 16px",
-//             cursor: "pointer", color: "#fff",
-//           }}>
-//             <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-//               <line x1="22" y1="2" x2="11" y2="13" />
-//               <polygon points="22 2 15 22 11 13 2 9 22 2" />
-//             </svg>
-//           </button>
-//         </div>
-//       </div>
-//     </div>
-//   );
-
-//   // ── Render ─────────────────────────────────────────────────────────────────
 //   return (
 //     <>
 //       <Sidebar />
@@ -4229,22 +5375,16 @@
 //         <main>
 //           <div className="dash-wrper">
 
-//             {/* Page header */}
+//             {/* Top Workspace Header */}
 //             <div className="dash-upper-head">
 //               <div className="left">
 //                 <div className="dash-title-flex">
 //                   <h3 className="dash-title-text">Verifier Workspace</h3>
-//                   <span style={{
-//                     fontSize: "12px", color: "#64748b",
-//                     background: "#eef3ff", padding: "3px 10px", borderRadius: "20px",
-//                   }}>
+//                   <span style={{ fontSize: "14px", color: "#606060", fontWeight: 500, padding: "3px 10px", borderRadius: "20px" }}>
 //                     {user.name || "Verifier"} — {role}
 //                   </span>
 //                   {assignedCheck && (
-//                     <span style={{
-//                       fontSize: "11px", color: "#fff",
-//                       background: "#27348B", padding: "3px 10px", borderRadius: "20px",
-//                     }}>
+//                     <span style={{ fontSize: "11px", color: "#fff", background: "#27348B", padding: "3px 10px", borderRadius: "20px" }}>
 //                       Assigned: {CHECK_TABS.find(t => t.key === assignedCheck)?.label}
 //                     </span>
 //                   )}
@@ -4259,46 +5399,35 @@
 //                   onChange={e => setSearch(e.target.value)}
 //                 />
 //                 {search && (
-//                   <button onClick={() => setSearch("")}
-//                     style={{ background: "none", border: "none", cursor: "pointer", fontSize: "18px", color: "#94a3b8" }}>
+//                   <button onClick={() => setSearch("")} style={{ background: "none", border: "none", cursor: "pointer", fontSize: "18px", color: "#94a3b8" }}>
 //                     ×
 //                   </button>
 //                 )}
 //               </div>
 //             </div>
 
-//             {/* Date filters — same pattern as Intake.jsx */}
-//             <div style={{ display: "flex", gap: "8px", flexWrap: "wrap", alignItems: "center" }}>
+//             {/* Date Filters */}
+//             <div style={{ display: "flex", gap: "8px", flexWrap: "wrap", alignItems: "center", marginBottom: "16px" }}>
 //               {DATE_FILTERS.map(df => (
-//                 <button
-//                   key={df.key}
-//                   className={`tab-cta ${dateFilter === df.key ? "active" : ""}`}
-//                   onClick={() => setDateFilter(df.key)}
-//                 >
+//                 <button key={df.key} className={`tab-cta ${dateFilter === df.key ? "active" : ""}`} onClick={() => setDateFilter(df.key)}>
 //                   {df.label}
 //                 </button>
 //               ))}
 //               {dateFilter === "custom" && (
 //                 <>
-//                   <input
-//                     type="date" value={customFrom} onChange={e => setCustomFrom(e.target.value)}
-//                     style={{ padding: "8px 12px", border: "1px solid #e2e8f0", borderRadius: "10px", fontSize: "13px" }}
-//                   />
+//                   <input type="date" value={customFrom} onChange={e => setCustomFrom(e.target.value)} style={{ padding: "8px 12px", border: "1px solid #e2e8f0", borderRadius: "10px", fontSize: "13px" }} />
 //                   <span style={{ color: "#94a3b8" }}>→</span>
-//                   <input
-//                     type="date" value={customTo} onChange={e => setCustomTo(e.target.value)}
-//                     style={{ padding: "8px 12px", border: "1px solid #e2e8f0", borderRadius: "10px", fontSize: "13px" }}
-//                   />
+//                   <input type="date" value={customTo} onChange={e => setCustomTo(e.target.value)} style={{ padding: "8px 12px", border: "1px solid #e2e8f0", borderRadius: "10px", fontSize: "13px" }} />
 //                 </>
 //               )}
 //             </div>
 
-//             {/* ── Stat cards — now double as the queue-view selector (replaces the old tab row) ── */}
-//             <div className="cards-head-dash">
+//             {/* Navigation Cards Header */}
+//             <div className="cards-head-dash" style={{ marginBottom: "20px" }}>
 //               {[
 //                 { key: "active",      cls: "bdr-total",    count: activeCases.length,      label: "Active" },
 //                 { key: "completed",   cls: "bdr-com",       count: completedCases.length,   label: "Completed" },
-//                 { key: "clear",       cls: "bdr-progress",  count: clearCases.length,       label: "Clear" },
+//                 { key: "education",   cls: "bdr-progress",  count: clearCases.length,       label: "Education Check" },
 //                 { key: "discrepancy", cls: "bdr-rate",      count: discrepancyCases.length,  label: "Discrepancy" },
 //               ].map(card => (
 //                 <div
@@ -4320,43 +5449,70 @@
 //               ))}
 //             </div>
 
-//             {/* Three-column layout: Queue | Form | Charges+Comments */}
-//             <div style={{ display: "grid", gridTemplateColumns: "300px 1fr 280px", gap: "16px", alignItems: "start" }}>
+//             {/* ── CONDITIONALLY SWITCH VIEWS ── */}
+//             {sidebarView === "completed" ? (
+//               <CompletedEducationView cases={completedCases} />
+//             ) : sidebarView === "education" ? (
+//               <EducationCheckView cases={clearCases} />
+//             ) : (
+//               /* Original 3-Column Workspace for Active / Discrepancy Views */
+//               <div style={{ display: "none", gridTemplateColumns: "300px 1fr 280px", gap: "16px", alignItems: "start" }}>
 
-//               {/* ── LEFT: Case queue ── */}
-//               <div className="down-table" style={{ margin: 0 }}>
-//                 <div className="client-portal-cases">
-//                   <h3>
-//                     {VIEW_LABELS[sidebarView] || "ACTIVE"} ({queueList.length})
-//                   </h3>
+//                 {/* Left Queue Table */}
+//                 <div className="down-table" style={{ margin: 0 }}>
+//                   <div className="client-portal-cases">
+//                     <h3>{VIEW_LABELS[sidebarView] || "ACTIVE"} ({queueList.length})</h3>
+//                   </div>
+
+//                   {loading ? (
+//                     <p style={{ padding: "24px", textAlign: "center", color: "#94a3b8" }}>Loading cases…</p>
+//                   ) : queueList.length === 0 ? (
+//                     <p style={{ padding: "24px", textAlign: "center", color: "#94a3b8", fontSize: "13px" }}>
+//                       No {sidebarView} cases found.
+//                     </p>
+//                   ) : (
+//                     <table>
+//                       <tbody>
+//                         {queueList.map(c => (
+//                           <QueueItem key={c.case_id} c={c} selectedCase={selectedCase} selectCase={selectCase} />
+//                         ))}
+//                       </tbody>
+//                     </table>
+//                   )}
 //                 </div>
 
-//                 {loading ? (
-//                   <p style={{ padding: "24px", textAlign: "center", color: "#94a3b8" }}>Loading cases…</p>
-//                 ) : queueList.length === 0 ? (
-//                   <p style={{ padding: "24px", textAlign: "center", color: "#94a3b8", fontSize: "13px" }}>
-//                     No {sidebarView} cases found.
-//                   </p>
-//                 ) : (
-//                   <table>
-//                     <tbody>
-//                       {queueList.map(c => <QueueItem key={c.case_id} c={c} />)}
-//                     </tbody>
-//                   </table>
-//                 )}
-//               </div>
+//                 {/* Middle Form Panel */}
+//                 <div className="second-card">
+//                   <DetailPanel
+//                     selectedCase={selectedCase}
+//                     activeCheck={activeCheck}
+//                     setActiveCheck={setActiveCheck}
+//                     canAccessTab={canAccessTab}
+//                     form={form}
+//                     setForm={setForm}
+//                     prefillSource={prefillSource}
+//                     outcome={outcome}
+//                     setOutcome={setOutcome}
+//                     saveMsg={saveMsg}
+//                     saving={saving}
+//                     handleSave={handleSave}
+//                   />
+//                 </div>
 
-//               {/* ── MIDDLE: Detail + form ── */}
-//               <div className="second-card">
-//                 <DetailPanel />
-//               </div>
+//                 {/* Right Comments Panel */}
+//                 <div className="thrid-card">
+//                   <RightPanel
+//                     comments={comments}
+//                     commentInput={commentInput}
+//                     setCommentInput={setCommentInput}
+//                     sendComment={sendComment}
+//                     commentsEndRef={commentsEndRef}
+//                   />
+//                 </div>
 
-//               {/* ── RIGHT: Charges + Comments ── */}
-//               <div className="thrid-card">
-//                 <RightPanel />
 //               </div>
+//             )}
 
-//             </div>
 //           </div>
 //         </main>
 //       </section>
@@ -4487,6 +5643,56 @@ const CLIENT_TO_VERIFIER_FIELD_MAP = {
   education: { instituteName: "institution_name", qualification: "degree", rollNo: "roll_number", yearOfPassing: "year_of_passing" },
   address: { address: "address_line", city: "city", state: "state", pinCode: "pincode" },
 };
+
+// ── Resolve education display fields across the three schemas that can
+// hold them for a given case: the client/candidate's own submission
+// (check_details.education.fields — singular keys, instituteName /
+// qualification / yearOfPassing), the admin's qualification-intake form
+// (same fields object but a `qualifications` ARRAY, plural keys —
+// instituteUniversity / qualificationType / toYOP), and this verifier
+// form's own saved result (check_results.education.form_data —
+// institution_name / degree / year_of_passing). Checked in that priority
+// order — client submission first since it's what the candidate actually
+// told us, falling back to whichever intake form has data.
+function getEducationDisplay(c) {
+  const clientFields   = c.check_details?.education?.fields;
+  const adminQual      = clientFields?.qualifications?.[0];
+  const verifierFields = c.check_results?.education?.form_data;
+
+  return {
+    university:
+      clientFields?.instituteName ||
+      adminQual?.instituteUniversity ||
+      verifierFields?.institution_name ||
+      "—",
+    qualification:
+      clientFields?.qualification ||
+      adminQual?.qualificationType ||
+      verifierFields?.degree ||
+      "—",
+    passingYear:
+      clientFields?.yearOfPassing ||
+      adminQual?.toYOP ||
+      verifierFields?.year_of_passing ||
+      "—",
+    linkSentOn: clientFields?.link_sent_at
+      ? new Date(clientFields.link_sent_at).toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" })
+      : "-",
+    rawFields: clientFields || {},
+  };
+}
+
+// ── QC Review badge — mirrors the education-check QC lifecycle used on the
+// TL side (see TLEducationCheck.jsx's qcReviewFor): a case is "Reviewed"
+// once a TL has approved its QC, "Flagged" if rejected, "Pending" once the
+// verifier has submitted a result but no TL decision exists yet, and
+// "In Progress" otherwise.
+function qcReviewFor(checkStatus, qc) {
+  if (qc?.status === "approved") return { label: "Reviewed", bg: "#dcfce7", color: "#15803d" };
+  if (qc?.status === "rejected") return { label: "Flagged", bg: "#fee2e2", color: "#b91c1c" };
+  if (checkStatus === "completed") return { label: "Pending", bg: "#f3e8ff", color: "#7c3aed" };
+  return { label: "In Progress", bg: "#fef9c3", color: "#92400e" };
+}
 
 function buildPrefilledForm(caseObj, checkKey) {
   const draft = caseObj?.check_results?.[checkKey]?.form_data;
@@ -4792,12 +5998,97 @@ function RightPanel({ comments, commentInput, setCommentInput, sendComment, comm
 }
 
 // ── 1. ACTIVE EDUCATION CHECK VIEW ──
-function EducationCheckView({ cases }) {
-  const totalCases = cases.length || 128;
-  const linkSent = 42;
-  const inProgress = cases.filter(c => String(c.status || "").toLowerCase() !== "completed").length || 31;
-  const completed = cases.filter(c => String(c.status || "").toLowerCase() === "completed").length || 45;
-  const discrepancy = 10;
+function EducationCheckView({ cases, token, onRefresh }) {
+  const [search, setSearch] = useState("");
+  const [sendingId, setSendingId] = useState(null);
+
+  // Derive display rows once per render: real university/qualification/passing
+  // year (across the three schemas — see getEducationDisplay), plus a real
+  // QC Review badge computed from the case's check_status/check_qc maps.
+  const rows = cases.map((c, idx) => {
+    const edu = getEducationDisplay(c);
+    const checkStatus = c.check_status?.education;
+    const qc = c.check_qc?.education;
+    return {
+      raw: c,
+      sno: idx + 1,
+      caseId: c.case_id,
+      candidate: c.candidate || "Candidate Name",
+      client: c.client || c.client_name || "Client",
+      edu,
+      qcInfo: qcReviewFor(checkStatus, qc),
+      documentsCount: Object.keys(c.check_details?.education?.documents || {}).length,
+    };
+  });
+
+  const filteredRows = search.trim()
+    ? rows.filter(r => {
+        const q = search.trim().toLowerCase();
+        return (
+          (r.caseId || "").toLowerCase().includes(q) ||
+          (r.candidate || "").toLowerCase().includes(q) ||
+          (r.edu.university || "").toLowerCase().includes(q)
+        );
+      })
+    : rows;
+
+  // Real stats, derived from the same rows the table renders — no more
+  // hardcoded fallbacks that never move with the actual data.
+  const totalCases  = rows.length;
+  const linkSent     = rows.filter(r => r.edu.linkSentOn !== "-").length;
+  const completed    = rows.filter(r => r.qcInfo.label === "Reviewed").length;
+  const discrepancy  = rows.filter(r => r.qcInfo.label === "Flagged").length;
+  const inProgress   = rows.filter(r => r.qcInfo.label !== "Reviewed" && r.qcInfo.label !== "Flagged").length;
+
+  // Send Verification Link — POST /cases/{caseId}/share-link (education
+  // only), then stamps link_sent_at onto the education check's fields so
+  // "Link Sent On" has something real to show. Mirrors TLEducationCheck.jsx.
+  const handleSendLink = async (row) => {
+    if (!token) {
+      alert("You're not signed in. Please log in again.");
+      return;
+    }
+    setSendingId(row.caseId);
+    try {
+      const res = await fetch(`${API_URL}/api/cases/${row.caseId}/share-link`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ checks: ["education"] }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        alert(data.message || "Failed to generate link.");
+        return;
+      }
+
+      await fetch(`${API_URL}/api/cases/${row.caseId}/checks/education`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ fields: { ...row.edu.rawFields, link_sent_at: new Date().toISOString() } }),
+      });
+
+      try {
+        await navigator.clipboard.writeText(data.url);
+        alert(`Verification link copied to clipboard:\n${data.url}`);
+      } catch {
+        alert(`Verification link generated:\n${data.url}`);
+      }
+
+      onRefresh?.();
+    } catch {
+      alert("Unable to connect to server. Please try again.");
+    } finally {
+      setSendingId(null);
+    }
+  };
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
@@ -4814,6 +6105,8 @@ function EducationCheckView({ cases }) {
           <input
             type="text"
             placeholder="Search Case ID / Candidate Name / University"
+            value={search}
+            onChange={e => setSearch(e.target.value)}
             style={{ padding: "9px 14px", width: "320px", borderRadius: "8px", border: "1px solid #cbd5e1", fontSize: "13px", outline: "none" }}
           />
         </div>
@@ -4845,9 +6138,6 @@ function EducationCheckView({ cases }) {
           </select>
         </div>
         <button style={{ padding: "8px 10px", backgroundColor: "#fff", border: "1px solid #cbd5e1", borderRadius: "6px", cursor: "pointer" }}>📅</button>
-        {/* <button style={{ height: "36px", padding: "0 16px", backgroundColor: "#2563eb", color: "#fff", border: "none", borderRadius: "6px", fontWeight: 600, fontSize: "12px", cursor: "pointer" }}>
-          + New Education Check
-        </button> */}
       </div>
 
       <div style={{ display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: "12px" }}>
@@ -4890,6 +6180,7 @@ function EducationCheckView({ cases }) {
                 <th style={{ padding: "10px 8px" }}>University / Institute</th>
                 <th style={{ padding: "10px 8px" }}>Qualification</th>
                 <th style={{ padding: "10px 8px" }}>Passing Year</th>
+                <th style={{ padding: "10px 8px" }}>QC Review</th>
                 <th style={{ padding: "10px 8px" }}>Link Sent On</th>
                 <th style={{ padding: "10px 8px" }}>Documents</th>
                 <th style={{ padding: "10px 8px" }}>Action</th>
@@ -4897,34 +6188,54 @@ function EducationCheckView({ cases }) {
               </tr>
             </thead>
             <tbody>
-              {cases.length === 0 ? (
+              {filteredRows.length === 0 ? (
                 <tr><td colSpan="13" style={{ textAlign: "center", padding: "24px", color: "#94a3b8" }}>No Education Check Cases Found</td></tr>
               ) : (
-                cases.map((c, idx) => (
-                  <tr key={c.case_id || idx} style={{ borderBottom: "1px solid #f1f5f9" }}>
+                filteredRows.map((r) => (
+                  <tr key={r.caseId || r.sno} style={{ borderBottom: "1px solid #f1f5f9" }}>
                     <td style={{ padding: "12px 8px" }}><input type="checkbox" /></td>
-                    <td style={{ padding: "12px 8px", color: "#64748b" }}>{idx + 1}</td>
-                    <td style={{ padding: "12px 8px", fontWeight: 700, color: "#1e293b" }}>{c.case_id || `EDU-102${idx + 4}`}</td>
-                    <td style={{ padding: "12px 8px", color: "#334155" }}>{c.candidate || "Candidate Name"}</td>
-                    <td style={{ padding: "12px 8px", color: "#64748b" }}>{c.client || c.client_name || "Client"}</td>
-                    <td style={{ padding: "12px 8px", color: "#334155" }}>{c.check_details?.education?.fields?.instituteName || "University"}</td>
-                    <td style={{ padding: "12px 8px", color: "#64748b" }}>{c.check_details?.education?.fields?.qualification || "Degree"}</td>
+                    <td style={{ padding: "12px 8px", color: "#64748b" }}>{r.sno}</td>
+                    <td style={{ padding: "12px 8px", fontWeight: 700, color: "#1e293b" }}>{r.caseId}</td>
+                    <td style={{ padding: "12px 8px", color: "#334155" }}>{r.candidate}</td>
+                    <td style={{ padding: "12px 8px", color: "#64748b" }}>{r.client}</td>
+                    <td style={{ padding: "12px 8px", color: "#334155" }}>{r.edu.university}</td>
+                    <td style={{ padding: "12px 8px", color: "#64748b" }}>{r.edu.qualification}</td>
+                    <td style={{ padding: "12px 8px", color: "#64748b" }}>{r.edu.passingYear}</td>
                     <td style={{ padding: "12px 8px" }}>
-                      <span style={{ padding: "4px 10px", borderRadius: "12px", fontSize: "11px", fontWeight: 600, backgroundColor: "#fff7ed", color: "#c2410c" }}>
-                        {c.status || "In Progress"}
+                      <span style={{ padding: "4px 10px", borderRadius: "12px", fontSize: "11px", fontWeight: 600, backgroundColor: r.qcInfo.bg, color: r.qcInfo.color }}>
+                        {r.qcInfo.label}
                       </span>
                     </td>
-                    <td style={{ padding: "12px 8px", color: "#64748b" }}>—</td>
+                    <td style={{ padding: "12px 8px", color: "#64748b" }}>{r.edu.linkSentOn}</td>
                     <td style={{ padding: "12px 8px" }}>
                       <div style={{ display: "flex", gap: "6px" }}>
                         <button style={{ padding: "4px 8px", border: "1px solid #cbd5e1", background: "#fff", borderRadius: "4px", fontSize: "11px", cursor: "pointer" }}>📄 Upload</button>
-                        <button style={{ padding: "4px 8px", border: "1px solid #cbd5e1", background: "#fff", borderRadius: "4px", fontSize: "11px", cursor: "pointer" }}>👁 View</button>
+                        <button style={{ padding: "4px 8px", border: "1px solid #cbd5e1", background: "#fff", borderRadius: "4px", fontSize: "11px", cursor: "pointer" }}>👁 View ({r.documentsCount})</button>
                       </div>
                     </td>
                     <td style={{ padding: "12px 8px" }}>
-                      <button style={{ padding: "5px 10px", border: "1px solid #bfdbfe", background: "#eff6ff", color: "#2563eb", borderRadius: "4px", fontSize: "11px", fontWeight: 600, cursor: "pointer" }}>
-                        📩 Send Verification Link
-                      </button>
+                      <div style={{ display: "flex", gap: "6px" }}>
+                        <button
+                          onClick={() => handleSendLink(r)}
+                          disabled={sendingId === r.caseId}
+                          style={{ padding: "5px 10px", border: "1px solid #bfdbfe", background: sendingId === r.caseId ? "#e2e8f0" : "#eff6ff", color: "#2563eb", borderRadius: "4px", fontSize: "11px", fontWeight: 600, cursor: sendingId === r.caseId ? "not-allowed" : "pointer" }}
+                        >
+                          📩 {sendingId === r.caseId ? "Sending…" : "Send Verification Link"}
+                        </button>
+                        {/* Not yet built: universities have no contact
+                            email on file (no such field on the Institution
+                            model) and there's no backend route to notify
+                            or hear back from one. Disabled + labeled so
+                            the gap stays visible instead of silently
+                            absent. */}
+                        <button
+                          disabled
+                          title="Not yet configured — universities have no contact email on file, and there's no backend route to notify them yet."
+                          style={{ padding: "5px 10px", border: "1px solid #e2e8f0", background: "#f8fafc", color: "#94a3b8", borderRadius: "4px", fontSize: "11px", fontWeight: 600, cursor: "not-allowed" }}
+                        >
+                          📧 Notify University
+                        </button>
+                      </div>
                     </td>
                     <td style={{ padding: "12px 8px", textAlign: "center", color: "#94a3b8", cursor: "pointer" }}>⋮</td>
                   </tr>
@@ -5004,22 +6315,22 @@ function CompletedEducationView({ cases }) {
       <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "12px" }}>
         <div style={{ background: "#fff", padding: "14px 16px", borderRadius: "10px", border: "1px solid #e2e8f0", display: "flex", alignItems: "center", gap: "12px" }}>
           <div style={{ width: "38px", height: "38px", borderRadius: "50%", background: "#eff6ff", color: "#2563eb", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "18px" }}>📄</div>
-          <div><span style={{ fontSize: "11px", color: "#64748b", fontWeight: 600 }}>Total Completed</span><h3 style={{ margin: 0, fontSize: "20px", color: "#1e293b" }}>45</h3></div>
+          <div><span style={{ fontSize: "11px", color: "#64748b", fontWeight: 600 }}>Total Completed</span><h3 style={{ margin: 0, fontSize: "20px", color: "#1e293b" }}>{mockCompleted.length}</h3></div>
         </div>
 
         <div style={{ background: "#fff", padding: "14px 16px", borderRadius: "10px", border: "1px solid #e2e8f0", display: "flex", alignItems: "center", gap: "12px" }}>
           <div style={{ width: "38px", height: "38px", borderRadius: "50%", background: "#f0fdf4", color: "#16a34a", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "18px" }}>🏛</div>
-          <div><span style={{ fontSize: "11px", color: "#64748b", fontWeight: 600 }}>University Verified</span><h3 style={{ margin: 0, fontSize: "20px", color: "#1e293b" }}>32</h3></div>
+          <div><span style={{ fontSize: "11px", color: "#64748b", fontWeight: 600 }}>University Verified</span><h3 style={{ margin: 0, fontSize: "20px", color: "#1e293b" }}>{mockCompleted.filter(c => (c.result || "Verified") === "Verified").length}</h3></div>
         </div>
 
         <div style={{ background: "#fff", padding: "14px 16px", borderRadius: "10px", border: "1px solid #e2e8f0", display: "flex", alignItems: "center", gap: "12px" }}>
           <div style={{ width: "38px", height: "38px", borderRadius: "50%", background: "#fff7ed", color: "#ea580c", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "18px" }}>🏫</div>
-          <div><span style={{ fontSize: "11px", color: "#64748b", fontWeight: 600 }}>School/College Verified</span><h3 style={{ margin: 0, fontSize: "20px", color: "#1e293b" }}>13</h3></div>
+          <div><span style={{ fontSize: "11px", color: "#64748b", fontWeight: 600 }}>School/College Verified</span><h3 style={{ margin: 0, fontSize: "20px", color: "#1e293b" }}>{mockCompleted.filter(c => c.result && c.result !== "Verified").length}</h3></div>
         </div>
 
         <div style={{ background: "#fff", padding: "14px 16px", borderRadius: "10px", border: "1px solid #e2e8f0", display: "flex", alignItems: "center", gap: "12px" }}>
           <div style={{ width: "38px", height: "38px", borderRadius: "50%", background: "#faf5ff", color: "#9333ea", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "18px" }}>📜</div>
-          <div><span style={{ fontSize: "11px", color: "#64748b", fontWeight: 600 }}>Reports Generated</span><h3 style={{ margin: 0, fontSize: "20px", color: "#1e293b" }}>45</h3></div>
+          <div><span style={{ fontSize: "11px", color: "#64748b", fontWeight: 600 }}>Reports Generated</span><h3 style={{ margin: 0, fontSize: "20px", color: "#1e293b" }}>{mockCompleted.length}</h3></div>
         </div>
       </div>
 
@@ -5100,12 +6411,10 @@ function CompletedEducationView({ cases }) {
             </table>
           </div>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: "16px", fontSize: "12px", color: "#64748b" }}>
-            <span>Showing 1 - 5 of 45 entries</span>
+            <span>Showing 1 - {mockCompleted.length} of {mockCompleted.length} entries</span>
             <div style={{ display: "flex", gap: "4px" }}>
               <button style={{ padding: "4px 8px", border: "1px solid #cbd5e1", background: "#fff", borderRadius: "4px" }}>&lt;</button>
               <button style={{ padding: "4px 8px", background: "#2563eb", color: "#fff", border: "none", borderRadius: "4px" }}>1</button>
-              <button style={{ padding: "4px 8px", border: "1px solid #cbd5e1", background: "#fff", borderRadius: "4px" }}>2</button>
-              <button style={{ padding: "4px 8px", border: "1px solid #cbd5e1", background: "#fff", borderRadius: "4px" }}>3</button>
               <button style={{ padding: "4px 8px", border: "1px solid #cbd5e1", background: "#fff", borderRadius: "4px" }}>&gt;</button>
             </div>
           </div>
@@ -5453,7 +6762,7 @@ export default function Verifyer() {
             {sidebarView === "completed" ? (
               <CompletedEducationView cases={completedCases} />
             ) : sidebarView === "education" ? (
-              <EducationCheckView cases={clearCases} />
+              <EducationCheckView cases={clearCases} token={token} onRefresh={fetchCases} />
             ) : (
               /* Original 3-Column Workspace for Active / Discrepancy Views */
               <div style={{ display: "none", gridTemplateColumns: "300px 1fr 280px", gap: "16px", alignItems: "start" }}>
