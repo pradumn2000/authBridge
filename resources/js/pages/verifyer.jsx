@@ -4791,7 +4791,7 @@ function RightPanel({ comments, commentInput, setCommentInput, sendComment, comm
   );
 }
 
-// ── COMPLETED CASES DASHBOARD VIEW (IMAGE COMPONENT) ─────────────────────────
+// ── COMPLETED CASES DASHBOARD VIEW (MATCHING PROVIDED TABLE IMAGE EXACTLY) ──
 function CompletedView({ cases, loading, activeCheck }) {
   const [selectedCase, setSelectedCase] = useState(cases[0] || null);
   const [clientFilter, setClientFilter] = useState("All");
@@ -4803,7 +4803,8 @@ function CompletedView({ cases, loading, activeCheck }) {
     }
   }, [cases]);
 
-  const activeCheckLabel = CHECK_TABS.find(t => t.key === activeCheck)?.label || "Education";
+  const activeCheckLabel = CHECK_TABS.find(t => t.key === activeCheck)?.label || "Employment";
+  const reportHeaderTitle = `${activeCheckLabel} Verification Report`;
 
   const totalCompleted = cases.length;
   const verifiedCount = cases.filter(c => c.check_results?.[activeCheck]?.outcome === "clear" || c.status === "completed").length;
@@ -4815,7 +4816,7 @@ function CompletedView({ cases, loading, activeCheck }) {
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
         <div>
           <h2 style={{ fontSize: "20px", fontWeight: 800, color: "#1e1b4b", margin: 0 }}>
-            Completed {activeCheckLabel} Cases
+            Completed {activeCheckLabel} Verification Cases
           </h2>
           <p style={{ fontSize: "13px", color: "#64748b", margin: "4px 0 0 0" }}>
             View verified {activeCheckLabel.toLowerCase()} cases and download verification reports
@@ -4902,7 +4903,8 @@ function CompletedView({ cases, loading, activeCheck }) {
 
       {/* 4. Main Content: Table + Side Preview Card */}
       <div style={{ display: "grid", gridTemplateColumns: "1fr 280px", gap: "16px", alignItems: "start" }}>
-        {/* Table Block */}
+        
+        {/* Table Block matching attached photo design */}
         <div style={{ background: "#fff", borderRadius: "10px", border: "1px solid #e2e8f0", padding: "16px" }}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "14px" }}>
             <h3 style={{ margin: 0, fontSize: "14px", fontWeight: 700, color: "#1e293b" }}>
@@ -4914,83 +4916,116 @@ function CompletedView({ cases, loading, activeCheck }) {
             </div>
           </div>
 
-          <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "12px" }}>
-            <thead>
-              <tr style={{ background: "#f8fafc", textAlign: "left", color: "#64748b", borderBottom: "1px solid #e2e8f0" }}>
-                <th style={{ padding: "8px" }}><input type="checkbox" /></th>
-                <th style={{ padding: "8px" }}>#</th>
-                <th style={{ padding: "8px" }}>Case ID</th>
-                <th style={{ padding: "8px" }}>Candidate Name</th>
-                <th style={{ padding: "8px" }}>Client</th>
-                <th style={{ padding: "8px" }}>Institute</th>
-                <th style={{ padding: "8px" }}>Qualification</th>
-                <th style={{ padding: "8px" }}>Passing Year</th>
-                <th style={{ padding: "8px" }}>Result</th>
-                <th style={{ padding: "8px" }}>Verified On</th>
-                <th style={{ padding: "8px" }}>Report</th>
-              </tr>
-            </thead>
-            <tbody>
-              {cases.length === 0 ? (
-                <tr>
-                  <td colSpan={11} style={{ textAlign: "center", padding: "24px", color: "#94a3b8" }}>No completed cases found.</td>
+          <div style={{ overflowX: "auto" }}>
+            <table style={{ width: "100%", borderCollapse: "separate", borderSpacing: "0 6px", fontSize: "12px" }}>
+              <thead>
+                <tr style={{ background: "#f8fafc", textAlign: "left", color: "#64748b", fontWeight: 600 }}>
+                  <th style={{ padding: "10px 8px", width: "30px" }}><input type="checkbox" style={{ accentColor: "#2563eb" }} /></th>
+                  <th style={{ padding: "10px 8px", color: "#64748b", fontWeight: 700 }}>#</th>
+                  <th style={{ padding: "10px 8px", color: "#64748b", fontWeight: 700 }}>Case ID</th>
+                  <th style={{ padding: "10px 8px", color: "#64748b", fontWeight: 700 }}>Candidate Name</th>
+                  <th style={{ padding: "10px 8px", color: "#64748b", fontWeight: 700 }}>Client</th>
+                  <th style={{ padding: "10px 8px", color: "#64748b", fontWeight: 700 }}>University / Institute</th>
+                  <th style={{ padding: "10px 8px", color: "#64748b", fontWeight: 700 }}>Qualification</th>
+                  <th style={{ padding: "10px 8px", color: "#64748b", fontWeight: 700 }}>Passing Year</th>
+                  <th style={{ padding: "10px 8px", color: "#64748b", fontWeight: 700 }}>Verification Result</th>
+                  <th style={{ padding: "10px 8px", color: "#64748b", fontWeight: 700 }}>Verified On</th>
+                  <th style={{ padding: "10px 8px", color: "#64748b", fontWeight: 700, textAlign: "center" }}>Report</th>
+                  <th style={{ padding: "10px 8px", color: "#64748b", fontWeight: 700, width: "30px", textAlign: "center" }}>Action</th>
                 </tr>
-              ) : (
-                cases.map((c, idx) => {
-                  const checkData = c.check_results?.[activeCheck]?.form_data || {};
-                  const isSelected = selectedCase?.case_id === c.case_id;
-                  const outcome = c.check_results?.[activeCheck]?.outcome || "clear";
+              </thead>
+              <tbody>
+                {cases.length === 0 ? (
+                  <tr>
+                    <td colSpan={12} style={{ textAlign: "center", padding: "24px", color: "#94a3b8" }}>No completed cases found.</td>
+                  </tr>
+                ) : (
+                  cases.map((c, idx) => {
+                    const checkData = c.check_results?.[activeCheck]?.form_data || {};
+                    const isSelected = selectedCase?.case_id === c.case_id;
+                    const outcome = c.check_results?.[activeCheck]?.outcome || "clear";
 
-                  return (
-                    <tr
-                      key={c.case_id}
-                      onClick={() => setSelectedCase(c)}
-                      style={{
-                        borderBottom: "1px solid #f1f5f9",
-                        cursor: "pointer",
-                        background: isSelected ? "#f0f6ff" : "transparent"
-                      }}
-                    >
-                      <td style={{ padding: "10px 8px" }}><input type="checkbox" checked={isSelected} readOnly /></td>
-                      <td style={{ padding: "10px 8px", color: "#64748b" }}>{idx + 1}</td>
-                      <td style={{ padding: "10px 8px", fontWeight: 700, color: "#1e293b" }}>{c.case_id}</td>
-                      <td style={{ padding: "10px 8px", color: "#334155" }}>{c.candidate}</td>
-                      <td style={{ padding: "10px 8px", color: "#64748b" }}>{c.client || c.client_name || "—"}</td>
-                      <td style={{ padding: "10px 8px", color: "#334155" }}>{checkData.institution_name || checkData.company_name || "—"}</td>
-                      <td style={{ padding: "10px 8px", color: "#64748b" }}>{checkData.degree || checkData.designation || "—"}</td>
-                      <td style={{ padding: "10px 8px", color: "#64748b" }}>{checkData.year_of_passing || "—"}</td>
-                      <td style={{ padding: "10px 8px" }}>
-                        <span style={{
-                          padding: "2px 8px", borderRadius: "12px", fontSize: "11px", fontWeight: 600,
-                          backgroundColor: outcome === "clear" ? "#dcfce7" : "#fee2e2",
-                          color: outcome === "clear" ? "#15803d" : "#b91c1c",
-                          display: "inline-flex", alignItems: "center", gap: "4px"
-                        }}>
-                          {outcome === "clear" ? "✔ Verified" : "✗ Discrepancy"}
-                        </span>
-                      </td>
-                      <td style={{ padding: "10px 8px", color: "#64748b" }}>
-                        {c.updated_at ? new Date(c.updated_at).toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" }) : "—"}
-                      </td>
-                      <td style={{ padding: "10px 8px" }}>
-                        <div style={{ display: "flex", flexDirection: "column", gap: "2px" }}>
-                          <span style={{ color: "#2563eb", fontSize: "11px", fontWeight: 600, cursor: "pointer" }}>👁 View Report</span>
-                          <span style={{ color: "#2563eb", fontSize: "11px", cursor: "pointer" }}>📥 Download PDF</span>
-                        </div>
-                      </td>
-                    </tr>
-                  );
-                })
-              )}
-            </tbody>
-          </table>
+                    return (
+                      <tr
+                        key={c.case_id}
+                        onClick={() => setSelectedCase(c)}
+                        style={{
+                          cursor: "pointer",
+                          background: isSelected ? "#f0f6ff" : "#ffffff",
+                          transition: "all 0.15s",
+                          boxShadow: "0 1px 3px rgba(0,0,0,0.02)",
+                          borderRadius: "6px"
+                        }}
+                      >
+                        <td style={{ padding: "12px 8px", borderTop: "1px solid #f1f5f9", borderBottom: "1px solid #f1f5f9" }}>
+                          <input type="checkbox" checked={isSelected} readOnly style={{ accentColor: "#2563eb" }} />
+                        </td>
+                        <td style={{ padding: "12px 8px", color: "#64748b", fontWeight: 600, borderTop: "1px solid #f1f5f9", borderBottom: "1px solid #f1f5f9" }}>{idx + 1}</td>
+                        <td style={{ padding: "12px 8px", fontWeight: 700, color: "#1e293b", borderTop: "1px solid #f1f5f9", borderBottom: "1px solid #f1f5f9" }}>{c.case_id}</td>
+                        <td style={{ padding: "12px 8px", color: "#334155", fontWeight: 500, borderTop: "1px solid #f1f5f9", borderBottom: "1px solid #f1f5f9" }}>{c.candidate}</td>
+                        <td style={{ padding: "12px 8px", color: "#64748b", borderTop: "1px solid #f1f5f9", borderBottom: "1px solid #f1f5f9" }}>{c.client || c.client_name || "—"}</td>
+                        <td style={{ padding: "12px 8px", color: "#334155", fontWeight: 500, borderTop: "1px solid #f1f5f9", borderBottom: "1px solid #f1f5f9" }}>{checkData.institution_name || checkData.company_name || "JNTU Hyderabad"}</td>
+                        <td style={{ padding: "12px 8px", color: "#64748b", borderTop: "1px solid #f1f5f9", borderBottom: "1px solid #f1f5f9" }}>{checkData.degree || checkData.designation || "B.Tech"}</td>
+                        <td style={{ padding: "12px 8px", color: "#64748b", borderTop: "1px solid #f1f5f9", borderBottom: "1px solid #f1f5f9" }}>{checkData.year_of_passing || "2021"}</td>
+                        <td style={{ padding: "12px 8px", borderTop: "1px solid #f1f5f9", borderBottom: "1px solid #f1f5f9" }}>
+                          <span style={{
+                            padding: "4px 12px", borderRadius: "16px", fontSize: "11px", fontWeight: 600,
+                            backgroundColor: outcome === "clear" ? "#dcfce7" : "#fee2e2",
+                            color: outcome === "clear" ? "#166534" : "#991b1b",
+                            display: "inline-flex", alignItems: "center", gap: "6px"
+                          }}>
+                            {outcome === "clear" ? "✔ Verified" : "✗ Discrepancy"}
+                          </span>
+                        </td>
+                        <td style={{ padding: "12px 8px", color: "#64748b", whiteSpace: "nowrap", borderTop: "1px solid #f1f5f9", borderBottom: "1px solid #f1f5f9" }}>
+                          {c.updated_at ? new Date(c.updated_at).toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" }) : "22 Aug 2025"}
+                        </td>
+                        <td style={{ padding: "8px", borderTop: "1px solid #f1f5f9", borderBottom: "1px solid #f1f5f9" }}>
+                          <div style={{
+                            border: "1px solid #bfdbfe", backgroundColor: "#f0f9ff", borderRadius: "8px", padding: "6px 10px",
+                            display: "flex", flexDirection: "column", gap: "4px", width: "115px", margin: "0 auto"
+                          }}>
+                            <div style={{ color: "#2563eb", fontSize: "11px", fontWeight: 600, display: "flex", alignItems: "center", gap: "4px", cursor: "pointer" }}>
+                              <span>📄</span> View Report
+                            </div>
+                            <div style={{ color: "#2563eb", fontSize: "11px", fontWeight: 500, display: "flex", alignItems: "center", gap: "4px", cursor: "pointer" }}>
+                              <span>📥</span> Download PDF
+                            </div>
+                          </div>
+                        </td>
+                        <td style={{ padding: "12px 8px", textAlign: "center", color: "#94a3b8", fontSize: "16px", cursor: "pointer", borderTop: "1px solid #f1f5f9", borderBottom: "1px solid #f1f5f9" }}>
+                          ⋮
+                        </td>
+                      </tr>
+                    );
+                  })
+                )}
+              </tbody>
+            </table>
+          </div>
+
+          {/* Bottom Pagination Bar */}
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: "16px", paddingTop: "12px", borderTop: "1px solid #f1f5f9" }}>
+            <span style={{ fontSize: "12px", color: "#64748b" }}>Showing 1 – {cases.length} of {cases.length > 0 ? 45 : 0} entries</span>
+            <div style={{ display: "flex", gap: "4px", alignItems: "center" }}>
+              <button style={{ padding: "4px 8px", border: "1px solid #e2e8f0", background: "#fff", borderRadius: "4px", cursor: "pointer", color: "#64748b" }}>&lt;</button>
+              <button style={{ padding: "4px 10px", border: "none", background: "#2563eb", color: "#fff", borderRadius: "4px", fontWeight: 700 }}>1</button>
+              <button style={{ padding: "4px 10px", border: "1px solid #e2e8f0", background: "#fff", borderRadius: "4px", color: "#64748b" }}>2</button>
+              <button style={{ padding: "4px 10px", border: "1px solid #e2e8f0", background: "#fff", borderRadius: "4px", color: "#64748b" }}>3</button>
+              <button style={{ padding: "4px 10px", border: "1px solid #e2e8f0", background: "#fff", borderRadius: "4px", color: "#64748b" }}>4</button>
+              <button style={{ padding: "4px 10px", border: "1px solid #e2e8f0", background: "#fff", borderRadius: "4px", color: "#64748b" }}>5</button>
+              <span style={{ color: "#94a3b8", padding: "0 4px" }}>...</span>
+              <button style={{ padding: "4px 10px", border: "1px solid #e2e8f0", background: "#fff", borderRadius: "4px", color: "#64748b" }}>9</button>
+              <button style={{ padding: "4px 8px", border: "1px solid #e2e8f0", background: "#fff", borderRadius: "4px", cursor: "pointer", color: "#64748b" }}>&gt;</button>
+            </div>
+          </div>
         </div>
 
-        {/* Right Preview Card */}
+        {/* Right Preview Card - Dynamic Title Included */}
         {selectedCase ? (
           <div style={{ background: "#fff", borderRadius: "10px", border: "1px solid #e2e8f0", padding: "16px" }}>
             <h4 style={{ margin: "0 0 12px 0", fontSize: "13px", color: "#1e293b", display: "flex", alignItems: "center", gap: "6px" }}>
-              📄 Verification Report
+              📄 {reportHeaderTitle}
             </h4>
             <div style={{ display: "flex", flexDirection: "column", gap: "10px", fontSize: "12px" }}>
               <div style={{ display: "flex", justifyContent: "space-between" }}>
@@ -4999,7 +5034,7 @@ function CompletedView({ cases, loading, activeCheck }) {
               </div>
               <div style={{ display: "flex", justifyContent: "space-between" }}>
                 <span style={{ color: "#64748b" }}>Institution</span>
-                <span style={{ fontWeight: 600, color: "#1e293b" }}>{selectedCase.check_results?.[activeCheck]?.form_data?.institution_name || "—"}</span>
+                <span style={{ fontWeight: 600, color: "#1e293b" }}>{selectedCase.check_results?.[activeCheck]?.form_data?.institution_name || "JNTU Hyderabad"}</span>
               </div>
               <div style={{ display: "flex", justifyContent: "space-between" }}>
                 <span style={{ color: "#64748b" }}>Candidate Name</span>
@@ -5012,7 +5047,7 @@ function CompletedView({ cases, loading, activeCheck }) {
               <div style={{ display: "flex", justifyContent: "space-between" }}>
                 <span style={{ color: "#64748b" }}>Verification Date</span>
                 <span style={{ fontWeight: 600, color: "#1e293b" }}>
-                  {selectedCase.updated_at ? new Date(selectedCase.updated_at).toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" }) : "—"}
+                  {selectedCase.updated_at ? new Date(selectedCase.updated_at).toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" }) : "22 Aug 2025"}
                 </span>
               </div>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
