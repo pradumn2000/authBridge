@@ -68,7 +68,7 @@ import ClientBilling from "./pages/ClientBilling";
     TL MANAGEMENT
    ========================================================= */
 import AddNewTl from "./pages/AddNewTl";
-import Permissions from "./pages/Permissions";
+// import Permissions from "./pages/Permissions";
 import ViewPermission from "./pages/ViewPermission"
 import SubUser from "./pages/SubUser";
 import SubUserPermission from "./pages/SubUserPermission";
@@ -458,14 +458,14 @@ function App() {
           }
         />
 
-        <Route
+        {/* <Route
           path="/Permissions"
           element={
             <PrivateRoute role="admin">
               <Permissions />
             </PrivateRoute>
           }
-        />
+        /> */}
 
            <Route
           path="/ViewPermission"
