@@ -4736,7 +4736,7 @@ function DetailPanel({ selectedCase, activeCheck, setActiveCheck, canAccessTab, 
           <button onClick={() => handleSave(true)} disabled={saving} style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "8px", padding: "13px", background: "#27348B", color: "#fff", border: "none", borderRadius: "6px", fontWeight: 700, fontSize: "13px", cursor: "pointer" }}>
             💾 Save Draft
           </button>
-          <button onClick={() => handleSave(false)} disabled={saving || !outcome} style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "8px", padding: "13px", background: saving || !outcome ? "#94a3b8" : "#10b981", color: "#fff", border: "none", borderRadius: "6px", fontWeight 700, fontSize: "13px", cursor: saving || !outcome ? "not-allowed" : "pointer" }}>
+          <button onClick={() => handleSave(false)} disabled={saving || !outcome} style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "8px", padding: "13px", background: saving || !outcome ? "#94a3b8" : "#10b981", color: "#fff", border: "none", borderRadius: "6px", fontWeight: 700, fontSize: "13px", cursor: saving || !outcome ? "not-allowed" : "pointer" }}>
             {saving ? "Saving…" : "✔ Save & Mark Done"}
           </button>
         </div>
