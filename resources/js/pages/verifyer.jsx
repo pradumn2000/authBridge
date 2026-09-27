@@ -4845,9 +4845,9 @@ function EducationCheckView({ cases }) {
           </select>
         </div>
         <button style={{ padding: "8px 10px", backgroundColor: "#fff", border: "1px solid #cbd5e1", borderRadius: "6px", cursor: "pointer" }}>📅</button>
-        <button style={{ height: "36px", padding: "0 16px", backgroundColor: "#2563eb", color: "#fff", border: "none", borderRadius: "6px", fontWeight: 600, fontSize: "12px", cursor: "pointer" }}>
+        {/* <button style={{ height: "36px", padding: "0 16px", backgroundColor: "#2563eb", color: "#fff", border: "none", borderRadius: "6px", fontWeight: 600, fontSize: "12px", cursor: "pointer" }}>
           + New Education Check
-        </button>
+        </button> */}
       </div>
 
       <div style={{ display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: "12px" }}>
@@ -4890,7 +4890,6 @@ function EducationCheckView({ cases }) {
                 <th style={{ padding: "10px 8px" }}>University / Institute</th>
                 <th style={{ padding: "10px 8px" }}>Qualification</th>
                 <th style={{ padding: "10px 8px" }}>Passing Year</th>
-                <th style={{ padding: "10px 8px" }}>QC Review</th>
                 <th style={{ padding: "10px 8px" }}>Link Sent On</th>
                 <th style={{ padding: "10px 8px" }}>Documents</th>
                 <th style={{ padding: "10px 8px" }}>Action</th>
@@ -4910,7 +4909,6 @@ function EducationCheckView({ cases }) {
                     <td style={{ padding: "12px 8px", color: "#64748b" }}>{c.client || c.client_name || "Client"}</td>
                     <td style={{ padding: "12px 8px", color: "#334155" }}>{c.check_details?.education?.fields?.instituteName || "University"}</td>
                     <td style={{ padding: "12px 8px", color: "#64748b" }}>{c.check_details?.education?.fields?.qualification || "Degree"}</td>
-                    <td style={{ padding: "12px 8px", color: "#64748b" }}>{c.check_details?.education?.fields?.yearOfPassing || "—"}</td>
                     <td style={{ padding: "12px 8px" }}>
                       <span style={{ padding: "4px 10px", borderRadius: "12px", fontSize: "11px", fontWeight: 600, backgroundColor: "#fff7ed", color: "#c2410c" }}>
                         {c.status || "In Progress"}
