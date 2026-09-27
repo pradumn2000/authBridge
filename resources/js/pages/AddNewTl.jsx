@@ -765,6 +765,168 @@ export default function AddNewTl() {
               </form>
             </div>
 
+              {/* Module Permissions Card */}
+            <div className="add-tl-card">
+              <div className="add-tl-card-header perm-card-header">
+                <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                  <svg width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                  </svg>
+                  Module Permissions
+                </div>
+                <label className="select-all-label">
+                  <input
+                    type="checkbox"
+                    checked={isAllSelected}
+                    onChange={handleSelectAll}
+                  />
+                  Select All
+                </label>
+              </div>
+
+              <div className="permissions-grid">
+                <label className="perm-checkbox-item">
+                  <input
+                    type="checkbox"
+                    checked={permissions.education}
+                    onChange={() => handlePermissionChange("education")}
+                  />
+                  Education Verification
+                </label>
+                <label className="perm-checkbox-item">
+                  <input
+                    type="checkbox"
+                    checked={permissions.employment}
+                    onChange={() => handlePermissionChange("employment")}
+                  />
+                  Employment Verification
+                </label>
+                <label className="perm-checkbox-item">
+                  <input
+                    type="checkbox"
+                    checked={permissions.address}
+                    onChange={() => handlePermissionChange("address")}
+                  />
+                  Address Verification
+                </label>
+                <label className="perm-checkbox-item">
+                  <input
+                    type="checkbox"
+                    checked={permissions.identity}
+                    onChange={() => handlePermissionChange("identity")}
+                  />
+                  Identity/Database Verification
+                </label>
+                <label className="perm-checkbox-item">
+                  <input
+                    type="checkbox"
+                    checked={permissions.criminal}
+                    onChange={() => handlePermissionChange("criminal")}
+                  />
+                  Criminal Verification
+                </label>
+
+                <label className="perm-checkbox-item">
+                  <input
+                    type="checkbox"
+                    checked={permissions.drugTest}
+                    onChange={() => handlePermissionChange("drugTest")}
+                  />
+                  Drug Test
+                </label>
+                <label className="perm-checkbox-item">
+                  <input
+                    type="checkbox"
+                    checked={permissions.courtroom}
+                    onChange={() => handlePermissionChange("courtroom")}
+                  />
+                  Courtroom Verification
+                </label>
+                <label className="perm-checkbox-item">
+                  <input
+                    type="checkbox"
+                    checked={permissions.globalDatabase}
+                    onChange={() => handlePermissionChange("globalDatabase")}
+                  />
+                  Global Database Verification
+                </label>
+                <label className="perm-checkbox-item">
+                  <input
+                    type="checkbox"
+                    checked={permissions.caseAllocation}
+                    onChange={() => handlePermissionChange("caseAllocation")}
+                  />
+                  Case Allocation
+                </label>
+                <label className="perm-checkbox-item">
+                  <input
+                    type="checkbox"
+                    checked={permissions.verifierCases}
+                    onChange={() => handlePermissionChange("verifierCases")}
+                  />
+                  Verifier Cases
+                </label>
+
+                <label className="perm-checkbox-item">
+                  <input
+                    type="checkbox"
+                    checked={permissions.qcReview}
+                    onChange={() => handlePermissionChange("qcReview")}
+                  />
+                  QC Review
+                </label>
+                <label className="perm-checkbox-item">
+                  <input
+                    type="checkbox"
+                    checked={permissions.reportWriting}
+                    onChange={() => handlePermissionChange("reportWriting")}
+                  />
+                  Report Writing
+                </label>
+                <label className="perm-checkbox-item">
+                  <input
+                    type="checkbox"
+                    checked={permissions.finalReport}
+                    onChange={() => handlePermissionChange("finalReport")}
+                  />
+                  Final Report Approval
+                </label>
+                {/* <label className="perm-checkbox-item">
+                  <input
+                    type="checkbox"
+                    checked={permissions.screenModule}
+                    onChange={() => handlePermissionChange("screenModule")}
+                  />
+                  Screen / Module Permissions
+                </label> */}
+                <label className="perm-checkbox-item">
+                  <input
+                    type="checkbox"
+                    checked={permissions.universitySelection}
+                    onChange={() => handlePermissionChange("universitySelection")}
+                  />
+                  University Selection
+                </label>
+
+               
+                <label className="perm-checkbox-item">
+                  <input
+                    type="checkbox"
+                    checked={permissions.viewPermission}
+                    onChange={() => handlePermissionChange("viewPermission")}
+                  />
+                  View Permission
+                </label>
+              </div>
+
+              <div className="perm-info-text">
+                <svg width="14" height="14" fill="currentColor" viewBox="0 0 16 16">
+                  <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm.93-9.412-1 4.705c-.07.34.029.533.304.533.194 0 .487-.07.686-.246l-.088.416c-.287.346-.92.598-1.465.598-.703 0-1.002-.422-.808-1.319l.738-3.468c.064-.293.006-.399-.287-.47l-.451-.081.082-.381 2.29-.287zM8 5.5a1 1 0 1 1 0-2 1 1 0 0 1 0 2z" />
+                </svg>
+                Team Lead will be able to view, manage and assign selected verification modules.
+              </div>
+            </div>
+
             {/* Table Card */}
             <div className="add-tl-card">
               <div className="add-tl-card-header table-card-header">
