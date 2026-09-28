@@ -397,7 +397,16 @@ Route::patch('/candidate-link/{token}/fields', function (Request $request, $toke
     $checkType = $normalizeCheckKey($request->check_type);
     
     $check = CaseCheck::where('case_id', $link->case_id)->where('check_type', $checkType)->firstOrFail();
-    $check->fields = $request->fields;
+
+    // FIX: this used to be `$check->fields = $request->fields;`, which
+    // REPLACED the whole fields blob with just the keys the candidate form
+    // sends. Anything already stored on the check — link_sent_at stamped by
+    // the Sub-User/TL "Send Verification Link" button, fields entered by an
+    // admin or verifier — was wiped the moment the candidate saved.
+    // Merging keeps existing keys and only overwrites the ones the candidate
+    // actually supplied (arrays such as `qualifications` / `employers` are
+    // replaced wholesale, which is what the wizard intends).
+    $check->fields = array_merge($check->fields ?? [], $request->fields);
     $check->save();
 
     return response()->json(['message' => 'Saved']);
@@ -434,7 +443,7 @@ Route::post('/candidate-link/{token}/documents', function (Request $request, $to
     return response()->json(['message' => 'Uploaded', 'url' => $url]);
 });
 
-Route::post('/candidate-link/{token}/submit', function (Request $request, $token) {
+Route::post('/candidate-link/{token}/submit', function (Request $request, $token) use ($normalizeCheckKey) {
     $link = \App\Models\CandidateLink::where('token', $token)->first();
     if (!$link) return response()->json(['message' => 'Invalid link'], 404);
 
@@ -452,6 +461,25 @@ Route::post('/candidate-link/{token}/submit', function (Request $request, $token
         //    status update separately.
         if ($case && $case->status === 'pending') {
             $case->update(['status' => 'in-progress']);
+        }
+
+        // ── FIX: submitting only flipped the case-level status; every
+        //    per-check row stayed 'pending'. The check tables (Verifyer,
+        //    TL QC Review, per-check pages) key off case_checks.status, so
+        //    a submitted employment/education form never showed up as
+        //    received in them. Move the checks this link covered from
+        //    pending → in-progress (never touch ones already further along).
+        $submittedKeys = collect($link->checks ?? [])->map($normalizeCheckKey);
+        if ($link->check_type) {
+            $submittedKeys->push($normalizeCheckKey($link->check_type));
+        }
+        $submittedKeys = $submittedKeys->unique()->values()->all();
+
+        if (!empty($submittedKeys)) {
+            CaseCheck::where('case_id', $link->case_id)
+                ->whereIn('check_type', $submittedKeys)
+                ->where('status', 'pending')
+                ->update(['status' => 'in-progress']);
         }
 
         \App\Models\CaseEvent::log(
@@ -503,27 +531,7 @@ Route::middleware('auth:sanctum')->group(function () {
         ]);
     });
 
-    // Route::post('/users/create', function (Request $request) {
-    //     if ($request->user()->role !== 'admin') return response()->json(['message' => 'Unauthorized'], 403);
-
-    //     $request->validate([
-    //         'name'     => 'required|string|max:255',
-    //         'email'    => 'required|email|unique:users,email',
-    //         'password' => 'required|min:6',
-    //         'role'     => 'required|string',
-    //     ]);
-
-    //     $user = User::create([
-    //         'name'     => $request->name,
-    //         'email'    => $request->email,
-    //         'password' => Hash::make($request->password),
-    //         'role'     => $request->role,
-    //         'status'   => 'active',
-    //     ]);
-
-    //     return response()->json(['message' => 'User created successfully', 'user' => $user], 201);
-    // });
-        Route::post('/users/create', function (Request $request) {
+    Route::post('/users/create', function (Request $request) {
         if ($request->user()->role !== 'admin') return response()->json(['message' => 'Unauthorized'], 403);
 
         $request->validate([
@@ -549,11 +557,7 @@ Route::middleware('auth:sanctum')->group(function () {
         return response()->json(['message' => 'User created successfully', 'user' => $user], 201);
     });
 
-    // Route::get('/users', function (Request $request) {
-    //     if (!in_array($request->user()->role, ['admin', 'allocator'])) return response()->json(['message' => 'Unauthorized'], 403);
-    //     return response()->json(['users' => User::select('id', 'name', 'email', 'role', 'status', 'created_at')->orderByDesc('created_at')->get()]);
-    // });
-        Route::get('/users', function (Request $request) {
+    Route::get('/users', function (Request $request) {
         if (!in_array($request->user()->role, ['admin', 'allocator'])) return response()->json(['message' => 'Unauthorized'], 403);
         return response()->json([
             'users' => User::select('id', 'name', 'mobile', 'email', 'role', 'status', 'permissions', 'created_at')
@@ -574,7 +578,8 @@ Route::middleware('auth:sanctum')->group(function () {
         $user->update(['status' => $request->status]);
         return response()->json(['message' => 'User status updated', 'user' => $user]);
     });
-        // Used by ViewPermission.jsx / AddNewTl.jsx to update a TL's saved
+
+    // Used by ViewPermission.jsx / AddNewTl.jsx to update a TL's saved
     // module-permission checkboxes after creation.
     Route::patch('/users/{id}/permissions', function (Request $request, $id) {
         if ($request->user()->role !== 'admin') return response()->json(['message' => 'Unauthorized'], 403);
@@ -988,23 +993,13 @@ Route::middleware('auth:sanctum')->group(function () {
                 return [$chk->check_type => ['fields' => $chk->fields, 'documents' => $chk->documents]];
             })->toArray();
 
-            // Added: per-check status (pending/in-progress/completed) and TL
-            // QC decision, keyed by check_type — needed by TLEducationCheck.jsx
-            // (per-row "QC Review" badge) and TLQCReview.jsx (the approve/reject
-            // queue), neither of which can see individual case_checks rows
-            // otherwise. Named 'check_qc' rather than reusing 'qc_status' below,
-            // which is a different, case-level (not per-check) field already
-            // consumed elsewhere.
-            // Added: verifier's own submitted outcome/form_data
-+            // (CaseCheck.result), previously never serialized here despite
-+            // being written by POST /cases/{caseId}/check-result and read
-+            // by Verifyer.jsx's caseHasOutcome() and buildPrefilledForm() —
-+            // both of which have been silently working against undefined
-+            // this whole time. Same per-check-type shape as check_qc above.
-           $checkResults = $caseChecks->mapWithKeys(fn ($chk) => [
-                $chk->check_type => $chk->result,
-            ])->filter()->toArray();
-
+            // Per-check status (pending/in-progress/completed) and TL QC
+            // decision, keyed by check_type — needed by TLEducationCheck.jsx
+            // (per-row "QC Review" badge) and TLQCReview.jsx (the approve/
+            // reject queue), neither of which can see individual
+            // case_checks rows otherwise. Named 'check_qc' rather than
+            // reusing 'qc_status' below, which is a different, case-level
+            // (not per-check) field already consumed elsewhere.
             $checkStatus = $caseChecks->pluck('status', 'check_type')->toArray();
             $checkQc = $caseChecks->mapWithKeys(fn ($chk) => [
                 $chk->check_type => [
@@ -1014,6 +1009,14 @@ Route::middleware('auth:sanctum')->group(function () {
                     'reviewed_at'  => optional($chk->qc_reviewed_at)->toIso8601String(),
                 ],
             ])->toArray();
+
+            // Verifier's own submitted outcome/form_data (CaseCheck.result),
+            // written by POST /cases/{caseId}/check-result and read by
+            // Verifyer.jsx's caseHasOutcome() and buildPrefilledForm().
+            // Same per-check-type shape as check_qc above.
+            $checkResults = $caseChecks->mapWithKeys(fn ($chk) => [
+                $chk->check_type => $chk->result,
+            ])->filter()->toArray();
 
             return [
                 'id'                 => $c->id,
@@ -1069,7 +1072,7 @@ Route::middleware('auth:sanctum')->group(function () {
         $caseArray['check_details'] = $case->caseChecks->mapWithKeys(function($chk) {
             return [$chk->check_type => ['fields' => $chk->fields, 'documents' => $chk->documents]];
         })->toArray();
-        // Added: same per-check status/QC maps as the list route, for
+        // Same per-check status/QC maps as the list route, for
         // consistency — see the comment there.
         $caseArray['check_status'] = $case->caseChecks->pluck('status', 'check_type')->toArray();
         $caseArray['check_qc'] = $case->caseChecks->mapWithKeys(fn ($chk) => [
@@ -1080,7 +1083,7 @@ Route::middleware('auth:sanctum')->group(function () {
                 'reviewed_at' => optional($chk->qc_reviewed_at)->toIso8601String(),
             ],
         ])->toArray();
-        +        // Same addition as the list route above.
+        // Same addition as the list route above.
         $caseArray['check_results'] = $case->caseChecks->mapWithKeys(fn ($chk) => [
             $chk->check_type => $chk->result,
         ])->filter()->toArray();
