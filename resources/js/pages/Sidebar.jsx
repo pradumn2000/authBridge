@@ -1547,7 +1547,7 @@ const VERIFIER_TABS = (basePath) => [
   },
 
   {
-    path: `${basePath}?view=clear`,
+    path: `${basePath}?view=education`,
     label: "Education Check",
     img: "images/sidebar/completed-icon.svg",
   },
