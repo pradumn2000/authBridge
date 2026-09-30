@@ -1087,6 +1087,7 @@ import AddNewTl from "./pages/AddNewTl";
 // import Permissions from "./pages/Permissions";
 import ViewPermission from "./pages/ViewPermission"
 import SubUser from "./pages/SubUser";
+import Allocation from "./pages/Allocation";
 import SubUserPermission from "./pages/SubUserPermission";
 /* =========================================================
    ADMIN MANAGEMENT
@@ -1513,6 +1514,15 @@ function App() {
             ================================================= */}
         <Route
           path="/SubUsers"
+          element={
+            <PrivateRoute role="admin">
+              <SubUser />
+            </PrivateRoute>
+          }
+        />
+
+        <Route
+          path="/Allocation"
           element={
             <PrivateRoute role="admin">
               <SubUser />
