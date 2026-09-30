@@ -1633,16 +1633,16 @@ export default function AddCase() {
                                                 onChange={(e) => {
                                                     const value = e.target.value
                                                         .replace(/\D/g, "")
-                                                        .slice(0, 12);
+                                                        .slice(0, 10);
                                                     set(
                                                         "candidateMobile",
                                                         value,
                                                     );
                                                 }}
                                                 required
-                                                maxLength={12}
-                                                pattern="[0-9]{12}"
-                                                title="Please enter a valid 12-digit mobile number"
+                                                maxLength={10}
+                                                pattern="[0-9]{10}"
+                                                title="Please enter a valid 10-digit mobile number"
                                             />
                                         </div>
                                         <div className="ac-field">
@@ -1667,21 +1667,60 @@ export default function AddCase() {
                                             />
                                         </div>
                                         <div className="ac-field">
-                                            <label className="ac-label">
-                                                Date of Birth{" "}
-                                                <span className="ac-req">
-                                                    *
-                                                </span>
-                                            </label>
-                                            <input
-                                                className="ac-input"
-                                                type="date"
-                                                value={form.DOB}
-                                                onChange={(e) =>
-                                                    set("DOB", e.target.value)
-                                                }
-                                            />
-                                        </div>
+    <label className="ac-label">
+        Date of Birth <span className="ac-req">*</span>
+    </label>
+    <input
+        className="ac-input"
+        type="date"
+        value={form.DOB}
+        max={new Date(new Date().setFullYear(new Date().getFullYear() - 18)).toISOString().split("T")[0]}
+        onChange={(e) => set("DOB", e.target.value)}
+        style={{
+            borderColor: (() => {
+                if (!form.DOB) return "";
+                const selectedDate = new Date(form.DOB);
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+
+                if (selectedDate > today) return "#dc3545"; // Future date check
+
+                const minAgeDate = new Date();
+                minAgeDate.setFullYear(minAgeDate.getFullYear() - 18);
+                if (selectedDate > minAgeDate) return "#dc3545"; // Below 18 years check
+
+                return "";
+            })()
+        }}
+    />
+    {(() => {
+        if (!form.DOB) return null;
+        const selectedDate = new Date(form.DOB);
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+
+        if (selectedDate > today) {
+            return (
+                <span style={{ color: "#dc3545", fontSize: "12px", marginTop: "4px", display: "block" }}>
+                    Date of Birth cannot be a future date.
+                </span>
+            );
+        }
+
+        const minAgeDate = new Date();
+        minAgeDate.setFullYear(minAgeDate.getFullYear() - 18);
+
+        if (selectedDate > minAgeDate) {
+            return (
+                <span style={{ color: "#dc3545", fontSize: "12px", marginTop: "4px", display: "block" }}>
+                    Age must be at least 18 years old.
+                </span>
+            );
+        }
+
+        return null;
+    })()}
+</div>
 
                                         {/* Client field — required only when onboarding via a client.
                         Candidate-sourced cases leave this optional; admin/allocator
