@@ -1571,8 +1571,9 @@ export default function AddCase() {
     value={form.candidateName}
     onChange={(e) => {
       const val = e.target.value;
-      // Alphabets, spaces, dot (.) aur hyphen (-) allow honge (* quantifier ke saath)
-      if (val === "" || /^[a-zA-Z\s.-]*$/.test(val)) {
+      
+      // Isme Alphabets, spaces, aur `. - ' _ / , ( )` saare special characters allow honge
+      if (val === "" || /^[a-zA-Z\s.\-'_/(),]*$/.test(val)) {
         set("candidateName", val);
       }
     }}
