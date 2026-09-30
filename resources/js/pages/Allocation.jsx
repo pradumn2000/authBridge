@@ -4,7 +4,7 @@ import Header from "./Header";
 import Sidebar from "./Sidebar";
 import { API_URL } from "../src/config";
 
-// Inline Icons
+// --- SVG Icons ---
 const IconSearch = () => (
   <svg className="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
@@ -53,8 +53,8 @@ const IconChevronRight = () => (
   </svg>
 );
 
-// Fallback Initial UI Mock Data
-const MOCK_TLS = [
+// --- Dummy Data (matching image) ---
+const INITIAL_TLS = [
   { id: 1, name: "Amit Sharma", email: "amit.sharma@company.com", verification_type: "All Verification" },
   { id: 2, name: "Neha Verma", email: "neha.verma@company.com", verification_type: "Background Verification" },
   { id: 3, name: "Rohit Kumar", email: "rohit.kumar@company.com", verification_type: "Education Verification" },
@@ -65,7 +65,7 @@ const MOCK_TLS = [
   { id: 8, name: "Ritika Gupta", email: "ritika.gupta@company.com", verification_type: "Education Verification" },
 ];
 
-const MOCK_SUB_USERS = [
+const INITIAL_SUB_USERS = [
   { id: 101, name: "Ravi Kumar", email: "ravi.kumar@company.com", status: "Active" },
   { id: 102, name: "Anjali Singh", email: "anjali.singh@company.com", status: "Active" },
   { id: 103, name: "Deepak Verma", email: "deepak.verma@company.com", status: "Active" },
@@ -80,67 +80,75 @@ const Allocation = () => {
   const navigate = useNavigate();
   const token = localStorage.getItem("token");
 
-  const [tls, setTls] = useState([]);
-  const [subUsers, setSubUsers] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [tls, setTls] = useState(INITIAL_TLS);
+  const [subUsers, setSubUsers] = useState(INITIAL_SUB_USERS);
+  const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
 
+  // Search filter state
   const [tlSearch, setTlSearch] = useState("");
   const [subUserSearch, setSubUserSearch] = useState("");
 
-  const [selectedTls, setSelectedTls] = useState([1]); // Defaults to Amit Sharma as per image
-  const [selectedSubUsers, setSelectedSubUsers] = useState([101, 102, 103]); // Defaults as per image
+  // Checked item tracking (image standard defaults: Amit Sharma checked, top 3 subusers checked)
+  const [selectedTls, setSelectedTls] = useState([1]);
+  const [selectedSubUsers, setSelectedSubUsers] = useState([101, 102, 103]);
 
-  const fetchData = async () => {
-    setLoading(true);
-    try {
-      const res = await fetch(`${API_URL}/api/allocations/data`, {
-        headers: { Authorization: `Bearer ${token}`, Accept: "application/json" },
-      });
-      if (res.ok) {
-        const data = await res.json();
-        setTls(data.tls || MOCK_TLS);
-        setSubUsers(data.subUsers || MOCK_SUB_USERS);
-      } else {
-        setTls(MOCK_TLS);
-        setSubUsers(MOCK_SUB_USERS);
+  useEffect(() => {
+    // API Fetch setup (optional fallback to initial values if route unavailable)
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        const res = await fetch(`${API_URL}/api/allocations/data`, {
+          headers: { Authorization: `Bearer ${token}`, Accept: "application/json" },
+        });
+        if (res.ok) {
+          const data = await res.json();
+          if (data.tls) setTls(data.tls);
+          if (data.subUsers) setSubUsers(data.subUsers);
+        }
+      } catch (err) {
+        // Fallback silently to initial preset
+      } finally {
+        setLoading(false);
       }
-    } catch (err) {
-      setTls(MOCK_TLS);
-      setSubUsers(MOCK_SUB_USERS);
-    } finally {
-      setLoading(false);
+    };
+
+    fetchData();
+  }, [token]);
+
+  // Checkbox Select All Functions
+  const toggleAllTls = (e, items) => {
+    if (e.target.checked) {
+      setSelectedTls(items.map((item) => item.id));
+    } else {
+      setSelectedTls([]);
     }
   };
 
-  useEffect(() => {
-    fetchData();
-  }, []);
-
-  // Selection handlers
-  const toggleSelectAllTls = (e, items) => {
-    setSelectedTls(e.target.checked ? items.map((i) => i.id) : []);
-  };
-
-  const toggleSelectTl = (id) => {
+  const toggleTl = (id) => {
     setSelectedTls((prev) =>
       prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]
     );
   };
 
-  const toggleSelectAllSubUsers = (e, items) => {
-    setSelectedSubUsers(e.target.checked ? items.map((i) => i.id) : []);
+  const toggleAllSubUsers = (e, items) => {
+    if (e.target.checked) {
+      setSelectedSubUsers(items.map((item) => item.id));
+    } else {
+      setSelectedSubUsers([]);
+    }
   };
 
-  const toggleSelectSubUser = (id) => {
+  const toggleSubUser = (id) => {
     setSelectedSubUsers((prev) =>
       prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]
     );
   };
 
-  const handleSaveAllocation = async () => {
+  // Submit Handler
+  const handleSave = async () => {
     if (selectedTls.length === 0 || selectedSubUsers.length === 0) {
-      alert("Please select at least one Team Lead and one Sub User.");
+      alert("Kripya kam se kam ek Team Lead aur ek Sub User select karein.");
       return;
     }
 
@@ -159,29 +167,28 @@ const Allocation = () => {
       });
 
       if (res.ok) {
-        alert("Allocation saved successfully!");
+        alert("Allocation successful!");
       } else {
-        const data = await res.json().catch(() => ({}));
-        alert(data.message || "Failed to save allocation.");
+        alert("Failed to save allocation.");
       }
     } catch {
-      alert("Server error while saving allocation.");
+      alert("Error saving allocation.");
     } finally {
       setSaving(false);
     }
   };
 
-  // Filtered lists
+  // Search Filters
   const filteredTls = tls.filter(
-    (tl) =>
-      tl.name.toLowerCase().includes(tlSearch.toLowerCase()) ||
-      tl.email.toLowerCase().includes(tlSearch.toLowerCase())
+    (item) =>
+      item.name.toLowerCase().includes(tlSearch.toLowerCase()) ||
+      item.email.toLowerCase().includes(tlSearch.toLowerCase())
   );
 
   const filteredSubUsers = subUsers.filter(
-    (u) =>
-      u.name.toLowerCase().includes(subUserSearch.toLowerCase()) ||
-      u.email.toLowerCase().includes(subUserSearch.toLowerCase())
+    (item) =>
+      item.name.toLowerCase().includes(subUserSearch.toLowerCase()) ||
+      item.email.toLowerCase().includes(subUserSearch.toLowerCase())
   );
 
   return (
@@ -190,9 +197,9 @@ const Allocation = () => {
       <section id="content">
         <Header />
         <main>
-          <div className="dash-wrper p-4 md:p-6 bg-[#f4f7fe] min-h-screen text-slate-700 font-sans">
+          <div className="p-4 md:p-6 bg-[#f4f7fe] min-h-screen text-slate-700 font-sans">
             
-            {/* Header & Breadcrumb */}
+            {/* Top Bar Header & Breadcrumb */}
             <div className="flex flex-col md:flex-row md:items-center justify-between mb-6 gap-2">
               <div>
                 <h1 className="text-xl md:text-2xl font-bold text-slate-800">Allocation</h1>
@@ -206,12 +213,13 @@ const Allocation = () => {
               </div>
             </div>
 
-            {/* Split Dual Layout Container */}
+            {/* Split Dual Table Box Layout */}
             <div className="grid grid-cols-1 lg:grid-cols-[1fr_auto_1fr] gap-4 items-center">
               
-              {/* Left Column: Team Leads (TLs) */}
+              {/* Left Box: Team Leads (TLs) */}
               <div className="bg-white rounded-xl border border-slate-200/80 shadow-sm p-4 flex flex-col justify-between min-h-[500px]">
                 <div>
+                  {/* Card Header */}
                   <div className="flex items-center gap-3 mb-4">
                     <div className="w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center">
                       <IconUsers />
@@ -222,6 +230,7 @@ const Allocation = () => {
                     </div>
                   </div>
 
+                  {/* Search Input */}
                   <div className="relative mb-4">
                     <input
                       type="text"
@@ -235,53 +244,54 @@ const Allocation = () => {
                     </div>
                   </div>
 
+                  {/* TL Table */}
                   <div className="overflow-x-auto">
                     <table className="w-full text-left border-collapse">
                       <thead>
                         <tr className="bg-slate-50/80 text-[10px] font-semibold text-slate-500 uppercase border-b border-slate-100">
-                          <th className="py-2 px-2 w-8">
+                          <th className="py-2.5 px-2 w-8">
                             <input
                               type="checkbox"
-                              className="rounded border-slate-300 text-blue-600 focus:ring-0"
-                              onChange={(e) => toggleSelectAllTls(e, filteredTls)}
+                              className="rounded border-slate-300 text-blue-600 focus:ring-0 cursor-pointer"
+                              onChange={(e) => toggleAllTls(e, filteredTls)}
                               checked={
                                 filteredTls.length > 0 &&
                                 filteredTls.every((tl) => selectedTls.includes(tl.id))
                               }
                             />
                           </th>
-                          <th className="py-2 px-2">TL Name</th>
-                          <th className="py-2 px-2">Email ID</th>
-                          <th className="py-2 px-2">Verification Type</th>
+                          <th className="py-2.5 px-2">TL Name</th>
+                          <th className="py-2.5 px-2">Email ID</th>
+                          <th className="py-2.5 px-2">Verification Type</th>
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-slate-100 text-xs">
                         {loading ? (
-                          <tr><td colSpan="4" className="text-center py-8 text-slate-400">Loading...</td></tr>
+                          <tr><td colSpan="4" className="text-center py-8 text-slate-400">Loading TLs...</td></tr>
                         ) : filteredTls.length === 0 ? (
                           <tr><td colSpan="4" className="text-center py-8 text-slate-400">No TLs found.</td></tr>
                         ) : (
                           filteredTls.map((tl) => {
-                            const isSelected = selectedTls.includes(tl.id);
+                            const isChecked = selectedTls.includes(tl.id);
                             return (
                               <tr
                                 key={tl.id}
-                                onClick={() => toggleSelectTl(tl.id)}
+                                onClick={() => toggleTl(tl.id)}
                                 className={`cursor-pointer transition-colors ${
-                                  isSelected ? "bg-blue-50/80 font-medium" : "hover:bg-slate-50/60"
+                                  isChecked ? "bg-blue-50/80 font-medium" : "hover:bg-slate-50/60"
                                 }`}
                               >
-                                <td className="py-2 px-2" onClick={(e) => e.stopPropagation()}>
+                                <td className="py-2.5 px-2" onClick={(e) => e.stopPropagation()}>
                                   <input
                                     type="checkbox"
-                                    checked={isSelected}
-                                    onChange={() => toggleSelectTl(tl.id)}
-                                    className="rounded border-slate-300 text-blue-600 focus:ring-0"
+                                    checked={isChecked}
+                                    onChange={() => toggleTl(tl.id)}
+                                    className="rounded border-slate-300 text-blue-600 focus:ring-0 cursor-pointer"
                                   />
                                 </td>
-                                <td className="py-2 px-2 font-semibold text-slate-800">{tl.name}</td>
-                                <td className="py-2 px-2 text-slate-500">{tl.email}</td>
-                                <td className="py-2 px-2 text-slate-600">{tl.verification_type}</td>
+                                <td className="py-2.5 px-2 font-semibold text-slate-800">{tl.name}</td>
+                                <td className="py-2.5 px-2 text-slate-500">{tl.email}</td>
+                                <td className="py-2.5 px-2 text-slate-600">{tl.verification_type}</td>
                               </tr>
                             );
                           })
@@ -306,10 +316,10 @@ const Allocation = () => {
                 </div>
               </div>
 
-              {/* Middle Transfer Buttons */}
+              {/* Middle Transfer Control Buttons */}
               <div className="flex lg:flex-col gap-2 justify-center my-2 lg:my-0">
                 <button
-                  onClick={handleSaveAllocation}
+                  onClick={handleSave}
                   className="w-8 h-8 rounded-lg bg-blue-600 hover:bg-blue-700 text-white flex items-center justify-center shadow transition-transform active:scale-95"
                   title="Assign Selected"
                 >
@@ -327,9 +337,10 @@ const Allocation = () => {
                 </button>
               </div>
 
-              {/* Right Column: Sub Users */}
+              {/* Right Box: Sub Users */}
               <div className="bg-white rounded-xl border border-slate-200/80 shadow-sm p-4 flex flex-col justify-between min-h-[500px]">
                 <div>
+                  {/* Card Header */}
                   <div className="flex items-center gap-3 mb-4">
                     <div className="w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center">
                       <IconUser />
@@ -340,6 +351,7 @@ const Allocation = () => {
                     </div>
                   </div>
 
+                  {/* Search Input */}
                   <div className="relative mb-4">
                     <input
                       type="text"
@@ -353,53 +365,54 @@ const Allocation = () => {
                     </div>
                   </div>
 
+                  {/* Sub Users Table */}
                   <div className="overflow-x-auto">
                     <table className="w-full text-left border-collapse">
                       <thead>
                         <tr className="bg-slate-50/80 text-[10px] font-semibold text-slate-500 uppercase border-b border-slate-100">
-                          <th className="py-2 px-2 w-8">
+                          <th className="py-2.5 px-2 w-8">
                             <input
                               type="checkbox"
-                              className="rounded border-slate-300 text-blue-600 focus:ring-0"
-                              onChange={(e) => toggleSelectAllSubUsers(e, filteredSubUsers)}
+                              className="rounded border-slate-300 text-blue-600 focus:ring-0 cursor-pointer"
+                              onChange={(e) => toggleAllSubUsers(e, filteredSubUsers)}
                               checked={
                                 filteredSubUsers.length > 0 &&
                                 filteredSubUsers.every((u) => selectedSubUsers.includes(u.id))
                               }
                             />
                           </th>
-                          <th className="py-2 px-2">Sub User Name</th>
-                          <th className="py-2 px-2">Email ID</th>
-                          <th className="py-2 px-2">Status</th>
+                          <th className="py-2.5 px-2">Sub User Name</th>
+                          <th className="py-2.5 px-2">Email ID</th>
+                          <th className="py-2.5 px-2">Status</th>
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-slate-100 text-xs">
                         {loading ? (
-                          <tr><td colSpan="4" className="text-center py-8 text-slate-400">Loading...</td></tr>
+                          <tr><td colSpan="4" className="text-center py-8 text-slate-400">Loading Sub Users...</td></tr>
                         ) : filteredSubUsers.length === 0 ? (
                           <tr><td colSpan="4" className="text-center py-8 text-slate-400">No Sub Users found.</td></tr>
                         ) : (
                           filteredSubUsers.map((user) => {
-                            const isSelected = selectedSubUsers.includes(user.id);
+                            const isChecked = selectedSubUsers.includes(user.id);
                             return (
                               <tr
                                 key={user.id}
-                                onClick={() => toggleSelectSubUser(user.id)}
+                                onClick={() => toggleSubUser(user.id)}
                                 className={`cursor-pointer transition-colors ${
-                                  isSelected ? "bg-blue-50/80 font-medium" : "hover:bg-slate-50/60"
+                                  isChecked ? "bg-blue-50/80 font-medium" : "hover:bg-slate-50/60"
                                 }`}
                               >
-                                <td className="py-2 px-2" onClick={(e) => e.stopPropagation()}>
+                                <td className="py-2.5 px-2" onClick={(e) => e.stopPropagation()}>
                                   <input
                                     type="checkbox"
-                                    checked={isSelected}
-                                    onChange={() => toggleSelectSubUser(user.id)}
-                                    className="rounded border-slate-300 text-blue-600 focus:ring-0"
+                                    checked={isChecked}
+                                    onChange={() => toggleSubUser(user.id)}
+                                    className="rounded border-slate-300 text-blue-600 focus:ring-0 cursor-pointer"
                                   />
                                 </td>
-                                <td className="py-2 px-2 font-semibold text-slate-800">{user.name}</td>
-                                <td className="py-2 px-2 text-slate-500">{user.email}</td>
-                                <td className="py-2 px-2">
+                                <td className="py-2.5 px-2 font-semibold text-slate-800">{user.name}</td>
+                                <td className="py-2.5 px-2 text-slate-500">{user.email}</td>
+                                <td className="py-2.5 px-2">
                                   <span className="px-2 py-0.5 text-[10px] font-medium bg-emerald-50 text-emerald-600 rounded border border-emerald-100">
                                     {user.status}
                                   </span>
@@ -431,7 +444,7 @@ const Allocation = () => {
 
             </div>
 
-            {/* Bottom Actions */}
+            {/* Bottom Action Area */}
             <div className="mt-6 flex items-center justify-end gap-3">
               <button
                 onClick={() => navigate(-1)}
@@ -440,7 +453,7 @@ const Allocation = () => {
                 Cancel
               </button>
               <button
-                onClick={handleSaveAllocation}
+                onClick={handleSave}
                 disabled={saving}
                 className="flex items-center px-5 py-2 text-xs font-semibold text-white bg-emerald-600 hover:bg-emerald-700 rounded-lg shadow-sm transition-colors disabled:opacity-60"
               >
