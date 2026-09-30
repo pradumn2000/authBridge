@@ -1525,7 +1525,7 @@ function App() {
           path="/Allocation"
           element={
             <PrivateRoute role="admin">
-              <SubUser />
+              <Allocation />
             </PrivateRoute>
           }
         />
