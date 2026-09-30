@@ -1561,34 +1561,23 @@ export default function AddCase() {
                                     </div>
                                     <div className="ac-fields">
                                         <div className="ac-field">
-                                            <label className="ac-label">
-                                                Candidate Name{" "}
-                                                <span className="ac-req">
-                                                    *
-                                                </span>
-                                            </label>
-                                            <input
-                                                className="ac-input"
-                                                type="text"
-                                                placeholder="Full name as per documents"
-                                                value={form.candidateName}
-                                                onChange={(e) => {
-                                                    const val = e.target.value;
-                                                    // Alphabets, spaces, dot (.) aur hyphen (-) ko allow karega
-                                                    if (
-                                                        val === "" ||
-                                                        /^[a-zA-Z\s.-]+$/.test(
-                                                            val,
-                                                        )
-                                                    ) {
-                                                        set(
-                                                            "candidateName",
-                                                            val,
-                                                        );
-                                                    }
-                                                }}
-                                            />
-                                        </div>
+  <label className="ac-label">
+    Candidate Name <span className="ac-req">*</span>
+  </label>
+  <input
+    className="ac-input"
+    type="text"
+    placeholder="Full name as per documents"
+    value={form.candidateName}
+    onChange={(e) => {
+      const val = e.target.value;
+      // Alphabets, spaces, dot (.) aur hyphen (-) allow honge (* quantifier ke saath)
+      if (val === "" || /^[a-zA-Z\s.-]*$/.test(val)) {
+        set("candidateName", val);
+      }
+    }}
+  />
+</div>
                                         <div className="ac-field">
                                             <label className="ac-label">
                                                 Email Address{" "}
