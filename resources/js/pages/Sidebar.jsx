@@ -1659,10 +1659,10 @@ const SUB_USER_MANAGEMENT_SUBMENU = [
     path: "/SubUsers",
     label: "Sub Users",
   },
-  // {
-  //   path: "/SubUserPermissions",
-  //   label: "Permissions",
-  // },
+  {
+    path: "/Allocation",
+    label: "Allocation",
+  },
 ];
 
 /* =========================================================
