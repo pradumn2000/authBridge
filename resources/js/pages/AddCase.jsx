@@ -1591,25 +1591,25 @@ export default function AddCase() {
                                             />
                                         </div>
                                         <div className="ac-field">
-                                            <label className="ac-label">
-                                                Email Address{" "}
-                                                <span className="ac-req">
-                                                    *
-                                                </span>
-                                            </label>
-                                            <input
-                                                className="ac-input"
-                                                type="email"
-                                                placeholder="candidate@email.com"
-                                                value={form.candidateEmail}
-                                                onChange={(e) =>
-                                                    set(
-                                                        "candidateEmail",
-                                                        e.target.value,
-                                                    )
-                                                }
-                                            />
-                                        </div>
+    <label className="ac-label">
+        Email Address <span className="ac-req">*</span>
+    </label>
+    <input
+        className="ac-input"
+        type="email"
+        placeholder="candidate@email.com"
+        value={form.candidateEmail}
+        onChange={(e) => set("candidateEmail", e.target.value)}
+        style={{
+            borderColor: form.candidateEmail && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.candidateEmail) ? "#dc3545" : ""
+        }}
+    />
+    {form.candidateEmail && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.candidateEmail) && (
+        <span style={{ color: "#dc3545", fontSize: "12px", marginTop: "4px" }}>
+            Invalid email format
+        </span>
+    )}
+</div>
                                         <div className="ac-field">
                                             {/* NOTE: this and Position are marked required in the
                           label but neither validate() nor the backend
