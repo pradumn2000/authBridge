@@ -5,6 +5,24 @@ import Header from "./Header";
 import Sidebar from "./Sidebar";
 import { API_URL } from "../src/config";
 
+const [emailError, setEmailError] = useState("");
+
+// Email format validation function
+const validateEmail = (email) => {
+  if (!email || email.trim() === "") {
+    setEmailError("Email Address is mandatory.");
+    return false;
+  }
+  // Standard Valid Email Format Regex
+  const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+  if (!emailRegex.test(email)) {
+    setEmailError("Please enter a valid email address (e.g., candidate@email.com).");
+    return false;
+  }
+  setEmailError("");
+  return true;
+};
+
 const DEFAULT_CHECK_RATES = {
     employment: "",
     education: "",
@@ -1561,44 +1579,57 @@ export default function AddCase() {
                                     </div>
                                     <div className="ac-fields">
                                         <div className="ac-field">
-  <label className="ac-label">
-    Candidate Name <span className="ac-req">*</span>
-  </label>
-  <input
-    className="ac-input"
-    type="text"
-    placeholder="Full name as per documents"
-    value={form.candidateName}
-    onChange={(e) => {
-      const val = e.target.value;
-      
-      // Isme Alphabets, spaces, aur `. - ' _ / , ( )` saare special characters allow honge
-      if (val === "" || /^[a-zA-Z\s.\-'_/(),]*$/.test(val)) {
-        set("candidateName", val);
-      }
-    }}
-  />
-</div>
-                                        <div className="ac-field">
                                             <label className="ac-label">
-                                                Email Address{" "}
+                                                Candidate Name{" "}
                                                 <span className="ac-req">
                                                     *
                                                 </span>
                                             </label>
                                             <input
                                                 className="ac-input"
-                                                type="email"
-                                                placeholder="candidate@email.com"
-                                                value={form.candidateEmail}
-                                                onChange={(e) =>
-                                                    set(
-                                                        "candidateEmail",
-                                                        e.target.value,
-                                                    )
-                                                }
+                                                type="text"
+                                                placeholder="Full name as per documents"
+                                                value={form.candidateName}
+                                                onChange={(e) => {
+                                                    const val = e.target.value;
+
+                                                    
+                                                    if (
+                                                        val === "" ||
+                                                        /^[a-zA-Z\s.\-'_/(),]*$/.test(
+                                                            val,
+                                                        )
+                                                    ) {
+                                                        set(
+                                                            "candidateName",
+                                                            val,
+                                                        );
+                                                    }
+                                                }}
                                             />
                                         </div>
+                                        <div className="ac-field">
+  <label className="ac-label">
+    Email Address <span className="ac-req">*</span>
+  </label>
+  <input
+    className={`ac-input ${emailError ? "border-red-500" : ""}`}
+    type="email"
+    placeholder="candidate@email.com"
+    value={form.candidateEmail}
+    onChange={(e) => {
+      const val = e.target.value.toLowerCase().trim(); // spaces remove aur lowercase
+      set("candidateEmail", val);
+      if (emailError) validateEmail(val); // Type karte waqt error clear/update karne ke liye
+    }}
+    onBlur={(e) => validateEmail(e.target.value)} // User jab input se baahar click kare tab check karega
+  />
+  {emailError && (
+    <span className="text-xs text-red-500 mt-1 block font-medium">
+      {emailError}
+    </span>
+  )}
+</div>
                                         <div className="ac-field">
                                             {/* NOTE: this and Position are marked required in the
                           label but neither validate() nor the backend
