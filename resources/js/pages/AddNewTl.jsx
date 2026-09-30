@@ -1256,6 +1256,8 @@ export default function AddNewTl() {
     finalReport: false,
     universitySelection: false,
     viewPermission: false,
+    documentsDespatch: false,
+    paymentProcess: false,
   });
 
   // Check if all permissions are selected
@@ -2278,6 +2280,22 @@ export default function AddNewTl() {
                     onChange={() => handlePermissionChange("viewPermission")}
                   />
                   View Permission
+                </label>
+                <label className="perm-checkbox-item">
+                  <input
+                    type="checkbox"
+                    checked={permissions.paymentProcess}
+                    onChange={() => handlePermissionChange("paymentProcess")}
+                  />
+                  Payment Process
+                </label>
+                <label className="perm-checkbox-item">
+                  <input
+                    type="checkbox"
+                    checked={permissions.documentsDespatch}
+                    onChange={() => handlePermissionChange("documentsDespatch")}
+                  />
+                  Documents Despatch
                 </label>
               </div>
 
