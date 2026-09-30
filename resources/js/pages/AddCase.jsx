@@ -5,8 +5,6 @@ import Header from "./Header";
 import Sidebar from "./Sidebar";
 import { API_URL } from "../src/config";
 
-
-
 const DEFAULT_CHECK_RATES = {
     employment: "",
     education: "",
@@ -324,27 +322,6 @@ export default function AddCase() {
     const user = getUser();
     const isClientUser = user.role === "client";
     const isAdminUser = user.role === "admin";
-
-    // ✅ STEP 1: Component ke andar state define karein
-    const [emailError, setEmailError] = useState("");
-
-    // ✅ STEP 2: Email Validation Function
-    const validateEmail = (email) => {
-        if (!email || email.trim() === "") {
-            setEmailError("Email Address is mandatory.");
-            return false;
-        }
-
-        // Email Format Regular Expression (Regex)
-        const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-        if (!emailRegex.test(email.trim())) {
-            setEmailError("Please enter a valid email address (e.g., candidate@email.com).");
-            return false;
-        }
-
-        setEmailError(""); // Clear error if valid
-        return true;
-    };
 
     // ── Edit mode is driven entirely by ?editCaseId=... in the URL ──────────────
     const editCaseId =
@@ -1621,18 +1598,17 @@ export default function AddCase() {
                                                 </span>
                                             </label>
                                             <input
-    type="email"
-    name="candidateEmail"
-    value={form.candidateEmail}
-    onChange={(e) => {
-        handleChange(e); // Aapka normal onChange function
-        validateEmail(e.target.value); // Real-time validation check
-    }}
-    className={emailError ? "input-error" : ""}
-/>
-
-{/* Error Message dikhane ke liye */}
-{emailError && <p style={{ color: "red", fontSize: "12px" }}>{emailError}</p>}
+                                                className="ac-input"
+                                                type="email"
+                                                placeholder="candidate@email.com"
+                                                value={form.candidateEmail}
+                                                onChange={(e) =>
+                                                    set(
+                                                        "candidateEmail",
+                                                        e.target.value,
+                                                    )
+                                                }
+                                            />
                                         </div>
                                         <div className="ac-field">
                                             {/* NOTE: this and Position are marked required in the
