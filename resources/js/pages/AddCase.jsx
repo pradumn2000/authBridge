@@ -1611,40 +1611,36 @@ export default function AddCase() {
     )}
 </div>
                                         <div className="ac-field">
-                                            {/* NOTE: this and Position are marked required in the
-                          label but neither validate() nor the backend
-                          enforces it — the `required` attribute does nothing
-                          here because there's no wrapping <form> and submit
-                          is a plain onClick. Either drop the asterisk or add
-                          the checks to validate(); flagging rather than
-                          changing, since I don't know which you intended. */}
-                                            <label className="ac-label">
-                                                Mobile Number{" "}
-                                                <span className="form-required">
-                                                    *
-                                                </span>
-                                            </label>
+    <label className="ac-label">
+        Mobile Number <span className="form-required">*</span>
+    </label>
 
-                                            <input
-                                                className="ac-input"
-                                                type="tel"
-                                                placeholder="+91 XXXXX XXXXX"
-                                                value={form.candidateMobile}
-                                                onChange={(e) => {
-                                                    const value = e.target.value
-                                                        .replace(/\D/g, "")
-                                                        .slice(0, 10);
-                                                    set(
-                                                        "candidateMobile",
-                                                        value,
-                                                    );
-                                                }}
-                                                required
-                                                maxLength={10}
-                                                pattern="[0-9]{10}"
-                                                title="Please enter a valid 10-digit mobile number"
-                                            />
-                                        </div>
+    <input
+        className="ac-input"
+        type="tel"
+        placeholder="9876543210"
+        value={form.candidateMobile}
+        onChange={(e) => {
+            const value = e.target.value.replace(/\D/g, "").slice(0, 10);
+            set("candidateMobile", value);
+        }}
+        maxLength={10}
+        style={{
+            borderColor:
+                form.candidateMobile && !/^[6-9]\d{9}$/.test(form.candidateMobile)
+                    ? "#dc3545"
+                    : "",
+        }}
+    />
+
+    {form.candidateMobile && !/^[6-9]\d{9}$/.test(form.candidateMobile) && (
+        <span style={{ color: "#dc3545", fontSize: "12px", marginTop: "4px", display: "block" }}>
+            {form.candidateMobile.length < 10
+                ? "Mobile number must be exactly 10 digits"
+                : "Please enter a valid 10-digit Indian mobile number starting with 6, 7, 8, or 9"}
+        </span>
+    )}
+</div>
                                         <div className="ac-field">
                                             <label className="ac-label">
                                                 Position Applied For{" "}
@@ -1687,7 +1683,7 @@ export default function AddCase() {
 
                 const minAgeDate = new Date();
                 minAgeDate.setFullYear(minAgeDate.getFullYear() - 18);
-                if (selectedDate > minAgeDate) return "#dc3545"; // Below 18 years check
+                if (selectedDate > minAgeDate) return "#dc3545"; // Below 18 check
 
                 return "";
             })()
@@ -1713,7 +1709,7 @@ export default function AddCase() {
         if (selectedDate > minAgeDate) {
             return (
                 <span style={{ color: "#dc3545", fontSize: "12px", marginTop: "4px", display: "block" }}>
-                    Age must be at least 18 years old.
+                    Invalid Date of Birth: Please fill age above 18 years.
                 </span>
             );
         }
