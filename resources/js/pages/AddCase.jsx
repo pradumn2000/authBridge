@@ -5,23 +5,7 @@ import Header from "./Header";
 import Sidebar from "./Sidebar";
 import { API_URL } from "../src/config";
 
-const [emailError, setEmailError] = useState("");
 
-// Email format validation function
-const validateEmail = (email) => {
-  if (!email || email.trim() === "") {
-    setEmailError("Email Address is mandatory.");
-    return false;
-  }
-  // Standard Valid Email Format Regex
-  const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-  if (!emailRegex.test(email)) {
-    setEmailError("Please enter a valid email address (e.g., candidate@email.com).");
-    return false;
-  }
-  setEmailError("");
-  return true;
-};
 
 const DEFAULT_CHECK_RATES = {
     employment: "",
@@ -340,6 +324,27 @@ export default function AddCase() {
     const user = getUser();
     const isClientUser = user.role === "client";
     const isAdminUser = user.role === "admin";
+
+    // ✅ STEP 1: Component ke andar state define karein
+    const [emailError, setEmailError] = useState("");
+
+    // ✅ STEP 2: Email Validation Function
+    const validateEmail = (email) => {
+        if (!email || email.trim() === "") {
+            setEmailError("Email Address is mandatory.");
+            return false;
+        }
+
+        // Email Format Regular Expression (Regex)
+        const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+        if (!emailRegex.test(email.trim())) {
+            setEmailError("Please enter a valid email address (e.g., candidate@email.com).");
+            return false;
+        }
+
+        setEmailError(""); // Clear error if valid
+        return true;
+    };
 
     // ── Edit mode is driven entirely by ?editCaseId=... in the URL ──────────────
     const editCaseId =
@@ -1609,27 +1614,25 @@ export default function AddCase() {
                                             />
                                         </div>
                                         <div className="ac-field">
-  <label className="ac-label">
-    Email Address <span className="ac-req">*</span>
-  </label>
-  <input
-    className={`ac-input ${emailError ? "border-red-500" : ""}`}
-    type="email"
-    placeholder="candidate@email.com"
-    value={form.candidateEmail}
-    onChange={(e) => {
-      const val = e.target.value.toLowerCase().trim(); // spaces remove aur lowercase
-      set("candidateEmail", val);
-      if (emailError) validateEmail(val); // Type karte waqt error clear/update karne ke liye
-    }}
-    onBlur={(e) => validateEmail(e.target.value)} // User jab input se baahar click kare tab check karega
-  />
-  {emailError && (
-    <span className="text-xs text-red-500 mt-1 block font-medium">
-      {emailError}
-    </span>
-  )}
-</div>
+                                            <label className="ac-label">
+                                                Email Address{" "}
+                                                <span className="ac-req">
+                                                    *
+                                                </span>
+                                            </label>
+                                            <input
+                                                className="ac-input"
+                                                type="email"
+                                                placeholder="candidate@email.com"
+                                                value={form.candidateEmail}
+                                                onChange={(e) =>
+                                                    set(
+                                                        "candidateEmail",
+                                                        e.target.value,
+                                                    )
+                                                }
+                                            />
+                                        </div>
                                         <div className="ac-field">
                                             {/* NOTE: this and Position are marked required in the
                           label but neither validate() nor the backend
