@@ -1621,17 +1621,18 @@ export default function AddCase() {
                                                 </span>
                                             </label>
                                             <input
-                                                className="ac-input"
-                                                type="email"
-                                                placeholder="candidate@email.com"
-                                                value={form.candidateEmail}
-                                                onChange={(e) =>
-                                                    set(
-                                                        "candidateEmail",
-                                                        e.target.value,
-                                                    )
-                                                }
-                                            />
+    type="email"
+    name="candidateEmail"
+    value={form.candidateEmail}
+    onChange={(e) => {
+        handleChange(e); // Aapka normal onChange function
+        validateEmail(e.target.value); // Real-time validation check
+    }}
+    className={emailError ? "input-error" : ""}
+/>
+
+{/* Error Message dikhane ke liye */}
+{emailError && <p style={{ color: "red", fontSize: "12px" }}>{emailError}</p>}
                                         </div>
                                         <div className="ac-field">
                                             {/* NOTE: this and Position are marked required in the
