@@ -148,7 +148,7 @@ const Allocation = () => {
   // Submit Handler
   const handleSave = async () => {
     if (selectedTls.length === 0 || selectedSubUsers.length === 0) {
-      alert("Kripya kam se kam ek Team Lead aur ek Sub User select karein.");
+      alert("Please select at least one Team Lead and one Sub User.");
       return;
     }
 
