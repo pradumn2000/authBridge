@@ -2111,85 +2111,217 @@ export default function EmploymentCheck() {
       <div style={{ background: "#fff", padding: "16px", borderTop: "1px solid #e2e8f0" }}>
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "16px", marginBottom: "16px" }}>
           <div>
-            <label style={{ display: "block", fontSize: "12px", fontWeight: 700, marginBottom: "6px", color: "#374151" }}>COMPANY NAME *</label>
-            <input
-              type="text"
-              placeholder="Enter company name"
-              value={emp.companyName}
-              onChange={(e) => updateEmployer(idx, "companyName", e.target.value)}
-              style={{ width: "100%", padding: "8px 12px", borderRadius: "6px", border: "1px solid #cbd5e1", outline: "none" }}
-            />
-          </div>
+  <label style={{ display: "block", fontSize: "12px", fontWeight: 700, marginBottom: "6px", color: "#374151" }}>
+    COMPANY NAME <span style={{ color: "#eb4d4b" }}>*</span>
+  </label>
+  <input
+    type="text"
+    placeholder="Enter company name"
+    value={emp.companyName}
+    onChange={(e) => {
+      const val = e.target.value;
+      if (val === "" || /^[a-zA-Z0-9\s.\-'_/(),&]*$/.test(val)) {
+        updateEmployer(idx, "companyName", val);
+      }
+    }}
+    required
+    style={{
+      width: "100%",
+      padding: "8px 12px",
+      borderRadius: "6px",
+      border: emp.companyName && !/^[a-zA-Z0-9\s.\-'_/(),&]+$/.test(emp.companyName)
+        ? "1px solid #eb4d4b"
+        : "1px solid #cbd5e1",
+      outline: "none"
+    }}
+  />
+</div>
           <div>
-            <label style={{ display: "block", fontSize: "12px", fontWeight: 700, marginBottom: "6px", color: "#374151" }}>DESIGNATION *</label>
-            <input
-              type="text"
-              placeholder="Enter designation"
-              value={emp.designation}
-              onChange={(e) => updateEmployer(idx, "designation", e.target.value)}
-              style={{ width: "100%", padding: "8px 12px", borderRadius: "6px", border: "1px solid #cbd5e1", outline: "none" }}
-            />
-          </div>
+  <label style={{ display: "block", fontSize: "12px", fontWeight: 700, marginBottom: "6px", color: "#374151" }}>
+    DESIGNATION <span style={{ color: "#eb4d4b" }}>*</span>
+  </label>
+  <input
+    type="text"
+    placeholder="Enter designation"
+    value={emp.designation}
+    onChange={(e) => {
+      const val = e.target.value;
+      if (val === "" || /^[a-zA-Z0-9\s.\-'_/(),&]*$/.test(val)) {
+        updateEmployer(idx, "designation", val);
+      }
+    }}
+    required
+    style={{
+      width: "100%",
+      padding: "8px 12px",
+      borderRadius: "6px",
+      border: emp.designation && !/^[a-zA-Z0-9\s.\-'_/(),&]+$/.test(emp.designation)
+        ? "1px solid #eb4d4b"
+        : "1px solid #cbd5e1",
+      outline: "none"
+    }}
+  />
+</div>
           <div>
-            <label style={{ display: "block", fontSize: "12px", fontWeight: 700, marginBottom: "6px", color: "#374151" }}>EMPLOYEE ID</label>
-            <input
-              type="text"
-              placeholder="Enter employee ID"
-              value={emp.employeeId}
-              onChange={(e) => updateEmployer(idx, "employeeId", e.target.value)}
-              style={{ width: "100%", padding: "8px 12px", borderRadius: "6px", border: "1px solid #cbd5e1", outline: "none" }}
-            />
-          </div>
+  <label style={{ display: "block", fontSize: "12px", fontWeight: 700, marginBottom: "6px", color: "#374151" }}>EMPLOYEE ID</label>
+  <input
+    type="text"
+    placeholder="Enter employee ID"
+    value={emp.employeeId}
+    onChange={(e) => {
+      const val = e.target.value;
+      if (val === "" || /^[a-zA-Z0-9\s.\-'_/()#]*$/.test(val)) {
+        updateEmployer(idx, "employeeId", val);
+      }
+    }}
+    style={{
+      width: "100%",
+      padding: "8px 12px",
+      borderRadius: "6px",
+      border: emp.employeeId && !/^[a-zA-Z0-9\s.\-'_/()#]+$/.test(emp.employeeId)
+        ? "1px solid #eb4d4b"
+        : "1px solid #cbd5e1",
+      outline: "none"
+    }}
+  />
+</div>
         </div>
 
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px", marginBottom: "16px" }}>
+         <div>
+  <label style={{ display: "block", fontSize: "12px", fontWeight: 700, marginBottom: "6px", color: "#374151" }}>
+    HR EMAIL ID <span style={{ color: "#eb4d4b" }}>*</span>
+  </label>
+  <input
+    type="email"
+    placeholder="Enter HR email ID"
+    value={emp.hrEmail}
+    onChange={(e) => updateEmployer(idx, "hrEmail", e.target.value)}
+    required
+    style={{
+      width: "100%",
+      padding: "8px 12px",
+      borderRadius: "6px",
+      border: emp.hrEmail && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emp.hrEmail)
+        ? "1px solid #eb4d4b"
+        : "1px solid #cbd5e1",
+      outline: "none"
+    }}
+  />
+</div>
           <div>
-            <label style={{ display: "block", fontSize: "12px", fontWeight: 700, marginBottom: "6px", color: "#374151" }}>HR EMAIL ID *</label>
-            <input
-              type="email"
-              placeholder="Enter HR email ID"
-              value={emp.hrEmail}
-              onChange={(e) => updateEmployer(idx, "hrEmail", e.target.value)}
-              style={{ width: "100%", padding: "8px 12px", borderRadius: "6px", border: "1px solid #cbd5e1", outline: "none" }}
-            />
-          </div>
-          <div>
-            <label style={{ display: "block", fontSize: "12px", fontWeight: 700, marginBottom: "6px", color: "#374151" }}>HR PHONE NUMBER *</label>
-            <div style={{ display: "flex", gap: "8px" }}>
-              <select style={{ padding: "8px", borderRadius: "6px", border: "1px solid #cbd5e1", background: "#fff" }}>
-                <option>+91</option>
-              </select>
-              <input
-                type="text"
-                placeholder="Enter phone number"
-                value={emp.hrPhone}
-                onChange={(e) => updateEmployer(idx, "hrPhone", e.target.value)}
-                style={{ width: "100%", padding: "8px 12px", borderRadius: "6px", border: "1px solid #cbd5e1", outline: "none" }}
-              />
-            </div>
-          </div>
+  <label style={{ display: "block", fontSize: "12px", fontWeight: 700, marginBottom: "6px", color: "#374151" }}>
+    HR PHONE NUMBER <span style={{ color: "#eb4d4b" }}>*</span>
+  </label>
+  <div style={{ display: "flex", gap: "8px" }}>
+    <select 
+      value={emp.countryCode || "+91"}
+      onChange={(e) => updateEmployer(idx, "countryCode", e.target.value)}
+      style={{ padding: "8px", borderRadius: "6px", border: "1px solid #cbd5e1", background: "#fff" }}
+    >
+      <option value="+91">+91 (IN)</option>
+      <option value="INT">Other</option>
+    </select>
+    <input
+      type="text"
+      placeholder={emp.countryCode === "INT" ? "Enter international phone" : "10-digit mobile number"}
+      value={emp.hrPhone}
+      onChange={(e) => {
+        const val = e.target.value;
+        const isIndia = !emp.countryCode || emp.countryCode === "+91";
+
+        if (isIndia) {
+          // Indian number: sirf digits, max 10 digits
+          const digits = val.replace(/\D/g, "").slice(0, 10);
+          updateEmployer(idx, "hrPhone", digits);
+        } else {
+          // International number: digits, spaces, hyphens, plus, max 15 digits
+          if (val === "" || /^[0-9\s\-+]*$/.test(val)) {
+            if (val.replace(/\D/g, "").length <= 15) {
+              updateEmployer(idx, "hrPhone", val);
+            }
+          }
+        }
+      }}
+      required
+      style={{
+        width: "100%",
+        padding: "8px 12px",
+        borderRadius: "6px",
+        border: (() => {
+          if (!emp.hrPhone) return "1px solid #cbd5e1";
+          const isIndia = !emp.countryCode || emp.countryCode === "+91";
+          
+          if (isIndia) {
+            // Indian check: exact 10 digits starting with 6,7,8,9
+            return /^[6-9]\d{9}$/.test(emp.hrPhone) ? "1px solid #cbd5e1" : "1px solid #eb4d4b";
+          } else {
+            // International check: 7 to 15 digits (Global E.164 standard)
+            const digitCount = emp.hrPhone.replace(/\D/g, "").length;
+            return digitCount >= 7 && digitCount <= 15 ? "1px solid #cbd5e1" : "1px solid #eb4d4b";
+          }
+        })(),
+        outline: "none"
+      }}
+    />
+  </div>
+</div>
         </div>
 
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px", marginBottom: "20px" }}>
-          <div>
-            <label style={{ display: "block", fontSize: "12px", fontWeight: 700, marginBottom: "6px", color: "#374151" }}>DATE OF JOINING (DOJ) *</label>
-            <input
-              type="date"
-              value={emp.doj}
-              onChange={(e) => updateEmployer(idx, "doj", e.target.value)}
-              style={{ width: "100%", padding: "8px 12px", borderRadius: "6px", border: "1px solid #cbd5e1", outline: "none" }}
-            />
-          </div>
-          <div>
-            <label style={{ display: "block", fontSize: "12px", fontWeight: 700, marginBottom: "6px", color: "#374151" }}>DATE OF EXIT (DOE) *</label>
-            <input
-              type="date"
-              value={emp.doe}
-              onChange={(e) => updateEmployer(idx, "doe", e.target.value)}
-              style={{ width: "100%", padding: "8px 12px", borderRadius: "6px", border: "1px solid #cbd5e1", outline: "none" }}
-            />
-          </div>
-        </div>
+  <div>
+    <label style={{ display: "block", fontSize: "12px", fontWeight: 700, marginBottom: "6px", color: "#374151" }}>
+      DATE OF JOINING (DOJ) <span style={{ color: "#eb4d4b" }}>*</span>
+    </label>
+    <input
+      type="date"
+      value={emp.doj}
+      max={new Date().toISOString().split("T")[0]}
+      onChange={(e) => updateEmployer(idx, "doj", e.target.value)}
+      required
+      style={{
+        width: "100%",
+        padding: "8px 12px",
+        borderRadius: "6px",
+        border: (() => {
+          if (!emp.doj) return "1px solid #cbd5e1";
+          // If DOE exists, DOJ must be before or equal to DOE
+          if (emp.doe && new Date(emp.doj) > new Date(emp.doe)) {
+            return "1px solid #eb4d4b";
+          }
+          return "1px solid #cbd5e1";
+        })(),
+        outline: "none"
+      }}
+    />
+  </div>
+  <div>
+    <label style={{ display: "block", fontSize: "12px", fontWeight: 700, marginBottom: "6px", color: "#374151" }}>
+      DATE OF EXIT (DOE) <span style={{ color: "#eb4d4b" }}>*</span>
+    </label>
+    <input
+      type="date"
+      value={emp.doe}
+      min={emp.doj || undefined}
+      onChange={(e) => updateEmployer(idx, "doe", e.target.value)}
+      required
+      style={{
+        width: "100%",
+        padding: "8px 12px",
+        borderRadius: "6px",
+        border: (() => {
+          if (!emp.doe) return "1px solid #cbd5e1";
+          // DOE cannot be earlier than DOJ
+          if (emp.doj && new Date(emp.doe) < new Date(emp.doj)) {
+            return "1px solid #eb4d4b";
+          }
+          return "1px solid #cbd5e1";
+        })(),
+        outline: "none"
+      }}
+    />
+  </div>
+</div>
 
         {/* Documents Upload Section */}
         <div>
@@ -2524,9 +2656,7 @@ export default function EmploymentCheck() {
                   <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px" }}>
                     <div>
   <label style={{ display: "block", fontSize: "12px", fontWeight: 700, marginBottom: "6px", color: "#374151" }}>
-    CANDIDATE NAME <span className="ac-req">
-                                                    *
-                                                </span>
+    CANDIDATE NAME <span style={{ color: "#eb4d4b" }}>*</span>
   </label>
   <input
     type="text"
@@ -2551,9 +2681,7 @@ export default function EmploymentCheck() {
   />
 </div>
                     <div>
-                      <label style={{ display: "block", fontSize: "12px", fontWeight: 700, marginBottom: "6px", color: "#374151" }}>DATE<span className="ac-req">
-                                                    *
-                                                </span></label>
+                      <label style={{ display: "block", fontSize: "12px", fontWeight: 700, marginBottom: "6px", color: "#374151" }}>DATE<span style={{ color: "#eb4d4b" }}>*</span></label>
                       <input
                         type="date"
                         value={formData.date}
