@@ -2523,17 +2523,37 @@ export default function EmploymentCheck() {
                   <h4 style={{ fontSize: "14px", fontWeight: 700, color: "#2563eb", marginBottom: "12px" }}>Candidate Details</h4>
                   <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px" }}>
                     <div>
-                      <label style={{ display: "block", fontSize: "12px", fontWeight: 700, marginBottom: "6px", color: "#374151" }}>CANDIDATE NAME *</label>
-                      <input
-                        type="text"
-                        placeholder="Enter candidate name"
-                        value={formData.candidateName}
-                        onChange={(e) => handleInputChange("candidateName", e.target.value)}
-                        style={{ width: "100%", padding: "9px 12px", borderRadius: "6px", border: "1px solid #cbd5e1", outline: "none", background: "#fff" }}
-                      />
-                    </div>
+  <label style={{ display: "block", fontSize: "12px", fontWeight: 700, marginBottom: "6px", color: "#374151" }}>
+    CANDIDATE NAME <span className="ac-req">
+                                                    *
+                                                </span>
+  </label>
+  <input
+    type="text"
+    placeholder="Enter candidate name"
+    value={formData.candidateName}
+    onChange={(e) => {
+      const val = e.target.value;
+      if (val === "" || /^[a-zA-Z\s.\-'_/(),]*$/.test(val)) {
+        handleInputChange("candidateName", val);
+      }
+    }}
+    style={{
+      width: "100%",
+      padding: "9px 12px",
+      borderRadius: "6px",
+      border: formData.candidateName && !/^[a-zA-Z\s.\-'_/(),]+$/.test(formData.candidateName)
+        ? "1px solid #dc3545"
+        : "1px solid #cbd5e1",
+      outline: "none",
+      background: "#fff"
+    }}
+  />
+</div>
                     <div>
-                      <label style={{ display: "block", fontSize: "12px", fontWeight: 700, marginBottom: "6px", color: "#374151" }}>DATE *</label>
+                      <label style={{ display: "block", fontSize: "12px", fontWeight: 700, marginBottom: "6px", color: "#374151" }}>DATE<span className="ac-req">
+                                                    *
+                                                </span></label>
                       <input
                         type="date"
                         value={formData.date}
