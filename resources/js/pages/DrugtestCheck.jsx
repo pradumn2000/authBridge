@@ -2197,368 +2197,234 @@ export default function DrugTestVerification() {
             {/* Tab 2: New Drug Verification Form */}
             {activeTab === "new" && (
               <div className="ndv-form-card">
-                <h2 className="ndv-form-title">New Drug Test Verification</h2>
-                <p className="ndv-form-subtitle">Enter drug test request details</p>
+  <h2 className="ndv-form-title">New Drug Test Verification</h2>
+  <p className="ndv-form-subtitle">Enter drug test request details</p>
 
-                {(clientsError || casesError || labsError) && (
-                  <div className="ndv-error-banner">
-                    ⚠ {clientsError || casesError || labsError}
-                  </div>
-                )}
-
-                {/* Select Client / Select Candidate — ties this drug test
-                    check to an existing case, same pattern as Education /
-                    Employment. Case IDs are read-only, auto-filled from the
-                    selection. */}
-               {/* Select Client & Candidate Section */}
-<div className="ndv-select-row">
-  <div className="ndv-input-group">
-    <label style={{ display: "block", marginBottom: "6px", fontSize: "12px", fontWeight: "600", color: "#374151" }}>Select Client</label>
-    <select
-      value={selectedClientId}
-      onChange={(e) => setSelectedClientId(e.target.value)}
-      style={{
-        width: "100%",
-        padding: "8px 12px",
-        border: !selectedClientId ? "1.5px solid #eb4d4b" : "1px solid #cbd5e1",
-        borderRadius: "6px",
-        fontSize: "13px",
-        outline: "none"
-      }}
-    >
-      <option value="">
-        {clientsLoading ? "Loading clients…" : clientsError ? "Failed to load clients" : clients.length === 0 ? "No clients found" : "— Select Client —"}
-      </option>
-      {clients.map((c) => (
-        <option key={c.id} value={c.id}>{c.company_name || c.name}</option>
-      ))}
-    </select>
-  </div>
-
-  <div className="ndv-input-group">
-    <label style={{ display: "block", marginBottom: "6px", fontSize: "12px", fontWeight: "600", color: "#374151" }}>Case ID (Client)</label>
-    <div 
-      className="ndv-readonly-box"
-      style={{ 
-        padding: "8px 12px",
-        border: "1px solid #cbd5e1",
-        borderRadius: "6px",
-        fontSize: "13px",
-        background: "#f1f5f9", 
-        fontWeight: "600",
-        color: "#475569" 
-      }}
-    >
-      {!selectedClientId ? "—" : casesLoading ? "Loading…" : clientCaseId || "No drug test case found for this client"}
+  {(clientsError || casesError || labsError) && (
+    <div className="ndv-error-banner">
+      ⚠ {clientsError || casesError || labsError}
     </div>
-  </div>
+  )}
 
-  <div className="ndv-input-group">
-    <label style={{ display: "block", marginBottom: "6px", fontSize: "12px", fontWeight: "600", color: "#374151" }}>Select Candidate</label>
-    <select
-      value={selectedCandidateKey}
-      onChange={(e) => setSelectedCandidateKey(e.target.value)}
-      style={{
-        width: "100%",
-        padding: "8px 12px",
-        border: !selectedCandidateKey ? "1.5px solid #eb4d4b" : "1px solid #cbd5e1",
-        borderRadius: "6px",
-        fontSize: "13px",
-        outline: "none"
-      }}
-    >
-      <option value="">
-        {casesLoading ? "Loading candidates…" : casesError ? "Failed to load candidates" : candidateOptions.length === 0 ? "No candidates found" : "— Select Candidate —"}
-      </option>
-      {candidateOptions.map((cand) => (
-        <option key={cand.key} value={cand.key}>{cand.name}</option>
-      ))}
-    </select>
-  </div>
-
-  <div className="ndv-input-group">
-    <label style={{ display: "block", marginBottom: "6px", fontSize: "12px", fontWeight: "600", color: "#374151" }}>Case ID (Candidate)</label>
-    <div 
-      className="ndv-readonly-box"
-      style={{ 
-        padding: "8px 12px",
-        border: "1px solid #cbd5e1",
-        borderRadius: "6px",
-        fontSize: "13px",
-        background: "#f1f5f9", 
-        fontWeight: "600",
-        color: "#475569" 
-      }}
-    >
-      {!selectedCandidateKey ? "—" : casesLoading ? "Loading…" : candidateCaseId || "No drug test case found for this candidate"}
-    </div>
-  </div>
-</div>
-
-<form onSubmit={(e) => e.preventDefault()}>
-  {/* Row 1 */}
-  <div className="ndv-form-grid">
+  {/* Select Client / Select Candidate */}
+  <div className="ndv-select-row">
     <div className="ndv-input-group">
-      <label style={{ display: "block", marginBottom: "6px", fontSize: "12px", fontWeight: "600", color: "#374151" }}>
-        Candidate Name <span className="ndv-asterisk" style={{ color: "#eb4d4b" }}>*</span>
-      </label>
-      <input
-        type="text"
-        name="candidateName"
-        placeholder="Auto-filled from selected candidate"
-        value={formData.candidateName || ""}
-        onChange={(e) => {
-          const val = e.target.value;
-          if (val === "" || /^[a-zA-Z\s]*$/.test(val)) {
-            handleInputChange(e);
-          }
-        }}
-        style={{
-          width: "100%",
-          padding: "8px 12px",
-          border: (!formData.candidateName || formData.candidateName.trim().length < 2) ? "1.5px solid #eb4d4b" : "1px solid #cbd5e1",
-          borderRadius: "6px",
-          fontSize: "13px",
-          outline: "none"
-        }}
-      />
-    </div>
-
-    <div className="ndv-input-group">
-      <label style={{ display: "block", marginBottom: "6px", fontSize: "12px", fontWeight: "600", color: "#374151" }}>
-        Request Date <span className="ndv-asterisk" style={{ color: "#eb4d4b" }}>*</span>
-      </label>
-      <input 
-        type="date" 
-        name="requestDate" 
-        value={formData.requestDate || ""} 
-        onChange={handleInputChange} 
-        style={{
-          width: "100%",
-          padding: "8px 12px",
-          border: !formData.requestDate ? "1.5px solid #eb4d4b" : "1px solid #cbd5e1",
-          borderRadius: "6px",
-          fontSize: "13px",
-          outline: "none"
-        }}
-      />
-    </div>
-
-    <div className="ndv-input-group">
-      <label style={{ display: "block", marginBottom: "6px", fontSize: "12px", fontWeight: "600", color: "#374151" }}>
-        Test Type <span className="ndv-asterisk" style={{ color: "#eb4d4b" }}>*</span>
-      </label>
-      <select 
-        name="testType" 
-        value={formData.testType || ""} 
-        onChange={handleInputChange}
-        style={{
-          width: "100%",
-          padding: "8px 12px",
-          border: !formData.testType ? "1.5px solid #eb4d4b" : "1px solid #cbd5e1",
-          borderRadius: "6px",
-          fontSize: "13px",
-          outline: "none"
-        }}
-      >
-        <option value="">Select Test Type</option>
-        <option value="Urine">Urine</option>
-        <option value="Hair Follicle">Hair Follicle</option>
-        <option value="Saliva">Saliva</option>
-        <option value="Blood">Blood</option>
-      </select>
-    </div>
-  </div>
-
-  {/* Row 2 */}
-  <div className="ndv-form-grid">
-    <div className="ndv-input-group">
-      <label style={{ display: "block", marginBottom: "6px", fontSize: "12px", fontWeight: "600", color: "#374151" }}>
-        Sample Type <span className="ndv-asterisk" style={{ color: "#eb4d4b" }}>*</span>
-      </label>
-      <select 
-        name="sampleType" 
-        value={formData.sampleType || ""} 
-        onChange={handleInputChange}
-        style={{
-          width: "100%",
-          padding: "8px 12px",
-          border: !formData.sampleType ? "1.5px solid #eb4d4b" : "1px solid #cbd5e1",
-          borderRadius: "6px",
-          fontSize: "13px",
-          outline: "none"
-        }}
-      >
-        <option value="">Select Sample Type</option>
-        <option value="Yes">Yes</option>
-        <option value="No">No</option>
-      </select>
-    </div>
-
-    <div className="ndv-input-group">
-      <label style={{ display: "block", marginBottom: "6px", fontSize: "12px", fontWeight: "600", color: "#374151" }}>
-        Collection Date <span className="ndv-asterisk" style={{ color: "#eb4d4b" }}>*</span>
-      </label>
-      <input 
-        type="date" 
-        name="collectionDate" 
-        value={formData.collectionDate || ""} 
-        onChange={handleInputChange} 
-        style={{
-          width: "100%",
-          padding: "8px 12px",
-          border: !formData.collectionDate ? "1.5px solid #eb4d4b" : "1px solid #cbd5e1",
-          borderRadius: "6px",
-          fontSize: "13px",
-          outline: "none"
-        }}
-      />
-    </div>
-
-    <div className="ndv-input-group">
-      <label style={{ display: "block", marginBottom: "6px", fontSize: "12px", fontWeight: "600", color: "#374151" }}>
-        Collection Time <span className="ndv-asterisk" style={{ color: "#eb4d4b" }}>*</span>
-      </label>
-      <input 
-        type="time" 
-        name="collectionTime" 
-        value={formData.collectionTime || ""} 
-        onChange={handleInputChange} 
-        style={{
-          width: "100%",
-          padding: "8px 12px",
-          border: !formData.collectionTime ? "1.5px solid #eb4d4b" : "1px solid #cbd5e1",
-          borderRadius: "6px",
-          fontSize: "13px",
-          outline: "none"
-        }}
-      />
-    </div>
-  </div>
-
-  {/* Row 3 */}
-  <div className="ndv-form-grid">
-    <div className="ndv-input-group">
-      <label style={{ display: "block", marginBottom: "6px", fontSize: "12px", fontWeight: "600", color: "#374151" }}>
-        Lab Name <span className="ndv-asterisk" style={{ color: "#eb4d4b" }}>*</span>
-      </label>
+      <label style={{ display: "block", marginBottom: "6px", fontSize: "12px", fontWeight: "600", color: "#374151" }}>Select Client</label>
       <select
-        name="labName"
-        value={formData.labName || ""}
-        onChange={(e) => handleLabSelect(e.target.value)}
+        value={selectedClientId}
+        onChange={(e) => setSelectedClientId(e.target.value)}
         style={{
           width: "100%",
           padding: "8px 12px",
-          border: !formData.labName ? "1.5px solid #eb4d4b" : "1px solid #cbd5e1",
+          border: !selectedClientId ? "1.5px solid #eb4d4b" : "1px solid #cbd5e1",
           borderRadius: "6px",
           fontSize: "13px",
           outline: "none"
         }}
       >
         <option value="">
-          {labsLoading ? "Loading labs…" : labsError ? "Failed to load" : labs.length === 0 ? "No labs found" : "Select Lab Name"}
+          {clientsLoading ? "Loading clients…" : clientsError ? "Failed to load clients" : clients.length === 0 ? "No clients found" : "— Select Client —"}
         </option>
-        {labs.map((l) => (
-          <option key={l.id} value={l.name}>{l.name}</option>
+        {clients.map((c) => (
+          <option key={c.id} value={c.id}>{c.company_name || c.name}</option>
         ))}
       </select>
     </div>
 
     <div className="ndv-input-group">
-      <label style={{ display: "block", marginBottom: "6px", fontSize: "12px", fontWeight: "600", color: "#374151" }}>
-        Lab Code <span className="ndv-asterisk" style={{ color: "#eb4d4b" }}>*</span>
-      </label>
-      <input 
-        type="text" 
-        name="labCode" 
-        placeholder="Enter Lab Code" 
-        value={formData.labCode || ""} 
-        onChange={handleInputChange} 
-        style={{
-          width: "100%",
+      <label style={{ display: "block", marginBottom: "6px", fontSize: "12px", fontWeight: "600", color: "#374151" }}>Case ID (Client)</label>
+      <div 
+        className="ndv-readonly-box"
+        style={{ 
           padding: "8px 12px",
-          border: !formData.labCode ? "1.5px solid #eb4d4b" : "1px solid #cbd5e1",
+          border: "1px solid #cbd5e1",
           borderRadius: "6px",
           fontSize: "13px",
-          outline: "none"
+          background: "#f1f5f9", 
+          fontWeight: "600",
+          color: "#475569" 
         }}
-      />
+      >
+        {!selectedClientId ? "—" : casesLoading ? "Loading…" : clientCaseId || "No drug test case found for this client"}
+      </div>
     </div>
 
     <div className="ndv-input-group">
-      <label style={{ display: "block", marginBottom: "6px", fontSize: "12px", fontWeight: "600", color: "#374151" }}>
-        Collection Person Name <span className="ndv-asterisk" style={{ color: "#eb4d4b" }}>*</span>
-      </label>
-      <input 
-        type="text" 
-        name="collectionPersonName" 
-        placeholder="Enter Collection Person Name" 
-        value={formData.collectionPersonName || ""} 
-        onChange={(e) => {
-          const val = e.target.value;
-          if (val === "" || /^[a-zA-Z\s]*$/.test(val)) {
-            handleInputChange(e);
-          }
-        }} 
+      <label style={{ display: "block", marginBottom: "6px", fontSize: "12px", fontWeight: "600", color: "#374151" }}>Select Candidate</label>
+      <select
+        value={selectedCandidateKey}
+        onChange={(e) => setSelectedCandidateKey(e.target.value)}
         style={{
           width: "100%",
           padding: "8px 12px",
-          border: (!formData.collectionPersonName || formData.collectionPersonName.trim().length < 2) ? "1.5px solid #eb4d4b" : "1px solid #cbd5e1",
+          border: !selectedCandidateKey ? "1.5px solid #eb4d4b" : "1px solid #cbd5e1",
           borderRadius: "6px",
           fontSize: "13px",
           outline: "none"
         }}
-      />
+      >
+        <option value="">
+          {casesLoading ? "Loading candidates…" : casesError ? "Failed to load candidates" : candidateOptions.length === 0 ? "No candidates found" : "— Select Candidate —"}
+        </option>
+        {candidateOptions.map((cand) => (
+          <option key={cand.key} value={cand.key}>{cand.name}</option>
+        ))}
+      </select>
+    </div>
+
+    <div className="ndv-input-group">
+      <label style={{ display: "block", marginBottom: "6px", fontSize: "12px", fontWeight: "600", color: "#374151" }}>Case ID (Candidate)</label>
+      <div 
+        className="ndv-readonly-box"
+        style={{ 
+          padding: "8px 12px",
+          border: "1px solid #cbd5e1",
+          borderRadius: "6px",
+          fontSize: "13px",
+          background: "#f1f5f9", 
+          fontWeight: "600",
+          color: "#475569" 
+        }}
+      >
+        {!selectedCandidateKey ? "—" : casesLoading ? "Loading…" : candidateCaseId || "No drug test case found for this candidate"}
+      </div>
     </div>
   </div>
 
-  {/* Row 4 */}
-  <div className="ndv-form-grid">
-    <div className="ndv-input-group">
-      <label style={{ display: "block", marginBottom: "6px", fontSize: "12px", fontWeight: "600", color: "#374151" }}>
-        Phone Number <span className="ndv-asterisk" style={{ color: "#eb4d4b" }}>*</span>
-      </label>
-      <div 
-        className="ndv-phone-container"
-        style={{
-          display: "flex",
-          border: (formData.phoneNumber && !/^[6-9]\d{9}$/.test(formData.phoneNumber)) || !formData.phoneNumber ? "1.5px solid #eb4d4b" : "1px solid #cbd5e1",
-          borderRadius: "6px",
-          overflow: "hidden"
-        }}
-      >
+  <form onSubmit={(e) => e.preventDefault()}>
+    {/* Row 1 */}
+    <div className="ndv-form-grid">
+      <div className="ndv-input-group">
+        <label style={{ display: "block", marginBottom: "6px", fontSize: "12px", fontWeight: "600", color: "#374151" }}>
+          Candidate Name <span className="ndv-asterisk" style={{ color: "#eb4d4b" }}>*</span>
+        </label>
+        <input
+          type="text"
+          name="candidateName"
+          placeholder="Auto-filled from selected candidate"
+          value={formData.candidateName || ""}
+          onChange={(e) => {
+            const val = e.target.value;
+            if (val === "" || /^[a-zA-Z\s]*$/.test(val)) {
+              handleInputChange(e);
+            }
+          }}
+          style={{
+            width: "100%",
+            padding: "8px 12px",
+            border: (!formData.candidateName || formData.candidateName.trim().length < 2) ? "1.5px solid #eb4d4b" : "1px solid #cbd5e1",
+            borderRadius: "6px",
+            fontSize: "13px",
+            outline: "none"
+          }}
+        />
+      </div>
+
+      <div className="ndv-input-group">
+        <label style={{ display: "block", marginBottom: "6px", fontSize: "12px", fontWeight: "600", color: "#374151" }}>
+          Request Date <span className="ndv-asterisk" style={{ color: "#eb4d4b" }}>*</span>
+        </label>
+        <input 
+          type="date" 
+          name="requestDate" 
+          value={formData.requestDate || ""} 
+          onChange={handleInputChange} 
+          style={{
+            width: "100%",
+            padding: "8px 12px",
+            border: !formData.requestDate ? "1.5px solid #eb4d4b" : "1px solid #cbd5e1",
+            borderRadius: "6px",
+            fontSize: "13px",
+            outline: "none"
+          }}
+        />
+      </div>
+
+      <div className="ndv-input-group">
+        <label style={{ display: "block", marginBottom: "6px", fontSize: "12px", fontWeight: "600", color: "#374151" }}>
+          Test Type <span className="ndv-asterisk" style={{ color: "#eb4d4b" }}>*</span>
+        </label>
         <select 
-          className="ndv-phone-select" 
-          name="countryCode" 
-          value={formData.countryCode || "+91"} 
+          name="testType" 
+          value={formData.testType || ""} 
           onChange={handleInputChange}
           style={{
-            padding: "8px",
-            border: "none",
-            background: "#f8fafc",
-            borderRight: "1px solid #cbd5e1",
+            width: "100%",
+            padding: "8px 12px",
+            border: !formData.testType ? "1.5px solid #eb4d4b" : "1px solid #cbd5e1",
+            borderRadius: "6px",
             fontSize: "13px",
             outline: "none"
           }}
         >
-          <option value="+91">🇮🇳 +91</option>
+          <option value="">Select Test Type</option>
+          <option value="Urine">Urine</option>
+          <option value="Hair Follicle">Hair Follicle</option>
+          <option value="Saliva">Saliva</option>
+          <option value="Blood">Blood</option>
         </select>
-        <input 
-          className="ndv-phone-input" 
-          type="text" 
-          maxLength={10}
-          name="phoneNumber" 
-          placeholder="Enter 10-digit Phone Number" 
-          value={formData.phoneNumber || ""} 
-          onChange={(e) => {
-            const val = e.target.value.replace(/\D/g, "").slice(0, 10);
-            e.target.value = val;
-            handleInputChange(e);
-          }} 
+      </div>
+    </div>
+
+    {/* Row 2 */}
+    <div className="ndv-form-grid">
+      <div className="ndv-input-group">
+        <label style={{ display: "block", marginBottom: "6px", fontSize: "12px", fontWeight: "600", color: "#374151" }}>
+          Sample Type <span className="ndv-asterisk" style={{ color: "#eb4d4b" }}>*</span>
+        </label>
+        <select 
+          name="sampleType" 
+          value={formData.sampleType || ""} 
+          onChange={handleInputChange}
           style={{
             width: "100%",
             padding: "8px 12px",
-            border: "none",
+            border: !formData.sampleType ? "1.5px solid #eb4d4b" : "1px solid #cbd5e1",
+            borderRadius: "6px",
+            fontSize: "13px",
+            outline: "none"
+          }}
+        >
+          <option value="">Select Sample Type</option>
+          <option value="Yes">Yes</option>
+          <option value="No">No</option>
+        </select>
+      </div>
+
+      <div className="ndv-input-group">
+        <label style={{ display: "block", marginBottom: "6px", fontSize: "12px", fontWeight: "600", color: "#374151" }}>
+          Collection Date <span className="ndv-asterisk" style={{ color: "#eb4d4b" }}>*</span>
+        </label>
+        <input 
+          type="date" 
+          name="collectionDate" 
+          value={formData.collectionDate || ""} 
+          onChange={handleInputChange} 
+          style={{
+            width: "100%",
+            padding: "8px 12px",
+            border: !formData.collectionDate ? "1.5px solid #eb4d4b" : "1px solid #cbd5e1",
+            borderRadius: "6px",
+            fontSize: "13px",
+            outline: "none"
+          }}
+        />
+      </div>
+
+      <div className="ndv-input-group">
+        <label style={{ display: "block", marginBottom: "6px", fontSize: "12px", fontWeight: "600", color: "#374151" }}>
+          Collection Time <span className="ndv-asterisk" style={{ color: "#eb4d4b" }}>*</span>
+        </label>
+        <input 
+          type="time" 
+          name="collectionTime" 
+          value={formData.collectionTime || ""} 
+          onChange={handleInputChange} 
+          style={{
+            width: "100%",
+            padding: "8px 12px",
+            border: !formData.collectionTime ? "1.5px solid #eb4d4b" : "1px solid #cbd5e1",
+            borderRadius: "6px",
             fontSize: "13px",
             outline: "none"
           }}
@@ -2566,112 +2432,241 @@ export default function DrugTestVerification() {
       </div>
     </div>
 
-    <div className="ndv-input-group">
-      <label style={{ display: "block", marginBottom: "6px", fontSize: "12px", fontWeight: "600", color: "#374151" }}>
-        Lab Address <span className="ndv-asterisk" style={{ color: "#eb4d4b" }}>*</span>
+    {/* Row 3 */}
+    <div className="ndv-form-grid">
+      <div className="ndv-input-group">
+        <label style={{ display: "block", marginBottom: "6px", fontSize: "12px", fontWeight: "600", color: "#374151" }}>
+          Lab Name <span className="ndv-asterisk" style={{ color: "#eb4d4b" }}>*</span>
+        </label>
+        <select
+          name="labName"
+          value={formData.labName || ""}
+          onChange={(e) => handleLabSelect(e.target.value)}
+          style={{
+            width: "100%",
+            padding: "8px 12px",
+            border: !formData.labName ? "1.5px solid #eb4d4b" : "1px solid #cbd5e1",
+            borderRadius: "6px",
+            fontSize: "13px",
+            outline: "none"
+          }}
+        >
+          <option value="">
+            {labsLoading ? "Loading labs…" : labsError ? "Failed to load" : labs.length === 0 ? "No labs found" : "Select Lab Name"}
+          </option>
+          {labs.map((l) => (
+            <option key={l.id} value={l.name}>{l.name}</option>
+          ))}
+        </select>
+      </div>
+
+      <div className="ndv-input-group">
+        <label style={{ display: "block", marginBottom: "6px", fontSize: "12px", fontWeight: "600", color: "#374151" }}>
+          Lab Code <span className="ndv-asterisk" style={{ color: "#eb4d4b" }}>*</span>
+        </label>
+        <input 
+          type="text" 
+          name="labCode" 
+          placeholder="Enter Lab Code" 
+          value={formData.labCode || ""} 
+          onChange={handleInputChange} 
+          style={{
+            width: "100%",
+            padding: "8px 12px",
+            border: !formData.labCode ? "1.5px solid #eb4d4b" : "1px solid #cbd5e1",
+            borderRadius: "6px",
+            fontSize: "13px",
+            outline: "none"
+          }}
+        />
+      </div>
+
+      <div className="ndv-input-group">
+        <label style={{ display: "block", marginBottom: "6px", fontSize: "12px", fontWeight: "600", color: "#374151" }}>
+          Collection Person Name <span className="ndv-asterisk" style={{ color: "#eb4d4b" }}>*</span>
+        </label>
+        <input 
+          type="text" 
+          name="collectionPersonName" 
+          placeholder="Enter Collection Person Name" 
+          value={formData.collectionPersonName || ""} 
+          onChange={(e) => {
+            const val = e.target.value;
+            if (val === "" || /^[a-zA-Z\s]*$/.test(val)) {
+              handleInputChange(e);
+            }
+          }} 
+          style={{
+            width: "100%",
+            padding: "8px 12px",
+            border: (!formData.collectionPersonName || formData.collectionPersonName.trim().length < 2) ? "1.5px solid #eb4d4b" : "1px solid #cbd5e1",
+            borderRadius: "6px",
+            fontSize: "13px",
+            outline: "none"
+          }}
+        />
+      </div>
+    </div>
+
+    {/* Row 4 */}
+    <div className="ndv-form-grid">
+      <div className="ndv-input-group">
+        <label style={{ display: "block", marginBottom: "6px", fontSize: "12px", fontWeight: "600", color: "#374151" }}>
+          Phone Number <span className="ndv-asterisk" style={{ color: "#eb4d4b" }}>*</span>
+        </label>
+        <div 
+          className="ndv-phone-container"
+          style={{
+            display: "flex",
+            border: (formData.phoneNumber && !/^[6-9]\d{9}$/.test(formData.phoneNumber)) || !formData.phoneNumber ? "1.5px solid #eb4d4b" : "1px solid #cbd5e1",
+            borderRadius: "6px",
+            overflow: "hidden"
+          }}
+        >
+          <select 
+            className="ndv-phone-select" 
+            name="countryCode" 
+            value={formData.countryCode || "+91"} 
+            onChange={handleInputChange}
+            style={{
+              padding: "8px",
+              border: "none",
+              background: "#f8fafc",
+              borderRight: "1px solid #cbd5e1",
+              fontSize: "13px",
+              outline: "none"
+            }}
+          >
+            <option value="+91">🇮🇳 +91</option>
+          </select>
+          <input 
+            className="ndv-phone-input" 
+            type="text" 
+            maxLength={10}
+            name="phoneNumber" 
+            placeholder="Enter 10-digit Phone Number" 
+            value={formData.phoneNumber || ""} 
+            onChange={(e) => {
+              const val = e.target.value.replace(/\D/g, "").slice(0, 10);
+              e.target.value = val;
+              handleInputChange(e);
+            }} 
+            style={{
+              width: "100%",
+              padding: "8px 12px",
+              border: "none",
+              fontSize: "13px",
+              outline: "none"
+            }}
+          />
+        </div>
+      </div>
+
+      <div className="ndv-input-group">
+        <label style={{ display: "block", marginBottom: "6px", fontSize: "12px", fontWeight: "600", color: "#374151" }}>
+          Lab Address <span className="ndv-asterisk" style={{ color: "#eb4d4b" }}>*</span>
+        </label>
+        <textarea 
+          name="labAddress" 
+          rows="1" 
+          placeholder="Enter Lab Address" 
+          value={formData.labAddress || ""} 
+          onChange={handleInputChange} 
+          style={{
+            width: "100%",
+            padding: "8px 12px",
+            border: !formData.labAddress ? "1.5px solid #eb4d4b" : "1px solid #cbd5e1",
+            borderRadius: "6px",
+            fontSize: "13px",
+            outline: "none",
+            resize: "none"
+          }}
+        />
+      </div>
+
+      <div className="ndv-input-group">
+        <label style={{ display: "block", marginBottom: "6px", fontSize: "12px", fontWeight: "600", color: "#374151" }}>
+          TAT (Turnaround Time) <span className="ndv-asterisk" style={{ color: "#eb4d4b" }}>*</span>
+        </label>
+        <select 
+          name="tat" 
+          value={formData.tat || ""} 
+          onChange={handleInputChange}
+          style={{
+            width: "100%",
+            padding: "8px 12px",
+            border: !formData.tat ? "1.5px solid #eb4d4b" : "1px solid #cbd5e1",
+            borderRadius: "6px",
+            fontSize: "13px",
+            outline: "none"
+          }}
+        >
+          <option value="">Select TAT</option>
+          <option value="24 hrs">24 hrs</option>
+          <option value="48 hrs">48 hrs</option>
+          <option value="3 days">3 days</option>
+          <option value="5 days">5 days</option>
+        </select>
+      </div>
+    </div>
+
+    {/* Row 5: Overall Result */}
+    <div className="ndv-form-grid">
+      <div className="ndv-input-group">
+        <label style={{ display: "block", marginBottom: "6px", fontSize: "12px", fontWeight: "600", color: "#374151" }}>Overall Result</label>
+        <select 
+          name="overallResult" 
+          value={formData.overallResult || ""} 
+          onChange={handleInputChange}
+          style={{
+            width: "100%",
+            padding: "8px 12px",
+            border: "1px solid #cbd5e1",
+            borderRadius: "6px",
+            fontSize: "13px",
+            outline: "none"
+          }}
+        >
+          <option value="">Pending</option>
+          <option value="Negative">Negative</option>
+          <option value="Positive">Positive</option>
+        </select>
+      </div>
+    </div>
+
+    {/* Upload Drop Zone */}
+    <div className="ndv-upload-wrapper">
+      <label className="ndv-upload-label">Report Download</label>
+      <label className="ndv-upload-zone">
+        <input type="file" className="ndv-file-input" onChange={handleFileChange} />
+        <div className="ndv-upload-icon">📤</div>
+        <div className="ndv-upload-text">Upload Report</div>
+        <div className="ndv-upload-subtext">PDF, JPG, PNG (Max 10MB)</div>
+        {reportFile && (
+          <div className="ndv-file-selected">
+            Selected: {reportFile.name}
+          </div>
+        )}
       </label>
-      <textarea 
-        name="labAddress" 
-        rows="1" 
-        placeholder="Enter Lab Address" 
-        value={formData.labAddress || ""} 
-        onChange={handleInputChange} 
-        style={{
-          width: "100%",
-          padding: "8px 12px",
-          border: !formData.labAddress ? "1.5px solid #eb4d4b" : "1px solid #cbd5e1",
-          borderRadius: "6px",
-          fontSize: "13px",
-          outline: "none",
-          resize: "none"
-        }}
-      />
     </div>
 
-    <div className="ndv-input-group">
-      <label style={{ display: "block", marginBottom: "6px", fontSize: "12px", fontWeight: "600", color: "#374151" }}>
-        TAT (Turnaround Time) <span className="ndv-asterisk" style={{ color: "#eb4d4b" }}>*</span>
-      </label>
-      <select 
-        name="tat" 
-        value={formData.tat || ""} 
-        onChange={handleInputChange}
-        style={{
-          width: "100%",
-          padding: "8px 12px",
-          border: !formData.tat ? "1.5px solid #eb4d4b" : "1px solid #cbd5e1",
-          borderRadius: "6px",
-          fontSize: "13px",
-          outline: "none"
-        }}
+    {/* Bottom Action Controls */}
+    <div className="ndv-form-actions">
+      <button type="button" className="ndv-btn-cancel" onClick={() => setActiveTab("verification")}>
+        Cancel
+      </button>
+      <button
+        type="submit"
+        className="ndv-btn-submit"
+        disabled={saving}
+        onClick={handleSaveCase}
+        style={{ opacity: saving ? 0.7 : 1, cursor: saving ? "not-allowed" : "pointer" }}
       >
-        <option value="">Select TAT</option>
-        <option value="24 hrs">24 hrs</option>
-        <option value="48 hrs">48 hrs</option>
-        <option value="3 days">3 days</option>
-        <option value="5 days">5 days</option>
-      </select>
+        {saving ? "Saving…" : "Save & Submit"}
+      </button>
     </div>
-  </div>
-
-  {/* Row 5: Overall Result */}
-  <div className="ndv-form-grid">
-    <div className="ndv-input-group">
-      <label style={{ display: "block", marginBottom: "6px", fontSize: "12px", fontWeight: "600", color: "#374151" }}>Overall Result</label>
-      <select 
-        name="overallResult" 
-        value={formData.overallResult || ""} 
-        onChange={handleInputChange}
-        style={{
-          width: "100%",
-          padding: "8px 12px",
-          border: "1px solid #cbd5e1",
-          borderRadius: "6px",
-          fontSize: "13px",
-          outline: "none"
-        }}
-      >
-        <option value="">Pending</option>
-        <option value="Negative">Negative</option>
-        <option value="Positive">Positive</option>
-      </select>
-    </div>
-  </div>
-</form>
-
-                  {/* Upload Drop Zone */}
-                  <div className="ndv-upload-wrapper">
-                    <label className="ndv-upload-label">Report Download</label>
-                    <label className="ndv-upload-zone">
-                      <input type="file" className="ndv-file-input" onChange={handleFileChange} />
-                      <div className="ndv-upload-icon">📤</div>
-                      <div className="ndv-upload-text">Upload Report</div>
-                      <div className="ndv-upload-subtext">PDF, JPG, PNG (Max 10MB)</div>
-                      {reportFile && (
-                        <div className="ndv-file-selected">
-                          Selected: {reportFile.name}
-                        </div>
-                      )}
-                    </label>
-                  </div>
-
-                  {/* Bottom Action Controls */}
-                  <div className="ndv-form-actions">
-                    <button type="button" className="ndv-btn-cancel" onClick={() => setActiveTab("verification")}>
-                      Cancel
-                    </button>
-                    <button
-                      type="submit"
-                      className="ndv-btn-submit"
-                      disabled={saving}
-                      onClick={handleSaveCase}
-                      style={{ opacity: saving ? 0.7 : 1, cursor: saving ? "not-allowed" : "pointer" }}
-                    >
-                      {saving ? "Saving…" : "Save & Submit"}
-                    </button>
-                  </div>
-                </form>
-              </div>
+  </form>
+</div>
             )}
           </main>
         </div>
