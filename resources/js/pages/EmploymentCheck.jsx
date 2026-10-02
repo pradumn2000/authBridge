@@ -4037,7 +4037,7 @@ export default function EmploymentCheck() {
                     style={{
                       fontSize: "14px",
                       fontWeight: 700,
-                      color: "#2563eb",
+                      color: "rgb(15, 23, 42)",
                       marginBottom: "12px",
                     }}
                   >
