@@ -2318,7 +2318,9 @@ export default function CriminalCheck() {
   <h3 className="pvc-section-title">Candidate Details</h3>
   <div className="pvc-grid-4">
     <div className="pvc-form-group">
-      <label className="pvc-form-label">Candidate Name *</label>
+      <label className="pvc-form-label">
+        Candidate Name <span style={{ color: "#eb4d4b" }}>*</span>
+      </label>
       <input
         type="text"
         name="candidateName"
@@ -2343,7 +2345,9 @@ export default function CriminalCheck() {
       />
     </div>
     <div className="pvc-form-group">
-      <label className="pvc-form-label">Candidate ID / Reference No. *</label>
+      <label className="pvc-form-label">
+        Candidate ID / Reference No. <span style={{ color: "#eb4d4b" }}>*</span>
+      </label>
       <input
         type="text"
         name="candidateId"
@@ -2408,7 +2412,9 @@ export default function CriminalCheck() {
 
   <div className="pvc-grid-4" style={{ marginBottom: "16px" }}>
     <div className="pvc-form-group">
-      <label className="pvc-form-label">Verification Type *</label>
+      <label className="pvc-form-label">
+        Verification Type <span style={{ color: "#eb4d4b" }}>*</span>
+      </label>
       <div className="pvc-radio-group">
         <label className="pvc-radio-label">
           <input
@@ -2433,7 +2439,9 @@ export default function CriminalCheck() {
       </div>
     </div>
     <div className="pvc-form-group">
-      <label className="pvc-form-label">Police Verification Mode *</label>
+      <label className="pvc-form-label">
+        Police Verification Mode <span style={{ color: "#eb4d4b" }}>*</span>
+      </label>
       <select
         name="policeVerificationMode"
         value={formData.policeVerificationMode || ""}
@@ -2457,7 +2465,9 @@ export default function CriminalCheck() {
       </select>
     </div>
     <div className="pvc-form-group">
-      <label className="pvc-form-label">State *</label>
+      <label className="pvc-form-label">
+        State <span style={{ color: "#eb4d4b" }}>*</span>
+      </label>
       <select
         name="state"
         value={formData.state || ""}
@@ -2478,7 +2488,9 @@ export default function CriminalCheck() {
       </select>
     </div>
     <div className="pvc-form-group">
-      <label className="pvc-form-label">District *</label>
+      <label className="pvc-form-label">
+        District <span style={{ color: "#eb4d4b" }}>*</span>
+      </label>
       <input
         type="text"
         name="district"
@@ -2544,7 +2556,9 @@ export default function CriminalCheck() {
 
   <div className="pvc-grid-2-1-1">
     <div className="pvc-form-group">
-      <label className="pvc-form-label">Purpose of Verification *</label>
+      <label className="pvc-form-label">
+        Purpose of Verification <span style={{ color: "#eb4d4b" }}>*</span>
+      </label>
       <select
         name="purposeOfVerification"
         value={formData.purposeOfVerification || ""}
@@ -2568,7 +2582,9 @@ export default function CriminalCheck() {
       </select>
     </div>
     <div className="pvc-form-group">
-      <label className="pvc-form-label">Expected TAT (Days) *</label>
+      <label className="pvc-form-label">
+        Expected TAT (Days) <span style={{ color: "#eb4d4b" }}>*</span>
+      </label>
       <input
         type="number"
         name="expectedTat"
