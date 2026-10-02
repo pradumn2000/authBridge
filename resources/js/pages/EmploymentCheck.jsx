@@ -2294,7 +2294,7 @@ export default function EmploymentCheck() {
       color: "#475569",
               }}
             >
-              DESIGNATION{" "}
+              Designation{" "}
               <span style={{ color: "#eb4d4b" }}>*</span>
             </label>
             <input
@@ -2339,11 +2339,11 @@ export default function EmploymentCheck() {
       color: "#475569",
               }}
             >
-              EMPLOYEE ID
+              Employee ID
             </label>
             <input
               type="text"
-              placeholder="Enter employee ID"
+              placeholder="Enter Employee ID"
               value={emp.employeeId}
               onChange={(e) => {
                 const val = e.target.value;
@@ -2392,12 +2392,12 @@ export default function EmploymentCheck() {
       color: "#475569",
               }}
             >
-              HR EMAIL ID{" "}
+              HR Email ID{" "}
               <span style={{ color: "#eb4d4b" }}>*</span>
             </label>
             <input
               type="email"
-              placeholder="Enter HR email ID"
+              placeholder="Enter HR Email ID"
               value={emp.hrEmail}
               onChange={(e) =>
                 updateEmployer(idx, "hrEmail", e.target.value)
@@ -2431,7 +2431,7 @@ export default function EmploymentCheck() {
       color: "#475569",
               }}
             >
-              HR PHONE NUMBER{" "}
+              HR Phone Number{" "}
               <span style={{ color: "#eb4d4b" }}>*</span>
             </label>
             <div style={{ display: "flex", gap: "8px" }}>
@@ -2496,8 +2496,11 @@ export default function EmploymentCheck() {
                 required
                 style={{
                   width: "100%",
-                  padding: "10px 13px",
-                  borderRadius: "8px",
+      padding: "10px 13px",
+      borderRadius: "8px",
+      fontSize: "0.875rem",
+      color: "#1e293b",
+      background: "#f8fafc",
                   border: (() => {
                     if (!emp.hrPhone)
                       return "1px solid #cbd5e1";
@@ -2550,7 +2553,7 @@ export default function EmploymentCheck() {
       color: "#475569",
               }}
             >
-              DATE OF JOINING (DOJ){" "}
+              Date Of Joining (DOJ){" "}
               <span style={{ color: "#eb4d4b" }}>*</span>
             </label>
             <input
@@ -2593,7 +2596,7 @@ export default function EmploymentCheck() {
       color: "#475569",
               }}
             >
-              DATE OF EXIT (DOE){" "}
+              Date Of Exit (DOE){" "}
               <span style={{ color: "#eb4d4b" }}>*</span>
             </label>
             <input
@@ -2639,7 +2642,7 @@ export default function EmploymentCheck() {
               color: "#374151",
             }}
           >
-            DOCUMENTS * (Upload up to 4 documents)
+            Documents * (Upload up to 4 documents)
           </label>
           <div
             style={{
