@@ -3180,12 +3180,11 @@ export default function EducationVerification() {
     </label>
     <input
       type="text"
-      inputMode="decimal"
-      placeholder="Enter GST"
+      placeholder="e.g. 18% or GSTIN No."
       value={q.gst || ""}
       onChange={(e) => {
-        const val = e.target.value;
-        if (val === "" || /^\d*\.?\d*$/.test(val)) {
+        const val = e.target.value.toUpperCase(); 
+        if (val === "" || /^[a-zA-Z0-9\s.%-]*$/.test(val)) {
           handleQualificationChange(q.id, "gst", val);
         }
       }}
@@ -3199,9 +3198,7 @@ export default function EducationVerification() {
         outline: "none",
         transition: "border-color 0.18s",
         boxSizing: "border-box",
-        border: q.gst && (isNaN(Number(q.gst)) || Number(q.gst) < 0 || Number(q.gst) > 100)
-          ? "1.5px solid #eb4d4b"
-          : "1.5px solid #e2e8f0",
+        border: "1.5px solid #e2e8f0",
       }}
     />
   </div>
