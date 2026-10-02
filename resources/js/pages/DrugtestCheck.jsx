@@ -2216,7 +2216,7 @@ export default function DrugTestVerification() {
         style={{
           width: "100%",
           padding: "8px 12px",
-          border: !selectedClientId ? "1.5px solid #eb4d4b" : "1px solid #cbd5e1",
+          border: selectedClientId ? "1px solid #cbd5e1" : "1.5px solid #eb4d4b",
           borderRadius: "6px",
           fontSize: "13px",
           outline: "none"
@@ -2257,7 +2257,7 @@ export default function DrugTestVerification() {
         style={{
           width: "100%",
           padding: "8px 12px",
-          border: !selectedCandidateKey ? "1.5px solid #eb4d4b" : "1px solid #cbd5e1",
+          border: selectedCandidateKey ? "1px solid #cbd5e1" : "1.5px solid #eb4d4b",
           borderRadius: "6px",
           fontSize: "13px",
           outline: "none"
@@ -2312,7 +2312,7 @@ export default function DrugTestVerification() {
           style={{
             width: "100%",
             padding: "8px 12px",
-            border: (!formData.candidateName || formData.candidateName.trim().length < 2) ? "1.5px solid #eb4d4b" : "1px solid #cbd5e1",
+            border: (formData.candidateName && formData.candidateName.trim().length >= 2) ? "1px solid #cbd5e1" : "1.5px solid #eb4d4b",
             borderRadius: "6px",
             fontSize: "13px",
             outline: "none"
@@ -2332,7 +2332,7 @@ export default function DrugTestVerification() {
           style={{
             width: "100%",
             padding: "8px 12px",
-            border: !formData.requestDate ? "1.5px solid #eb4d4b" : "1px solid #cbd5e1",
+            border: formData.requestDate ? "1px solid #cbd5e1" : "1.5px solid #eb4d4b",
             borderRadius: "6px",
             fontSize: "13px",
             outline: "none"
@@ -2351,7 +2351,7 @@ export default function DrugTestVerification() {
           style={{
             width: "100%",
             padding: "8px 12px",
-            border: !formData.testType ? "1.5px solid #eb4d4b" : "1px solid #cbd5e1",
+            border: formData.testType ? "1px solid #cbd5e1" : "1.5px solid #eb4d4b",
             borderRadius: "6px",
             fontSize: "13px",
             outline: "none"
@@ -2379,7 +2379,7 @@ export default function DrugTestVerification() {
           style={{
             width: "100%",
             padding: "8px 12px",
-            border: !formData.sampleType ? "1.5px solid #eb4d4b" : "1px solid #cbd5e1",
+            border: formData.sampleType ? "1px solid #cbd5e1" : "1.5px solid #eb4d4b",
             borderRadius: "6px",
             fontSize: "13px",
             outline: "none"
@@ -2403,7 +2403,7 @@ export default function DrugTestVerification() {
           style={{
             width: "100%",
             padding: "8px 12px",
-            border: !formData.collectionDate ? "1.5px solid #eb4d4b" : "1px solid #cbd5e1",
+            border: formData.collectionDate ? "1px solid #cbd5e1" : "1.5px solid #eb4d4b",
             borderRadius: "6px",
             fontSize: "13px",
             outline: "none"
@@ -2423,7 +2423,7 @@ export default function DrugTestVerification() {
           style={{
             width: "100%",
             padding: "8px 12px",
-            border: !formData.collectionTime ? "1.5px solid #eb4d4b" : "1px solid #cbd5e1",
+            border: formData.collectionTime ? "1px solid #cbd5e1" : "1.5px solid #eb4d4b",
             borderRadius: "6px",
             fontSize: "13px",
             outline: "none"
@@ -2445,7 +2445,7 @@ export default function DrugTestVerification() {
           style={{
             width: "100%",
             padding: "8px 12px",
-            border: !formData.labName ? "1.5px solid #eb4d4b" : "1px solid #cbd5e1",
+            border: formData.labName ? "1px solid #cbd5e1" : "1.5px solid #eb4d4b",
             borderRadius: "6px",
             fontSize: "13px",
             outline: "none"
@@ -2473,7 +2473,7 @@ export default function DrugTestVerification() {
           style={{
             width: "100%",
             padding: "8px 12px",
-            border: !formData.labCode ? "1.5px solid #eb4d4b" : "1px solid #cbd5e1",
+            border: formData.labCode ? "1px solid #cbd5e1" : "1.5px solid #eb4d4b",
             borderRadius: "6px",
             fontSize: "13px",
             outline: "none"
@@ -2499,7 +2499,7 @@ export default function DrugTestVerification() {
           style={{
             width: "100%",
             padding: "8px 12px",
-            border: (!formData.collectionPersonName || formData.collectionPersonName.trim().length < 2) ? "1.5px solid #eb4d4b" : "1px solid #cbd5e1",
+            border: (formData.collectionPersonName && formData.collectionPersonName.trim().length >= 2) ? "1px solid #cbd5e1" : "1.5px solid #eb4d4b",
             borderRadius: "6px",
             fontSize: "13px",
             outline: "none"
@@ -2518,7 +2518,7 @@ export default function DrugTestVerification() {
           className="ndv-phone-container"
           style={{
             display: "flex",
-            border: (formData.phoneNumber && !/^[6-9]\d{9}$/.test(formData.phoneNumber)) || !formData.phoneNumber ? "1.5px solid #eb4d4b" : "1px solid #cbd5e1",
+            border: (formData.phoneNumber && /^[6-9]\d{9}$/.test(formData.phoneNumber)) ? "1px solid #cbd5e1" : "1.5px solid #eb4d4b",
             borderRadius: "6px",
             overflow: "hidden"
           }}
@@ -2575,7 +2575,7 @@ export default function DrugTestVerification() {
           style={{
             width: "100%",
             padding: "8px 12px",
-            border: !formData.labAddress ? "1.5px solid #eb4d4b" : "1px solid #cbd5e1",
+            border: formData.labAddress ? "1px solid #cbd5e1" : "1.5px solid #eb4d4b",
             borderRadius: "6px",
             fontSize: "13px",
             outline: "none",
@@ -2595,7 +2595,7 @@ export default function DrugTestVerification() {
           style={{
             width: "100%",
             padding: "8px 12px",
-            border: !formData.tat ? "1.5px solid #eb4d4b" : "1px solid #cbd5e1",
+            border: formData.tat ? "1px solid #cbd5e1" : "1.5px solid #eb4d4b",
             borderRadius: "6px",
             fontSize: "13px",
             outline: "none"
