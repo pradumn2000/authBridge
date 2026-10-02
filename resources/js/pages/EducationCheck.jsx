@@ -394,11 +394,7 @@
 // //                     { label: "EMAIL ADDRESS *", key: "emailAddress", placeholder: "Enter Email Address" },
 // //                   ].map((field, i) => (
 // //                     <div key={i}>
-// //                       <label style={{  display: "block",
-                          fontSize: "14px",
-                          fontWeight: 600,
-                          marginBottom: "6px",
-                          color: "#475569", }}>{field.label}</label>
+// //                       <label style={{ display: "block", fontSize: "11px", fontWeight: 700, marginBottom: "6px", color: "#374151" }}>{field.label}</label>
 // //                       <input
 // //                         type="text"
 // //                         placeholder={field.placeholder}
@@ -523,11 +519,7 @@
 // //       {/* ROW 1: QUALIFICATION INPUTS (Qualification Type, Course, Specialization, Institute, Board) */}
 // //       <div style={{ display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: "16px", marginBottom: "16px" }}>
 // //         <div>
-// //           <label style={{  display: "block",
-                          fontSize: "14px",
-                          fontWeight: 600,
-                          marginBottom: "6px",
-                          color: "#475569", }}>Qualification Type *</label>
+// //           <label style={{ display: "block", fontSize: "11px", fontWeight: 700, marginBottom: "6px", color: "#374151" }}>Qualification Type *</label>
 // //           <select
 // //             value={q.qualificationType || ""}
 // //             onChange={(e) => handleQualificationChange(q.id, "qualificationType", e.target.value)}
@@ -542,11 +534,7 @@
 // //         </div>
 
 // //         <div>
-// //           <label style={{  display: "block",
-                          fontSize: "14px",
-                          fontWeight: 600,
-                          marginBottom: "6px",
-                          color: "#475569", }}>Course / Stream *</label>
+// //           <label style={{ display: "block", fontSize: "11px", fontWeight: 700, marginBottom: "6px", color: "#374151" }}>Course / Stream *</label>
 // //           <select
 // //             value={q.courseStream || ""}
 // //             onChange={(e) => handleQualificationChange(q.id, "courseStream", e.target.value)}
@@ -561,11 +549,7 @@
 // //         </div>
 
 // //         <div>
-// //           <label style={{  display: "block",
-                          fontSize: "14px",
-                          fontWeight: 600,
-                          marginBottom: "6px",
-                          color: "#475569", }}>Specialization (Optional)</label>
+// //           <label style={{ display: "block", fontSize: "11px", fontWeight: 700, marginBottom: "6px", color: "#374151" }}>Specialization (Optional)</label>
 // //           <input
 // //             type="text"
 // //             placeholder="Enter Specialization"
@@ -576,11 +560,7 @@
 // //         </div>
 
 // //         <div>
-// //           <label style={{  display: "block",
-                          fontSize: "14px",
-                          fontWeight: 600,
-                          marginBottom: "6px",
-                          color: "#475569", }}>Institute / University *</label>
+// //           <label style={{ display: "block", fontSize: "11px", fontWeight: 700, marginBottom: "6px", color: "#374151" }}>Institute / University *</label>
 // //           <select
 // //             value={q.instituteUniversity || ""}
 // //             onChange={(e) => handleQualificationChange(q.id, "instituteUniversity", e.target.value)}
@@ -594,11 +574,7 @@
 // //         </div>
 
 // //         <div>
-// //           <label style={{  display: "block",
-                          fontSize: "14px",
-                          fontWeight: 600,
-                          marginBottom: "6px",
-                          color: "#475569", }}>Board / University *</label>
+// //           <label style={{ display: "block", fontSize: "11px", fontWeight: 700, marginBottom: "6px", color: "#374151" }}>Board / University *</label>
 // //           <select
 // //             value={q.boardUniversity || ""}
 // //             onChange={(e) => handleQualificationChange(q.id, "boardUniversity", e.target.value)}
@@ -616,11 +592,7 @@
 // //       {q.studyType === "National" && (
 // //         <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "16px", marginBottom: "16px" }}>
 // //           <div>
-// //             <label style={{  display: "block",
-                          fontSize: "14px",
-                          fontWeight: 600,
-                          marginBottom: "6px",
-                          color: "#475569", }}>Verification Fees By *</label>
+// //             <label style={{ display: "block", fontSize: "11px", fontWeight: 700, marginBottom: "6px", color: "#374151" }}>Verification Fees By *</label>
 // //             <select
 // //               value={q.verificationFeesBy || ""}
 // //               onChange={(e) => handleQualificationChange(q.id, "verificationFeesBy", e.target.value)}
@@ -637,11 +609,7 @@
 // //           {q.verificationFeesBy === "Year of Passing" && (
 // //             <>
 // //               <div>
-// //                 <label style={{  display: "block",
-                          fontSize: "14px",
-                          fontWeight: 600,
-                          marginBottom: "6px",
-                          color: "#475569", }}>From YOP *</label>
+// //                 <label style={{ display: "block", fontSize: "11px", fontWeight: 700, marginBottom: "6px", color: "#374151" }}>From YOP *</label>
 // //                 <input
 // //                   type="text"
 // //                   placeholder="YYYY"
@@ -652,11 +620,7 @@
 // //               </div>
 
 // //               <div>
-// //                 <label style={{  display: "block",
-                          fontSize: "14px",
-                          fontWeight: 600,
-                          marginBottom: "6px",
-                          color: "#475569", }}>To YOP *</label>
+// //                 <label style={{ display: "block", fontSize: "11px", fontWeight: 700, marginBottom: "6px", color: "#374151" }}>To YOP *</label>
 // //                 <input
 // //                   type="text"
 // //                   placeholder="YYYY"
@@ -673,11 +637,7 @@
 // //       {/* ROW 3: BILLING & FEES */}
 // //       <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "16px", marginBottom: "20px" }}>
 // //         <div>
-// //           <label style={{  display: "block",
-                          fontSize: "14px",
-                          fontWeight: 600,
-                          marginBottom: "6px",
-                          color: "#475569", }}>
+// //           <label style={{ display: "block", fontSize: "11px", fontWeight: 700, marginBottom: "6px", color: "#374151" }}>
 // // Verification Fees (₹)</label>
 // //           <input
 // //             type="number"
@@ -689,11 +649,7 @@
 // //         </div>
 
 // //         {/* <div>
-// //           <label style={{  display: "block",
-                          fontSize: "14px",
-                          fontWeight: 600,
-                          marginBottom: "6px",
-                          color: "#475569", }}>Service Charge (₹)</label>
+// //           <label style={{ display: "block", fontSize: "11px", fontWeight: 700, marginBottom: "6px", color: "#374151" }}>Service Charge (₹)</label>
 // //           <input
 // //             type="number"
 // //             placeholder="Enter Service Charge"
@@ -704,11 +660,7 @@
 // //         </div> */}
 
 // //         <div>
-// //           <label style={{  display: "block",
-                          fontSize: "14px",
-                          fontWeight: 600,
-                          marginBottom: "6px",
-                          color: "#475569", }}>GST</label>
+// //           <label style={{ display: "block", fontSize: "11px", fontWeight: 700, marginBottom: "6px", color: "#374151" }}>GST</label>
 // //           <input
 // //             type="text"
 // //             placeholder="Enter GST"
@@ -719,11 +671,7 @@
 // //         </div>
 
 // //         <div>
-// //           <label style={{  display: "block",
-                          fontSize: "14px",
-                          fontWeight: 600,
-                          marginBottom: "6px",
-                          color: "#475569", }}>Total Amount</label>
+// //           <label style={{ display: "block", fontSize: "11px", fontWeight: 700, marginBottom: "6px", color: "#374151" }}>Total Amount</label>
 // //           <input
 // //             type="number"
 // //             placeholder="Total Amount"
@@ -1428,11 +1376,7 @@
 //                     are read-only, auto-filled from the selection. */}
 //                 <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px", marginBottom: "16px" }}>
 //                   <div>
-//                     <label style={{  display: "block",
-                          fontSize: "14px",
-                          fontWeight: 600,
-                          marginBottom: "6px",
-                          color: "#475569", }}>SELECT CLIENT</label>
+//                     <label style={{ display: "block", fontSize: "11px", fontWeight: 700, marginBottom: "6px", color: "#374151" }}>SELECT CLIENT</label>
 //                     <select
 //                       value={selectedClientId}
 //                       onChange={(e) => setSelectedClientId(e.target.value)}
@@ -1447,22 +1391,14 @@
 //                     </select>
 //                   </div>
 //                   <div>
-//                     <label style={{  display: "block",
-                          fontSize: "14px",
-                          fontWeight: 600,
-                          marginBottom: "6px",
-                          color: "#475569", }}>CASE ID (CLIENT)</label>
+//                     <label style={{ display: "block", fontSize: "11px", fontWeight: 700, marginBottom: "6px", color: "#374151" }}>CASE ID (CLIENT)</label>
 //                     <div style={{ width: "100%", padding: "9px 12px", borderRadius: "6px", border: "1px solid #cbd5e1", background: "#eef1fb", color: "#2b3b8c", fontWeight: 700, boxSizing: "border-box", fontSize: "12px" }}>
 //                       {!selectedClientId ? "—" : casesLoading ? "Loading…" : clientCaseId || "No education case found for this client"}
 //                     </div>
 //                   </div>
 
 //                   <div>
-//                     <label style={{  display: "block",
-                          fontSize: "14px",
-                          fontWeight: 600,
-                          marginBottom: "6px",
-                          color: "#475569", }}>SELECT CANDIDATE</label>
+//                     <label style={{ display: "block", fontSize: "11px", fontWeight: 700, marginBottom: "6px", color: "#374151" }}>SELECT CANDIDATE</label>
 //                     <select
 //                       value={selectedCandidateKey}
 //                       onChange={(e) => setSelectedCandidateKey(e.target.value)}
@@ -1477,11 +1413,7 @@
 //                     </select>
 //                   </div>
 //                   <div>
-//                     <label style={{  display: "block",
-                          fontSize: "14px",
-                          fontWeight: 600,
-                          marginBottom: "6px",
-                          color: "#475569", }}>CASE ID (CANDIDATE)</label>
+//                     <label style={{ display: "block", fontSize: "11px", fontWeight: 700, marginBottom: "6px", color: "#374151" }}>CASE ID (CANDIDATE)</label>
 //                     <div style={{ width: "100%", padding: "9px 12px", borderRadius: "6px", border: "1px solid #cbd5e1", background: "#eef1fb", color: "#2b3b8c", fontWeight: 700, boxSizing: "border-box", fontSize: "12px" }}>
 //                       {!selectedCandidateKey ? "—" : casesLoading ? "Loading…" : candidateCaseId || "No education case found for this candidate"}
 //                     </div>
@@ -1496,11 +1428,7 @@
 //                     { label: "EMAIL ADDRESS *", key: "emailAddress", placeholder: "Enter Email Address" },
 //                   ].map((field, i) => (
 //                     <div key={i}>
-//                       <label style={{  display: "block",
-                          fontSize: "14px",
-                          fontWeight: 600,
-                          marginBottom: "6px",
-                          color: "#475569", }}>{field.label}</label>
+//                       <label style={{ display: "block", fontSize: "11px", fontWeight: 700, marginBottom: "6px", color: "#374151" }}>{field.label}</label>
 //                       <input
 //                         type="text"
 //                         placeholder={field.placeholder}
@@ -1631,11 +1559,7 @@
 //       {/* ROW 1: QUALIFICATION INPUTS (Qualification Type, Course, Specialization, Institute, Board) */}
 //       <div style={{ display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: "16px", marginBottom: "16px" }}>
 //         <div>
-//           <label style={{  display: "block",
-                          fontSize: "14px",
-                          fontWeight: 600,
-                          marginBottom: "6px",
-                          color: "#475569", }}>Qualification Type *</label>
+//           <label style={{ display: "block", fontSize: "11px", fontWeight: 700, marginBottom: "6px", color: "#374151" }}>Qualification Type *</label>
 //           <select
 //             value={q.qualificationType || ""}
 //             onChange={(e) => handleQualificationChange(q.id, "qualificationType", e.target.value)}
@@ -1650,11 +1574,7 @@
 //         </div>
 
 //         <div>
-//           <label style={{  display: "block",
-                          fontSize: "14px",
-                          fontWeight: 600,
-                          marginBottom: "6px",
-                          color: "#475569", }}>Course / Stream *</label>
+//           <label style={{ display: "block", fontSize: "11px", fontWeight: 700, marginBottom: "6px", color: "#374151" }}>Course / Stream *</label>
 //           <select
 //             value={q.courseStream || ""}
 //             onChange={(e) => handleQualificationChange(q.id, "courseStream", e.target.value)}
@@ -1669,11 +1589,7 @@
 //         </div>
 
 //         <div>
-//           <label style={{  display: "block",
-                          fontSize: "14px",
-                          fontWeight: 600,
-                          marginBottom: "6px",
-                          color: "#475569", }}>Specialization (Optional)</label>
+//           <label style={{ display: "block", fontSize: "11px", fontWeight: 700, marginBottom: "6px", color: "#374151" }}>Specialization (Optional)</label>
 //           <input
 //             type="text"
 //             placeholder="Enter Specialization"
@@ -1686,11 +1602,7 @@
 //         {/* Institute / University — sourced live from AddInstitution.jsx's
 //             data via GET /api/institutions?type=university */}
 //         <div>
-//           <label style={{  display: "block",
-                          fontSize: "14px",
-                          fontWeight: 600,
-                          marginBottom: "6px",
-                          color: "#475569", }}>Institute / University *</label>
+//           <label style={{ display: "block", fontSize: "11px", fontWeight: 700, marginBottom: "6px", color: "#374151" }}>Institute / University *</label>
 //           <select
 //   value={q.instituteUniversity || ""}
 //   onChange={(e) => handleInstituteSelect(q.id, e.target.value)}
@@ -1708,11 +1620,7 @@
 //         {/* Board / University — same institutions list; no separate "board"
 //             catalogue exists in the backend, so this shares the data source */}
 //         <div>
-//           <label style={{  display: "block",
-                          fontSize: "14px",
-                          fontWeight: 600,
-                          marginBottom: "6px",
-                          color: "#475569", }}>Board / University *</label>
+//           <label style={{ display: "block", fontSize: "11px", fontWeight: 700, marginBottom: "6px", color: "#374151" }}>Board / University *</label>
 //           <select
 //             value={q.boardUniversity || ""}
 //             onChange={(e) => handleQualificationChange(q.id, "boardUniversity", e.target.value)}
@@ -1735,11 +1643,7 @@
 //       {q.studyType === "National" && (
 //         <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "16px", marginBottom: "16px" }}>
 //           <div>
-//             <label style={{  display: "block",
-                          fontSize: "14px",
-                          fontWeight: 600,
-                          marginBottom: "6px",
-                          color: "#475569", }}>Verification Fees By *</label>
+//             <label style={{ display: "block", fontSize: "11px", fontWeight: 700, marginBottom: "6px", color: "#374151" }}>Verification Fees By *</label>
 //             <select
 //               value={q.verificationFeesBy || ""}
 //               onChange={(e) => handleQualificationChange(q.id, "verificationFeesBy", e.target.value)}
@@ -1756,11 +1660,7 @@
 //           {q.verificationFeesBy === "Year of Passing" && (
 //             <>
 //               <div>
-//                 <label style={{  display: "block",
-                          fontSize: "14px",
-                          fontWeight: 600,
-                          marginBottom: "6px",
-                          color: "#475569", }}>From YOP *</label>
+//                 <label style={{ display: "block", fontSize: "11px", fontWeight: 700, marginBottom: "6px", color: "#374151" }}>From YOP *</label>
 //                 <input
 //                   type="text"
 //                   placeholder="YYYY"
@@ -1771,11 +1671,7 @@
 //               </div>
 
 //               <div>
-//                 <label style={{  display: "block",
-                          fontSize: "14px",
-                          fontWeight: 600,
-                          marginBottom: "6px",
-                          color: "#475569", }}>To YOP *</label>
+//                 <label style={{ display: "block", fontSize: "11px", fontWeight: 700, marginBottom: "6px", color: "#374151" }}>To YOP *</label>
 //                 <input
 //                   type="text"
 //                   placeholder="YYYY"
@@ -1792,11 +1688,7 @@
 //       {/* ROW 3: BILLING & FEES */}
 //       <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "16px", marginBottom: "20px" }}>
 //         <div>
-//           <label style={{  display: "block",
-                          fontSize: "14px",
-                          fontWeight: 600,
-                          marginBottom: "6px",
-                          color: "#475569", }}>
+//           <label style={{ display: "block", fontSize: "11px", fontWeight: 700, marginBottom: "6px", color: "#374151" }}>
 // Verification Fees (₹)</label>
 //           <input
 //             type="number"
@@ -1808,11 +1700,7 @@
 //         </div>
 
 //         <div>
-//           <label style={{  display: "block",
-                          fontSize: "14px",
-                          fontWeight: 600,
-                          marginBottom: "6px",
-                          color: "#475569", }}>GST</label>
+//           <label style={{ display: "block", fontSize: "11px", fontWeight: 700, marginBottom: "6px", color: "#374151" }}>GST</label>
 //           <input
 //             type="text"
 //             placeholder="Enter GST"
@@ -1823,11 +1711,7 @@
 //         </div>
 
 //         <div>
-//           <label style={{  display: "block",
-                          fontSize: "14px",
-                          fontWeight: 600,
-                          marginBottom: "6px",
-                          color: "#475569", }}>Total Amount</label>
+//           <label style={{ display: "block", fontSize: "11px", fontWeight: 700, marginBottom: "6px", color: "#374151" }}>Total Amount</label>
 //           <input
 //             type="number"
 //             placeholder="Total Amount"
@@ -2547,11 +2431,7 @@ export default function EducationVerification() {
                     are read-only, auto-filled from the selection. */}
                 <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px", marginBottom: "16px" }}>
                   <div>
-                    <label style={{  display: "block",
-                          fontSize: "14px",
-                          fontWeight: 600,
-                          marginBottom: "6px",
-                          color: "#475569", }}>Select Client</label>
+                    <label style={{ display: "block", fontSize: "11px", fontWeight: 700, marginBottom: "6px", color: "#374151" }}>Select Client</label>
                     <select
                       value={selectedClientId}
                       onChange={(e) => setSelectedClientId(e.target.value)}
@@ -2566,22 +2446,14 @@ export default function EducationVerification() {
                     </select>
                   </div>
                   <div>
-                    <label style={{  display: "block",
-                          fontSize: "14px",
-                          fontWeight: 600,
-                          marginBottom: "6px",
-                          color: "#475569", }}>Case ID (Client)</label>
+                    <label style={{ display: "block", fontSize: "11px", fontWeight: 700, marginBottom: "6px", color: "#374151" }}>CASE ID (CLIENT)</label>
                     <div style={{ width: "100%", padding: "9px 12px", borderRadius: "6px", border: "1px solid #cbd5e1", background: "#eef1fb", color: "#2b3b8c", fontWeight: 700, boxSizing: "border-box", fontSize: "12px" }}>
                       {!selectedClientId ? "—" : casesLoading ? "Loading…" : clientCaseId || "No education case found for this client"}
                     </div>
                   </div>
 
                   <div>
-                    <label style={{  display: "block",
-                          fontSize: "14px",
-                          fontWeight: 600,
-                          marginBottom: "6px",
-                          color: "#475569", }}>SELECT CANDIDATE</label>
+                    <label style={{ display: "block", fontSize: "11px", fontWeight: 700, marginBottom: "6px", color: "#374151" }}>SELECT CANDIDATE</label>
                     <select
                       value={selectedCandidateKey}
                       onChange={(e) => setSelectedCandidateKey(e.target.value)}
@@ -2596,11 +2468,7 @@ export default function EducationVerification() {
                     </select>
                   </div>
                   <div>
-                    <label style={{  display: "block",
-                          fontSize: "14px",
-                          fontWeight: 600,
-                          marginBottom: "6px",
-                          color: "#475569", }}>CASE ID (CANDIDATE)</label>
+                    <label style={{ display: "block", fontSize: "11px", fontWeight: 700, marginBottom: "6px", color: "#374151" }}>CASE ID (CANDIDATE)</label>
                     <div style={{ width: "100%", padding: "9px 12px", borderRadius: "6px", border: "1px solid #cbd5e1", background: "#eef1fb", color: "#2b3b8c", fontWeight: 700, boxSizing: "border-box", fontSize: "12px" }}>
                       {!selectedCandidateKey ? "—" : casesLoading ? "Loading…" : candidateCaseId || "No education case found for this candidate"}
                     </div>
@@ -2615,11 +2483,7 @@ export default function EducationVerification() {
                     { label: "EMAIL ADDRESS *", key: "emailAddress", placeholder: "Enter Email Address" },
                   ].map((field, i) => (
                     <div key={i}>
-                      <label style={{  display: "block",
-                          fontSize: "14px",
-                          fontWeight: 600,
-                          marginBottom: "6px",
-                          color: "#475569", }}>{field.label}</label>
+                      <label style={{ display: "block", fontSize: "11px", fontWeight: 700, marginBottom: "6px", color: "#374151" }}>{field.label}</label>
                       <input
                         type="text"
                         placeholder={field.placeholder}
@@ -2750,11 +2614,7 @@ export default function EducationVerification() {
       {/* ROW 1: QUALIFICATION INPUTS (Qualification Type, Course, Specialization, Institute, Board) */}
       <div style={{ display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: "16px", marginBottom: "16px" }}>
         <div>
-          <label style={{  display: "block",
-                          fontSize: "14px",
-                          fontWeight: 600,
-                          marginBottom: "6px",
-                          color: "#475569", }}>Qualification Type *</label>
+          <label style={{ display: "block", fontSize: "11px", fontWeight: 700, marginBottom: "6px", color: "#374151" }}>Qualification Type *</label>
           <select
             value={q.qualificationType || ""}
             onChange={(e) => handleQualificationChange(q.id, "qualificationType", e.target.value)}
@@ -2769,11 +2629,7 @@ export default function EducationVerification() {
         </div>
 
         <div>
-          <label style={{  display: "block",
-                          fontSize: "14px",
-                          fontWeight: 600,
-                          marginBottom: "6px",
-                          color: "#475569", }}>Course / Stream *</label>
+          <label style={{ display: "block", fontSize: "11px", fontWeight: 700, marginBottom: "6px", color: "#374151" }}>Course / Stream *</label>
           <select
             value={q.courseStream || ""}
             onChange={(e) => handleQualificationChange(q.id, "courseStream", e.target.value)}
@@ -2788,11 +2644,7 @@ export default function EducationVerification() {
         </div>
 
         <div>
-          <label style={{  display: "block",
-                          fontSize: "14px",
-                          fontWeight: 600,
-                          marginBottom: "6px",
-                          color: "#475569", }}>Specialization (Optional)</label>
+          <label style={{ display: "block", fontSize: "11px", fontWeight: 700, marginBottom: "6px", color: "#374151" }}>Specialization (Optional)</label>
           <input
             type="text"
             placeholder="Enter Specialization"
@@ -2805,11 +2657,7 @@ export default function EducationVerification() {
         {/* Institute / University — sourced live from AddInstitution.jsx's
             data via GET /api/institutions?type=university */}
         <div>
-          <label style={{  display: "block",
-                          fontSize: "14px",
-                          fontWeight: 600,
-                          marginBottom: "6px",
-                          color: "#475569", }}>Institute / University *</label>
+          <label style={{ display: "block", fontSize: "11px", fontWeight: 700, marginBottom: "6px", color: "#374151" }}>Institute / University *</label>
           <select
   value={q.instituteUniversity || ""}
   onChange={(e) => handleInstituteSelect(q.id, e.target.value)}
@@ -2827,11 +2675,7 @@ export default function EducationVerification() {
         {/* Board / University — same institutions list; no separate "board"
             catalogue exists in the backend, so this shares the data source */}
         <div>
-          <label style={{  display: "block",
-                          fontSize: "14px",
-                          fontWeight: 600,
-                          marginBottom: "6px",
-                          color: "#475569", }}>Board / University *</label>
+          <label style={{ display: "block", fontSize: "11px", fontWeight: 700, marginBottom: "6px", color: "#374151" }}>Board / University *</label>
           <select
             value={q.boardUniversity || ""}
             onChange={(e) => handleQualificationChange(q.id, "boardUniversity", e.target.value)}
@@ -2854,11 +2698,7 @@ export default function EducationVerification() {
       {q.studyType === "National" && (
         <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "16px", marginBottom: "16px" }}>
           <div>
-            <label style={{  display: "block",
-                          fontSize: "14px",
-                          fontWeight: 600,
-                          marginBottom: "6px",
-                          color: "#475569", }}>Verification Fees By *</label>
+            <label style={{ display: "block", fontSize: "11px", fontWeight: 700, marginBottom: "6px", color: "#374151" }}>Verification Fees By *</label>
             <select
               value={q.verificationFeesBy || ""}
               onChange={(e) => handleQualificationChange(q.id, "verificationFeesBy", e.target.value)}
@@ -2875,11 +2715,7 @@ export default function EducationVerification() {
           {q.verificationFeesBy === "Year of Passing" && (
             <>
               <div>
-                <label style={{  display: "block",
-                          fontSize: "14px",
-                          fontWeight: 600,
-                          marginBottom: "6px",
-                          color: "#475569", }}>From YOP *</label>
+                <label style={{ display: "block", fontSize: "11px", fontWeight: 700, marginBottom: "6px", color: "#374151" }}>From YOP *</label>
                 <input
                   type="text"
                   placeholder="YYYY"
@@ -2890,11 +2726,7 @@ export default function EducationVerification() {
               </div>
 
               <div>
-                <label style={{  display: "block",
-                          fontSize: "14px",
-                          fontWeight: 600,
-                          marginBottom: "6px",
-                          color: "#475569", }}>To YOP *</label>
+                <label style={{ display: "block", fontSize: "11px", fontWeight: 700, marginBottom: "6px", color: "#374151" }}>To YOP *</label>
                 <input
                   type="text"
                   placeholder="YYYY"
@@ -2911,11 +2743,7 @@ export default function EducationVerification() {
       {/* ROW 3: BILLING & FEES */}
       <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "16px", marginBottom: "20px" }}>
         <div>
-          <label style={{  display: "block",
-                          fontSize: "14px",
-                          fontWeight: 600,
-                          marginBottom: "6px",
-                          color: "#475569", }}>
+          <label style={{ display: "block", fontSize: "11px", fontWeight: 700, marginBottom: "6px", color: "#374151" }}>
 Verification Fees (₹)</label>
           <input
             type="number"
@@ -2927,11 +2755,7 @@ Verification Fees (₹)</label>
         </div>
 
         <div>
-          <label style={{  display: "block",
-                          fontSize: "14px",
-                          fontWeight: 600,
-                          marginBottom: "6px",
-                          color: "#475569", }}>GST</label>
+          <label style={{ display: "block", fontSize: "11px", fontWeight: 700, marginBottom: "6px", color: "#374151" }}>GST</label>
           <input
             type="text"
             placeholder="Enter GST"
@@ -2942,11 +2766,7 @@ Verification Fees (₹)</label>
         </div>
 
         <div>
-          <label style={{  display: "block",
-                          fontSize: "14px",
-                          fontWeight: 600,
-                          marginBottom: "6px",
-                          color: "#475569", }}>Total Amount</label>
+          <label style={{ display: "block", fontSize: "11px", fontWeight: 700, marginBottom: "6px", color: "#374151" }}>Total Amount</label>
           <input
             type="number"
             placeholder="Total Amount"
