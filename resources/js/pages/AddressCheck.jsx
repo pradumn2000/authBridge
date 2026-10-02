@@ -876,110 +876,252 @@ export default function AddressCheck() {
   // avoids duplicating the same large JSX block twice with different state.
   const renderAddressSection = (title, icon, state, setState, showSameAsCurrent) => (
     <div style={{ border: "1px solid #e2e8f0", borderRadius: "8px", padding: "16px" }}>
-      <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "16px" }}>
-        <span style={{ color: "#2563eb", fontSize: "16px" }}>{icon}</span>
-        <h3 style={{ fontSize: "14px", fontWeight: "700", color: "#0f172a", margin: 0 }}>{title}</h3>
-      </div>
+  <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "16px" }}>
+    <span style={{ color: "#2563eb", fontSize: "16px" }}>{icon}</span>
+    <h3 style={{ fontSize: "14px", fontWeight: "700", color: "#0f172a", margin: 0 }}>{title}</h3>
+  </div>
 
-      <div style={{ marginBottom: showSameAsCurrent ? "12px" : "38px" }}>
-        <label style={{ display: "block", fontSize: "12px", fontWeight: "600", color: "#374151", marginBottom: "4px" }}>Address Proof Type *</label>
-        <select
-          value={state.addressProofType}
-          onChange={(e) => updateAddress(setState, "addressProofType", e.target.value)}
-          style={{ width: "100%", padding: "8px", border: "1px solid #cbd5e1", borderRadius: "6px", fontSize: "12px", color: state.addressProofType ? "#0f172a" : "#64748b" }}
-        >
-          <option value="">Select Address Proof Type</option>
-          <option value="Aadhaar Card">Aadhaar Card</option>
-          <option value="Passport">Passport</option>
-          <option value="Utility Bill">Utility Bill</option>
-          <option value="Rental Agreement">Rental Agreement</option>
-          <option value="Bank Statement">Bank Statement</option>
-        </select>
-      </div>
+  {/* Address Proof Type */}
+  <div style={{ marginBottom: showSameAsCurrent ? "12px" : "38px" }}>
+    <label style={{ display: "block", fontSize: "12px", fontWeight: "600", color: "#374151", marginBottom: "4px" }}>
+      Address Proof Type <span style={{ color: "#eb4d4b" }}>*</span>
+    </label>
+    <select
+      value={state.addressProofType || ""}
+      onChange={(e) => updateAddress(setState, "addressProofType", e.target.value)}
+      required
+      style={{
+        width: "100%",
+        padding: "8px",
+        border: !state.addressProofType ? "1.5px solid #eb4d4b" : "1px solid #cbd5e1",
+        borderRadius: "6px",
+        fontSize: "12px",
+        color: state.addressProofType ? "#0f172a" : "#64748b",
+        outline: "none",
+        transition: "border-color 0.18s",
+      }}
+    >
+      <option value="">Select Address Proof Type</option>
+      <option value="Aadhaar Card">Aadhaar Card</option>
+      <option value="Passport">Passport</option>
+      <option value="Utility Bill">Utility Bill</option>
+      <option value="Rental Agreement">Rental Agreement</option>
+      <option value="Bank Statement">Bank Statement</option>
+    </select>
+  </div>
 
-      {showSameAsCurrent && (
-        <div style={{ display: "flex", alignItems: "center", gap: "6px", marginBottom: "12px" }}>
-          <input
-            type="checkbox"
-            id="sameAsCurrent"
-            checked={state.sameAsCurrent}
-            onChange={(e) => updateAddress(setState, "sameAsCurrent", e.target.checked)}
-          />
-          <label htmlFor="sameAsCurrent" style={{ fontSize: "12px", color: "#475569" }}>Same as Current Address</label>
-        </div>
-      )}
-
-      <div style={{ marginBottom: "12px" }}>
-        <label style={{ display: "block", fontSize: "12px", fontWeight: "600", color: "#374151", marginBottom: "4px" }}>Address *</label>
-        <textarea
-          placeholder="Enter full address (Flat/House No., Street, Area, City, State, PIN)"
-          rows="3"
-          value={state.address}
-          onChange={(e) => updateAddress(setState, "address", e.target.value)}
-          maxLength={500}
-          style={{ width: "100%", padding: "8px", border: "1px solid #cbd5e1", borderRadius: "6px", fontSize: "12px", outline: "none", boxSizing: "border-box", resize: "none" }}
-        ></textarea>
-        <span style={{ fontSize: "10px", color: "#94a3b8", display: "block", textAlign: "right" }}>{state.address.length}/500</span>
-      </div>
-
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "10px", marginBottom: "12px" }}>
-        <div>
-          <label style={{ display: "block", fontSize: "11px", fontWeight: "600", color: "#374151", marginBottom: "4px" }}>Country *</label>
-          <select
-            value={state.country}
-            onChange={(e) => updateAddress(setState, "country", e.target.value)}
-            style={{ width: "100%", padding: "6px", border: "1px solid #cbd5e1", borderRadius: "4px", fontSize: "11px", color: state.country ? "#0f172a" : "#64748b" }}
-          >
-            <option value="">Select Country</option>
-            <option value="India">India</option>
-            <option value="USA">USA</option>
-            <option value="UK">UK</option>
-          </select>
-        </div>
-        <div>
-          <label style={{ display: "block", fontSize: "11px", fontWeight: "600", color: "#374151", marginBottom: "4px" }}>State *</label>
-          <input
-            type="text"
-            placeholder="Enter state"
-            value={state.state}
-            onChange={(e) => updateAddress(setState, "state", e.target.value)}
-            style={{ width: "100%", padding: "6px", border: "1px solid #cbd5e1", borderRadius: "4px", fontSize: "11px", boxSizing: "border-box" }}
-          />
-        </div>
-        <div>
-          <label style={{ display: "block", fontSize: "11px", fontWeight: "600", color: "#374151", marginBottom: "4px" }}>City *</label>
-          <input
-            type="text"
-            placeholder="Enter city"
-            value={state.city}
-            onChange={(e) => updateAddress(setState, "city", e.target.value)}
-            style={{ width: "100%", padding: "6px", border: "1px solid #cbd5e1", borderRadius: "4px", fontSize: "11px", boxSizing: "border-box" }}
-          />
-        </div>
-      </div>
-
-      <div style={{ marginBottom: "16px" }}>
-        <label style={{ display: "block", fontSize: "12px", fontWeight: "600", color: "#374151", marginBottom: "4px" }}>PIN Code *</label>
-        <input
-          type="text"
-          placeholder="Enter PIN code"
-          value={state.pinCode}
-          onChange={(e) => updateAddress(setState, "pinCode", e.target.value)}
-          style={{ width: "100%", padding: "8px", border: "1px solid #cbd5e1", borderRadius: "6px", fontSize: "12px", boxSizing: "border-box" }}
-        />
-      </div>
-
-      {/* Upload Container — not yet wired to a real upload; same gap as
-          the document boxes in Employment/Education */}
-      <div style={{ border: "1px dashed #cbd5e1", background: "#f8fafc", padding: "12px", borderRadius: "6px", textAlign: "center" }}>
-        <span style={{ fontSize: "11px", fontWeight: "600", color: "#374151", display: "block", marginBottom: "8px" }}>☁️ Upload Address Proof Document(s)</span>
-        <div style={{ display: "flex", justifyContent: "center", alignItems: "center", gap: "8px" }}>
-          <button style={{ border: "1px solid #cbd5e1", background: "#fff", padding: "4px 12px", borderRadius: "4px", fontSize: "11px", fontWeight: "600", color: "#2563eb", cursor: "pointer" }}>Choose File</button>
-          <span style={{ fontSize: "11px", color: "#94a3b8" }}>No file chosen</span>
-        </div>
-        <span style={{ fontSize: "9px", color: "#94a3b8", marginTop: "4px", display: "block" }}>Supported formats: PDF, JPG, PNG | Max size: 5 MB</span>
-      </div>
+  {showSameAsCurrent && (
+    <div style={{ display: "flex", alignItems: "center", gap: "6px", marginBottom: "12px" }}>
+      <input
+        type="checkbox"
+        id="sameAsCurrent"
+        checked={state.sameAsCurrent || false}
+        onChange={(e) => updateAddress(setState, "sameAsCurrent", e.target.checked)}
+      />
+      <label htmlFor="sameAsCurrent" style={{ fontSize: "12px", color: "#475569" }}>
+        Same as Current Address
+      </label>
     </div>
+  )}
+
+  {/* Full Address */}
+  <div style={{ marginBottom: "12px" }}>
+    <label style={{ display: "block", fontSize: "12px", fontWeight: "600", color: "#374151", marginBottom: "4px" }}>
+      Address <span style={{ color: "#eb4d4b" }}>*</span>
+    </label>
+    <textarea
+      placeholder="Enter full address (Flat/House No., Street, Area, City, State, PIN)"
+      rows="3"
+      value={state.address || ""}
+      onChange={(e) => updateAddress(setState, "address", e.target.value)}
+      maxLength={500}
+      required
+      style={{
+        width: "100%",
+        padding: "8px",
+        border: state.address && state.address.trim().length < 5 ? "1.5px solid #eb4d4b" : "1px solid #cbd5e1",
+        borderRadius: "6px",
+        fontSize: "12px",
+        outline: "none",
+        boxSizing: "border-box",
+        resize: "none",
+        transition: "border-color 0.18s",
+      }}
+    ></textarea>
+    <span style={{ fontSize: "10px", color: "#94a3b8", display: "block", textAlign: "right" }}>
+      {(state.address || "").length}/500
+    </span>
+  </div>
+
+  {/* Country, State, City Grid */}
+  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "10px", marginBottom: "12px" }}>
+    {/* Country */}
+    <div>
+      <label style={{ display: "block", fontSize: "11px", fontWeight: "600", color: "#374151", marginBottom: "4px" }}>
+        Country <span style={{ color: "#eb4d4b" }}>*</span>
+      </label>
+      <select
+        value={state.country || ""}
+        onChange={(e) => updateAddress(setState, "country", e.target.value)}
+        required
+        style={{
+          width: "100%",
+          padding: "6px",
+          border: !state.country ? "1.5px solid #eb4d4b" : "1px solid #cbd5e1",
+          borderRadius: "4px",
+          fontSize: "11px",
+          color: state.country ? "#0f172a" : "#64748b",
+          outline: "none",
+        }}
+      >
+        <option value="">Select Country</option>
+        <option value="India">India</option>
+        <option value="USA">USA</option>
+        <option value="UK">UK</option>
+      </select>
+    </div>
+
+    {/* State */}
+    <div>
+      <label style={{ display: "block", fontSize: "11px", fontWeight: "600", color: "#374151", marginBottom: "4px" }}>
+        State <span style={{ color: "#eb4d4b" }}>*</span>
+      </label>
+      <input
+        type="text"
+        placeholder="Enter state"
+        value={state.state || ""}
+        onChange={(e) => {
+          const val = e.target.value;
+          if (val === "" || /^[a-zA-Z\s]*$/.test(val)) {
+            updateAddress(setState, "state", val);
+          }
+        }}
+        required
+        style={{
+          width: "100%",
+          padding: "6px",
+          border: !state.state ? "1.5px solid #eb4d4b" : "1px solid #cbd5e1",
+          borderRadius: "4px",
+          fontSize: "11px",
+          boxSizing: "border-box",
+          outline: "none",
+        }}
+      />
+    </div>
+
+    {/* City */}
+    <div>
+      <label style={{ display: "block", fontSize: "11px", fontWeight: "600", color: "#374151", marginBottom: "4px" }}>
+        City <span style={{ color: "#eb4d4b" }}>*</span>
+      </label>
+      <input
+        type="text"
+        placeholder="Enter city"
+        value={state.city || ""}
+        onChange={(e) => {
+          const val = e.target.value;
+          if (val === "" || /^[a-zA-Z\s]*$/.test(val)) {
+            updateAddress(setState, "city", val);
+          }
+        }}
+        required
+        style={{
+          width: "100%",
+          padding: "6px",
+          border: !state.city ? "1.5px solid #eb4d4b" : "1px solid #cbd5e1",
+          borderRadius: "4px",
+          fontSize: "11px",
+          boxSizing: "border-box",
+          outline: "none",
+        }}
+      />
+    </div>
+  </div>
+
+  {/* PIN Code - 6-Digit Indian PIN Code Validation */}
+  <div style={{ marginBottom: "16px" }}>
+    <label style={{ display: "block", fontSize: "12px", fontWeight: "600", color: "#374151", marginBottom: "4px" }}>
+      PIN Code <span style={{ color: "#eb4d4b" }}>*</span>
+    </label>
+    <input
+      type="text"
+      maxLength={6}
+      inputMode="numeric"
+      placeholder="Enter 6-digit PIN code"
+      value={state.pinCode || ""}
+      onChange={(e) => {
+        const val = e.target.value.replace(/\D/g, "").slice(0, 6);
+        updateAddress(setState, "pinCode", val);
+      }}
+      required
+      style={{
+        width: "100%",
+        padding: "8px",
+        border: state.pinCode && !/^[1-9][0-9]{5}$/.test(state.pinCode)
+          ? "1.5px solid #eb4d4b"
+          : "1px solid #cbd5e1",
+        borderRadius: "6px",
+        fontSize: "12px",
+        boxSizing: "border-box",
+        outline: "none",
+        transition: "border-color 0.18s",
+      }}
+    />
+  </div>
+
+  {/* File Upload Box - Document Validations */}
+  <div style={{ border: "1px dashed #cbd5e1", background: "#f8fafc", padding: "12px", borderRadius: "6px", textAlign: "center" }}>
+    <span style={{ fontSize: "11px", fontWeight: "600", color: "#374151", display: "block", marginBottom: "8px" }}>
+      ☁️ Upload Address Proof Document(s)
+    </span>
+    <div style={{ display: "flex", justifyContent: "center", alignItems: "center", gap: "8px" }}>
+      <label
+        style={{
+          border: "1px solid #cbd5e1",
+          background: "#fff",
+          padding: "4px 12px",
+          borderRadius: "4px",
+          fontSize: "11px",
+          fontWeight: "600",
+          color: "#2563eb",
+          cursor: "pointer",
+          display: "inline-block",
+        }}
+      >
+        Choose File
+        <input
+          type="file"
+          accept=".pdf,.jpg,.jpeg,.png"
+          onChange={(e) => {
+            const file = e.target.files?.[0];
+            if (file) {
+              const validTypes = ["application/pdf", "image/jpeg", "image/png", "image/jpg"];
+              const maxSize = 5 * 1024 * 1024; // 5 MB Limit
+              if (!validTypes.includes(file.type)) {
+                alert("Only PDF, JPG, or PNG files are permitted.");
+                e.target.value = "";
+                return;
+              }
+              if (file.size > maxSize) {
+                alert("File size must not exceed 5 MB.");
+                e.target.value = "";
+                return;
+              }
+              updateAddress(setState, "document", file);
+            }
+          }}
+          style={{ display: "none" }}
+        />
+      </label>
+      <span style={{ fontSize: "11px", color: state.document ? "#1e293b" : "#94a3b8" }}>
+        {state.document ? state.document.name : "No file chosen"}
+      </span>
+    </div>
+    <span style={{ fontSize: "9px", color: "#94a3b8", marginTop: "4px", display: "block" }}>
+      Supported formats: PDF, JPG, PNG | Max size: 5 MB
+    </span>
+  </div>
+</div>
   );
 
   return (
