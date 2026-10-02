@@ -2288,10 +2288,10 @@ export default function EmploymentCheck() {
             <label
               style={{
                 display: "block",
-                fontSize: "12px",
-                fontWeight: 700,
-                marginBottom: "6px",
-                color: "#374151",
+      fontSize: "14px",
+      fontWeight: 600,
+      marginBottom: "6px",
+      color: "#475569",
               }}
             >
               DESIGNATION{" "}
@@ -2313,8 +2313,11 @@ export default function EmploymentCheck() {
               required
               style={{
                 width: "100%",
-                padding: "8px 12px",
-                borderRadius: "6px",
+      padding: "10px 13px",
+      borderRadius: "8px",
+      fontSize: "0.875rem",
+      color: "#1e293b",
+      background: "#f8fafc",
                 border:
                   emp.designation &&
                     !/^[a-zA-Z0-9\s.\-'_/(),&]+$/.test(
@@ -2330,10 +2333,10 @@ export default function EmploymentCheck() {
             <label
               style={{
                 display: "block",
-                fontSize: "12px",
-                fontWeight: 700,
-                marginBottom: "6px",
-                color: "#374151",
+      fontSize: "14px",
+      fontWeight: 600,
+      marginBottom: "6px",
+      color: "#475569",
               }}
             >
               EMPLOYEE ID
@@ -2353,8 +2356,11 @@ export default function EmploymentCheck() {
               }}
               style={{
                 width: "100%",
-                padding: "8px 12px",
-                borderRadius: "6px",
+      padding: "10px 13px",
+      borderRadius: "8px",
+      fontSize: "0.875rem",
+      color: "#1e293b",
+      background: "#f8fafc",
                 border:
                   emp.employeeId &&
                     !/^[a-zA-Z0-9\s.\-'_/()#]+$/.test(
@@ -2380,10 +2386,10 @@ export default function EmploymentCheck() {
             <label
               style={{
                 display: "block",
-                fontSize: "12px",
-                fontWeight: 700,
-                marginBottom: "6px",
-                color: "#374151",
+      fontSize: "14px",
+      fontWeight: 600,
+      marginBottom: "6px",
+      color: "#475569",
               }}
             >
               HR EMAIL ID{" "}
@@ -2399,8 +2405,11 @@ export default function EmploymentCheck() {
               required
               style={{
                 width: "100%",
-                padding: "8px 12px",
-                borderRadius: "6px",
+      padding: "10px 13px",
+      borderRadius: "8px",
+      fontSize: "0.875rem",
+      color: "#1e293b",
+      background: "#f8fafc",
                 border:
                   emp.hrEmail &&
                     !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(
@@ -2416,10 +2425,10 @@ export default function EmploymentCheck() {
             <label
               style={{
                 display: "block",
-                fontSize: "12px",
-                fontWeight: 700,
-                marginBottom: "6px",
-                color: "#374151",
+      fontSize: "14px",
+      fontWeight: 600,
+      marginBottom: "6px",
+      color: "#475569",
               }}
             >
               HR PHONE NUMBER{" "}
@@ -2436,10 +2445,10 @@ export default function EmploymentCheck() {
                   )
                 }
                 style={{
-                  padding: "8px",
-                  borderRadius: "6px",
+                  padding: "10px 13px",
+                  borderRadius: "8px",
                   border: "1px solid #cbd5e1",
-                  background: "#fff",
+                  background: "#f8fafc",
                 }}
               >
                 <option value="+91">+91 (IN)</option>
@@ -2487,8 +2496,8 @@ export default function EmploymentCheck() {
                 required
                 style={{
                   width: "100%",
-                  padding: "8px 12px",
-                  borderRadius: "6px",
+                  padding: "10px 13px",
+                  borderRadius: "8px",
                   border: (() => {
                     if (!emp.hrPhone)
                       return "1px solid #cbd5e1";
@@ -2535,10 +2544,10 @@ export default function EmploymentCheck() {
             <label
               style={{
                 display: "block",
-                fontSize: "12px",
-                fontWeight: 700,
-                marginBottom: "6px",
-                color: "#374151",
+      fontSize: "14px",
+      fontWeight: 600,
+      marginBottom: "6px",
+      color: "#475569",
               }}
             >
               DATE OF JOINING (DOJ){" "}
@@ -2553,9 +2562,12 @@ export default function EmploymentCheck() {
               }
               required
               style={{
-                width: "100%",
-                padding: "8px 12px",
-                borderRadius: "6px",
+               width: "100%",
+      padding: "10px 13px",
+      borderRadius: "8px",
+      fontSize: "0.875rem",
+      color: "#1e293b",
+      background: "#f8fafc",
                 border: (() => {
                   if (!emp.doj) return "1px solid #cbd5e1";
                   // If DOE exists, DOJ must be before or equal to DOE
@@ -2575,10 +2587,10 @@ export default function EmploymentCheck() {
             <label
               style={{
                 display: "block",
-                fontSize: "12px",
-                fontWeight: 700,
-                marginBottom: "6px",
-                color: "#374151",
+      fontSize: "14px",
+      fontWeight: 600,
+      marginBottom: "6px",
+      color: "#475569",
               }}
             >
               DATE OF EXIT (DOE){" "}
@@ -2594,8 +2606,11 @@ export default function EmploymentCheck() {
               required
               style={{
                 width: "100%",
-                padding: "8px 12px",
-                borderRadius: "6px",
+      padding: "10px 13px",
+      borderRadius: "8px",
+      fontSize: "0.875rem",
+      color: "#1e293b",
+      background: "#f8fafc",
                 border: (() => {
                   if (!emp.doe) return "1px solid #cbd5e1";
                   // DOE cannot be earlier than DOJ
