@@ -2559,129 +2559,297 @@ export default function DatabaseCheck() {
 )}
 
       {/* POPUP 2: Global Check Modal */}
-      {activeModal === 'global' && (
-        <div className="db-modal-overlay">
-          <div className="db-modal-card">
-            <div className="db-modal-header">
+      {/* POPUP 2: Global Check (LSEG) Verification Modal */}
+{activeModal === 'global' && (
+  <div className="db-modal-overlay">
+    <div className="db-modal-card">
+      <div className="db-modal-header">
+        <div>
+          <div style={{ fontSize: "12px", fontWeight: 600, color: "#334155" }}>Add Database Verification</div>
+          <h3 className="db-modal-title">Global Check (London Stock Exchange Group)</h3>
+          <p className="db-modal-subtitle">Verify candidate against global watchlists and risk databases of London Stock Exchange Group.</p>
+        </div>
+        <button className="db-modal-close" onClick={closeModal}>✕</button>
+      </div>
+
+      {/* Select Case Section */}
+      <div className="db-section-card">
+        <div className="db-section-title">Select Case</div>
+        <div className="db-form-grid-2">
+          <div className="db-form-group">
+            <label style={{ display: "block", marginBottom: "6px", fontSize: "12px", fontWeight: "600", color: "#374151" }}>
+              Select Candidate <span style={{ color: "#eb4d4b" }}>*</span>
+            </label>
+            <select 
+              value={selectedCandidateKey} 
+              onChange={(e) => setSelectedCandidateKey(e.target.value)}
+              style={{
+                width: "100%",
+                padding: "8px 12px",
+                border: !selectedCandidateKey ? "1.5px solid #eb4d4b" : "1px solid #cbd5e1",
+                borderRadius: "6px",
+                fontSize: "13px",
+                outline: "none"
+              }}
+            >
+              <option value="">{casesLoading ? "Loading…" : "— Select Candidate —"}</option>
+              {candidateOptions.map((c) => (
+                <option key={c.key} value={c.key}>{c.name}</option>
+              ))}
+            </select>
+          </div>
+          <div className="db-form-group">
+            <label style={{ display: "block", marginBottom: "6px", fontSize: "12px", fontWeight: "600", color: "#374151" }}>Case ID</label>
+            <input 
+              type="text" 
+              value={candidateCase?.case_id || ""} 
+              disabled 
+              style={{ 
+                width: "100%",
+                padding: "8px 12px",
+                border: "1px solid #cbd5e1",
+                borderRadius: "6px",
+                fontSize: "13px",
+                background: "#f1f5f9", 
+                cursor: "not-allowed", 
+                fontWeight: "600",
+                color: "#475569" 
+              }} 
+            />
+          </div>
+        </div>
+      </div>
+
+      {/* Candidate Information Section */}
+      <div className="db-section-card">
+        <div className="db-section-title">Candidate Information</div>
+        <div className="db-form-grid-2">
+          <div className="db-form-group">
+            <label style={{ display: "block", marginBottom: "6px", fontSize: "12px", fontWeight: "600", color: "#374151" }}>
+              Candidate Name <span style={{ color: "#eb4d4b" }}>*</span>
+            </label>
+            <input 
+              type="text" 
+              placeholder="Enter candidate name" 
+              value={globalForm.candidateName || ""} 
+              onChange={(e) => {
+                const val = e.target.value;
+                if (val === "" || /^[a-zA-Z\s]*$/.test(val)) {
+                  setGlobalForm({ ...globalForm, candidateName: val });
+                }
+              }} 
+              style={{
+                width: "100%",
+                padding: "8px 12px",
+                border: (!globalForm.candidateName || globalForm.candidateName.trim().length < 2) ? "1.5px solid #eb4d4b" : "1px solid #cbd5e1",
+                borderRadius: "6px",
+                fontSize: "13px",
+                outline: "none"
+              }}
+            />
+          </div>
+          <div className="db-form-group">
+            <label style={{ display: "block", marginBottom: "6px", fontSize: "12px", fontWeight: "600", color: "#374151" }}>
+              Mobile Number <span style={{ color: "#eb4d4b" }}>*</span>
+            </label>
+            <input 
+              type="text" 
+              maxLength={10}
+              placeholder="Enter 10-digit mobile number" 
+              value={globalForm.mobileNumber || ""} 
+              onChange={(e) => {
+                const val = e.target.value.replace(/\D/g, "").slice(0, 10);
+                setGlobalForm({ ...globalForm, mobileNumber: val });
+              }} 
+              style={{
+                width: "100%",
+                padding: "8px 12px",
+                border: (globalForm.mobileNumber && !/^[6-9]\d{9}$/.test(globalForm.mobileNumber)) || !globalForm.mobileNumber ? "1.5px solid #eb4d4b" : "1px solid #cbd5e1",
+                borderRadius: "6px",
+                fontSize: "13px",
+                outline: "none"
+              }}
+            />
+          </div>
+          <div className="db-form-group">
+            <label style={{ display: "block", marginBottom: "6px", fontSize: "12px", fontWeight: "600", color: "#374151" }}>Email ID</label>
+            <input 
+              type="email" 
+              placeholder="Enter email address" 
+              value={globalForm.email || ""} 
+              onChange={(e) => setGlobalForm({ ...globalForm, email: e.target.value })} 
+              style={{
+                width: "100%",
+                padding: "8px 12px",
+                border: (globalForm.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(globalForm.email)) ? "1.5px solid #eb4d4b" : "1px solid #cbd5e1",
+                borderRadius: "6px",
+                fontSize: "13px",
+                outline: "none"
+              }}
+            />
+          </div>
+          <div className="db-form-group">
+            <label style={{ display: "block", marginBottom: "6px", fontSize: "12px", fontWeight: "600", color: "#374151" }}>
+              Date of Birth <span style={{ color: "#eb4d4b" }}>*</span>
+            </label>
+            <input 
+              type="text" 
+              maxLength={11}
+              placeholder="DD-MMM-YYYY (e.g. 15-AUG-1995)" 
+              value={globalForm.dob || ""} 
+              onChange={(e) => setGlobalForm({ ...globalForm, dob: e.target.value.toUpperCase() })} 
+              style={{
+                width: "100%",
+                padding: "8px 12px",
+                border: !globalForm.dob ? "1.5px solid #eb4d4b" : "1px solid #cbd5e1",
+                borderRadius: "6px",
+                fontSize: "13px",
+                outline: "none"
+              }}
+            />
+          </div>
+          <div className="db-form-group">
+            <label style={{ display: "block", marginBottom: "6px", fontSize: "12px", fontWeight: "600", color: "#374151" }}>
+              Nationality <span style={{ color: "#eb4d4b" }}>*</span>
+            </label>
+            <select 
+              value={globalForm.nationality || ""} 
+              onChange={(e) => setGlobalForm({ ...globalForm, nationality: e.target.value })}
+              style={{
+                width: "100%",
+                padding: "8px 12px",
+                border: !globalForm.nationality ? "1.5px solid #eb4d4b" : "1px solid #cbd5e1",
+                borderRadius: "6px",
+                fontSize: "13px",
+                outline: "none"
+              }}
+            >
+              <option value="" disabled>Select nationality</option>
+              <option>Indian</option>
+              <option>American</option>
+              <option>British</option>
+              <option>Others</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      {/* Global Check Details Section */}
+      <div className="db-section-card">
+        <div className="db-section-title">Global Check Details</div>
+        <div className="db-form-grid-2" style={{ marginBottom: "12px" }}>
+          <div className="db-form-group">
+            <label style={{ display: "block", marginBottom: "6px", fontSize: "12px", fontWeight: "600", color: "#374151" }}>
+              Verification Through <span style={{ color: "#eb4d4b" }}>*</span>
+            </label>
+            <input 
+              type="text" 
+              defaultValue="London Stock Exchange Group" 
+              disabled 
+              style={{ 
+                width: "100%",
+                padding: "8px 12px",
+                border: "1px solid #cbd5e1",
+                borderRadius: "6px",
+                fontSize: "13px",
+                background: "#f1f5f9",
+                cursor: "not-allowed",
+                fontWeight: "600",
+                color: "#475569"
+              }} 
+            />
+          </div>
+          <div className="db-form-group">
+            <label style={{ display: "block", marginBottom: "6px", fontSize: "12px", fontWeight: "600", color: "#374151" }}>Database Source</label>
+            <div style={{ padding: "6px 12px", border: "1px solid #e2e8f0", borderRadius: "6px", background: "#fff", display: "flex", alignItems: "center", gap: "8px" }}>
+              <span style={{ fontSize: "16px" }}>🏛️</span>
               <div>
-                <div style={{ fontSize: "12px", fontWeight: 600, color: "#334155" }}>Add Database Verification</div>
-                <h3 className="db-modal-title">Global Check (London Stock Exchange Group)</h3>
-                <p className="db-modal-subtitle">Verify candidate against global watchlists and risk databases of London Stock Exchange Group.</p>
+                <div style={{ fontSize: "11px", fontWeight: 800 }}>LONDON</div>
+                <div style={{ fontSize: "8px", color: "#64748b" }}>Stock Exchange Group</div>
               </div>
-              <button className="db-modal-close" onClick={closeModal}>✕</button>
-            </div>
-
-            <div className="db-section-card">
-              <div className="db-section-title">Select Case</div>
-              <div className="db-form-grid-2">
-                <div className="db-form-group">
-                  <label>Select Candidate *</label>
-                  <select value={selectedCandidateKey} onChange={(e) => setSelectedCandidateKey(e.target.value)}>
-                    <option value="">{casesLoading ? "Loading…" : "— Select Candidate —"}</option>
-                    {candidateOptions.map((c) => (
-                      <option key={c.key} value={c.key}>{c.name}</option>
-                    ))}
-                  </select>
-                </div>
-                <div className="db-form-group">
-                  <label>Case ID</label>
-                  <input type="text" value={candidateCase?.case_id || ""} disabled style={{ background: "#f1f5f9" }} />
-                </div>
-              </div>
-            </div>
-
-            <div className="db-section-card">
-              <div className="db-section-title">Candidate Information</div>
-              <div className="db-form-grid-2">
-                <div className="db-form-group">
-                  <label>Candidate Name *</label>
-                  <input type="text" placeholder="Enter candidate name" value={globalForm.candidateName} onChange={(e) => setGlobalForm({ ...globalForm, candidateName: e.target.value })} />
-                </div>
-                <div className="db-form-group">
-                  <label>Mobile Number *</label>
-                  <input type="text" placeholder="Enter mobile number" value={globalForm.mobileNumber} onChange={(e) => setGlobalForm({ ...globalForm, mobileNumber: e.target.value })} />
-                </div>
-                <div className="db-form-group">
-                  <label>Email ID</label>
-                  <input type="email" placeholder="Enter email address" value={globalForm.email} onChange={(e) => setGlobalForm({ ...globalForm, email: e.target.value })} />
-                </div>
-                <div className="db-form-group">
-                  <label>Date of Birth *</label>
-                  <input type="text" placeholder="DD-MMM-YYYY" value={globalForm.dob} onChange={(e) => setGlobalForm({ ...globalForm, dob: e.target.value })} />
-                </div>
-                <div className="db-form-group">
-                  <label>Nationality *</label>
-                  <select value={globalForm.nationality} onChange={(e) => setGlobalForm({ ...globalForm, nationality: e.target.value })}>
-                    <option value="" disabled>Select nationality</option>
-                    <option>Indian</option>
-                    <option>American</option>
-                    <option>British</option>
-                    <option>Others</option>
-                  </select>
-                </div>
-              </div>
-            </div>
-
-            <div className="db-section-card">
-              <div className="db-section-title">Global Check Details</div>
-              <div className="db-form-grid-2" style={{ marginBottom: "12px" }}>
-                <div className="db-form-group">
-                  <label>Verification Through *</label>
-                  <input type="text" defaultValue="London Stock Exchange Group" disabled style={{ background: "#f1f5f9" }} />
-                </div>
-                <div className="db-form-group">
-                  <label>Database Source</label>
-                  <div style={{ padding: "6px 12px", border: "1px solid #e2e8f0", borderRadius: "6px", background: "#fff", display: "flex", alignItems: "center", gap: "8px" }}>
-                    <span style={{ fontSize: "16px" }}>🏛️</span>
-                    <div>
-                      <div style={{ fontSize: "11px", fontWeight: 800 }}>LONDON</div>
-                      <div style={{ fontSize: "8px", color: "#64748b" }}>Stock Exchange Group</div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div className="db-form-group">
-                <label>Verification Coverage *</label>
-                <div className="db-checkbox-grid">
-                  <label className="db-checkbox-box"><input type="checkbox" checked={globalForm.coverage.sanctionsPep} onChange={() => toggleCoverage("sanctionsPep")} /> Sanctions & PEP</label>
-                  <label className="db-checkbox-box"><input type="checkbox" checked={globalForm.coverage.adverseMedia} onChange={() => toggleCoverage("adverseMedia")} /> Adverse Media</label>
-                  <label className="db-checkbox-box"><input type="checkbox" checked={globalForm.coverage.globalWatchlist} onChange={() => toggleCoverage("globalWatchlist")} /> Global Watchlist</label>
-                  <label className="db-checkbox-box"><input type="checkbox" checked={globalForm.coverage.financialCrime} onChange={() => toggleCoverage("financialCrime")} /> Financial Crime</label>
-                  <label className="db-checkbox-box"><input type="checkbox" checked={globalForm.coverage.regulatoryActions} onChange={() => toggleCoverage("regulatoryActions")} /> Regulatory Actions</label>
-                  <label className="db-checkbox-box"><input type="checkbox" checked={globalForm.coverage.others} onChange={() => toggleCoverage("others")} /> Others</label>
-                </div>
-              </div>
-
-              <div className="db-form-group" style={{ marginTop: "12px" }}>
-                <label>Purpose of Verification</label>
-                <select value={globalForm.purposeOfVerification} onChange={(e) => setGlobalForm({ ...globalForm, purposeOfVerification: e.target.value })}>
-                  <option value="" disabled>Select purpose</option>
-                  <option>Employment Background Check</option>
-                  <option>Compliance & Regulatory</option>
-                  <option>Risk Assessment</option>
-                </select>
-              </div>
-            </div>
-
-            <div className="db-section-card">
-              <div className="db-section-title">Additional Details (If any)</div>
-              <div className="db-form-group">
-                <label>Remarks</label>
-                <textarea rows="2" placeholder="Enter remarks (optional)" value={globalForm.remarks} onChange={(e) => setGlobalForm({ ...globalForm, remarks: e.target.value })} maxLength={500}></textarea>
-                <span style={{ fontSize: "10px", color: "#94a3b8", textAlign: "right" }}>{globalForm.remarks.length} / 500</span>
-              </div>
-            </div>
-
-            <div className="db-modal-footer">
-              <button className="db-btn-cancel" onClick={closeModal}>Cancel</button>
-              <button className="db-btn-submit" disabled={saving} onClick={() => handleSaveVerification("global")}>
-                {saving ? "Saving…" : "Save & Send for Verification"}
-              </button>
             </div>
           </div>
         </div>
-      )}
+
+        <div className="db-form-group">
+          <label style={{ display: "block", marginBottom: "6px", fontSize: "12px", fontWeight: "600", color: "#374151" }}>
+            Verification Coverage <span style={{ color: "#eb4d4b" }}>*</span>
+          </label>
+          <div className="db-checkbox-grid" style={{
+            padding: "8px",
+            border: !Object.values(globalForm.coverage || {}).some(Boolean) ? "1.5px solid #eb4d4b" : "1px solid transparent",
+            borderRadius: "6px"
+          }}>
+            <label className="db-checkbox-box"><input type="checkbox" checked={globalForm.coverage?.sanctionsPep || false} onChange={() => toggleCoverage("sanctionsPep")} /> Sanctions & PEP</label>
+            <label className="db-checkbox-box"><input type="checkbox" checked={globalForm.coverage?.adverseMedia || false} onChange={() => toggleCoverage("adverseMedia")} /> Adverse Media</label>
+            <label className="db-checkbox-box"><input type="checkbox" checked={globalForm.coverage?.globalWatchlist || false} onChange={() => toggleCoverage("globalWatchlist")} /> Global Watchlist</label>
+            <label className="db-checkbox-box"><input type="checkbox" checked={globalForm.coverage?.financialCrime || false} onChange={() => toggleCoverage("financialCrime")} /> Financial Crime</label>
+            <label className="db-checkbox-box"><input type="checkbox" checked={globalForm.coverage?.regulatoryActions || false} onChange={() => toggleCoverage("regulatoryActions")} /> Regulatory Actions</label>
+            <label className="db-checkbox-box"><input type="checkbox" checked={globalForm.coverage?.others || false} onChange={() => toggleCoverage("others")} /> Others</label>
+          </div>
+        </div>
+
+        <div className="db-form-group" style={{ marginTop: "12px" }}>
+          <label style={{ display: "block", marginBottom: "6px", fontSize: "12px", fontWeight: "600", color: "#374151" }}>
+            Purpose of Verification <span style={{ color: "#eb4d4b" }}>*</span>
+          </label>
+          <select 
+            value={globalForm.purposeOfVerification || ""} 
+            onChange={(e) => setGlobalForm({ ...globalForm, purposeOfVerification: e.target.value })}
+            style={{
+              width: "100%",
+              padding: "8px 12px",
+              border: !globalForm.purposeOfVerification ? "1.5px solid #eb4d4b" : "1px solid #cbd5e1",
+              borderRadius: "6px",
+              fontSize: "13px",
+              outline: "none"
+            }}
+          >
+            <option value="" disabled>Select purpose</option>
+            <option>Employment Background Check</option>
+            <option>Compliance & Regulatory</option>
+            <option>Risk Assessment</option>
+          </select>
+        </div>
+      </div>
+
+      {/* Additional Details Section */}
+      <div className="db-section-card">
+        <div className="db-section-title">Additional Details (If any)</div>
+        <div className="db-form-group">
+          <label style={{ display: "block", marginBottom: "6px", fontSize: "12px", fontWeight: "600", color: "#374151" }}>Remarks</label>
+          <textarea 
+            rows="2" 
+            placeholder="Enter remarks (optional)" 
+            value={globalForm.remarks || ""} 
+            onChange={(e) => setGlobalForm({ ...globalForm, remarks: e.target.value })} 
+            maxLength={500}
+            style={{
+              width: "100%",
+              padding: "8px 12px",
+              border: "1px solid #cbd5e1",
+              borderRadius: "6px",
+              fontSize: "13px",
+              outline: "none",
+              resize: "none",
+              boxSizing: "border-box"
+            }}
+          ></textarea>
+          <span style={{ fontSize: "10px", color: "#94a3b8", display: "block", textAlign: "right" }}>
+            {(globalForm.remarks || "").length} / 500
+          </span>
+        </div>
+      </div>
+
+      <div className="db-modal-footer">
+        <button className="db-btn-cancel" onClick={closeModal}>Cancel</button>
+        <button className="db-btn-submit" disabled={saving} onClick={() => handleSaveVerification("global")}>
+          {saving ? "Saving…" : "Save & Send for Verification"}
+        </button>
+      </div>
+    </div>
+  </div>
+)}
     </>
   );
 }
