@@ -4008,7 +4008,7 @@ export default function EmploymentCheck() {
                 {/* Candidate Details Card */}
                 <div
                   style={{
-                    background: "#f8fafc",
+                    background: "#fff",
                     padding: "18px",
                     borderRadius: "8px",
                     border: "1.5px solid #e2e8f0",
