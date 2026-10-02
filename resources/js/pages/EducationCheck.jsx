@@ -2596,7 +2596,8 @@ export default function EducationVerification() {
                           outline: "none",
                           transition:
                             "border-color 0.18s",
-                          boxSizing: "border-box", }}
+                          boxSizing: "border-box",
+                          border: "1.5px solid #e2e8f0", }}
                     >
                       <option value="">
                         {clientsLoading ? "Loading clients…" : clientsError ? "Failed to load clients" : clients.length === 0 ? "No clients found" : "— Select Client —"}
@@ -2635,7 +2636,8 @@ export default function EducationVerification() {
                           outline: "none",
                           transition:
                             "border-color 0.18s",
-                          boxSizing: "border-box", }}
+                          boxSizing: "border-box",
+                          border: "1.5px solid #e2e8f0", }}
                     >
                       <option value="">
                         {casesLoading ? "Loading candidates…" : casesError ? "Failed to load candidates" : candidateOptions.length === 0 ? "No candidates found" : "— Select Candidate —"}
@@ -2657,29 +2659,102 @@ export default function EducationVerification() {
                   </div>
                 </div>
 
-                <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "12px" }}>
-                  {[
-                    { label: "CANDIDATE NAME *", key: "candidateName", placeholder: "Enter Candidate Name" },
-                    { label: "CANDIDATE ID *", key: "candidateId", placeholder: "Enter Candidate ID" },
-                    { label: "MOBILE NUMBER *", key: "mobileNumber", placeholder: "Enter Mobile Number" },
-                    { label: "EMAIL ADDRESS *", key: "emailAddress", placeholder: "Enter Email Address" },
-                  ].map((field, i) => (
-                    <div key={i}>
-                      <label style={{  display: "block",
-                          fontSize: "14px",
-                          fontWeight: 600,
-                          marginBottom: "6px",
-                          color: "#475569", }}>{field.label}</label>
-                      <input
-                        type="text"
-                        placeholder={field.placeholder}
-                        value={candidateInfo[field.key]}
-                        onChange={(e) => handleCandidateChange(field.key, e.target.value)}
-                        style={{ width: "100%", padding: "8px 10px", borderRadius: "6px", border: "1px solid #cbd5e1", outline: "none", fontSize: "12px" }}
-                      />
-                    </div>
-                  ))}
-                </div>
+                <div
+  style={{
+    display: "grid",
+    gridTemplateColumns: "repeat(4, 1fr)",
+    gap: "16px",
+    marginBottom: "16px",
+  }}
+>
+  {[
+    {
+      label: "Candidate Name",
+      key: "candidateName",
+      placeholder: "Enter candidate name",
+      type: "text",
+      required: true,
+      validateInput: (val) => val === "" || /^[a-zA-Z\s.'-]*$/.test(val),
+      isInvalid: (val) => val && !/^[a-zA-Z\s.'-]+$/.test(val),
+    },
+    {
+      label: "Candidate ID",
+      key: "candidateId",
+      placeholder: "Enter candidate ID",
+      type: "text",
+      required: true,
+      validateInput: (val) => val === "" || /^[a-zA-Z0-9\s.\-'_/()#]*$/.test(val),
+      isInvalid: (val) => val && !/^[a-zA-Z0-9\s.\-'_/()#]+$/.test(val),
+    },
+    {
+      label: "Mobile Number",
+      key: "mobileNumber",
+      placeholder: "10-digit mobile number",
+      type: "text",
+      required: true,
+      validateInput: (val) => {
+        const digitsOnly = val.replace(/\D/g, "");
+        return digitsOnly.slice(0, 10);
+      },
+      isInvalid: (val) => val && !/^[6-9]\d{9}$/.test(val),
+    },
+    {
+      label: "Email Address",
+      key: "emailAddress",
+      placeholder: "Enter email address",
+      type: "email",
+      required: true,
+      validateInput: (val) => val,
+      isInvalid: (val) => val && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val),
+    },
+  ].map((field, i) => (
+    <div key={i}>
+      <label
+        style={{
+          display: "block",
+          fontSize: "14px",
+          fontWeight: 600,
+          marginBottom: "6px",
+          color: "#475569",
+        }}
+      >
+        {field.label}{" "}
+        {field.required && <span style={{ color: "#eb4d4b" }}>*</span>}
+      </label>
+      <input
+        type={field.type}
+        placeholder={field.placeholder}
+        value={candidateInfo[field.key] || ""}
+        onChange={(e) => {
+          const val = e.target.value;
+          if (field.key === "mobileNumber") {
+            const formatted = field.validateInput(val);
+            handleCandidateChange(field.key, formatted);
+          } else {
+            if (field.validateInput(val) !== false) {
+              handleCandidateChange(field.key, val);
+            }
+          }
+        }}
+        required={field.required}
+        style={{
+          width: "100%",
+          padding: "10px 13px",
+          borderRadius: "8px",
+          fontSize: "0.875rem",
+          color: "#1e293b",
+          background: "#f8fafc",
+          border: field.isInvalid(candidateInfo[field.key])
+            ? "1.5px solid #eb4d4b"
+            : "1.5px solid #e2e8f0",
+          outline: "none",
+          boxSizing: "border-box",
+          transition: "border-color 0.18s",
+        }}
+      />
+    </div>
+  ))}
+</div>
               </div>
 
               {universitiesError && (
