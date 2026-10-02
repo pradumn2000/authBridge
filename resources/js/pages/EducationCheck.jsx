@@ -555,7 +555,17 @@
 // //             placeholder="Enter Specialization"
 // //             value={q.specialization || ""}
 // //             onChange={(e) => handleQualificationChange(q.id, "specialization", e.target.value)}
-// //             style={{ width: "100%", padding: "8px 12px", borderRadius: "6px", border: "1px solid #cbd5e1", fontSize: "12px", outline: "none" }}
+// //             style={{ width: "100%",
+                          // padding: "10px 13px",
+                          // borderRadius: "8px",
+                          // fontSize: "0.875rem",
+                          // color: "#1e293b",
+                          // background: "#f8fafc",
+                          // outline: "none",
+                          // transition:
+                          //   "border-color 0.18s",
+                          // boxSizing: "border-box",
+                          // border: "1.5px solid #e2e8f0", }}
 // //           />
 // //         </div>
 
@@ -615,7 +625,17 @@
 // //                   placeholder="YYYY"
 // //                   value={q.fromYOP || ""}
 // //                   onChange={(e) => handleQualificationChange(q.id, "fromYOP", e.target.value)}
-// //                   style={{ width: "100%", padding: "8px 12px", borderRadius: "6px", border: "1px solid #cbd5e1", fontSize: "12px", outline: "none" }}
+// //                   style={{ width: "100%",
+                          // padding: "10px 13px",
+                          // borderRadius: "8px",
+                          // fontSize: "0.875rem",
+                          // color: "#1e293b",
+                          // background: "#f8fafc",
+                          // outline: "none",
+                          // transition:
+                          //   "border-color 0.18s",
+                          // boxSizing: "border-box",
+                          // border: "1.5px solid #e2e8f0", }}
 // //                 />
 // //               </div>
 
@@ -626,7 +646,17 @@
 // //                   placeholder="YYYY"
 // //                   value={q.toYOP || ""}
 // //                   onChange={(e) => handleQualificationChange(q.id, "toYOP", e.target.value)}
-// //                   style={{ width: "100%", padding: "8px 12px", borderRadius: "6px", border: "1px solid #cbd5e1", fontSize: "12px", outline: "none" }}
+// //                   style={{ width: "100%",
+                          // padding: "10px 13px",
+                          // borderRadius: "8px",
+                          // fontSize: "0.875rem",
+                          // color: "#1e293b",
+                          // background: "#f8fafc",
+                          // outline: "none",
+                          // transition:
+                          //   "border-color 0.18s",
+                          // boxSizing: "border-box",
+                          // border: "1.5px solid #e2e8f0", }}
 // //                 />
 // //               </div>
 // //             </>
@@ -644,7 +674,17 @@
 // //             placeholder="Enter Verification Fees"
 // //             value={q.universityFees || ""}
 // //             onChange={(e) => handleQualificationChange(q.id, "universityFees", e.target.value)}
-// //             style={{ width: "100%", padding: "8px 12px", borderRadius: "6px", border: "1px solid #cbd5e1", fontSize: "12px", outline: "none" }}
+// //             style={{ width: "100%",
+                          // padding: "10px 13px",
+                          // borderRadius: "8px",
+                          // fontSize: "0.875rem",
+                          // color: "#1e293b",
+                          // background: "#f8fafc",
+                          // outline: "none",
+                          // transition:
+                          //   "border-color 0.18s",
+                          // boxSizing: "border-box",
+                          // border: "1.5px solid #e2e8f0", }}
 // //           />
 // //         </div>
 
@@ -655,7 +695,17 @@
 // //             placeholder="Enter Service Charge"
 // //             value={q.serviceCharge || ""}
 // //             onChange={(e) => handleQualificationChange(q.id, "serviceCharge", e.target.value)}
-// //             style={{ width: "100%", padding: "8px 12px", borderRadius: "6px", border: "1px solid #cbd5e1", fontSize: "12px", outline: "none" }}
+// //             style={{ width: "100%",
+                          // padding: "10px 13px",
+                          // borderRadius: "8px",
+                          // fontSize: "0.875rem",
+                          // color: "#1e293b",
+                          // background: "#f8fafc",
+                          // outline: "none",
+                          // transition:
+                          //   "border-color 0.18s",
+                          // boxSizing: "border-box",
+                          // border: "1.5px solid #e2e8f0", }}
 // //           />
 // //         </div> */}
 
@@ -666,7 +716,17 @@
 // //             placeholder="Enter GST"
 // //             value={q.gst || ""}
 // //             onChange={(e) => handleQualificationChange(q.id, "gst", e.target.value)}
-// //             style={{ width: "100%", padding: "8px 12px", borderRadius: "6px", border: "1px solid #cbd5e1", fontSize: "12px", outline: "none" }}
+// //             style={{ width: "100%",
+                          // padding: "10px 13px",
+                          // borderRadius: "8px",
+                          // fontSize: "0.875rem",
+                          // color: "#1e293b",
+                          // background: "#f8fafc",
+                          // outline: "none",
+                          // transition:
+                          //   "border-color 0.18s",
+                          // boxSizing: "border-box",
+                          // border: "1.5px solid #e2e8f0", }}
 // //           />
 // //         </div>
 
@@ -677,7 +737,17 @@
 // //             placeholder="Total Amount"
 // //             value={q.totalAmount || ""}
 // //             onChange={(e) => handleQualificationChange(q.id, "totalAmount", e.target.value)}
-// //             style={{ width: "100%", padding: "8px 12px", borderRadius: "6px", border: "1px solid #cbd5e1", fontSize: "12px", outline: "none" }}
+// //             style={{ width: "100%",
+                          // padding: "10px 13px",
+                          // borderRadius: "8px",
+                          // fontSize: "0.875rem",
+                          // color: "#1e293b",
+                          // background: "#f8fafc",
+                          // outline: "none",
+                          // transition:
+                          //   "border-color 0.18s",
+                          // boxSizing: "border-box",
+                          // border: "1.5px solid #e2e8f0", }}
 // //           />
 // //         </div>
 // //       </div>
@@ -1595,7 +1665,17 @@
 //             placeholder="Enter Specialization"
 //             value={q.specialization || ""}
 //             onChange={(e) => handleQualificationChange(q.id, "specialization", e.target.value)}
-//             style={{ width: "100%", padding: "8px 12px", borderRadius: "6px", border: "1px solid #cbd5e1", fontSize: "12px", outline: "none" }}
+//             style={{ width: "100%",
+                          // padding: "10px 13px",
+                          // borderRadius: "8px",
+                          // fontSize: "0.875rem",
+                          // color: "#1e293b",
+                          // background: "#f8fafc",
+                          // outline: "none",
+                          // transition:
+                          //   "border-color 0.18s",
+                          // boxSizing: "border-box",
+                          // border: "1.5px solid #e2e8f0", }}
 //           />
 //         </div>
 
@@ -1666,7 +1746,17 @@
 //                   placeholder="YYYY"
 //                   value={q.fromYOP || ""}
 //                   onChange={(e) => handleQualificationChange(q.id, "fromYOP", e.target.value)}
-//                   style={{ width: "100%", padding: "8px 12px", borderRadius: "6px", border: "1px solid #cbd5e1", fontSize: "12px", outline: "none" }}
+//                   style={{ width: "100%",
+                          // padding: "10px 13px",
+                          // borderRadius: "8px",
+                          // fontSize: "0.875rem",
+                          // color: "#1e293b",
+                          // background: "#f8fafc",
+                          // outline: "none",
+                          // transition:
+                          //   "border-color 0.18s",
+                          // boxSizing: "border-box",
+                          // border: "1.5px solid #e2e8f0", }}
 //                 />
 //               </div>
 
@@ -1677,7 +1767,17 @@
 //                   placeholder="YYYY"
 //                   value={q.toYOP || ""}
 //                   onChange={(e) => handleQualificationChange(q.id, "toYOP", e.target.value)}
-//                   style={{ width: "100%", padding: "8px 12px", borderRadius: "6px", border: "1px solid #cbd5e1", fontSize: "12px", outline: "none" }}
+//                   style={{ width: "100%",
+                          // padding: "10px 13px",
+                          // borderRadius: "8px",
+                          // fontSize: "0.875rem",
+                          // color: "#1e293b",
+                          // background: "#f8fafc",
+                          // outline: "none",
+                          // transition:
+                          //   "border-color 0.18s",
+                          // boxSizing: "border-box",
+                          // border: "1.5px solid #e2e8f0", }}
 //                 />
 //               </div>
 //             </>
@@ -1695,7 +1795,17 @@
 //             placeholder="Enter Verification Fees"
 //             value={q.universityFees || ""}
 //             onChange={(e) => handleQualificationChange(q.id, "universityFees", e.target.value)}
-//             style={{ width: "100%", padding: "8px 12px", borderRadius: "6px", border: "1px solid #cbd5e1", fontSize: "12px", outline: "none" }}
+//             style={{ width: "100%",
+                          // padding: "10px 13px",
+                          // borderRadius: "8px",
+                          // fontSize: "0.875rem",
+                          // color: "#1e293b",
+                          // background: "#f8fafc",
+                          // outline: "none",
+                          // transition:
+                          //   "border-color 0.18s",
+                          // boxSizing: "border-box",
+                          // border: "1.5px solid #e2e8f0", }}
 //           />
 //         </div>
 
@@ -1706,7 +1816,17 @@
 //             placeholder="Enter GST"
 //             value={q.gst || ""}
 //             onChange={(e) => handleQualificationChange(q.id, "gst", e.target.value)}
-//             style={{ width: "100%", padding: "8px 12px", borderRadius: "6px", border: "1px solid #cbd5e1", fontSize: "12px", outline: "none" }}
+//             style={{ width: "100%",
+                          // padding: "10px 13px",
+                          // borderRadius: "8px",
+                          // fontSize: "0.875rem",
+                          // color: "#1e293b",
+                          // background: "#f8fafc",
+                          // outline: "none",
+                          // transition:
+                          //   "border-color 0.18s",
+                          // boxSizing: "border-box",
+                          // border: "1.5px solid #e2e8f0", }}
 //           />
 //         </div>
 
@@ -1717,7 +1837,17 @@
 //             placeholder="Total Amount"
 //             value={q.totalAmount || ""}
 //             onChange={(e) => handleQualificationChange(q.id, "totalAmount", e.target.value)}
-//             style={{ width: "100%", padding: "8px 12px", borderRadius: "6px", border: "1px solid #cbd5e1", fontSize: "12px", outline: "none" }}
+//             style={{ width: "100%",
+                          // padding: "10px 13px",
+                          // borderRadius: "8px",
+                          // fontSize: "0.875rem",
+                          // color: "#1e293b",
+                          // background: "#f8fafc",
+                          // outline: "none",
+                          // transition:
+                          //   "border-color 0.18s",
+                          // boxSizing: "border-box",
+                          // border: "1.5px solid #e2e8f0", }}
 //           />
 //         </div>
 //       </div>
@@ -2682,7 +2812,17 @@ export default function EducationVerification() {
             placeholder="Enter Specialization"
             value={q.specialization || ""}
             onChange={(e) => handleQualificationChange(q.id, "specialization", e.target.value)}
-            style={{ width: "100%", padding: "8px 12px", borderRadius: "6px", border: "1px solid #cbd5e1", fontSize: "12px", outline: "none" }}
+            style={{ width: "100%",
+                          padding: "10px 13px",
+                          borderRadius: "8px",
+                          fontSize: "0.875rem",
+                          color: "#1e293b",
+                          background: "#f8fafc",
+                          outline: "none",
+                          transition:
+                            "border-color 0.18s",
+                          boxSizing: "border-box",
+                          border: "1.5px solid #e2e8f0", }}
           />
         </div>
 
@@ -2769,7 +2909,17 @@ export default function EducationVerification() {
                   placeholder="YYYY"
                   value={q.fromYOP || ""}
                   onChange={(e) => handleQualificationChange(q.id, "fromYOP", e.target.value)}
-                  style={{ width: "100%", padding: "8px 12px", borderRadius: "6px", border: "1px solid #cbd5e1", fontSize: "12px", outline: "none" }}
+                  style={{ width: "100%",
+                          padding: "10px 13px",
+                          borderRadius: "8px",
+                          fontSize: "0.875rem",
+                          color: "#1e293b",
+                          background: "#f8fafc",
+                          outline: "none",
+                          transition:
+                            "border-color 0.18s",
+                          boxSizing: "border-box",
+                          border: "1.5px solid #e2e8f0", }}
                 />
               </div>
 
@@ -2784,7 +2934,17 @@ export default function EducationVerification() {
                   placeholder="YYYY"
                   value={q.toYOP || ""}
                   onChange={(e) => handleQualificationChange(q.id, "toYOP", e.target.value)}
-                  style={{ width: "100%", padding: "8px 12px", borderRadius: "6px", border: "1px solid #cbd5e1", fontSize: "12px", outline: "none" }}
+                  style={{ width: "100%",
+                          padding: "10px 13px",
+                          borderRadius: "8px",
+                          fontSize: "0.875rem",
+                          color: "#1e293b",
+                          background: "#f8fafc",
+                          outline: "none",
+                          transition:
+                            "border-color 0.18s",
+                          boxSizing: "border-box",
+                          border: "1.5px solid #e2e8f0", }}
                 />
               </div>
             </>
@@ -2806,7 +2966,17 @@ Verification Fees (₹)</label>
             placeholder="Enter Verification Fees"
             value={q.universityFees || ""}
             onChange={(e) => handleQualificationChange(q.id, "universityFees", e.target.value)}
-            style={{ width: "100%", padding: "8px 12px", borderRadius: "6px", border: "1px solid #cbd5e1", fontSize: "12px", outline: "none" }}
+            style={{ width: "100%",
+                          padding: "10px 13px",
+                          borderRadius: "8px",
+                          fontSize: "0.875rem",
+                          color: "#1e293b",
+                          background: "#f8fafc",
+                          outline: "none",
+                          transition:
+                            "border-color 0.18s",
+                          boxSizing: "border-box",
+                          border: "1.5px solid #e2e8f0", }}
           />
         </div>
 
@@ -2821,7 +2991,17 @@ Verification Fees (₹)</label>
             placeholder="Enter GST"
             value={q.gst || ""}
             onChange={(e) => handleQualificationChange(q.id, "gst", e.target.value)}
-            style={{ width: "100%", padding: "8px 12px", borderRadius: "6px", border: "1px solid #cbd5e1", fontSize: "12px", outline: "none" }}
+            style={{ width: "100%",
+                          padding: "10px 13px",
+                          borderRadius: "8px",
+                          fontSize: "0.875rem",
+                          color: "#1e293b",
+                          background: "#f8fafc",
+                          outline: "none",
+                          transition:
+                            "border-color 0.18s",
+                          boxSizing: "border-box",
+                          border: "1.5px solid #e2e8f0", }}
           />
         </div>
 
@@ -2836,7 +3016,17 @@ Verification Fees (₹)</label>
             placeholder="Total Amount"
             value={q.totalAmount || ""}
             onChange={(e) => handleQualificationChange(q.id, "totalAmount", e.target.value)}
-            style={{ width: "100%", padding: "8px 12px", borderRadius: "6px", border: "1px solid #cbd5e1", fontSize: "12px", outline: "none" }}
+            style={{ width: "100%",
+                          padding: "10px 13px",
+                          borderRadius: "8px",
+                          fontSize: "0.875rem",
+                          color: "#1e293b",
+                          background: "#f8fafc",
+                          outline: "none",
+                          transition:
+                            "border-color 0.18s",
+                          boxSizing: "border-box",
+                          border: "1.5px solid #e2e8f0", }}
           />
         </div>
       </div>
