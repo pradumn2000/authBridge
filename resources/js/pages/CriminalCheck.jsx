@@ -2314,105 +2314,305 @@ export default function CriminalCheck() {
               </div>
 
               {/* Section 1: Candidate Details */}
-              <div className="pvc-form-section">
-                <h3 className="pvc-section-title">Candidate Details</h3>
-                <div className="pvc-grid-4">
-                  <div className="pvc-form-group">
-                    <label className="pvc-form-label">Candidate Name *</label>
-                    <input type="text" name="candidateName" value={formData.candidateName} onChange={handleInputChange} placeholder="Enter candidate name" className="pvc-form-input" disabled={!selectedCase} />
-                  </div>
-                  <div className="pvc-form-group">
-                    <label className="pvc-form-label">Candidate ID / Reference No. *</label>
-                    <input type="text" name="candidateId" value={formData.candidateId} onChange={handleInputChange} placeholder="Enter candidate ID" className="pvc-form-input" disabled={!selectedCase} />
-                  </div>
-                  <div className="pvc-form-group">
-                    <label className="pvc-form-label">Client Name</label>
-                    <input type="text" value={selectedCase?.client || ""} disabled className="pvc-form-input" />
-                  </div>
-                  <div className="pvc-form-group">
-                    <label className="pvc-form-label">Job Role</label>
-                    <input type="text" name="jobRole" value={formData.jobRole} onChange={handleInputChange} placeholder="Enter job role" className="pvc-form-input" disabled={!selectedCase} />
-                  </div>
-                </div>
-              </div>
+<div className="pvc-form-section">
+  <h3 className="pvc-section-title">Candidate Details</h3>
+  <div className="pvc-grid-4">
+    <div className="pvc-form-group">
+      <label className="pvc-form-label">Candidate Name *</label>
+      <input
+        type="text"
+        name="candidateName"
+        value={formData.candidateName || ""}
+        onChange={(e) => {
+          const val = e.target.value;
+          if (val === "" || /^[a-zA-Z\s]*$/.test(val)) {
+            handleInputChange(e);
+          }
+        }}
+        placeholder="Enter candidate name"
+        className="pvc-form-input"
+        disabled={!selectedCase}
+        style={{
+          width: "100%",
+          padding: "8px 12px",
+          border: (formData.candidateName !== undefined && formData.candidateName.trim().length < 2 && formData.candidateName.length > 0) ? "1.5px solid #eb4d4b" : "1px solid #cbd5e1",
+          borderRadius: "6px",
+          fontSize: "13px",
+          outline: "none"
+        }}
+      />
+    </div>
+    <div className="pvc-form-group">
+      <label className="pvc-form-label">Candidate ID / Reference No. *</label>
+      <input
+        type="text"
+        name="candidateId"
+        value={formData.candidateId || ""}
+        onChange={handleInputChange}
+        placeholder="Enter candidate ID"
+        className="pvc-form-input"
+        disabled={!selectedCase}
+        style={{
+          width: "100%",
+          padding: "8px 12px",
+          border: (formData.candidateId !== undefined && formData.candidateId.trim() === "" && formData.candidateId.length > 0) ? "1.5px solid #eb4d4b" : "1px solid #cbd5e1",
+          borderRadius: "6px",
+          fontSize: "13px",
+          outline: "none"
+        }}
+      />
+    </div>
+    <div className="pvc-form-group">
+      <label className="pvc-form-label">Client Name</label>
+      <input
+        type="text"
+        value={selectedCase?.client || ""}
+        disabled
+        className="pvc-form-input"
+        style={{
+          width: "100%",
+          padding: "8px 12px",
+          border: "1px solid #cbd5e1",
+          borderRadius: "6px",
+          fontSize: "13px",
+          background: "#f1f5f9"
+        }}
+      />
+    </div>
+    <div className="pvc-form-group">
+      <label className="pvc-form-label">Job Role</label>
+      <input
+        type="text"
+        name="jobRole"
+        value={formData.jobRole || ""}
+        onChange={handleInputChange}
+        placeholder="Enter job role"
+        className="pvc-form-input"
+        disabled={!selectedCase}
+        style={{
+          width: "100%",
+          padding: "8px 12px",
+          border: "1px solid #cbd5e1",
+          borderRadius: "6px",
+          fontSize: "13px",
+          outline: "none"
+        }}
+      />
+    </div>
+  </div>
+</div>
 
-              {/* Section 2: Verification Details */}
-              <div className="pvc-form-section">
-                <h3 className="pvc-section-title">Verification Details</h3>
+{/* Section 2: Verification Details */}
+<div className="pvc-form-section">
+  <h3 className="pvc-section-title">Verification Details</h3>
 
-                <div className="pvc-grid-4" style={{ marginBottom: "16px" }}>
-                  <div className="pvc-form-group">
-                    <label className="pvc-form-label">Verification Type *</label>
-                    <div className="pvc-radio-group">
-                      <label className="pvc-radio-label">
-                        <input type="radio" name="verificationType" value="Online" checked={formData.verificationType === "Online"} onChange={handleInputChange} disabled={!selectedCase} /> Online
-                      </label>
-                      <label className="pvc-radio-label">
-                        <input type="radio" name="verificationType" value="Offline" checked={formData.verificationType === "Offline"} onChange={handleInputChange} disabled={!selectedCase} /> Offline
-                      </label>
-                    </div>
-                  </div>
-                  <div className="pvc-form-group">
-                    <label className="pvc-form-label">Police Verification Mode *</label>
-                    <select name="policeVerificationMode" value={formData.policeVerificationMode} onChange={handleInputChange} className="pvc-form-select" disabled={!selectedCase}>
-                      <option value="">Select Mode</option>
-                      <option value="Online Portal">Online Portal</option>
-                      <option value="Police Station Visit">Police Station Visit</option>
-                      <option value="Third-Party Agency">Third-Party Agency</option>
-                      <option value="Advocate Search">Advocate Search</option>
-                    </select>
-                  </div>
-                  <div className="pvc-form-group">
-                    <label className="pvc-form-label">State *</label>
-                    <select name="state" value={formData.state} onChange={handleInputChange} className="pvc-form-select" disabled={!selectedCase}>
-                      <option value="">Select State</option>
-                      {STATES.map((s) => <option key={s} value={s}>{s}</option>)}
-                    </select>
-                  </div>
-                  <div className="pvc-form-group">
-                    <label className="pvc-form-label">District *</label>
-                    <input type="text" name="district" value={formData.district} onChange={handleInputChange} placeholder="Enter district" className="pvc-form-input" disabled={!selectedCase} />
-                  </div>
-                </div>
+  <div className="pvc-grid-4" style={{ marginBottom: "16px" }}>
+    <div className="pvc-form-group">
+      <label className="pvc-form-label">Verification Type *</label>
+      <div className="pvc-radio-group">
+        <label className="pvc-radio-label">
+          <input
+            type="radio"
+            name="verificationType"
+            value="Online"
+            checked={formData.verificationType === "Online"}
+            onChange={handleInputChange}
+            disabled={!selectedCase}
+          /> Online
+        </label>
+        <label className="pvc-radio-label">
+          <input
+            type="radio"
+            name="verificationType"
+            value="Offline"
+            checked={formData.verificationType === "Offline"}
+            onChange={handleInputChange}
+            disabled={!selectedCase}
+          /> Offline
+        </label>
+      </div>
+    </div>
+    <div className="pvc-form-group">
+      <label className="pvc-form-label">Police Verification Mode *</label>
+      <select
+        name="policeVerificationMode"
+        value={formData.policeVerificationMode || ""}
+        onChange={handleInputChange}
+        className="pvc-form-select"
+        disabled={!selectedCase}
+        style={{
+          width: "100%",
+          padding: "8px 12px",
+          border: "1px solid #cbd5e1",
+          borderRadius: "6px",
+          fontSize: "13px",
+          outline: "none"
+        }}
+      >
+        <option value="">Select Mode</option>
+        <option value="Online Portal">Online Portal</option>
+        <option value="Police Station Visit">Police Station Visit</option>
+        <option value="Third-Party Agency">Third-Party Agency</option>
+        <option value="Advocate Search">Advocate Search</option>
+      </select>
+    </div>
+    <div className="pvc-form-group">
+      <label className="pvc-form-label">State *</label>
+      <select
+        name="state"
+        value={formData.state || ""}
+        onChange={handleInputChange}
+        className="pvc-form-select"
+        disabled={!selectedCase}
+        style={{
+          width: "100%",
+          padding: "8px 12px",
+          border: "1px solid #cbd5e1",
+          borderRadius: "6px",
+          fontSize: "13px",
+          outline: "none"
+        }}
+      >
+        <option value="">Select State</option>
+        {STATES.map((s) => <option key={s} value={s}>{s}</option>)}
+      </select>
+    </div>
+    <div className="pvc-form-group">
+      <label className="pvc-form-label">District *</label>
+      <input
+        type="text"
+        name="district"
+        value={formData.district || ""}
+        onChange={handleInputChange}
+        placeholder="Enter district"
+        className="pvc-form-input"
+        disabled={!selectedCase}
+        style={{
+          width: "100%",
+          padding: "8px 12px",
+          border: "1px solid #cbd5e1",
+          borderRadius: "6px",
+          fontSize: "13px",
+          outline: "none"
+        }}
+      />
+    </div>
+  </div>
 
-                <div className="pvc-grid-1-3">
-                  <div className="pvc-form-group">
-                    <label className="pvc-form-label">Reference No. (if any)</label>
-                    <input type="text" name="referenceNo" value={formData.referenceNo} onChange={handleInputChange} placeholder="Enter reference number" className="pvc-form-input" disabled={!selectedCase} />
-                  </div>
-                  <div className="pvc-form-group">
-                    <label className="pvc-form-label">Case Details / Remarks</label>
-                    <input type="text" name="caseDetails" value={formData.caseDetails} onChange={handleInputChange} placeholder="Enter case details / remarks" className="pvc-form-input" disabled={!selectedCase} />
-                  </div>
-                </div>
+  <div className="pvc-grid-1-3">
+    <div className="pvc-form-group">
+      <label className="pvc-form-label">Reference No. (if any)</label>
+      <input
+        type="text"
+        name="referenceNo"
+        value={formData.referenceNo || ""}
+        onChange={handleInputChange}
+        placeholder="Enter reference number"
+        className="pvc-form-input"
+        disabled={!selectedCase}
+        style={{
+          width: "100%",
+          padding: "8px 12px",
+          border: "1px solid #cbd5e1",
+          borderRadius: "6px",
+          fontSize: "13px",
+          outline: "none"
+        }}
+      />
+    </div>
+    <div className="pvc-form-group">
+      <label className="pvc-form-label">Case Details / Remarks</label>
+      <input
+        type="text"
+        name="caseDetails"
+        value={formData.caseDetails || ""}
+        onChange={handleInputChange}
+        placeholder="Enter case details / remarks"
+        className="pvc-form-input"
+        disabled={!selectedCase}
+        style={{
+          width: "100%",
+          padding: "8px 12px",
+          border: "1px solid #cbd5e1",
+          borderRadius: "6px",
+          fontSize: "13px",
+          outline: "none"
+        }}
+      />
+    </div>
+  </div>
 
-                <div className="pvc-grid-2-1-1">
-                  <div className="pvc-form-group">
-                    <label className="pvc-form-label">Purpose of Verification *</label>
-                    <select name="purposeOfVerification" value={formData.purposeOfVerification} onChange={handleInputChange} className="pvc-form-select" disabled={!selectedCase}>
-                      <option value="">Select Purpose</option>
-                      <option value="Pre-Employment">Pre-Employment</option>
-                      <option value="Employment Renewal">Employment Renewal</option>
-                      <option value="Compliance">Compliance</option>
-                      <option value="Other">Other</option>
-                    </select>
-                  </div>
-                  <div className="pvc-form-group">
-                    <label className="pvc-form-label">Expected TAT (Days) *</label>
-                    <input type="number" name="expectedTat" value={formData.expectedTat} onChange={handleInputChange} placeholder="Enter expected TAT" className="pvc-form-input" disabled={!selectedCase} />
-                  </div>
-                  <div className="pvc-form-group">
-                    <label className="pvc-form-label">Priority</label>
-                    <select name="priority" value={formData.priority} onChange={handleInputChange} className="pvc-form-select" disabled={!selectedCase}>
-                      <option value="">Select Priority</option>
-                      <option value="Low">Low</option>
-                      <option value="Normal">Normal</option>
-                      <option value="High">High</option>
-                      <option value="Urgent">Urgent</option>
-                    </select>
-                  </div>
-                </div>
-              </div>
+  <div className="pvc-grid-2-1-1">
+    <div className="pvc-form-group">
+      <label className="pvc-form-label">Purpose of Verification *</label>
+      <select
+        name="purposeOfVerification"
+        value={formData.purposeOfVerification || ""}
+        onChange={handleInputChange}
+        className="pvc-form-select"
+        disabled={!selectedCase}
+        style={{
+          width: "100%",
+          padding: "8px 12px",
+          border: "1px solid #cbd5e1",
+          borderRadius: "6px",
+          fontSize: "13px",
+          outline: "none"
+        }}
+      >
+        <option value="">Select Purpose</option>
+        <option value="Pre-Employment">Pre-Employment</option>
+        <option value="Employment Renewal">Employment Renewal</option>
+        <option value="Compliance">Compliance</option>
+        <option value="Other">Other</option>
+      </select>
+    </div>
+    <div className="pvc-form-group">
+      <label className="pvc-form-label">Expected TAT (Days) *</label>
+      <input
+        type="number"
+        name="expectedTat"
+        value={formData.expectedTat || ""}
+        onChange={handleInputChange}
+        placeholder="Enter expected TAT"
+        className="pvc-form-input"
+        disabled={!selectedCase}
+        style={{
+          width: "100%",
+          padding: "8px 12px",
+          border: "1px solid #cbd5e1",
+          borderRadius: "6px",
+          fontSize: "13px",
+          outline: "none"
+        }}
+      />
+    </div>
+    <div className="pvc-form-group">
+      <label className="pvc-form-label">Priority</label>
+      <select
+        name="priority"
+        value={formData.priority || ""}
+        onChange={handleInputChange}
+        className="pvc-form-select"
+        disabled={!selectedCase}
+        style={{
+          width: "100%",
+          padding: "8px 12px",
+          border: "1px solid #cbd5e1",
+          borderRadius: "6px",
+          fontSize: "13px",
+          outline: "none"
+        }}
+      >
+        <option value="">Select Priority</option>
+        <option value="Low">Low</option>
+        <option value="Normal">Normal</option>
+        <option value="High">High</option>
+        <option value="Urgent">Urgent</option>
+      </select>
+    </div>
+  </div>
+</div>
 
               {/* Bottom Upload & Photograph Grid */}
               <div className="pvc-bottom-grid">
