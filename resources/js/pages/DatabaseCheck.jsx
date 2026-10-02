@@ -2238,143 +2238,325 @@ export default function DatabaseCheck() {
       </div>
 
       {/* POPUP 1: Identity Verification Modal */}
-      {activeModal === 'identity' && (
-        <div className="db-modal-overlay">
-          <div className="db-modal-card">
-            <div className="db-modal-header">
-              <div>
-                <div style={{ fontSize: "12px", fontWeight: 600, color: "#334155" }}>Add Database Verification</div>
-                <h3 className="db-modal-title">Identity Verification (Database)</h3>
-                <p className="db-modal-subtitle">Verify candidate identity using trusted government databases.</p>
-              </div>
-              <button className="db-modal-close" onClick={closeModal}>✕</button>
-            </div>
+{/* POPUP 1: Identity Verification Modal */}
+{activeModal === 'identity' && (
+  <div className="db-modal-overlay">
+    <div className="db-modal-card">
+      <div className="db-modal-header">
+        <div>
+          <div style={{ fontSize: "12px", fontWeight: 600, color: "#334155" }}>Add Database Verification</div>
+          <h3 className="db-modal-title">Identity Verification (Database)</h3>
+          <p className="db-modal-subtitle">Verify candidate identity using trusted government databases.</p>
+        </div>
+        <button className="db-modal-close" onClick={closeModal}>✕</button>
+      </div>
 
-            {/* Select Candidate — ties this verification entry to an
-                existing case with a database check, same pattern as the
-                other checks. */}
-            <div className="db-section-card">
-              <div className="db-section-title">Select Case</div>
-              <div className="db-form-grid-2">
-                <div className="db-form-group">
-                  <label>Select Candidate *</label>
-                  <select value={selectedCandidateKey} onChange={(e) => setSelectedCandidateKey(e.target.value)}>
-                    <option value="">{casesLoading ? "Loading…" : "— Select Candidate —"}</option>
-                    {candidateOptions.map((c) => (
-                      <option key={c.key} value={c.key}>{c.name}</option>
-                    ))}
-                  </select>
-                </div>
-                <div className="db-form-group">
-                  <label>Case ID</label>
-                  <input type="text" value={candidateCase?.case_id || ""} disabled style={{ background: "#f1f5f9" }} />
-                </div>
-              </div>
-            </div>
-
-            <div className="db-section-card">
-              <div className="db-section-title">Candidate Information</div>
-              <div className="db-form-grid-2">
-                <div className="db-form-group">
-                  <label>Candidate Name *</label>
-                  <input type="text" placeholder="Enter candidate name" value={identityForm.candidateName} onChange={(e) => setIdentityForm({ ...identityForm, candidateName: e.target.value })} />
-                </div>
-                <div className="db-form-group">
-                  <label>Mobile Number *</label>
-                  <input type="text" placeholder="Enter mobile number" value={identityForm.mobileNumber} onChange={(e) => setIdentityForm({ ...identityForm, mobileNumber: e.target.value })} />
-                </div>
-                <div className="db-form-group">
-                  <label>Email ID</label>
-                  <input type="email" placeholder="Enter email address" value={identityForm.email} onChange={(e) => setIdentityForm({ ...identityForm, email: e.target.value })} />
-                </div>
-                <div className="db-form-group">
-                  <label>Date of Birth *</label>
-                  <input type="text" placeholder="DD-MMM-YYYY" value={identityForm.dob} onChange={(e) => setIdentityForm({ ...identityForm, dob: e.target.value })} />
-                </div>
-              </div>
-            </div>
-
-            <div className="db-section-card">
-              <div className="db-section-title">Verification Details</div>
-              <div className="db-form-grid-2">
-                <div className="db-form-group">
-                  <label>ID Proof Type *</label>
-                  <select value={identityForm.idProofType} onChange={(e) => setIdentityForm({ ...identityForm, idProofType: e.target.value })}>
-                    <option value="" disabled>Select ID Proof</option>
-                    <option>PAN Card</option>
-                    <option>Aadhaar Card</option>
-                    <option>Driving License</option>
-                    <option>Passport</option>
-                    <option>Voter ID</option>
-                    <option>NPR (National Population Register)</option>
-                    <option>NREGA Card</option>
-                    <option>Ration Card</option>
-                    <option>Bank Passbook</option>
-                    <option>Others</option>
-                  </select>
-                </div>
-                <div className="db-form-group">
-                  <label>ID Proof Number *</label>
-                  <input type="text" placeholder="Enter ID number" value={identityForm.idProofNumber} onChange={(e) => setIdentityForm({ ...identityForm, idProofNumber: e.target.value })} />
-                </div>
-              </div>
-              <div className="db-form-group" style={{ width: "48%" }}>
-                <label>Issue Date (If Applicable)</label>
-                <input type="text" placeholder="DD-MMM-YYYY" value={identityForm.issueDate} onChange={(e) => setIdentityForm({ ...identityForm, issueDate: e.target.value })} />
-              </div>
-              <div className="db-form-group">
-                <label>Remarks</label>
-                <textarea rows="2" placeholder="Enter remarks (optional)" value={identityForm.remarks} onChange={(e) => setIdentityForm({ ...identityForm, remarks: e.target.value })} maxLength={500}></textarea>
-                <span style={{ fontSize: "10px", color: "#94a3b8", textAlign: "right" }}>{identityForm.remarks.length} / 500</span>
-              </div>
-            </div>
-
-            {/* Input Type File Added Here */}
-            <div className="db-section-card">
-              <div className="db-section-title">Documents</div>
-              <div className="db-form-group">
-                <label>Upload ID Proof Document *</label>
-                
-                <input 
-                  type="file" 
-                  ref={fileInputRef}
-                  className="db-file-input-hidden"
-                  accept=".pdf,.jpg,.jpeg,.png"
-                  onChange={handleFileChange}
-                />
-
-                <div 
-                  className="db-upload-box" 
-                  onClick={() => fileInputRef.current && fileInputRef.current.click()}
-                  onDragOver={handleDragOver}
-                  onDrop={handleDrop}
-                >
-                  {selectedFile ? (
-                    <div>
-                      📄 <strong style={{ color: "#2563eb" }}>{selectedFile.name}</strong>
-                      <div style={{ fontSize: "10px", color: "#64748b", marginTop: "4px" }}>
-                        {(selectedFile.size / (1024 * 1024)).toFixed(2)} MB - Click or drag to replace
-                      </div>
-                    </div>
-                  ) : (
-                    <>
-                      📤 <strong>Click to upload</strong> or drag and drop<br />
-                      <span style={{ fontSize: "10px", color: "#94a3b8" }}>PDF, JPG, PNG (Max. 5MB)</span>
-                    </>
-                  )}
-                </div>
-              </div>
-            </div>
-
-            <div className="db-modal-footer">
-              <button className="db-btn-cancel" onClick={closeModal}>Cancel</button>
-              <button className="db-btn-submit" disabled={saving} onClick={() => handleSaveVerification("identity")}>
-                {saving ? "Saving…" : "Save & Send for Verification"}
-              </button>
-            </div>
+      {/* Select Case Section */}
+      <div className="db-section-card">
+        <div className="db-section-title">Select Case</div>
+        <div className="db-form-grid-2">
+          <div className="db-form-group">
+            <label style={{ display: "block", marginBottom: "6px", fontSize: "12px", fontWeight: "600", color: "#374151" }}>
+              Select Candidate <span style={{ color: "#eb4d4b" }}>*</span>
+            </label>
+            <select 
+              value={selectedCandidateKey} 
+              onChange={(e) => setSelectedCandidateKey(e.target.value)}
+              style={{
+                width: "100%",
+                padding: "8px 12px",
+                border: !selectedCandidateKey ? "1.5px solid #eb4d4b" : "1px solid #cbd5e1",
+                borderRadius: "6px",
+                fontSize: "13px",
+                outline: "none"
+              }}
+            >
+              <option value="">{casesLoading ? "Loading…" : "— Select Candidate —"}</option>
+              {candidateOptions.map((c) => (
+                <option key={c.key} value={c.key}>{c.name}</option>
+              ))}
+            </select>
+          </div>
+          <div className="db-form-group">
+            <label style={{ display: "block", marginBottom: "6px", fontSize: "12px", fontWeight: "600", color: "#374151" }}>Case ID</label>
+            <input 
+              type="text" 
+              value={candidateCase?.case_id || ""} 
+              disabled 
+              style={{ 
+                width: "100%",
+                padding: "8px 12px",
+                border: "1px solid #cbd5e1",
+                borderRadius: "6px",
+                fontSize: "13px",
+                background: "#f1f5f9", 
+                cursor: "not-allowed", 
+                fontWeight: "600",
+                color: "#475569" 
+              }} 
+            />
           </div>
         </div>
-      )}
+      </div>
+
+      {/* Candidate Information Section */}
+      <div className="db-section-card">
+        <div className="db-section-title">Candidate Information</div>
+        <div className="db-form-grid-2">
+          <div className="db-form-group">
+            <label style={{ display: "block", marginBottom: "6px", fontSize: "12px", fontWeight: "600", color: "#374151" }}>
+              Candidate Name <span style={{ color: "#eb4d4b" }}>*</span>
+            </label>
+            <input 
+              type="text" 
+              placeholder="Enter candidate name" 
+              value={identityForm.candidateName || ""} 
+              onChange={(e) => {
+                const val = e.target.value;
+                if (val === "" || /^[a-zA-Z\s]*$/.test(val)) {
+                  setIdentityForm({ ...identityForm, candidateName: val });
+                }
+              }} 
+              style={{
+                width: "100%",
+                padding: "8px 12px",
+                border: (!identityForm.candidateName || identityForm.candidateName.trim().length < 2) ? "1.5px solid #eb4d4b" : "1px solid #cbd5e1",
+                borderRadius: "6px",
+                fontSize: "13px",
+                outline: "none"
+              }}
+            />
+          </div>
+          <div className="db-form-group">
+            <label style={{ display: "block", marginBottom: "6px", fontSize: "12px", fontWeight: "600", color: "#374151" }}>
+              Mobile Number <span style={{ color: "#eb4d4b" }}>*</span>
+            </label>
+            <input 
+              type="text" 
+              maxLength={10}
+              placeholder="Enter 10-digit mobile number" 
+              value={identityForm.mobileNumber || ""} 
+              onChange={(e) => {
+                const val = e.target.value.replace(/\D/g, "").slice(0, 10);
+                setIdentityForm({ ...identityForm, mobileNumber: val });
+              }} 
+              style={{
+                width: "100%",
+                padding: "8px 12px",
+                border: (identityForm.mobileNumber && !/^[6-9]\d{9}$/.test(identityForm.mobileNumber)) || !identityForm.mobileNumber ? "1.5px solid #eb4d4b" : "1px solid #cbd5e1",
+                borderRadius: "6px",
+                fontSize: "13px",
+                outline: "none"
+              }}
+            />
+          </div>
+          <div className="db-form-group">
+            <label style={{ display: "block", marginBottom: "6px", fontSize: "12px", fontWeight: "600", color: "#374151" }}>Email ID</label>
+            <input 
+              type="email" 
+              placeholder="Enter email address" 
+              value={identityForm.email || ""} 
+              onChange={(e) => setIdentityForm({ ...identityForm, email: e.target.value })} 
+              style={{
+                width: "100%",
+                padding: "8px 12px",
+                border: (identityForm.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(identityForm.email)) ? "1.5px solid #eb4d4b" : "1px solid #cbd5e1",
+                borderRadius: "6px",
+                fontSize: "13px",
+                outline: "none"
+              }}
+            />
+          </div>
+          <div className="db-form-group">
+            <label style={{ display: "block", marginBottom: "6px", fontSize: "12px", fontWeight: "600", color: "#374151" }}>
+              Date of Birth <span style={{ color: "#eb4d4b" }}>*</span>
+            </label>
+            <input 
+              type="text" 
+              maxLength={11}
+              placeholder="DD-MMM-YYYY (e.g. 15-AUG-1995)" 
+              value={identityForm.dob || ""} 
+              onChange={(e) => setIdentityForm({ ...identityForm, dob: e.target.value.toUpperCase() })} 
+              style={{
+                width: "100%",
+                padding: "8px 12px",
+                border: !identityForm.dob ? "1.5px solid #eb4d4b" : "1px solid #cbd5e1",
+                borderRadius: "6px",
+                fontSize: "13px",
+                outline: "none"
+              }}
+            />
+          </div>
+        </div>
+      </div>
+
+      {/* Verification Details Section */}
+      <div className="db-section-card">
+        <div className="db-section-title">Verification Details</div>
+        <div className="db-form-grid-2">
+          <div className="db-form-group">
+            <label style={{ display: "block", marginBottom: "6px", fontSize: "12px", fontWeight: "600", color: "#374151" }}>
+              ID Proof Type <span style={{ color: "#eb4d4b" }}>*</span>
+            </label>
+            <select 
+              value={identityForm.idProofType || ""} 
+              onChange={(e) => setIdentityForm({ ...identityForm, idProofType: e.target.value, idProofNumber: "" })}
+              style={{
+                width: "100%",
+                padding: "8px 12px",
+                border: !identityForm.idProofType ? "1.5px solid #eb4d4b" : "1px solid #cbd5e1",
+                borderRadius: "6px",
+                fontSize: "13px",
+                outline: "none"
+              }}
+            >
+              <option value="" disabled>Select ID Proof</option>
+              <option>PAN Card</option>
+              <option>Aadhaar Card</option>
+              <option>Driving License</option>
+              <option>Passport</option>
+              <option>Voter ID</option>
+              <option>NPR (National Population Register)</option>
+              <option>NREGA Card</option>
+              <option>Ration Card</option>
+              <option>Bank Passbook</option>
+              <option>Others</option>
+            </select>
+          </div>
+          <div className="db-form-group">
+            <label style={{ display: "block", marginBottom: "6px", fontSize: "12px", fontWeight: "600", color: "#374151" }}>
+              ID Proof Number <span style={{ color: "#eb4d4b" }}>*</span>
+            </label>
+            <input 
+              type="text" 
+              placeholder={
+                identityForm.idProofType === "PAN Card" ? "e.g. ABCDE1234F" :
+                identityForm.idProofType === "Aadhaar Card" ? "12-digit Aadhaar Number" :
+                identityForm.idProofType === "Passport" ? "e.g. A1234567" :
+                identityForm.idProofType === "Voter ID" ? "e.g. ABC1234567" : "Enter ID number"
+              } 
+              value={identityForm.idProofNumber || ""} 
+              onChange={(e) => {
+                let val = e.target.value;
+                if (identityForm.idProofType === "Aadhaar Card") {
+                  val = val.replace(/\D/g, "").slice(0, 12);
+                } else if (["PAN Card", "Passport", "Voter ID"].includes(identityForm.idProofType)) {
+                  val = val.toUpperCase();
+                }
+                setIdentityForm({ ...identityForm, idProofNumber: val });
+              }} 
+              style={{
+                width: "100%",
+                padding: "8px 12px",
+                border: !identityForm.idProofNumber ? "1.5px solid #eb4d4b" : "1px solid #cbd5e1",
+                borderRadius: "6px",
+                fontSize: "13px",
+                outline: "none"
+              }}
+            />
+          </div>
+        </div>
+        <div className="db-form-group" style={{ width: "48%" }}>
+          <label style={{ display: "block", marginBottom: "6px", fontSize: "12px", fontWeight: "600", color: "#374151" }}>Issue Date (If Applicable)</label>
+          <input 
+            type="text" 
+            maxLength={11}
+            placeholder="DD-MMM-YYYY" 
+            value={identityForm.issueDate || ""} 
+            onChange={(e) => setIdentityForm({ ...identityForm, issueDate: e.target.value.toUpperCase() })} 
+            style={{
+              width: "100%",
+              padding: "8px 12px",
+              border: "1px solid #cbd5e1",
+              borderRadius: "6px",
+              fontSize: "13px",
+              outline: "none"
+            }}
+          />
+        </div>
+        <div className="db-form-group">
+          <label style={{ display: "block", marginBottom: "6px", fontSize: "12px", fontWeight: "600", color: "#374151" }}>Remarks</label>
+          <textarea 
+            rows="2" 
+            placeholder="Enter remarks (optional)" 
+            value={identityForm.remarks || ""} 
+            onChange={(e) => setIdentityForm({ ...identityForm, remarks: e.target.value })} 
+            maxLength={500}
+            style={{
+              width: "100%",
+              padding: "8px 12px",
+              border: "1px solid #cbd5e1",
+              borderRadius: "6px",
+              fontSize: "13px",
+              outline: "none",
+              resize: "none",
+              boxSizing: "border-box"
+            }}
+          ></textarea>
+          <span style={{ fontSize: "10px", color: "#94a3b8", display: "block", textAlign: "right" }}>
+            {(identityForm.remarks || "").length} / 500
+          </span>
+        </div>
+      </div>
+
+      {/* Document Upload Section */}
+      <div className="db-section-card">
+        <div className="db-section-title">Documents</div>
+        <div className="db-form-group">
+          <label style={{ display: "block", marginBottom: "6px", fontSize: "12px", fontWeight: "600", color: "#374151" }}>
+            Upload ID Proof Document <span style={{ color: "#eb4d4b" }}>*</span>
+          </label>
+          
+          <input 
+            type="file" 
+            ref={fileInputRef}
+            className="db-file-input-hidden"
+            style={{ display: "none" }}
+            accept=".pdf,.jpg,.jpeg,.png"
+            onChange={handleFileChange}
+          />
+
+          <div 
+            className="db-upload-box" 
+            onClick={() => fileInputRef.current && fileInputRef.current.click()}
+            onDragOver={handleDragOver}
+            onDrop={handleDrop}
+            style={{
+              border: !selectedFile ? "1.5px dashed #eb4d4b" : "1.5px dashed #cbd5e1",
+              background: "#f8fafc",
+              padding: "16px",
+              borderRadius: "6px",
+              textAlign: "center",
+              cursor: "pointer",
+              transition: "border-color 0.18s"
+            }}
+          >
+            {selectedFile ? (
+              <div>
+                📄 <strong style={{ color: "#2563eb" }}>{selectedFile.name}</strong>
+                <div style={{ fontSize: "10px", color: "#64748b", marginTop: "4px" }}>
+                  {(selectedFile.size / (1024 * 1024)).toFixed(2)} MB - Click or drag to replace
+                </div>
+              </div>
+            ) : (
+              <>
+                📤 <strong>Click to upload</strong> or drag and drop<br />
+                <span style={{ fontSize: "10px", color: "#94a3b8" }}>PDF, JPG, PNG (Max. 5MB)</span>
+              </>
+            )}
+          </div>
+        </div>
+      </div>
+
+      <div className="db-modal-footer">
+        <button className="db-btn-cancel" onClick={closeModal}>Cancel</button>
+        <button className="db-btn-submit" disabled={saving} onClick={() => handleSaveVerification("identity")}>
+          {saving ? "Saving…" : "Save & Send for Verification"}
+        </button>
+      </div>
+    </div>
+  </div>
+)}
 
       {/* POPUP 2: Global Check Modal */}
       {activeModal === 'global' && (
