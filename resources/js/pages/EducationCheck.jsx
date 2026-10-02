@@ -1450,7 +1450,16 @@
 //                     <select
 //                       value={selectedClientId}
 //                       onChange={(e) => setSelectedClientId(e.target.value)}
-//                       style={{ width: "100%", padding: "9px 12px", borderRadius: "6px", border: "1px solid #cbd5e1", outline: "none", background: "#fff", fontSize: "12px" }}
+//                       style={{ width: "100%",
+                          // padding: "10px 13px",
+                          // borderRadius: "8px",
+                          // fontSize: "0.875rem",
+                          // color: "#1e293b",
+                          // background: "#f8fafc",
+                          // outline: "none",
+                          // transition:
+                          //   "border-color 0.18s",
+                          // boxSizing: "border-box", }}
 //                     >
 //                       <option value="">
 //                         {clientsLoading ? "Loading clients…" : clientsError ? "Failed to load clients" : clients.length === 0 ? "No clients found" : "— Select Client —"}
@@ -1472,7 +1481,16 @@
 //                     <select
 //                       value={selectedCandidateKey}
 //                       onChange={(e) => setSelectedCandidateKey(e.target.value)}
-//                       style={{ width: "100%", padding: "9px 12px", borderRadius: "6px", border: "1px solid #cbd5e1", outline: "none", background: "#fff", fontSize: "12px" }}
+//                       style={{ width: "100%",
+                          // padding: "10px 13px",
+                          // borderRadius: "8px",
+                          // fontSize: "0.875rem",
+                          // color: "#1e293b",
+                          // background: "#f8fafc",
+                          // outline: "none",
+                          // transition:
+                          //   "border-color 0.18s",
+                          // boxSizing: "border-box", }}
 //                     >
 //                       <option value="">
 //                         {casesLoading ? "Loading candidates…" : casesError ? "Failed to load candidates" : candidateOptions.length === 0 ? "No candidates found" : "— Select Candidate —"}
@@ -2569,7 +2587,16 @@ export default function EducationVerification() {
                     <select
                       value={selectedClientId}
                       onChange={(e) => setSelectedClientId(e.target.value)}
-                      style={{ width: "100%", padding: "9px 12px", borderRadius: "6px", border: "1px solid #cbd5e1", outline: "none", background: "#fff", fontSize: "12px" }}
+                      style={{ width: "100%",
+                          padding: "10px 13px",
+                          borderRadius: "8px",
+                          fontSize: "0.875rem",
+                          color: "#1e293b",
+                          background: "#f8fafc",
+                          outline: "none",
+                          transition:
+                            "border-color 0.18s",
+                          boxSizing: "border-box", }}
                     >
                       <option value="">
                         {clientsLoading ? "Loading clients…" : clientsError ? "Failed to load clients" : clients.length === 0 ? "No clients found" : "— Select Client —"}
@@ -2599,7 +2626,16 @@ export default function EducationVerification() {
                     <select
                       value={selectedCandidateKey}
                       onChange={(e) => setSelectedCandidateKey(e.target.value)}
-                      style={{ width: "100%", padding: "9px 12px", borderRadius: "6px", border: "1px solid #cbd5e1", outline: "none", background: "#fff", fontSize: "12px" }}
+                      style={{ width: "100%",
+                          padding: "10px 13px",
+                          borderRadius: "8px",
+                          fontSize: "0.875rem",
+                          color: "#1e293b",
+                          background: "#f8fafc",
+                          outline: "none",
+                          transition:
+                            "border-color 0.18s",
+                          boxSizing: "border-box", }}
                     >
                       <option value="">
                         {casesLoading ? "Loading candidates…" : casesError ? "Failed to load candidates" : candidateOptions.length === 0 ? "No candidates found" : "— Select Candidate —"}
