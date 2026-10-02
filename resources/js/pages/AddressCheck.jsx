@@ -1285,116 +1285,269 @@ export default function AddressCheck() {
               </div>
 
               {/* Basic Details Section */}
-              <div style={{ border: "1px solid #f1f5f9", borderRadius: "8px", padding: "16px", marginBottom: "20px", background: "#f8fafc" }}>
+              <div style={{ border: "1px solid #f1f5f9", borderRadius: "8px", padding: "16px", marginBottom: "20px", background: "#fff" }}>
 
                 {/* Select Client / Select Candidate — ties this address check
                     to an existing case, same pattern as Employment/Education. */}
                 <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px", marginBottom: "16px" }}>
-                  <div>
-                    <label style={{ display: "block", fontSize: "12px", fontWeight: "600", color: "#374151", marginBottom: "6px" }}>Select Client</label>
-                    <select
-                      value={selectedClientId}
-                      onChange={(e) => setSelectedClientId(e.target.value)}
-                      style={{ width: "100%", padding: "8px 12px", border: "1px solid #cbd5e1", borderRadius: "6px", fontSize: "12px", outline: "none", boxSizing: "border-box" }}
-                    >
-                      <option value="">
-                        {clientsLoading ? "Loading clients…" : clientsError ? "Failed to load clients" : clients.length === 0 ? "No clients found" : "— Select Client —"}
-                      </option>
-                      {clients.map((c) => (
-                        <option key={c.id} value={c.id}>{c.company_name || c.name}</option>
-                      ))}
-                    </select>
-                  </div>
-                  <div>
-                    <label style={{ display: "block", fontSize: "12px", fontWeight: "600", color: "#374151", marginBottom: "6px" }}>Case ID (Client)</label>
-                    <div style={{ width: "100%", padding: "8px 12px", borderRadius: "6px", border: "1px solid #cbd5e1", background: "#eef1fb", color: "#2b3b8c", fontWeight: 700, boxSizing: "border-box", fontSize: "12px" }}>
-                      {!selectedClientId ? "—" : casesLoading ? "Loading…" : clientCaseId || "No address case found for this client"}
-                    </div>
-                  </div>
+  {/* Select Client */}
+  <div>
+    <label style={{ display: "block", fontSize: "12px", fontWeight: "600", color: "#374151", marginBottom: "6px" }}>
+      Select Client <span style={{ color: "#eb4d4b" }}>*</span>
+    </label>
+    <select
+      value={selectedClientId}
+      onChange={(e) => setSelectedClientId(e.target.value)}
+      required
+      style={{
+        width: "100%",
+        padding: "8px 12px",
+        border: clientsError || !selectedClientId ? "1.5px solid #eb4d4b" : "1px solid #cbd5e1",
+        borderRadius: "6px",
+        fontSize: "12px",
+        outline: "none",
+        boxSizing: "border-box",
+        background: "#f8fafc",
+        transition: "border-color 0.18s",
+      }}
+    >
+      <option value="">
+        {clientsLoading ? "Loading clients…" : clientsError ? "Failed to load clients" : clients.length === 0 ? "No active clients found" : "— Select Client —"}
+      </option>
+      {clients.map((c) => (
+        <option key={c.id} value={c.id}>{c.company_name || c.name}</option>
+      ))}
+    </select>
+  </div>
 
-                  <div>
-                    <label style={{ display: "block", fontSize: "12px", fontWeight: "600", color: "#374151", marginBottom: "6px" }}>Select Candidate</label>
-                    <select
-                      value={selectedCandidateKey}
-                      onChange={(e) => setSelectedCandidateKey(e.target.value)}
-                      style={{ width: "100%", padding: "8px 12px", border: "1px solid #cbd5e1", borderRadius: "6px", fontSize: "12px", outline: "none", boxSizing: "border-box" }}
-                    >
-                      <option value="">
-                        {casesLoading ? "Loading candidates…" : casesError ? "Failed to load candidates" : candidateOptions.length === 0 ? "No candidates found" : "— Select Candidate —"}
-                      </option>
-                      {candidateOptions.map((cand) => (
-                        <option key={cand.key} value={cand.key}>{cand.name}</option>
-                      ))}
-                    </select>
-                  </div>
-                  <div>
-                    <label style={{ display: "block", fontSize: "12px", fontWeight: "600", color: "#374151", marginBottom: "6px" }}>Case ID (Candidate)</label>
-                    <div style={{ width: "100%", padding: "8px 12px", borderRadius: "6px", border: "1px solid #cbd5e1", background: "#eef1fb", color: "#2b3b8c", fontWeight: 700, boxSizing: "border-box", fontSize: "12px" }}>
-                      {!selectedCandidateKey ? "—" : casesLoading ? "Loading…" : candidateCaseId || "No address case found for this candidate"}
-                    </div>
-                  </div>
-                </div>
+  {/* Case ID (Client) - System Generated Read-only */}
+  <div>
+    <label style={{ display: "block", fontSize: "12px", fontWeight: "600", color: "#374151", marginBottom: "6px" }}>
+      Case ID (Client)
+    </label>
+    <div
+      style={{
+        width: "100%",
+        padding: "8px 12px",
+        borderRadius: "6px",
+        border: "1px solid #cbd5e1",
+        background: "#eef1fb",
+        color: "#2b3b8c",
+        fontWeight: 700,
+        boxSizing: "border-box",
+        fontSize: "12px",
+        display: "flex",
+        alignItems: "center",
+      }}
+    >
+      {!selectedClientId ? "—" : casesLoading ? "Loading…" : clientCaseId || "No address case found for this client"}
+    </div>
+  </div>
 
-                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "16px", marginBottom: "16px" }}>
-                  <div>
-                    <label style={{ display: "block", fontSize: "12px", fontWeight: "600", color: "#374151", marginBottom: "6px" }}>Candidate Name *</label>
-                    <div style={{ position: "relative" }}>
-                      <input
-                        type="text"
-                        placeholder="Enter candidate name"
-                        value={candidateInfo.candidateName}
-                        onChange={(e) => handleCandidateChange("candidateName", e.target.value)}
-                        style={{ width: "100%", padding: "8px 12px 8px 32px", border: "1px solid #cbd5e1", borderRadius: "6px", fontSize: "12px", outline: "none", boxSizing: "border-box" }}
-                      />
-                      <span style={{ position: "absolute", left: "10px", top: "8px", color: "#94a3b8" }}>👤</span>
-                    </div>
-                  </div>
-                  <div>
-                    <label style={{ display: "block", fontSize: "12px", fontWeight: "600", color: "#374151", marginBottom: "6px" }}>Candidate ID *</label>
-                    <div style={{ position: "relative" }}>
-                      <input
-                        type="text"
-                        placeholder="Enter candidate ID"
-                        value={candidateInfo.candidateId}
-                        onChange={(e) => handleCandidateChange("candidateId", e.target.value)}
-                        style={{ width: "100%", padding: "8px 12px 8px 32px", border: "1px solid #cbd5e1", borderRadius: "6px", fontSize: "12px", outline: "none", boxSizing: "border-box" }}
-                      />
-                      <span style={{ position: "absolute", left: "10px", top: "8px", color: "#94a3b8" }}>🪪</span>
-                    </div>
-                  </div>
-                  <div style={{ display: "none" }}>
-                    {/* Client Name superseded by the Select Client dropdown above */}
-                  </div>
-                </div>
+  {/* Select Candidate */}
+  <div>
+    <label style={{ display: "block", fontSize: "12px", fontWeight: "600", color: "#374151", marginBottom: "6px" }}>
+      Select Candidate <span style={{ color: "#eb4d4b" }}>*</span>
+    </label>
+    <select
+      value={selectedCandidateKey}
+      onChange={(e) => setSelectedCandidateKey(e.target.value)}
+      required
+      disabled={!selectedClientId}
+      style={{
+        width: "100%",
+        padding: "8px 12px",
+        border: casesError || (selectedClientId && !selectedCandidateKey) ? "1.5px solid #eb4d4b" : "1px solid #cbd5e1",
+        borderRadius: "6px",
+        fontSize: "12px",
+        outline: "none",
+        boxSizing: "border-box",
+        background: !selectedClientId ? "#f1f5f9" : "#f8fafc",
+        cursor: !selectedClientId ? "not-allowed" : "pointer",
+        transition: "border-color 0.18s",
+      }}
+    >
+      <option value="">
+        {!selectedClientId
+          ? "— Select Client First —"
+          : casesLoading
+          ? "Loading candidates…"
+          : casesError
+          ? "Failed to load candidates"
+          : candidateOptions.length === 0
+          ? "No candidates found"
+          : "— Select Candidate —"}
+      </option>
+      {candidateOptions.map((cand) => (
+        <option key={cand.key} value={cand.key}>{cand.name}</option>
+      ))}
+    </select>
+  </div>
 
-                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "16px" }}>
-                  <div>
-                    <label style={{ display: "block", fontSize: "12px", fontWeight: "600", color: "#374151", marginBottom: "6px" }}>Mobile Number *</label>
-                    <div style={{ position: "relative" }}>
-                      <input
-                        type="text"
-                        placeholder="Enter mobile number"
-                        value={candidateInfo.mobileNumber}
-                        onChange={(e) => handleCandidateChange("mobileNumber", e.target.value)}
-                        style={{ width: "100%", padding: "8px 12px 8px 32px", border: "1px solid #cbd5e1", borderRadius: "6px", fontSize: "12px", outline: "none", boxSizing: "border-box" }}
-                      />
-                      <span style={{ position: "absolute", left: "10px", top: "8px", color: "#94a3b8" }}>📞</span>
-                    </div>
-                  </div>
-                  <div>
-                    <label style={{ display: "block", fontSize: "12px", fontWeight: "600", color: "#374151", marginBottom: "6px" }}>Email ID *</label>
-                    <div style={{ position: "relative" }}>
-                      <input
-                        type="email"
-                        placeholder="Enter email address"
-                        value={candidateInfo.emailAddress}
-                        onChange={(e) => handleCandidateChange("emailAddress", e.target.value)}
-                        style={{ width: "100%", padding: "8px 12px 8px 32px", border: "1px solid #cbd5e1", borderRadius: "6px", fontSize: "12px", outline: "none", boxSizing: "border-box" }}
-                      />
-                      <span style={{ position: "absolute", left: "10px", top: "8px", color: "#94a3b8" }}>✉️</span>
-                    </div>
-                  </div>
-                </div>
+  {/* Case ID (Candidate) - System Generated Read-only */}
+  <div>
+    <label style={{ display: "block", fontSize: "12px", fontWeight: "600", color: "#374151", marginBottom: "6px" }}>
+      Case ID (Candidate)
+    </label>
+    <div
+      style={{
+        width: "100%",
+        padding: "8px 12px",
+        borderRadius: "6px",
+        border: "1px solid #cbd5e1",
+        background: "#eef1fb",
+        color: "#2b3b8c",
+        fontWeight: 700,
+        boxSizing: "border-box",
+        fontSize: "12px",
+        display: "flex",
+        alignItems: "center",
+      }}
+    >
+      {!selectedCandidateKey ? "—" : casesLoading ? "Loading…" : candidateCaseId || "No address case found for this candidate"}
+    </div>
+  </div>
+</div>
+
+                <>
+  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "16px", marginBottom: "16px" }}>
+    {/* Candidate Name */}
+    <div>
+      <label style={{ display: "block", fontSize: "12px", fontWeight: "600", color: "#374151", marginBottom: "6px" }}>
+        Candidate Name <span style={{ color: "#eb4d4b" }}>*</span>
+      </label>
+      <div style={{ position: "relative" }}>
+        <input
+          type="text"
+          placeholder="Enter candidate name"
+          value={candidateInfo.candidateName || ""}
+          onChange={(e) => {
+            const val = e.target.value;
+            // Alphabets and spaces only
+            if (val === "" || /^[a-zA-Z\s]*$/.test(val)) {
+              handleCandidateChange("candidateName", val);
+            }
+          }}
+          required
+          style={{
+            width: "100%",
+            padding: "8px 12px 8px 32px",
+            border: candidateInfo.candidateName && candidateInfo.candidateName.trim().length < 2
+              ? "1.5px solid #eb4d4b"
+              : "1px solid #cbd5e1",
+            borderRadius: "6px",
+            fontSize: "12px",
+            outline: "none",
+            boxSizing: "border-box",
+            background: "#f8fafc",
+            transition: "border-color 0.18s",
+          }}
+        />
+        <span style={{ position: "absolute", left: "10px", top: "8px", color: "#94a3b8" }}>👤</span>
+      </div>
+    </div>
+
+    {/* Candidate ID - System Generated & Unique */}
+    <div>
+      <label style={{ display: "block", fontSize: "12px", fontWeight: "600", color: "#374151", marginBottom: "6px" }}>
+        Candidate ID <span style={{ color: "#eb4d4b" }}>*</span>
+      </label>
+      <div style={{ position: "relative" }}>
+        <input
+          type="text"
+          placeholder="System Generated ID"
+          value={candidateInfo.candidateId || ""}
+          readOnly
+          style={{
+            width: "100%",
+            padding: "8px 12px 8px 32px",
+            border: "1px solid #cbd5e1",
+            borderRadius: "6px",
+            fontSize: "12px",
+            outline: "none",
+            boxSizing: "border-box",
+            background: "#eef1fb",
+            color: "#2b3b8c",
+            fontWeight: "700",
+            cursor: "not-allowed",
+          }}
+        />
+        <span style={{ position: "absolute", left: "10px", top: "8px", color: "#94a3b8" }}>🪪</span>
+      </div>
+    </div>
+
+    <div style={{ display: "none" }}>
+      {/* Client Name superseded by the Select Client dropdown above */}
+    </div>
+  </div>
+
+  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "16px" }}>
+    {/* Mobile Number - Valid 10-digit Indian Mobile */}
+    <div>
+      <label style={{ display: "block", fontSize: "12px", fontWeight: "600", color: "#374151", marginBottom: "6px" }}>
+        Mobile Number <span style={{ color: "#eb4d4b" }}>*</span>
+      </label>
+      <div style={{ position: "relative" }}>
+        <input
+          type="text"
+          maxLength={10}
+          inputMode="numeric"
+          placeholder="Enter 10-digit mobile number"
+          value={candidateInfo.mobileNumber || ""}
+          onChange={(e) => {
+            const val = e.target.value.replace(/\D/g, "").slice(0, 10);
+            handleCandidateChange("mobileNumber", val);
+          }}
+          required
+          style={{
+            width: "100%",
+            padding: "8px 12px 8px 32px",
+            border: candidateInfo.mobileNumber && (!/^[6-9]\d{9}$/.test(candidateInfo.mobileNumber))
+              ? "1.5px solid #eb4d4b"
+              : "1px solid #cbd5e1",
+            borderRadius: "6px",
+            fontSize: "12px",
+            outline: "none",
+            boxSizing: "border-box",
+            background: "#f8fafc",
+            transition: "border-color 0.18s",
+          }}
+        />
+        <span style={{ position: "absolute", left: "10px", top: "8px", color: "#94a3b8" }}>📞</span>
+      </div>
+    </div>
+
+    {/* Email ID - Valid Email Format */}
+    <div>
+      <label style={{ display: "block", fontSize: "12px", fontWeight: "600", color: "#374151", marginBottom: "6px" }}>
+        Email ID <span style={{ color: "#eb4d4b" }}>*</span>
+      </label>
+      <div style={{ position: "relative" }}>
+        <input
+          type="email"
+          placeholder="Enter email address"
+          value={candidateInfo.emailAddress || ""}
+          onChange={(e) => handleCandidateChange("emailAddress", e.target.value)}
+          required
+          style={{
+            width: "100%",
+            padding: "8px 12px 8px 32px",
+            border: candidateInfo.emailAddress && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(candidateInfo.emailAddress)
+              ? "1.5px solid #eb4d4b"
+              : "1px solid #cbd5e1",
+            borderRadius: "6px",
+            fontSize: "12px",
+            outline: "none",
+            boxSizing: "border-box",
+            background: "#f8fafc",
+            transition: "border-color 0.18s",
+          }}
+        />
+        <span style={{ position: "absolute", left: "10px", top: "8px", color: "#94a3b8" }}>✉️</span>
+      </div>
+    </div>
+  </div>
+</>
               </div>
 
               {/* Two Column Layout: Permanent Address vs Correspondence Address */}
